@@ -1,0 +1,178 @@
+{
+  "collage_numerique": "Collage numérique",
+  "image_generee_ia": "Image générée par l'IA",
+  "modelisation_3d": "Modélisation 3D",
+  "peinture_numerique": "Peinture numérique",
+  "photo_montage": "Photo montage",
+  "travail_numerique_2d": "Travail numérique 2D",
+  "video": "Vidéo",
+  "style": "Style",
+
+  "select_textile_technique": "Sélectionner une technique textile",
+  "placeholder_categories": "Catégories",
+  "no_options": "Technique non disponible",
+ 
+    "broderie": "Broderie",
+    "fibre_textile": "Fibre textile",
+    "fil": "Fil",
+    "patchwork": "Patchwork",
+    "string_art": "String Art",
+    "tapisserie": "Tapisserie",
+    "tissu": "Tissu",
+
+
+
+    "select_peinture_technique": "Indiquez la technique",
+    "placeholder_peinture": "Matériaux et méthodes utilisés : huile, acrylique...",
+ 
+    
+  
+
+
+     
+        "collagraphie": "Collagraphy",
+        "eau_forte": "Etching",
+        "embossage": "Embossing",
+        "gravure": "Engraving",
+        "impression_numerique": "Digital Printing",
+        "linogravures": "Linocuts",
+        "lithographie": "Lithography",
+        "monotype": "Monotype",
+        "serigraphie": "Silkscreen",
+        "tirage_argentique": "Silver Print",
+        "xylographie": "Woodcut",
+        "select_engraving_technique": "Select an engraving technique",
+        "categories": "Categories",
+        "field_required": "This field is required",
+    
+      
+
+      
+          "light_painting": "Light Painting",
+          "photographie_argentique": "Analog Photography",
+          "photographie_manipulee": "Manipulated Photography",
+          "photographie_non_manipulee": "Unmanipulated Photography",
+          "photographie_numerique": "Digital Photography",
+          "select_photography_type": "Select a type of photography",
+       
+      
+ 
+ 
+  
+            "aquarelle": "Aquarelle",
+            
+            "bombe_aerosol": "Bombe aérosol",
+            "carte_a_gratter": "Carte à gratter",
+            "cire": "Cire",
+            "conte": "Conté",
+            "craie": "Craie",
+            "crayon": "Crayon",
+            "email": "Émail",
+            "encaustique": "Encaustique",
+            "encre": "Encre",
+            "fusain": "Fusain",
+            "gouache": "Gouache",
+            "graphite": "Graphite",
+            "huile": "Huile",
+            "laque": "Laque",
+            "marqueur": "Marqueur",
+            "pastel": "Pastel",
+            "peinture_vitrail": "Peinture vitrail",
+            "pigments": "Pigments",
+            "pochoir": "Pochoir",
+            "pointe_d_argent": "Pointe d'argent",
+            "stylo_bille": "Stylo à bille",
+            "stylo_gel": "Stylo gel",
+            "tempera": "Tempera",
+
+
+
+
+ 
+          
+              "acier_inoxydable": "Acier inoxydable",
+              "aluminium": "Aluminium",
+              "argile": "Argile",
+              "autre": "Autre",
+              "beton": "Béton",
+              "beton_cellulaire": "Béton cellulaire",
+              "bois": "Bois",
+              "bronze": "Bronze",
+              "carton": "Carton",
+              "ceramique": "Céramique",
+              "ciment": "Ciment",
+              "coulage": "Coulage",
+              "cuir": "Cuir",
+              "fil_de_fer": "Fil de fer",
+              "glace": "Glace",
+              "metaux": "Métaux",
+              "mosaique": "Mosaïque",
+              "os": "Os",
+              "papier": "Papier",
+              "papier_mache": "Papier mâché",
+              "pate_polymere": "Pâte polymère",
+              "pierre": "Pierre",
+              "plastique": "Plastique",
+              "platre": "Plâtre",
+              "resine": "Résine",
+              "sable": "Sable",
+              "savon": "Savon",
+              "terre_cuite": "Terre cuite",
+              "verre": "Verre",
+
+
+
+
+
+          
+                "select_art_movement": "Sélectionner un mouvement artistique",
+         
+                "movement_not_available": "Mouvement non disponible",
+                "loading": "Chargement...",
+              
+                "abstrait": "Abstrait",
+                "art_brut": "Art brut",
+                "art_conceptuel": "Art conceptuel",
+                "art_naif": "Art naïf",
+                "art_oriental": "Art oriental",
+                "art_premier": "Art premier",
+                "art_spirituel": "Art spirituel",
+                "calligraphie": "Calligraphie",
+                "classicisme": "Classicisme",
+                "cubisme": "Cubisme",
+                "expressionnisme": "Expressionnisme",
+                "fauvisme": "Fauvisme",
+                "figuratif": "Figuratif",
+                "geometrique": "Géométrique",
+                "hyperrealisme": "Hyperréalisme",
+                "illustration": "Illustration",
+                "impressionnisme": "Impressionnisme",
+                "land_art": "Land Art",
+                "minimalisme": "Minimalisme",
+                "pop_art": "Pop Art",
+                "street_art": "Street Art",
+                "surrealisme": "Surréalisme",
+                "symbolisme": "Symbolisme"
+             
+              
+
+
+
+
+
+
+
+            }
+            
+
+
+
+
+        
+          
+ 
+ 
+ 
+   
+   
+ 

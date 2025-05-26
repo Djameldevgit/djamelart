@@ -1,0 +1,352 @@
+{
+  "support.select_label": "الدعامة",
+
+  "AR": "العربية",
+  "FR": "الفرنسية",
+  "EN": "الإنجليزية",
+  "art_painting": "بيع الفن",
+  "publish a work of art": "نشر عمل فني",
+  "selecionarcategoriaartistica": "الفئات الفنية",
+  "categorie_placeholder": "اختر فئة",
+  "categorie_required": "الفئة مطلوبة",
+  "_comment": "المكون: الفئات الرئيسية للفن",
+  "painting": "الرسم",
+  "sculpturee": "النحت",
+  "photography": "التصوير الفوتوغرافي",
+  "drawing": "الرسم التخطيطي",
+  "engraving": "النقش والمطبوعات",
+  "digital_art": "الفن الرقمي",
+  "collage": "التركيب",
+  "textile_art": "فن النسيج",
+  "_commentn": "🧱 المكون: المواد المتاحة",
+  "select_material": "اختر مادة",
+  "categories": "الفئات",
+  "acier_inoxydable": "الفولاذ المقاوم للصدأ",
+  "aluminium": "الألمنيوم",
+  "argile": "الطين",
+  "beton": "الخرسانة",
+  "beton_cellulaire": "الخرسانة الخلوية",
+  "bois": "الخشب",
+  "bronze": "البرونز",
+  "carton": "الكرتون",
+  "ceramique": "السيراميك",
+  "ciment": "الإسمنت",
+  "coulage": "الصب",
+  "cuir": "الجلد",
+  "fil_de_fer": "السلك",
+  "glace": "الجليد",
+  "metaux": "المعادن",
+  "mosaique": "الفسيفساء",
+  "os": "العظام",
+  "papier": "الورق",
+  "papier_mache": "ورق معجن",
+  "pate_polymere": "عجينة البوليمر",
+  "pierre": "الحجر",
+  "plastique": "البلاستيك",
+  "platre": "الجبس",
+  "resine": "الراتنج",
+  "sable": "الرمل",
+  "savon": "الصابون",
+  "terre_cuite": "الطين المشوي",
+  "verre": "الزجاج",
+  "_commentnj": "المكون: أنواع التصوير",
+  "select_photography_type": "اختر نوع التصوير",
+  "light_painting": "الرسم بالضوء",
+  "photographie_argentique": "التصوير التقليدي (تناظري)",
+  "photographie_manipulee": "تصوير معدل رقمياً",
+  "photographie_non_manipulee": "تصوير غير معدل",
+  "photographie_numerique": "تصوير رقمي",
+  "_commentnjh": "تقنيات الرسم",
+  "select_drawing_technique": "اختر تقنية رسم",
+  "acrylique": "أكريليك",
+  "aerographe": "جهاز الرش",
+  "aquarelle": "ألوان مائية",
+  "bombe_aerosol": "رذاذ",
+  "carte_a_gratter": "بطاقة خدش",
+  "cire": "شمع",
+  "conte": "كونتيه",
+  "craie": "طباشير",
+  "crayon": "قلم رصاص",
+  "email": "مينا",
+  "encaustique": "تقنية الشمع الساخن",
+  "encre": "حبر",
+  "fusain": "فحم",
+  "gouache": "ألوان غواش",
+  "graphite": "الغرافيت",
+  "huile": "ألوان زيتية",
+  "laque": "ورنيش",
+  "marqueur": "قلم تعليم",
+  "pastel": "باستيل",
+  "peinture_vitrail": "رسم على الزجاج الملون",
+  "pigments": "أصباغ",
+  "pochoir": "استنسل",
+  "pointe_d_argent": "سن الفضة",
+  "stylo_bille": "قلم حبر جاف",
+  "stylo_gel": "قلم جل",
+  "tempera": "ألوان التيمبرا",
+  "_commentnjhujlk": "الفئات الفرعية للفن الرقمي",
+  "select_digital_art_type": "اختر نوع الفن الرقمي",
+  "subcategorias_arts_numeriques": {
+    "collage_numerique": "تركيب رقمي",
+    "image_generee_ia": "صورة مولدة بالذكاء الاصطناعي",
+    "modelisation_3d": "تصميم ثلاثي الأبعاد",
+    "peinture_numerique": "رسم رقمي",
+    "photo_montage": "صور مركبة",
+    "travail_numerique_2d": "عمل رقمي ثنائي الأبعاد",
+    "video": "فن الفيديو",
+    "style": "الأسلوب الفني"
+  },
+  "_commentnjhu": "الفئات الفرعية لفن النسيج",
+  "categorias": {
+    "subcategorias_art_textile": {
+      "broderie": "تطريز",
+      "fibre_textile": "ألياف نسيجية",
+      "fil": "خيط",
+      "patchwork": "باتشوورك",
+      "string_art": "فن بالخيوط",
+      "tapisserie": "نسيج جداري",
+      "tissu": "قماش"
+    }
+  },
+  "titleDeLaObra": "عنوان العمل الفني",
+  "introduceUnTituloParaLaObra": "أدخل عنوانًا للعمل الفني",
+  "styles": {
+    "abstrait": "تجريدي",
+    "impressionnisme": "انطباعي",
+    "expressionnisme": "تعبيري",
+    "cubisme": "تكعيبي",
+    "surrealisme": "سريالي",
+    "hyperrealisme": "فرط واقعي",
+    "figuratif": "تصويري",
+    "classicisme": "كلاسيكي",
+    "pop_art": "فن البوب",
+    "tachisme": "تاشي",
+    "baroque": "باروكي",
+    "minimalisme": "تقليلي",
+    "art_conceptuel": "فن مفاهيمي",
+    "land_art": "فن الأرض",
+    "art_brut": "فن خام",
+    "art_cinetique": "فن حركي",
+    "documentaire": "وثائقي",
+    "conceptuel": "مفاهيمي",
+    "street_art": "فن الشارع",
+    "noir_et_blanc": "أبيض وأسود",
+    "futurisme": "مستقبلي",
+    "glitch_art": "فن الخلل",
+    "pixel_art": "فن البكسل",
+    "nft": "NFT",
+    "generatif": "توليدي",
+    "croquis": "رسم تخطيطي",
+    "manga": "مانغا",
+    "caricature": "كاريكاتير",
+    "tradicional": "تقليدي",
+    "contemporaneo": "معاصر",
+    "abstracto": "تجريدي",
+    "minimalista": "تقليلي",
+    "folclorico": "فلكلوري",
+    "autre": "آخر",
+    "mixte": "مختلط"
+  },
+  "groups": {
+    "modernes": "حديث",
+    "avantgardes": "طلائعي",
+    "contemporains": "معاصر",
+    "classique_traditionnel": "كلاسيكي / تقليدي",
+    "autres_styles": "أنماط أخرى"
+  },
+  "labels0": {
+    "style": "الأسلوب"
+  },
+  "placeholders0": {
+    "selectStyle": "اختر أسلوباً",
+    "selectCategoryFirst": "أولاً اختر فئة"
+  },
+  "messages0": {
+    "noStylesFound": "لم يتم العثور على أساليب"
+  },
+  "theme": {
+    "abstrait": "تجريدي",
+    "colore": "ملون",
+    "graffiti": "جرافيتي",
+    "geometrique": "هندسي",
+    "animal": "حيوان",
+    "chat": "قطة",
+    "cheval": "حصان",
+    "chien": "كلب",
+    "oiseau": "طائر",
+    "poisson": "سمكة",
+    "culture_populaire": "ثقافة شعبية",
+    "bandes_dessinees": "قصص مصورة",
+    "cinema": "سينما",
+    "dessin_anime": "رسوم متحركة",
+    "jeu_video": "ألعاب فيديو",
+    "mode": "موضة",
+    "select_label": "الموضوع",
+    "placeholder": "اختر موضوعاً",
+    "no_options": "لم يتم العثور على مواضيع"
+  },
+  "theme_groups": {
+    "styles": "أنماط",
+    "nature": "طبيعة",
+    "animaux": "حيوانات",
+    "culture": "ثقافة",
+    "urbain": "حضري",
+    "personnages": "شخصيات",
+    "fantastique": "خيالي",
+    "divers": "متنوع"
+  },
+  "support": {
+    "canvas": "قماش",
+    "wood_panel": "لوح خشبي",
+    "acrylic": {
+      "linen_canvas": "قماش كتان",
+      "mdf_board": "لوح MDF",
+      "cotton_canvas": "قماش قطني"
+    },
+    "oil": {
+      "linen_canvas": "قماش كتان (زيت)",
+      "copper_plate": "لوحة نحاسية",
+      "wood_mounted": "مثبت على الخشب"
+    },
+    "sculpture": {
+      "bronze": "برونز",
+      "marble": "رخام"
+    },
+    "placeholders": {
+      "selectSupport": "اختر دعامة"
+    },
+    "debesSeleccionarUnacategory": "اختر فئة أولاً"
+  },
+  "size": {
+    "talle.label": "حجم العمل الفني",
+    "petit": "صغير",
+    "moyen": "متوسط",
+    "grand": "كبير",
+    "tres_grand": "كبير جدًا",
+    "select_label": "حجم العمل الفني",
+    "placeholder": "اختر الحجم"
+  },
+ 
+
+
+
+ 
+  "mesure": {
+    "labels.measurement": "الأبعاد",
+    "labels.medidas": "أدخل الأبعاد"
+  },
+  "unit": {
+    "label": "وحدة القياس",
+    "placeholder": "اختر وحدة",
+    "noOptions": "لا توجد خيارات متاحة",
+    "cm": "سنتيمترات (سم)",
+    "m": "أمتار (م)",
+    "cm2": "سنتيمترات مربعة (سم²)",
+    "m2": "أمتار مربعة (م²)",
+    "mm": "ميليمترات (مم)",
+    "in": "بوصات (إنش)"
+  },
+  "availability": {
+    "label": "توفر العمل الفني",
+    "placeholder": "اختر حالة التوفر",
+    "noOptions": "لا توجد خيارات متاحة",
+    "disponible": "متوفر",
+    "vendue": "تم بيعه",
+    "reservee": "محجوز",
+    "non_disponible": "غير متوفر",
+    "pas_a_vendre": "غير معروض للبيع",
+    "exposition_uniquement": "للعرض فقط"
+  },
+  "price": {
+    "labelsprice": "سعر العمل الفني",
+    "placeholders": "أدخل السعر"
+  },
+  "devise_vente": {
+    "label": "عملة البيع",
+    "placeholder": "اختر العملة",
+    "no_option": "لم يتم العثور على عملات"
+  },
+  "currency": {
+    "DZD": "دينار جزائري (DZD)",
+    "EUR": "يورو (EUR)",
+    "USD": "دولار أمريكي (USD)",
+    "CAD": "دولار كندي (CAD)",
+    "GBP": "جنيه إسترليني (GBP)",
+    "JPY": "ين ياباني (JPY)",
+    "MAD": "درهم مغربي (MAD)",
+    "XOF": "فرنك غرب أفريقي (XOF)"
+  },
+  "negociable": {
+    "fixedPrice": "سعر ثابت",
+    "negotiablePrice": "سعر قابل للتفاوض",
+    "selectOptionPlaceholder": "اختر خيارًا"
+  },
+  "packaging": {
+    "label": "طريقة التعبئة",
+    "placeholder": "اختر طريقة التعبئة",
+    "toile": "قماش ملفوف",
+    "toile_encadree": "قماش مؤطر",
+    "papier": "ورق حماية",
+    "papier_plaque": "ورق وكرتون فوم",
+    "boite": "صندوق مخصص",
+    "tube": "أنبوب شحن",
+    "caisse": "صندوق خشبي",
+    "sculpture_boite": "تعبئة للنحت",
+    "montage_plexi": "تركيب بليكسيجلاس",
+    "autre": "طريقة أخرى"
+  },
+  "labels": {
+    "salesOptions": "خيارات البيع"
+  },
+  "placeholders": {
+    "conditionOfWork": "اختر حالة العمل الفني"
+  },
+  "salesOptions": {
+    "originalWork": "عمل أصلي",
+    "limitedEdition": "طبعة محدودة",
+    "artPrint": "نسخة فنية",
+    "reproductionLicense": "رخصة استنساخ",
+    "rentalLeasing": "تأجير/استئجار",
+    "preOrder": "طلب مسبق"
+  },
+  "labelss": {
+    "licenseUsage": "حقوق الطبع والنشر"
+  },
+  "placeholderss": {
+    "selectLicense": "اختر رخصة استخدام"
+  },
+  "messages": {
+    "noLicensesAvailable": "لا توجد رخص متاحة"
+  },
+  "validation": {
+    "requiredField": "هذا الحقل مطلوب"
+  },
+  "licenses": {
+    "allRightsReserved": "جميع الحقوق محفوظة ©",
+    "ccBy": "كريتيف كومونز نسبة (CC BY)",
+    "ccByNc": "كريتيف كومونز نسبة - غير تجاري (CC BY-NC)",
+    "ccBySa": "كريتيف كومونز نسبة - مشاركة بالمثل (CC BY-SA)",
+    "cc0": "كريتيف كومونز صفر (CC0) - الملكية العامة",
+    "personalUseOnly": "للاستخدام الشخصي فقط",
+    "commercialUseAllowed": "مسموح بالاستخدام التجاري"
+  },
+  "labelsss": {
+    "description1": "وصف العمل الفني"
+  },
+  "placeholdersss": {
+    "description": "اكتب وصفًا تفصيليًا للعمل الفني (التقنية، الإلهام، إلخ)..."
+  },
+  "_commentnjhulk": "المكوّن: تقنيات النقش",
+  "select_engraving_technique": "اختر تقنية نقش",
+  "collagraphie": "كولاجرافي",
+  "eau_forte": "نقش الحمض",
+  "embossage": "نقش بارز",
+  "gravure": "نقش فني",
+  "impression_numerique": "طباعة رقمية",
+  "linogravures": "نقش لينوليوم",
+  "lithographie": "طباعة حجرية",
+  "monotype": "مونوتايب",
+  "serigraphie": "طباعة الشاشة",
+  "tirage_argentique": "طباعة تصويرية",
+  "xylographie": "نقش خشبي"
+}

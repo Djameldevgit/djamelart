@@ -1,0 +1,86 @@
+import React from 'react';
+import Description from './Description';
+
+const DescriptionPost = ({ post, readMore, setReadMore }) => {
+  // Íconos mejorados con tamaños adecuados
+  const fieldIcons = {
+    category: 'fa fa-palette',
+    subcategory: 'fa fa-paint-brush',
+    createdAt: 'fa fa-calendar-alt',
+    updatedAt: 'fa fa-sync-alt',
+    vistas: 'fa fa-eye',
+    artStyle: 'fa fa-star',
+    sizes: 'fa fa-ruler-combined',
+    envolverobra: 'fa fa-box-open',
+    measurementValue: 'fa fa-ruler-vertical',
+    venteOption: 'fa fa-tag',
+    measurementUnit: 'fa fa-money-bill-wave',
+    wilaya: 'fa fa-map-marker-alt',
+    commune: 'fa fa-map-pin',
+    title: 'fa fa-heading',
+    theme: 'fa fa-image',
+    derechodeautor: 'fa fa-copyright',
+    description: 'fa fa-align-left'
+  };
+
+  // Campos ordenados con mejor agrupación
+  const fields = [
+    { key: 'title', label: 'Titre' },
+    { key: 'category', label: 'Catégorie' },
+    { key: 'subcategory', label: 'Technique' },
+    { key: 'artStyle', label: 'Style artistique' },
+    { key: 'theme', label: 'Thème' },
+    { key: 'sizes', label: 'Dimensions' },
+    { key: 'measurementValue', label: 'Mesures exactes' },
+    { key: 'measurementUnit', label: 'Unité' },
+    { key: 'venteOption', label: 'Option de vente' },
+    { key: 'derechodeautor', label: 'Droits d\'auteur' },
+    { key: 'envolverobra', label: 'Conditionnement' },
+    { key: 'createdAt', label: 'Publication', transform: (value) => formatDate(value) },
+    { key: 'updatedAt', label: 'Mise à jour', transform: (value) => formatDate(value) },
+    { key: 'vistas', label: 'Vues' },
+    { key: 'wilaya', label: 'Région' },
+    { key: 'commune', label: 'Ville' }
+  ];
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+  };
+
+  return (
+    <div className="artwork-details-container">
+      <div className="artwork-metadata-grid">
+        {fields.map(({ key, label, transform }) => (
+          post[key] && (
+            <div key={key} className="metadata-card">
+              <div className="metadata-line">
+                <i className={`${fieldIcons[key] || 'fa fa-info-circle'} metadata-icon`}></i>
+                <span className="metadata-label">{label}: </span>
+                <span className="metadata-value">
+                  {transform ? transform(post[key]) : post[key]}
+                </span>
+              </div>
+            </div>
+          )
+        ))}
+      </div>
+      
+      {post.description && (
+        <div className="description-section">
+          <div className="metadata-card">
+            <div className="metadata-line">
+              <i className="fa fa-align-left metadata-icon"></i>
+              <span className="metadata-label">Description: </span>
+            </div>
+            <div className="description-content">
+              <Description post={post} readMore={readMore} setReadMore={setReadMore} />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DescriptionPost;

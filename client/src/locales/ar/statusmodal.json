@@ -1,0 +1,205 @@
+{
+  
+  "labelsprice": "سعر العمل الفني",
+  "title":"عنوان العمل الفني",
+ 
+  "placeholder": "الاسم الذي يعرّف العمل",
+  
+  "petit": "صغير (حتى 50 سم)",
+  "moyen": "متوسط (50-100 سم)",
+  "grand": "كبير (100-150 سم)",
+
+  "noOptions": "لا توجد وحدات متاحة",
+  "cm": "سنتيمترات (سم)",
+  "m": "أمتار (م)",
+  "cm2": "سنتيمترات مربعة (سم²)",
+  "m2": "أمتار مربعة (م²)",
+  "mm": "ملليمترات (مم)",
+  "in": "بوصات (إنش)",
+
+  
+    "supportOfWork": "دعامة العمل",
+    "selectSupportPlaceholder": "اختر الدعامة",
+    "chooseCategoryFirst": "اختر فئة أولاً",
+ 
+  
+    
+     
+        "toile": "قماش" ,
+       
+        "papier": "ورق" ,
+        "metal": "معدن" ,
+       
+     
+     
+        "toile_lin": "قماش كتان" ,
+        "isorel": "لوح خشبي" ,
+        "panneau_bois": "لوح خشب" ,
+        "toile_coton": "قماش قطني" ,
+     
+      
+    
+        "ardoise": "أردواز" ,
+        "maroufle_bois": "ملصق على خشب" ,
+     
+        "papier_aquarelle": "ورق مائي (300 جم)" ,
+        "papier_arches": "ورق أرتشيس" ,
+        "papier_coton": "ورق قطني 100%" ,
+        
+        "papier_gouache": "ورق سميك" ,
+         
+      
+   
+        "papier_velours": "ورق مخملي" ,
+        "toile_pastel": "قماش باستيل" ,
+        "papier_abrasif": "ورق صنفرة" ,
+    
+        "papier_riz": "ورق أرز" ,
+        "papier_japon": "ورق واشي" ,
+        "parchemin": "رق" ,
+  
+      "bronze": "برونز (صب)" ,
+      "marbre": "رخام كرارا" ,
+      "resine": "راتنج إيبوكسي" ,
+      "terre_cuite": "خزف" ,
+      "pierre_calcaire": "حجر جيري" ,
+      "acier": "فولاذ غير قابل للصدأ" ,
+      "verre": "زجاج منفوخ" ,
+      "bois_sculpte": "خشب منحوت" ,
+      "platre": "جص" ,
+      "ceramique": "سيراميك مطلية" ,
+      "pierre_volcanique": "حجر بركاني" ,
+      "materiaux_recycles": "مواد معاد تدويرها" ,
+  
+      "papier_photo": "ورق فوتوغرافي" ,
+      
+      "plexiglas": "بلاستيك شفاف (3 مم)" ,
+      "papier_baryte": "ورق باريطا" ,
+      "toile_photo": "قماش فوتوغرافي" ,
+      "verre_acrylique": "زجاج أكريليك" ,
+      "metal_dibond": "معدن ديبوند" ,
+ 
+      "papier_canson": "ورق كانسون" ,
+      "papier_ingres": "ورق إنجرس" ,
+      "carnet_esquisse": "دفر رسم" ,
+      "papier_kraft": "ورق كرافت" ,
+      "papier_parchemin": "رق" ,
+      "papier_noir": "ورق أسود" ,
+    
+      "papier_hahnemuhle": "ورق هانيموهل" ,
+      "papier_rives": "ورق ريفز BFK" ,
+      
+      "linoleum": "طباعة لينوليوم" ,
+      "bois_gravure": "خشب (نقش خشبي)" ,
+      "cuivre": "لوح نحاسي" ,
+      "zinc": "لوح زنك" ,
+ 
+      "fichier_numerique": "ملف رقمي" ,
+      "impression_giclee": "طباعة جيكلي" ,
+      "toile_fineart": "قماش فني" ,
+      "aluminium": "ألومنيوم" ,
+      "acrylique_dibond": "أكريليك على ديبوند" ,
+      "led": "شاشة LED" ,
+     
+      "coton": "قطن" ,
+      "soie": "حرير" ,
+      "lin": "كتان" ,
+      "laine": "صوف" ,
+      "metal_tisse": "خيط معدني" ,
+      "tissu_recycle": "نسيج معاد تدويره" ,
+      "bambou": "ألياف الخيزران" ,
+ 
+      "papier_colle": "ورق ملصق" ,
+      "carton": "كرتون" ,
+      "bois": "خشب" ,
+      "photographie": "تصوير فوتوغرافي" ,
+      "materiaux_divers": "مواد متنوعة" ,
+   
+ 
+      
+      "non_precise": "غير محدد" ,
+   
+  
+  
+  "measurement": "القياس",
+  "measurementPlaceholder": "قياس العمل، عادة بالسنتيمترات (مثال: 150)",
+  
+  "negotiationPrice": "تفاوض السعر",
+  "selectOptionPlaceholder": "اختر خيارًا",
+  "fixedPrice": "سعر ثابت",
+  "negotiablePrice": "سعر قابل للتفاوض",
+  "price": "السعر",
+  
+  "style": "النمط",
+  "selectStyle": "اختر نمطًا",
+  "selectCategoryFirst": "اختر فئة أولاً",
+  "noStylesFound": "لم يتم العثور على أنماط",
+  
+  "modernes": "حديث",
+  "avantgardes": "طليعي",
+  "contemporains": "معاصر",
+  "classique_traditionnel": "كلاسيكي / تقليدي",
+  "autres_styles": "أنماط أخرى",
+  
+  "abstrait": "تجريدي",
+  "impressionnisme": "انطباعية",
+  "expressionnisme": "تعبيرية",
+  "cubisme": "تكعيبية",
+  "surrealisme": "سريالية",
+  "hyperrealisme": "واقعية فائقة",
+  "figuratif": "تصويري",
+  "classicisme": "كلاسيكية",
+  "pop_art": "بوب آرت",
+  "tachisme": "التاشية",
+  "baroque": "باروك",
+  "minimalisme": "الحد الأدنى",
+  "art_conceptuel": "فن مفاهيمي",
+  "land_art": "فن الأرض",
+  "art_brut": "فن خام",
+  "art_cinetique": "فن حركي",
+  "documentaire": "وثائقي",
+  "conceptuel": "مفاهيمي",
+  "street_art": "فن الشارع",
+  "noir_et_blanc": "أسود وأبيض",
+  "futurisme": "مستقبلية",
+  "glitch_art": "فن الخلل",
+  "pixel_art": "فن البكسل",
+  "nft": "NFT",
+  "generatif": "توليدي",
+  "croquis": "رسم تخطيطي",
+  "manga": "مانجا",
+  "caricature": "كاريكاتير",
+  "tradicional": "تقليدي",
+  "contemporaneo": "معاصر",
+  "abstracto": "تجريدي",
+  "minimalista": "الحد الأدنى",
+  "folclorico": "فلكلوري",
+  "autre": "أخرى",
+  "mixte": "مختلط",
+  
+    "allRightsReserved": "جميع الحقوق محفوظة",
+    "ccBy": "المشاع الإبداعي - نسب المصنف (CC BY)",
+    "ccByNc": "المشاع الإبداعي - نسب المصنف - غير تجاري (CC BY-NC)",
+    "ccBySa": "المشاع الإبداعي - نسب المصنف - تشارك بالمثل (CC BY-SA)",
+    "cc0": "المشاع الإبداعي - المجال العام (CC0)",
+    "personalUseOnly": "للاستخدام الشخصي فقط",
+    "commercialUseAllowed": "مسموح بالاستخدام التجاري",
+    "selectLicense": "اختر ترخيصًا",
+  
+    "noLicensesAvailable": "لا توجد تراخيص متاحة",
+ 
+    "requiredField": "هذا الحقل مطلوب",
+ 
+  
+   
+    "originalWork": "عمل أصلي",
+    "limitedEdition": "إصدار محدود",
+    "artPrint": "طبعة فنية",
+    "reproductionLicense": "ترخيص إعادة إنتاج",
+    "rentalLeasing": "إيجار (ليسينغ)",
+    "preOrder": "طلب مسبق"  ,
+
+ 
+    "conditionOfWork": "تجهيز العمل"
+  
+}

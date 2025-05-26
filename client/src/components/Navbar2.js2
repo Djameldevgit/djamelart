@@ -1,0 +1,295 @@
+import React, { useState } from 'react';
+import { Link, useLocation, useHistory } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../redux/actions/authAction';
+import { GLOBALTYPES } from '../redux/actions/globalTypes';
+import { useTranslation } from 'react-i18next';
+
+import { Navbar, Nav, Container, Offcanvas, Button, Badge, Dropdown } from 'react-bootstrap';
+
+import Avatar from './Avatar';
+import NotifyModal from './NotifyModal';
+import LanguageSelector from './LanguageSelector';
+import Modalsearchhome from './Modalsearchhome';
+import AuthModalAddLikesCommentsSave from './AuthModalAddLikesCommentsSave';
+
+const Navbar2 = () => {
+  const dispatch = useDispatch();
+  const { auth, theme, notify, languageReducer } = useSelector(state => state);
+  const history = useHistory();
+  const { pathname } = useLocation();
+  const { t } = useTranslation();
+
+  const [filters, setFilters] = useState({ title: '' });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showOffcanvas, setShowOffcanvas] = useState(false);
+
+  const handleDiscoverClick = () => {
+    if (auth.user) {
+      dispatch({ type: GLOBALTYPES.STATUS, payload: true });
+      setShowOffcanvas(false);
+    } else {
+      setShowAuthModal(true);
+      setShowOffcanvas(false);
+    }
+  };
+
+  const navLinks = [
+    { label: 'Home', icon: 'home', path: '/' },
+    { label: 'Search', icon: 'search', path: '#' },
+    { label: 'Discover', icon: 'fas fa-plus', onClick: handleDiscoverClick },
+  ];
+
+  const isActive = (pn) => (pn === pathname ? 'active' : '');
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({ ...filters, [name]: value });
+  };
+
+  const redirectToLogin = () => {
+    history.push('/login');
+    setShowAuthModal(false);
+  };
+
+  const redirectToRegister = () => {
+    history.push('/register');
+    setShowAuthModal(false);
+  };
+
+  return (
+    <>
+      <Navbar bg={theme ? 'light' : 'dark'} variant={theme ? 'light' : 'dark'} expand="lg" className="py-2" fixed="top">
+        <Container fluid>
+          <Navbar.Brand as={Link} to="/" onClick={() => window.scrollTo({ top: 0 })} className="d-flex align-items-center">
+            <img src="icon-web-01.png" alt="Logo" style={{ height: '30px', marginRight: '8px' }} />
+            <span className="text-uppercase">{t('art_painting', { lng: languageReducer.language })}</span>
+          </Navbar.Brand>
+
+          <Navbar.Toggle
+            aria-controls="offcanvasNavbar"
+            onClick={() => setShowOffcanvas(true)}
+          />
+
+          <Navbar.Offcanvas
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+            placement="end"
+            show={showOffcanvas}
+            onHide={() => setShowOffcanvas(false)}
+          >
+            <Offcanvas.Header closeButton>
+              <Offcanvas.Title id="offcanvasNavbarLabel">Menu</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+              <Nav className="justify-content-end flex-grow-1 pe-3">
+                {navLinks.map((link, idx) => (
+                  <Nav.Link
+                    key={idx}
+                    as={link.path ? Link : 'span'}
+                    to={link.path}
+                    onClick={(e) => {
+                      if (link.onClick) {
+                        e.preventDefault();
+                        link.onClick();
+                      }
+                      setShowOffcanvas(false);
+                    }}
+                    className={isActive(link.path)}
+                  >
+                    {link.icon.startsWith('fa') ? (
+                      <i className={link.icon} style={{ marginRight: '8px' }} />
+                    ) : (
+                      <span className="material-icons" style={{ marginRight: '8px' }}>{link.icon}</span>
+                    )}
+                    {link.label}
+                  </Nav.Link>
+                ))}
+
+                <Nav.Item className="mt-3">
+                  <LanguageSelector />
+                </Nav.Item>
+
+                {auth.user ? (
+                  <>
+                    <Nav.Link onClick={() => { dispatch({ type: GLOBALTYPES.STATUS, payload: true }); setShowOffcanvas(false); }}>
+                      Ajouter un annnonce
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/informacionaplicacion" onClick={() => setShowOffcanvas(false)}>
+                      Info aplicacion
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/message" onClick={() => setShowOffcanvas(false)}>
+                      Chat administration
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/administration/roles" onClick={() => setShowOffcanvas(false)}>
+                      Roles
+                    </Nav.Link>
+                    {auth.user.role === "admin" && (
+                      <>
+                        <Nav.Link as={Link} to="/administration/users/reportuser" onClick={() => setShowOffcanvas(false)}>Reports user</Nav.Link>
+                        <Nav.Link as={Link} to="/administration/homepostspendientes" onClick={() => setShowOffcanvas(false)}>Posts pendientes</Nav.Link>
+                        <Nav.Link as={Link} to="/administration/usersaction" onClick={() => setShowOffcanvas(false)}>Usuarios acción</Nav.Link>
+                        <Nav.Link as={Link} to="/administration/usersedicion" onClick={() => setShowOffcanvas(false)}>Edición de usuarios</Nav.Link>
+                        <Nav.Link as={Link} to="/administration/listadeusuariosbloqueadoss" onClick={() => setShowOffcanvas(false)}>Usuarios bloqueados</Nav.Link>
+                      </>
+                    )}
+                    <Nav.Link as={Link} to={`/profile/${auth.user._id}`} onClick={() => setShowOffcanvas(false)}>
+                      Profile
+                    </Nav.Link>
+                    <Nav.Link
+                      onClick={() => dispatch({ type: GLOBALTYPES.THEME, payload: !theme })}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {theme ? 'Light mode' : 'Dark mode'}
+                    </Nav.Link>
+                    <Nav.Link as="span" onClick={() => { dispatch(logout()); setShowOffcanvas(false); }} style={{ cursor: 'pointer' }}>
+                      Desconexion
+                    </Nav.Link>
+                  </>
+                ) : (
+                  <>
+                    <Nav.Link as={Link} to="/informacionaplicacion" onClick={() => setShowOffcanvas(false)}>
+                      Info aplicacion
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/login" onClick={() => setShowOffcanvas(false)}>
+                      Se connecter
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/register" onClick={() => setShowOffcanvas(false)}>
+                      S'inscrire
+                    </Nav.Link>
+                  </>
+                )}
+              </Nav>
+
+              <div className="mt-4">
+                <Button variant={notify.data.length > 0 ? 'danger' : 'secondary'} onClick={() => setShowOffcanvas(false)} disabled>
+                  <i className="material-icons">favorite</i>{' '}
+                  <Badge bg="light" text="dark">{notify.data.length}</Badge>
+                </Button>
+                <NotifyModal />
+              </div>
+            </Offcanvas.Body>
+          </Navbar.Offcanvas>
+
+          <Nav className="d-none d-lg-flex align-items-center">
+            <Button
+              variant="link"
+              className="position-relative me-3"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <i className="material-icons">search</i>
+            </Button>
+
+            <Button
+              variant="link"
+              className="position-relative me-3"
+              onClick={handleDiscoverClick}
+              title="Discover"
+            >
+              <i className="fas fa-plus" style={{ fontSize: '1.2rem' }}></i>
+            </Button>
+
+            <Dropdown align="end">
+              <Dropdown.Toggle variant="link" id="dropdown-notify" className="position-relative p-0">
+                <i
+                  className="material-icons"
+                  style={{ color: notify.data.length > 0 ? 'crimson' : '' }}
+                >
+                  favorite
+                </i>
+                {notify.data.length > 0 && (
+                  <Badge bg="danger" pill className="position-absolute top-0 start-100 translate-middle">
+                    {notify.data.length}
+                  </Badge>
+                )}
+              </Dropdown.Toggle>
+              <Dropdown.Menu align="end">
+                <NotifyModal />
+              </Dropdown.Menu>
+            </Dropdown>
+
+            {auth.user ? (
+              <Dropdown align="end">
+                <Dropdown.Toggle variant="link" id="dropdown-avatar" className="p-0">
+                  <Avatar src={auth.user.avatar} size="medium-avatar" />
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu align="end">
+                  <div className='px-3 mb-2'><LanguageSelector /></div>
+                  <Dropdown.Item onClick={() => dispatch({ type: GLOBALTYPES.STATUS, payload: true })}>
+                    Ajouter un annnonce
+                  </Dropdown.Item>
+                  <Dropdown.Item as={Link} to='/informacionaplicacion'>Info aplicacion</Dropdown.Item>
+                  <Dropdown.Item as={Link} to='/message'>Chat administration</Dropdown.Item>
+                  <Dropdown.Item as={Link} to='/administration/roles'>Roles</Dropdown.Item>
+                  {auth.user.role === "admin" && (
+                    <>
+                      <Dropdown.Item as={Link} to='/administration/users/reportuser'>Reports user</Dropdown.Item>
+                      <Dropdown.Item as={Link} to='/administration/homepostspendientes'>Posts pendientes</Dropdown.Item>
+                      <Dropdown.Item as={Link} to='/administration/usersaction'>Usuarios acción</Dropdown.Item>
+                      <Dropdown.Item as={Link} to='/administration/usersedicion'>Edición de usuarios</Dropdown.Item>
+                      <Dropdown.Item as={Link} to='/administration/listadeusuariosbloqueadoss'>Usuarios bloqueados</Dropdown.Item>
+                    </>
+                  )}
+                  <Dropdown.Item as={Link} to={`/profile/${auth.user._id}`}>Profile</Dropdown.Item>
+                  <Dropdown.Item onClick={() => dispatch({ type: GLOBALTYPES.THEME, payload: !theme })}>
+                    {theme ? 'Light mode' : 'Dark mode'}
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item as={Link} to="/" onClick={() => dispatch(logout())}>
+                    Desconexion
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            ) : (
+              <Dropdown align="end">
+                <Dropdown.Toggle variant="link" id="dropdown-user" className="p-0">
+                  <i className="fas fa-user user-icon" />
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu align="end">
+                  <Dropdown.Item as={Link} to='/informacionaplicacion'>Info aplicacion</Dropdown.Item>
+                  <Dropdown.Item as={Link} to='/login'>Se connecter</Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item as={Link} to='/register'>S'inscrire</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            )}
+          </Nav>
+        </Container>
+      </Navbar>
+
+      <Modalsearchhome isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div>
+          <h3>Search by title and province</h3>
+          <div className="filter-group">
+            <small>Titre</small>
+            <input
+              type="text"
+              name="title"
+              placeholder="Titre"
+              onChange={handleFilterChange}
+              value={filters.title}
+              className="form-control"
+            />
+          </div>
+          <Button variant="secondary" onClick={() => setIsModalOpen(false)} className="mt-3">
+            Cerrar
+          </Button>
+        </div>
+      </Modalsearchhome>
+
+      <AuthModalAddLikesCommentsSave
+        showModal={showAuthModal}
+        closeModal={() => setShowAuthModal(false)}
+        redirectToLogin={redirectToLogin}
+        redirectToRegister={redirectToRegister}
+      />
+    </>
+  );
+};
+
+ 
+
+export default Navbar2;

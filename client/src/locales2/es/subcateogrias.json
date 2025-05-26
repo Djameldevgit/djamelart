@@ -1,0 +1,28 @@
+ {
+
+ 
+    "collage_numerique": "Collage numérique",
+    "image_generee_ia": "Image générée par l'IA",
+    "modelisation_3d": "Modélisation 3D",
+    "peinture_numerique": "Peinture numérique",
+    "photo_montage": "Photo montage",
+    "travail_numerique_2d": "Travail numérique 2D",
+    "video": "Vidéo",
+    "style": "Style",
+  
+    "select_textile_technique": "Sélectionner une technique textile",
+    "placeholder_categories": "Catégories",
+    "no_options": "Technique non disponible",
+    "field_required": "Ce champ est requis",
+    "subcategorias_art_textile": {
+      "broderie": "Broderie",
+      "fibre_textile": "Fibre textile",
+      "fil": "Fil",
+      "patchwork": "Patchwork",
+      "string_art": "String Art",
+      "tapisserie": "Tapisserie",
+      "tissu": "Tissu"
+
+ 
+    }
+ }
