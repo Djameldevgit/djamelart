@@ -2,20 +2,22 @@ import Select from 'react-select';
 import { Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-
+ 
 export function ItemsSubCategoryArtTextile({ handleChangeInput, postData }) {
-  const { t } = useTranslation();
   const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation();
 
   const optionSubCategoryArtTextile = [
-    { value: "broderie", label: t('categorias:subcategorias_art_textile.broderie', { lng: languageReducer.language }) },
-    { value: "fibre_textile", label: t('categorias:subcategorias_art_textile.fibre_textile', { lng: languageReducer.language }) },
-    { value: "fil", label: t('categorias:subcategorias_art_textile.fil', { lng: languageReducer.language }) },
-    { value: "patchwork", label: t('categorias:subcategorias_art_textile.patchwork', { lng: languageReducer.language }) },
-    { value: "string_art", label: t('categorias:subcategorias_art_textile.string_art', { lng: languageReducer.language }) },
-    { value: "tapisserie", label: t('categorias:subcategorias_art_textile.tapisserie', { lng: languageReducer.language }) },
-    { value: "tissu", label: t('categorias:subcategorias_art_textile.tissu', { lng: languageReducer.language }) }
+    { value: "broderie", label: t('postDetail:broderie', { lng: languageReducer.language }) },
+    { value: "fibre_textile", label: t('postDetail:fibre_textile', { lng: languageReducer.language }) },
+    { value: "fil", label: t('postDetail:fil', { lng: languageReducer.language }) },
+    { value: "patchwork", label: t('postDetail:patchwork', { lng: languageReducer.language }) },
+    { value: "string_art", label: t('postDetail:string_art', { lng: languageReducer.language }) },
+    { value: "tapisserie", label: t('postDetail:tapisserie', { lng: languageReducer.language }) },
+    { value: "tissu", label: t('postDetail:tissu', { lng: languageReducer.language }) },
   ];
+
+
 
   return (
     <div className="art-category-container mb-3">

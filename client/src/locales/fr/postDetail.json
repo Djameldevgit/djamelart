@@ -1,0 +1,27 @@
+{ 
+     
+ 
+        "category": "Catégorie",
+        "title": "Titre",
+        "theme": "Thème",
+        "technique": "Technique",
+        "support": "Support",
+        "art_style": "Style artistique",
+        "packaging": "Emballage",
+        "copyright": "Droits d'auteur",
+        "measurements": "Dimensions",
+        "unit": "Unité",
+        "sale_option": "Option de vente",
+        "price": "Prix",
+        "availability": "Disponibilité",
+        "size": "Taille",
+        "description": "Description",
+        "region": "Région",
+        "city": "Ville",
+        "subcategory": "Sous-catégorie",
+    "photographie_argentique": "Photographie argentique",
+    "huile": "Huile",
+    "huilee": "Huile (variante)"
+    
+  }
+  

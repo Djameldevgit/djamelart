@@ -1,64 +1,47 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-// Importaciones de francés
-import frHeader from './locales/fr/header.json';
+// Archivos de traducción
+
+// Categorías
 import frCategorias from './locales/fr/categorias.json';
-import frSubcategorias from './locales/fr/subcategorias.json';
-import frStatusModal from './locales/fr/statusmodal.json';
-import frDescripcion from './locales/fr/descripcion.json';
-
-// Importaciones de inglés
-import enHeader from './locales/en/header.json';
 import enCategorias from './locales/en/categorias.json';
-import enSubcategorias from './locales/en/subcategorias.json';
-import enStatusModal from './locales/en/statusmodal.json';
-import enDescripcion from './locales/en/descripcion.json';
-
-// Importaciones de árabe
-import arHeader from './locales/ar/header.json';
 import arCategorias from './locales/ar/categorias.json';
-import arSubcategorias from './locales/ar/subcategorias.json';
-import arStatusModal from './locales/ar/statusmodal.json';
-import arDescripcion from './locales/ar/descripcion.json';
-
-import esHeader from './locales/es/header.json';
 import esCategorias from './locales/es/categorias.json';
- 
-import esStatusModal from './locales/es/statusmodal.json';
-import esDescripcion from './locales/es/descripcion.json';
+
+// Aplicación
+import frAplicacion from './locales/fr/aplicacion.json';
+import enAplicacion from './locales/en/aplicacion.json';
+import arAplicacion from './locales/ar/aplicacion.json';
+import esAplicacion from './locales/es/aplicacion.json';
+
+// PostDetail
+import frPostDetail from './locales/fr/postDetail.json';
+import enPostDetail from './locales/en/postDetail.json';
+import arPostDetail from './locales/ar/postDetail.json';
+import esPostDetail from './locales/es/postDetail.json';
 
 const resources = {
   fr: {
-    header: frHeader,
     categorias: frCategorias,
-    subcategorias: frSubcategorias,
-    statusmodal: frStatusModal,
-    descripcion: frDescripcion
+    aplicacion: frAplicacion,
+    postDetail: frPostDetail,
   },
   en: {
-    header: enHeader,
     categorias: enCategorias,
-    subcategorias: enSubcategorias,
-    statusmodal: enStatusModal,
-    descripcion: enDescripcion
+    aplicacion: enAplicacion,
+    postDetail: enPostDetail,
   },
   ar: {
-    header: arHeader,
     categorias: arCategorias,
-    subcategorias: arSubcategorias,
-    statusmodal: arStatusModal,
-    descripcion: arDescripcion
+    aplicacion: arAplicacion,
+    postDetail: arPostDetail,
   },
   es: {
-    header: esHeader,
     categorias: esCategorias,
-  
-    statusmodal: esStatusModal,
-    descripcion: esDescripcion
+    aplicacion: esAplicacion,
+    postDetail: esPostDetail,
   }
-
-
 };
 
 i18n
@@ -68,27 +51,21 @@ i18n
     lng: 'fr', // Idioma por defecto
     fallbackLng: 'en',
     
-    // Namespaces configurados correctamente
-    ns: ['header', 'categorias', 'support'],
-    defaultNS: 'categorias', // Solo UN defaultNS
-  
-    // Configuración clave para anidados:
-    keySeparator: '.', // Habilita notación de puntos para objetos anidados
-    nsSeparator: ':', // Separador de namespaces
- 
+    // Namespaces usados en la app
+    ns: ['categorias', 'aplicacion', 'postDetail'],
+    defaultNS: 'categorias', // Namespace por defecto
 
-
-
-
+    keySeparator: '.', // Para acceder a claves anidadas tipo "menu.opciones"
+    nsSeparator: ':', // Para usar namespace:clave
 
     interpolation: {
-      escapeValue: false // React ya protege contra XSS
+      escapeValue: false // React ya se encarga de la sanitización
     },
-    
-    // Opcional: Para mejor rendimiento con muchos namespaces
+
     partialBundledLanguages: true,
+
     parseMissingKeyHandler: (key) => {
-      console.warn(`Traducción faltante: ${key}`);
+      console.warn(`⚠️ Traducción faltante: ${key}`);
       return key;
     }
   });

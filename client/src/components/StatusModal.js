@@ -586,7 +586,7 @@ const StatusModal = () => {
 
 
                 )}
-                {postData.category === "Art textile" && (
+                {postData.category === "Textile_art" && (
                     <div className="Textile_art">
 
                         {ItemsSubCategoryArtTextilee()}

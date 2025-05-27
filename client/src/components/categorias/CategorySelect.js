@@ -9,7 +9,7 @@ export function ItemsCategory({ handleChangeInput, postData }) {
 
   const artCategories = [
     { value: "Painting", label: t('categorias:painting', { lng: languageReducer.language }) },
-    { value: "Sculpture", label: t('categorias:sculpturee', { lng: languageReducer.language }) },
+    { value: "Sculpture", label: t('categorias:sculpture', { lng: languageReducer.language }) },
     { value: "Photography", label: t('categorias:photography', { lng: languageReducer.language }) },
     { value: "drawing", label: t('categorias:drawing', { lng: languageReducer.language }) },
     { value: "Engraving", label: t('categorias:engraving', { lng: languageReducer.language }) },

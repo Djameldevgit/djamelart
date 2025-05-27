@@ -13,14 +13,16 @@ const Navbar2 = () => {
   const { auth, theme } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation();
+ 
+   const { t: tAplicacion } = useTranslation('aplicacion');
   return (
+    
     <Navbar expand="md" className="bg-body-tertiary mb-3">
       <Container fluid>
         <Navbar.Brand href="/" className="d-flex align-items-center">
-         
-          {t('art_painting', { lng: languageReducer.language })}
-
+     
+       
+        {tAplicacion('art_painting', { lng: languageReducer.language })}
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="offcanvasNavbar-expand-md" />

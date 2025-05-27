@@ -32,6 +32,10 @@ export function ItemsSubCategoryCollages({ handleChangeInput, postData }) {
     { value: "street_art", label: t("street_art", { lng: languageReducer.language }) },
     { value: "surrealisme", label: t("surrealisme", { lng: languageReducer.language }) },
     { value: "symbolisme", label: t("symbolisme", { lng: languageReducer.language }) },
+
+
+
+    
   ];
 
   return (

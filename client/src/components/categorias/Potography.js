@@ -14,6 +14,10 @@ export function ItemsSubCategoryPhotographie({ handleChangeInput, postData }) {
     { value: "photographie_manipulee", label: t("photographie_manipulee", { lng: languageReducer.language }) },
     { value: "photographie_non_manipulee", label: t("photographie_non_manipulee", { lng: languageReducer.language }) },
     { value: "photographie_numerique", label: t("photographie_numerique", { lng: languageReducer.language }) },
+  
+  
+  
+  
   ];
 
   return (
