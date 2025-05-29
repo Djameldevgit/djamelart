@@ -106,6 +106,7 @@ url("./header.css"); */
 @import url("./map.css");
 @import url("./estadoactividaduser.css");
 @import url("./estadoactividaduser11.css");
+@import url("./navbarandroid.css");
 /* --------- Responsive ------ */
 @media (max-width: 766px){
   
