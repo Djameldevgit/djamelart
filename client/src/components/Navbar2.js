@@ -1,183 +1,162 @@
-import React, { useState } from 'react';
+import {
+  Navbar,
+  Nav,
+  Container,
+  Offcanvas,
+  NavDropdown
+} from 'react-bootstrap';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { Navbar, Container, Nav, Offcanvas, Dropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { GLOBALTYPES } from '../redux/actions/globalTypes';
 import { logout } from '../redux/actions/authAction';
-import LanguageSelectorpc from './LanguageSelectorpc';
+import { Link } from 'react-router-dom';
 import Avatar from './Avatar';
+import { useState } from 'react';
+import LanguageSelectorpc from './LanguageSelectorpc';
 
 const Navbar2 = () => {
-  const { auth, theme } = useSelector((state) => state);
-  const { languageReducer } = useSelector(state => state);
   const dispatch = useDispatch();
-  const { t: tAplicacion } = useTranslation('aplicacion');
+  const { auth, theme } = useSelector(state => state);
 
-  const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
 
-  const handleClose = () => setShowOffcanvas(false);
-  const handleShow = () => setShowOffcanvas(true);
+  const handleCloseDrawer = () => setShowDrawer(false);
+  const handleOpenDrawer = () => setShowDrawer(true);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    handleCloseDrawer();
+  };
+
+  const toggleTheme = () => {
+    dispatch({ type: GLOBALTYPES.THEME, payload: !theme });
+    handleCloseDrawer();
+  };
+
+  const openStatusModal = () => {
+    dispatch({ type: GLOBALTYPES.STATUS, payload: true });
+    handleCloseDrawer();
+  };
 
   return (
-    <Navbar expand="md">
-      <Container fluid>
-        <Navbar.Brand href="/" className="d-flex align-items-center">
-          {tAplicacion('art_painting', { lng: languageReducer.language })}
-        </Navbar.Brand>
+    <Navbar expand="lg" bg="dark" variant="dark" className="mb-3">
+      <Container fluid className="px-3 px-lg-4">
+        <div className="d-flex w-100 align-items-center justify-content-between">
+          <Navbar.Brand href="/" className="py-2 me-0 me-lg-3">
+            Mi Aplicación
+          </Navbar.Brand>
 
-        <Navbar.Toggle onClick={handleShow} />
-
-        {auth.user && (
-          <div className="d-none d-md-flex align-items-center gap-2 ms-md-auto">
-            <LanguageSelectorpc />
-            <Dropdown align="end">
-              <Dropdown.Toggle variant="link" id="dropdown-avatar-desktop" className="p-0">
-                <Avatar src={auth.user.avatar} size="medium-avatar" />
-              </Dropdown.Toggle>
-              <Dropdown.Menu align="end" className="text-center">
-                <Dropdown.Item onClick={() => dispatch({ type: GLOBALTYPES.STATUS, payload: true })}>
-                  Ajouter un annonce
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to="/informacionaplicacion">
-                  Info aplicación
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to="/message">
-                  Chat administración
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to="/administration/roles">
-                  Roles
-                </Dropdown.Item>
-
-                {auth.user.role === 'admin' && (
-                  <>
-                    <Dropdown.Item as={Link} to="/administration/users/reportuser">
-                      Reports user
-                    </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/administration/homepostspendientes">
-                      Posts pendientes
-                    </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/administration/usersaction">
-                      Usuarios acción
-                    </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/administration/usersedicion">
-                      Edición de usuarios
-                    </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/administration/listadeusuariosbloqueadoss">
-                      Usuarios bloqueados
-                    </Dropdown.Item>
-                  </>
-                )}
-
-                <Dropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
-                  Profile
-                </Dropdown.Item>
-
-                <Dropdown.Item onClick={() => dispatch({ type: GLOBALTYPES.THEME, payload: !theme })}>
-                  Cambiar Tema
-                </Dropdown.Item>
-
-                <Dropdown.Divider />
-
-                <Dropdown.Item as={Link} to="/" onClick={() => dispatch(logout())}>
-                  Desconexión
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+          <div className="d-flex align-items-center">
+            <Navbar.Toggle
+              aria-controls="navbar-offcanvas"
+              className="border-0 p-2 ms-auto"
+              style={{ marginRight: '-8px' }}
+              onClick={handleOpenDrawer}
+            />
           </div>
-        )}
+        </div>
 
         <Navbar.Offcanvas
-          show={showOffcanvas}
-          onHide={handleClose}
-          id="offcanvasNavbar-expand-md"
-          aria-labelledby="offcanvasNavbarLabel-expand-md"
-          placement="start"
-          style={{ top: '56px', height: 'calc(100% - 56px)' }}
-          className="custom-offcanvas"
-        >
-          <Offcanvas.Body>
-            {/* Ícono ❌ de cierre arriba derecha */}
-            <div className="text-end">
-              <span
-                onClick={handleClose}
-                style={{
-                  cursor: 'pointer',
-                  fontSize: '1.5rem',
-                  marginBottom: '1rem',
-                }}
-              >
-              &times;
-              </span>
-            </div>
+          id="offcanvasNavbar"
+          show={showDrawer}
+          onHide={handleCloseDrawer}
+          placement="end"
+          style={{
+            top: '56px',
+            height: 'calc(100vh - 56px)'
+          }}
+        > 
+        <Offcanvas.Header closeButton  >
+              {/* Puedes dejar el título vacío o agregar algo si quieres */}
+            </Offcanvas.Header>
 
-            <Nav className="flex-column w-100 gap-3">
-              <div className="d-flex d-md-none flex-column">
-                <LanguageSelectorpc />
-                {auth.user ? (
-                  <>
-                    <Nav.Link onClick={() => { dispatch({ type: GLOBALTYPES.STATUS, payload: true }); handleClose(); }}>
+          <Offcanvas.Body className="position-relative">
+
+           
+            <Nav className="flex-grow-1 justify-content-end mt-4">
+              {auth.user ? (
+                <>
+                  <div className="d-none d-lg-block">
+                    <LanguageSelectorpc />
+                  </div>
+
+                  <NavDropdown
+                    id="user-dropdown"
+                    align="end"
+                    title={
+                      <div className="d-flex dropdown-avatar">
+                        <Avatar src={auth.user.avatar} size="medium-avatar" />
+                      </div>
+                    }
+                  >
+                    <NavDropdown.Item onClick={openStatusModal}>
                       Ajouter un annonce
-                    </Nav.Link>
-                    <Nav.Link as={Link} to="/informacionaplicacion" onClick={handleClose}>
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/informacionaplicacion" onClick={handleCloseDrawer}>
                       Info aplicación
-                    </Nav.Link>
-                    <Nav.Link as={Link} to="/message" onClick={handleClose}>
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/message" onClick={handleCloseDrawer}>
                       Chat administración
-                    </Nav.Link>
-                    <Nav.Link as={Link} to="/administration/roles" onClick={handleClose}>
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/administration/roles" onClick={handleCloseDrawer}>
                       Roles
-                    </Nav.Link>
+                    </NavDropdown.Item>
 
                     {auth.user.role === 'admin' && (
                       <>
-                        <Nav.Link as={Link} to="/administration/users/reportuser" onClick={handleClose}>
+                        <NavDropdown.Item as={Link} to="/administration/users/reportuser" onClick={handleCloseDrawer}>
                           Reports user
-                        </Nav.Link>
-                        <Nav.Link as={Link} to="/administration/homepostspendientes" onClick={handleClose}>
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/administration/homepostspendientes" onClick={handleCloseDrawer}>
                           Posts pendientes
-                        </Nav.Link>
-                        <Nav.Link as={Link} to="/administration/usersaction" onClick={handleClose}>
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/administration/usersaction" onClick={handleCloseDrawer}>
                           Usuarios acción
-                        </Nav.Link>
-                        <Nav.Link as={Link} to="/administration/usersedicion" onClick={handleClose}>
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/administration/usersedicion" onClick={handleCloseDrawer}>
                           Edición de usuarios
-                        </Nav.Link>
-                        <Nav.Link as={Link} to="/administration/listadeusuariosbloqueadoss" onClick={handleClose}>
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/administration/listadeusuariosbloqueadoss" onClick={handleCloseDrawer}>
                           Usuarios bloqueados
-                        </Nav.Link>
+                        </NavDropdown.Item>
                       </>
                     )}
 
-                    <Nav.Link as={Link} to={`/profile/${auth.user._id}`} onClick={handleClose}>
-                      Profile
-                    </Nav.Link>
+                    <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`} onClick={handleCloseDrawer}>
+                      Perfil
+                    </NavDropdown.Item>
 
-                    <Nav.Link onClick={() => { dispatch({ type: GLOBALTYPES.THEME, payload: !theme }); handleClose(); }}>
-                      Cambiar Tema
-                    </Nav.Link>
+                    <NavDropdown.Item onClick={toggleTheme}>
+                      {theme ? 'Light mode' : 'Dark mode'}
+                    </NavDropdown.Item>
 
-                    <hr />
+                    <NavDropdown.Divider />
 
-                    <Nav.Link as={Link} to="/" onClick={() => { dispatch(logout()); handleClose(); }}>
+                    <NavDropdown.Item onClick={handleLogout}>
                       Desconexión
-                    </Nav.Link>
-                  </>
-                ) : (
-                  <>
-                    <Nav.Link as={Link} to="/informacionaplicacion" onClick={handleClose}>
-                      Info aplicación
-                    </Nav.Link>
-                    <Nav.Link as={Link} to="/login" onClick={handleClose}>
-                      Se connecter
-                    </Nav.Link>
-                    <hr />
-                    <Nav.Link as={Link} to="/register" onClick={handleClose}>
-                      S'inscrire
-                    </Nav.Link>
-                  </>
-                )}
-              </div>
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </>
+              ) : (
+                <NavDropdown
+                  align="end"
+                  id="guest-dropdown"
+                  title={<span className="text-white">Cuenta</span>}
+                >
+                  <NavDropdown.Item as={Link} to="/informacionaplicacion" onClick={handleCloseDrawer}>
+                    Info aplicación
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/login" onClick={handleCloseDrawer}>
+                    Se connecter
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/register" onClick={handleCloseDrawer}>
+                    S'inscrire
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>

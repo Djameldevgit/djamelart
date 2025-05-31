@@ -5,23 +5,23 @@ import { useSelector } from 'react-redux';
  
 export function ItemsSubCategoryArtTextile({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation();
-
+  const { t } = useTranslation('subcategorias');  
+  const lang = languageReducer.language || 'en'; 
   const optionSubCategoryArtTextile = [
-    { value: "broderie", label: t('postDetail:broderie', { lng: languageReducer.language }) },
-    { value: "fibre_textile", label: t('postDetail:fibre_textile', { lng: languageReducer.language }) },
-    { value: "fil", label: t('postDetail:fil', { lng: languageReducer.language }) },
-    { value: "patchwork", label: t('postDetail:patchwork', { lng: languageReducer.language }) },
-    { value: "string_art", label: t('postDetail:string_art', { lng: languageReducer.language }) },
-    { value: "tapisserie", label: t('postDetail:tapisserie', { lng: languageReducer.language }) },
-    { value: "tissu", label: t('postDetail:tissu', { lng: languageReducer.language }) },
+    { value: "broderie", label: t('broderie', { lng: lang }) },
+    { value: "fibre_textile", label: t('fibre_textile', { lng: lang }) },
+    { value: "fil", label: t('fil', { lng: lang }) },
+    { value: "patchwork", label: t('patchwork', { lng: lang }) },
+    { value: "string_art", label: t('string_art', { lng: lang }) },
+    { value: "tapisserie", label: t('tapisserie', { lng: lang }) },
+    { value: "tissu", label: t('tissu', { lng: lang }) },
   ];
 
 
 
   return (
     <div className="art-category-container mb-3">
-      <Form.Label>{t('categorias:select_textile_technique', { lng: languageReducer.language })}</Form.Label>
+      <Form.Label>{t('categorias:select_textile_technique', { lng: lang })}</Form.Label>
 
       <Select
         options={optionSubCategoryArtTextile}
@@ -34,12 +34,12 @@ export function ItemsSubCategoryArtTextile({ handleChangeInput, postData }) {
         })}
         name="subcategory"
         value={optionSubCategoryArtTextile.find(opt => opt.value === (postData?.subcategory || ''))}
-        placeholder={t('categorias:placeholder_categories', { lng: languageReducer.language })}
+        placeholder={t('categorias:placeholder_categories', { lng: lang })}
         isDisabled={!postData?.category}
         className="textile-select"
         classNamePrefix="tx-select"
         isSearchable={true}
-        noOptionsMessage={() => t('categorias:no_options', { lng: languageReducer.language })}
+        noOptionsMessage={() => t('categorias:no_options', { lng: lang })}
         menuPortalTarget={document.body}
         styles={{
           menuPortal: base => ({ ...base, zIndex: 9999 }),
@@ -51,7 +51,7 @@ export function ItemsSubCategoryArtTextile({ handleChangeInput, postData }) {
           })
         }}
       />
-      <small className='text-danger'>{t('categorias:field_required', { lng: languageReducer.language })}</small>
+      <small className='text-danger'>{t('categorias:field_required', { lng: lang })}</small>
     </div>
   );
 }

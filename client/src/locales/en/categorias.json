@@ -1,7 +1,11 @@
 {
   "AR": "Arabic",
-  "FR": "French",
-  "EN": "English",
+"FR": "French",
+"EN": "English",
+"CHINO": "Chinese",
+"RU": "Russian",
+"KAB": "Kabyle",
+
 
   "art_painting": "art sale",
 
@@ -188,7 +192,8 @@
 
 
 
-
+ 
+    
 
 
 

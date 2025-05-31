@@ -53,23 +53,42 @@ const Users = require('../models/userModel')
     }
   },
   
- 
+  updateUserLanguageChino: async (req, res) => {
+    const language = 'chino';
+  
+    try {
+      const result = await Users.updateOne({ _id: req.user._id }, { language });
+  
+      if (result.modifiedCount === 0) {
+        return res.status(404).json({ message: 'No se encontró el usuario o el idioma ya estaba en cabilio' });
+      }
+  
+      res.status(200).json({ message: 'Idioma actualizado a cabilio (kabyle)' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error al actualizar el idioma del usuario' });
+    }
+  },
+  
 
 // Actualiza el idioma del usuario en la base de datos
 updateUserLanguage: async (req, res) => {
-   
-    const { language } = req.body; // obtener el idioma del cuerpo de la solicitud
-    try {
-      const user = await Users.findByIdAndUpdate({_id : req.user._id});
-      if (!user) {
-        return res.status(404).json({ error: 'Usuario no encontrado' });
-      }
-      user.language = language; // actualiza el idioma del usuario en la base de datos
-      await user.save();
-      res.status(200).json({ message: `Idioma actualizado exitosamente a ${language}` });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+  const { language } = req.body;
+  try {
+    const user = await Users.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: req.__('user_not_found') });
+
+    user.language = language;
+    await user.save();
+
+    // Opcional: Guardar cookie con preferencia de idioma
+    res.cookie('lang', language, { maxAge: 900000, httpOnly: true });
+
+    res.status(200).json({ message: req.__('language_updated') });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: req.__('server_error') });
+  }
 },
 
  
@@ -91,16 +110,11 @@ updateUserLanguage: async (req, res) => {
     const language = 'fr';
 
     try {
-        console.log('🔹 ID del usuario:', req.user ? req.user._id : 'ID no recibido');
-        console.log('🔹 Intentando actualizar idioma a:', language);
-
+     
         const result = await Users.updateOne({ _id: req.user._id }, { language });
 
-        console.log('🔹 Resultado de la actualización:', result);
-
-        if (result.modifiedCount === 0) {
-            console.log('⚠️ No se realizó ninguna modificación.');
-            return res.status(404).json({ message: 'Usuario no encontrado o idioma ya en francés' });
+           if (result.modifiedCount === 0) {
+              return res.status(404).json({ message: 'Usuario no encontrado o idioma ya en francés' });
         }
 
         res.status(200).json({ message: 'Idioma actualizado a francés' });

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
+import i18n from './i18n'; // Asegúrate de que la ruta sea correcta
 
 import PageRender from './customRouter/PageRender'
 import PrivateRouter from './customRouter/PrivateRouter'
@@ -39,7 +40,13 @@ function App() {
   const { auth, status, modal, call,languageReducer } = useSelector(state => state)
   const dispatch = useDispatch()
   const language = languageReducer?.language || localStorage.getItem("lang") || "en";
-
+ 
+  useEffect(() => {
+    if (language) {
+      i18n.changeLanguage(language); // ✅ sincroniza con i18n
+      localStorage.setItem('language', language); // ✅ persistencia
+    }
+  }, [language]);
   // Efecto para manejar el idioma y dirección del texto
   useEffect(() => {
     if (language === "ar") {

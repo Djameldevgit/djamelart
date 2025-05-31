@@ -45,8 +45,7 @@ const CardHeader = ({ post }) => {
 
     const handleReportPost = async (reportData) => {
         try {
-            console.log("Reporte enviado:", reportData);
-            alert("Post reportado correctamente.");
+              alert("Post reportado correctamente.");
         } catch (error) {
             console.error("Error al reportar el post:", error);
             alert("Error al reportar el post.");

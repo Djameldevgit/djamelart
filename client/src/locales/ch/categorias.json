@@ -1,7 +1,11 @@
 {
-    "AR": "阿拉伯语",
-    "FR": "法语",
-    "EN": "英语",
+  "AR": "阿拉伯语",
+  "FR": "法语",
+  "EN": "英语",
+  "CHINO": "中文",
+  "RU": "俄语",
+  "KAB": "卡比尔语",
+  
   
     "art_painting": "艺术品销售",
     "publish a work of art": "发布艺术品",
@@ -161,4 +165,16 @@
     "serigraphie": "丝网印刷",
     "tirage_argentique": "胶片冲印",
     "xylographie": "木刻版画"
+  
+  
+  
+  
+ 
+   
+  
+  
+  
+  
+  
+  
   }

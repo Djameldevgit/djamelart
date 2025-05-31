@@ -1,0 +1,79 @@
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import Offcanvas from 'react-bootstrap/Offcanvas';
+import { useDispatch, useSelector } from 'react-redux';
+import { GLOBALTYPES } from '../redux/actions/globalTypes';
+import { logout } from '../redux/actions/authAction';
+import { Link } from 'react-router-dom';
+import Avatar from './Avatar';
+import './Navbar.css'; // Archivo CSS adicional
+
+const Navbar2 = () => {
+    const dispatch = useDispatch();
+    const { auth, theme } = useSelector(state => state);
+
+    return (
+        <Navbar expand="lg" className="bg-body-tertiary mb-3" bg="dark" variant="dark">
+            <Container fluid>
+                <Navbar.Brand href="#">Mi Aplicación</Navbar.Brand>
+                <Navbar.Toggle aria-controls="navbar-offcanvas" />
+                <Navbar.Offcanvas
+                    id="navbar-offcanvas"
+                    aria-labelledby="navbar-offcanvas-label"
+                    placement="end"
+                    className="custom-offcanvas"
+                >
+                    <Offcanvas.Header closeButton closeVariant="white">
+                        <Offcanvas.Title id="navbar-offcanvas-label">Menú</Offcanvas.Title>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body>
+                        <Nav className="ms-auto"> {/* Cambiado a ms-auto para mejor alineación */}
+                            <NavDropdown
+                                title="Opciones"
+                                id="main-dropdown"
+                                renderMenuOnMount={true} // Importante para asegurar renderizado
+                            >
+                                <NavDropdown.Item onClick={() => dispatch({ type: GLOBALTYPES.STATUS, payload: true })}>
+                                    Ajouter un annonce
+                                </NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item href="#action5">
+                                    Something else here
+                                </NavDropdown.Item>
+                            </NavDropdown>
+
+                            {auth.token && (
+                                <NavDropdown
+                                    title={
+                                        <div className="d-flex align-items-center">
+                                            <Avatar src={auth.user?.avatar} size="medium-avatar" />
+                                        </div>
+                                    }
+                                    id="user-dropdown"
+                                    align="end"
+                                    drop="start" // Cambia la dirección del dropdown si es necesario
+                                    renderMenuOnMount={true}
+                                >
+                                    <NavDropdown.Item as={Link} to={`/profile/${auth.user?._id}`}>
+                                        Profile
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => dispatch({ type: GLOBALTYPES.THEME, payload: !theme })}>
+                                        {theme ? 'Light mode' : 'Dark mode'}
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Divider />
+                                    <NavDropdown.Item as={Link} to="/" onClick={() => dispatch(logout())}>
+                                        Logout
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            )}
+                        </Nav>
+                    </Offcanvas.Body>
+                </Navbar.Offcanvas>
+            </Container>
+        </Navbar>
+    );
+}
+
+export default Navbar2;

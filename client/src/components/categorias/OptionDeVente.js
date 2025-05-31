@@ -5,22 +5,23 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function VenteOptionsSelect({ handleChangeInput, postData }) {
-  const { t } = useTranslation();
   const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('componentstatusmodal');  
+  const lang = languageReducer.language || 'en'; 
 
   const optionsDeVente = [
-    { value: 'originalWork', label: t('salesOptions.originalWork', { lng: languageReducer.language }) },
-    { value: 'limitedEdition', label: t('salesOptions.limitedEdition', { lng: languageReducer.language }) },
-    { value: 'artPrint', label: t('salesOptions.artPrint', { lng: languageReducer.language }) },
-    { value: 'reproductionLicense', label: t('salesOptions.reproductionLicense', { lng: languageReducer.language }) },
-    { value: 'rentalLeasing', label: t('salesOptions.rentalLeasing', { lng: languageReducer.language }) },
-    { value: 'preOrder', label: t('salesOptions.preOrder', { lng: languageReducer.language }) },
+    { value: 'originalWork', label: t('salesOptions.originalWork', { lng: lang }) },
+    { value: 'limitedEdition', label: t('salesOptions.limitedEdition', { lng: lang }) },
+    { value: 'artPrint', label: t('salesOptions.artPrint', { lng: lang }) },
+    { value: 'reproductionLicense', label: t('salesOptions.reproductionLicense', { lng: lang }) },
+    { value: 'rentalLeasing', label: t('salesOptions.rentalLeasing', { lng: lang }) },
+    { value: 'preOrder', label: t('salesOptions.preOrder', { lng: lang }) },
   ];
 
   return (
     <Form.Group controlId="venteOptions" className="mb-3">
       <Form.Label>
-        {t('labels.salesOptions', { lng: languageReducer.language })}
+        {t('labels.salesOptions', { lng: lang })}
       </Form.Label>
 
       <Select
@@ -36,7 +37,7 @@ export function VenteOptionsSelect({ handleChangeInput, postData }) {
         }
         name="venteOption"
         value={postData ? optionsDeVente.find(opt => opt.value === postData.venteOption) : null}
-        placeholder={t('placeholders.conditionOfWork', { lng: languageReducer.language })}
+        placeholder={t('placeholders.conditionOfWork', { lng: lang })}
       />
     </Form.Group>
   );

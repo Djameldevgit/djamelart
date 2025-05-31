@@ -4,24 +4,25 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function ItemsCategory({ handleChangeInput, postData }) {
-  const { t } = useTranslation();
   const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('categorias');  
+  const lang = languageReducer.language || 'en'; 
 
   const artCategories = [
-    { value: "Painting", label: t('categorias:painting', { lng: languageReducer.language }) },
-    { value: "Sculpture", label: t('categorias:sculpture', { lng: languageReducer.language }) },
-    { value: "Photography", label: t('categorias:photography', { lng: languageReducer.language }) },
-    { value: "drawing", label: t('categorias:drawing', { lng: languageReducer.language }) },
-    { value: "Engraving", label: t('categorias:engraving', { lng: languageReducer.language }) },
-    { value: "Digital_art", label: t('categorias:digital_art', { lng: languageReducer.language }) },
-    { value: "Collage", label: t('categorias:collage', { lng: languageReducer.language }) },
-    { value: "Textile_art", label: t('categorias:textile_art', { lng: languageReducer.language }) }
+    { value: "Painting", label: t('categorias:painting', { lng: lang }) },
+    { value: "Sculpture", label: t('categorias:sculpture', { lng: lang }) },
+    { value: "Photography", label: t('categorias:photography', { lng: lang }) },
+    { value: "drawing", label: t('categorias:drawing', { lng: lang }) },
+    { value: "Engraving", label: t('categorias:engraving', { lng: lang }) },
+    { value: "Digital_art", label: t('categorias:digital_art', { lng: lang }) },
+    { value: "Collage", label: t('categorias:collage', { lng: lang }) },
+    { value: "Textile_art", label: t('categorias:textile_art', { lng: lang }) }
   ];
 
   return (
     <Form.Group className="mb-3">
        
-      <Form.Label>{t('selecionarcategoriaartistica', { lng: languageReducer.language })}</Form.Label>
+      <Form.Label>{t('selecionarcategoriaartistica', { lng: lang })}</Form.Label>
       <Select
         options={artCategories}
         onChange={(selectedOption) =>
@@ -39,11 +40,11 @@ export function ItemsCategory({ handleChangeInput, postData }) {
             ? artCategories.find(opt => opt.value === postData.category)
             : null
         }
-        placeholder={t('categorie_placeholder', { lng: languageReducer.language })}
+        placeholder={t('categorie_placeholder', { lng: lang })}
         className="basic-select"
         classNamePrefix="select"
       />
-      <small className="text-danger">{t('categorie_required', { lng: languageReducer.language })}</small>
+      <small className="text-danger">{t('categorie_required', { lng: lang })}</small>
     </Form.Group>
   );
 }

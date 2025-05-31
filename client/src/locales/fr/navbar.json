@@ -1,0 +1,18 @@
+{
+  
+  "art_painting": "Art et Peinture",
+  "add_announcement": "Ajouter une annonce",
+  "info_app": "Info application",
+  "chat_admin": "Chat d'administration",
+  "roles": "Rôles",
+  "reports_user": "Rapports utilisateur",
+  "pending_posts": "Publications en attente",
+  "users_action": "Actions des utilisateurs",
+  "edit_users": "Édition des utilisateurs",
+  "blocked_users": "Utilisateurs bloqués",
+  "profile": "Profil",
+  "change_theme": "Changer le thème",
+  "logout": "Déconnexion",
+  "login": "Se connecter",
+  "register": "S'inscrire"
+  }

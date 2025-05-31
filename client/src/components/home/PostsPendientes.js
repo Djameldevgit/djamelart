@@ -54,8 +54,7 @@ const PostsPendientes = () => {
     const handleBlockUser = (user) => {
         if (window.confirm(`¿Estás seguro de que quieres bloquear al usuario ${user.username}?`)) {
             // Aquí puedes llamar a una acción de Redux o a una API para bloquear al usuario
-            console.log(`Usuario ${user.username} bloqueado.`);
-            // dispatch(blockUserAction({ user, auth }));
+               // dispatch(blockUserAction({ user, auth }));
         }
     };
 

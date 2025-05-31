@@ -34,6 +34,9 @@ function LanguageSelectorpc() {
       case 'kab':
         dispatch(languageActions.synchronizeLanguage(language, auth));
         break;
+      case 'chino':
+        dispatch(languageActions.synchronizeLanguage(language, auth));
+        break;
       default:
         dispatch(languageActions.synchronizeLanguage(language, auth));
         break;
@@ -48,18 +51,8 @@ function LanguageSelectorpc() {
   }, [cookies.language, handleLanguageChange]);
 
   return (
-    <div className="d-none d-md-block" style={{ width: '100%', padding: 0, margin: 0 }}>
-    <div
-      style={{
-        display: 'flex',
-        width: '100%',
-        margin: 0,
-        padding: 0,
-        gap: '3px'
-      }}
-    >
-      <div style={{ flex: '1 1 0', margin: 0, padding: 0 }}>
-      <Dropdown as={ButtonGroup} className="w-100">
+    
+          <Dropdown as={ButtonGroup} className="w-100">
             <Dropdown.Toggle variant="secondary" id="dropdown-language" className="w-100">
               🌐 {t(languageReducer.language.toUpperCase())}
             </Dropdown.Toggle>
@@ -83,12 +76,16 @@ function LanguageSelectorpc() {
               <Dropdown.Item onClick={() => handleLanguageChange('kab')}>
                 {t('KAB', { lng: languageReducer.language })}
               </Dropdown.Item>
+
+              <Dropdown.Item onClick={() => handleLanguageChange('chino')}>
+                {t('CHINO', { lng: languageReducer.language })}
+              </Dropdown.Item>
+
             </Dropdown.Menu>
           </Dropdown>
-      </div>
-    </div>
-  </div>
-  
+      
+    
+
   );
 }
 

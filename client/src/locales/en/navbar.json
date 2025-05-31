@@ -1,0 +1,16 @@
+{
+  "add_announcement": "Add Announcement",
+  "info_app": "App Info",
+  "chat_admin": "Admin Chat",
+  "roles": "Roles",
+  "reports_user": "User Reports",
+  "pending_posts": "Pending Posts",
+  "users_action": "User Actions",
+  "edit_users": "Edit Users",
+  "blocked_users": "Blocked Users",
+  "profile": "Profile",
+  "change_theme": "Change Theme",
+  "logout": "Logout",
+  "login": "Login",
+  "register": "Register"
+  }

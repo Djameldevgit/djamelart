@@ -5,26 +5,27 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function Envolverlaobra({ handleChangeInput, postData }) {
-  const { t } = useTranslation();
   const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('componentstatusmodal');  
+  const lang = languageReducer.language || 'en'; 
 
   const Optionsenvolverobra = [
-    { value: 'toile', label: t('packaging.toile', { lng: languageReducer.language }) },
-    { value: 'toile_encadree', label: t('packaging.toile_encadree', { lng: languageReducer.language }) },
-    { value: 'papier', label: t('packaging.papier', { lng: languageReducer.language }) },
-    { value: 'papier_plaque', label: t('packaging.papier_plaque', { lng: languageReducer.language }) },
-    { value: 'boite', label: t('packaging.boite', { lng: languageReducer.language }) },
-    { value: 'tube', label: t('packaging.tube', { lng: languageReducer.language }) },
-    { value: 'caisse', label: t('packaging.caisse', { lng: languageReducer.language }) },
-    { value: 'sculpture_boite', label: t('packaging.sculpture_boite', { lng: languageReducer.language }) },
-    { value: 'montage_plexi', label: t('packaging.montage_plexi', { lng: languageReducer.language }) },
-    { value: 'autre', label: t('packaging.autre', { lng: languageReducer.language }) }
+    { value: 'toile', label: t('packaging.toile', { lng: lang }) },
+    { value: 'toile_encadree', label: t('packaging.toile_encadree', { lng: lang }) },
+    { value: 'papier', label: t('packaging.papier', { lng: lang }) },
+    { value: 'papier_plaque', label: t('packaging.papier_plaque', { lng: lang }) },
+    { value: 'boite', label: t('packaging.boite', { lng: lang }) },
+    { value: 'tube', label: t('packaging.tube', { lng: lang }) },
+    { value: 'caisse', label: t('packaging.caisse', { lng: lang }) },
+    { value: 'sculpture_boite', label: t('packaging.sculpture_boite', { lng: lang }) },
+    { value: 'montage_plexi', label: t('packaging.montage_plexi', { lng: lang }) },
+    { value: 'autre', label: t('packaging.autre', { lng: lang }) }
   ];
 
   return (
     <div className='mb-3'>
       <Form.Label>
-        {t('packaging.label', { lng: languageReducer.language })}
+        {t('packaging.label', { lng: lang })}
       </Form.Label>
 
       <Select
@@ -39,7 +40,7 @@ export function Envolverlaobra({ handleChangeInput, postData }) {
         })}
         name="envolverobra"
         value={postData ? Optionsenvolverobra.find(opt => opt.value === postData.envolverobra) : null}
-        placeholder={t('packaging.placeholder', { lng: languageReducer.language })}
+        placeholder={t('packaging.placeholder', { lng: lang })}
       />
     </div>
   );

@@ -8,12 +8,7 @@ const Bloqueoss = () => {
     // Verificamos si el usuario está bloqueado
     const isBlocked = userBlockReducer.blockedUsers.some(blockedUser => blockedUser.user._id === user._id && blockedUser.esBloqueado);
 
-    useEffect(() => {
-        if (!auth.token) {
-            // Si no hay token, redirigir o mostrar algún mensaje
-            console.log("No estás autenticado");
-        }
-    }, [auth.token]);
+    
 
     // Si el usuario está bloqueado, mostramos los detalles
     return (

@@ -51,7 +51,8 @@ const StatusModal = () => {
 
     const { auth, theme, socket, status, languageReducer } = useSelector((state) => state);
 
-    const { t } = useTranslation();
+    const { t } = useTranslation('componentstatusmodal'); 
+  const lang = languageReducer.language || 'en'; 
 
     const dispatch = useDispatch()
     const initialState = {
@@ -503,7 +504,7 @@ const StatusModal = () => {
 <Form.Group className="status_form_scrollable">
             <Form onSubmit={handleSubmit}>
                 <div className="status_header">
-                    <h3 className="m-0"> {t('publish a work of art', { lng: languageReducer.language })}</h3>
+                    <h3 className="m-0"> {t('titulostatusmoddal', { lng: lang })}</h3>
                     <span onClick={() => dispatch({
                         type: GLOBALTYPES.STATUS, payload: false
                     })}>

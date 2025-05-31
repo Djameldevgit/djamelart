@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     saved: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
     language: { 
         type: String, 
-        enum: ['en', 'fr', 'ar', 'es', 'ru', 'kab'], // Incluye todos los idiomas que usas
+        enum: ['en', 'fr', 'ar', 'es', 'ru','chino', 'kab'], // Incluye todos los idiomas que usas
         default: 'ar' 
       },
       

@@ -8,6 +8,7 @@ export const CHANGE_LANGUAGE = {
   ES: 'ES',
   RU: 'RU',
   KAB: 'KAB',
+  KAB: 'CHINO',
   SYNC: 'SYNC'
 };
 
@@ -90,14 +91,27 @@ export const kabyleLanguage = (language, auth) => async (dispatch) => {
 };
 
 // Acción de sincronización general (fallback)
-export const synchronizeLanguage = (language, auth) => async (dispatch) => {
+ 
+export const chinoLanguage = (language, auth) => async (dispatch) => {
   try {
-    const res = await putDataAPI(`language/${language}`, { language }, auth.token);
+    const res = await putDataAPI('language/chino', { language }, auth.token);
     dispatch({
-      type: CHANGE_LANGUAGE.SYNC,
+      type: CHANGE_LANGUAGE.CHINO,
       payload: { language, res: res.data },
     });
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const synchronizeLanguage = (language, auth) => async dispatch => {
+  try {
+    await axios.patch('language', { language }, {
+      headers: { Authorization: auth.token }
+    });
+
+    dispatch({ type: 'SET_LANGUAGE', payload: language });
+  } catch (err) {
+    console.error('Error updating language:', err);
   }
 };

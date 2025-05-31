@@ -1,0 +1,8 @@
+{
+  "auth": {
+    "login_success": "¡Inicio de sesión exitoso!",
+    "email_not_exist": "Este correo no existe.",
+    "incorrect_password": "Contraseña incorrecta.",
+    "server_error": "Error del servidor."
+  }
+}

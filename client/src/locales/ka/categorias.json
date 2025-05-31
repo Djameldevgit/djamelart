@@ -1,7 +1,10 @@
 {
-    "AR": "Taqbaylit",
-    "FR": "Tafransist",
-    "EN": "Tanglizt",
+  "AR": "Taɛrabt",
+  "FR": "Tafransist",
+  "EN": "Tanglizt",
+  "CHINO": "Tacinit",
+  "RU": "Tarwusit",
+  "KAB": "Taqbaylit",
     "titilos": "Isenfaren",
     "art_painting": "Aẓru n tazwart",
     "publish a work of art": "Sefre aẓru n tazwart",
@@ -156,10 +159,6 @@
  
     
       
-    
-
-
-
-
+     
 
     }  

@@ -34,6 +34,9 @@ function LanguageSelectorandroid() {
       case 'kab':
         dispatch(languageActions.synchronizeLanguage(language, auth));
         break;
+        case 'chino':
+          dispatch(languageActions.synchronizeLanguage(language, auth));
+          break;
       default:
         dispatch(languageActions.synchronizeLanguage(language, auth));
         break;
@@ -98,6 +101,10 @@ function LanguageSelectorandroid() {
               <Dropdown.Item onClick={() => handleLanguageChange('kab')}>
                 {t('KAB', { lng: languageReducer.language })}
               </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleLanguageChange('chino')}>
+                {t('CHINO', { lng: languageReducer.language })}
+              </Dropdown.Item>
+
             </Dropdown.Menu>
           </Dropdown>
         </div>

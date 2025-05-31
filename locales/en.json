@@ -1,0 +1,6 @@
+{
+	"auth": {
+		"login_success": "auth.login_success",
+		"incorrect_password": "auth.incorrect_password"
+	}
+}

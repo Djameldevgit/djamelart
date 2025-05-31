@@ -1,0 +1,249 @@
+{
+
+  "titulostatusmoddal": "منشورات الأعمال الفنية",
+
+  "titleDeLaObra":"عنوان العمل الفني",
+"introduceUnTituloParaLaObra":"أدخل عنوانًا",
+"placeholders.selectSupport":"حدد الدعم",
+"debesSeleccionarUnacategory": "يجب تحديد فئة أولاً",
+"theme.placeholder":"قدم موضوعا",
+"negociable.negotiationPrice":"تفاوض السعر" ,
+"licenseUsage":"حقوق الطبع والنشر",
+ 
+
+ "styles": {
+    "abstrait": "تجريدي",
+    "impressionnisme": "انطباعي",
+    "expressionnisme": "تعبيري",
+    "cubisme": "تكعيبي",
+    "surrealisme": "سريالي",
+    "hyperrealisme": "فرط واقعي",
+    "figuratif": "تصويري",
+    "classicisme": "كلاسيكي",
+    "pop_art": "فن البوب",
+    "tachisme": "تاشي",
+    "baroque": "باروكي",
+    "minimalisme": "تقليلي",
+    "art_conceptuel": "فن مفاهيمي",
+    "land_art": "فن الأرض",
+    "art_brut": "فن خام",
+    "art_cinetique": "فن حركي",
+    "documentaire": "وثائقي",
+    "conceptuel": "مفاهيمي",
+    "street_art": "فن الشارع",
+    "noir_et_blanc": "أبيض وأسود",
+    "futurisme": "مستقبلي",
+    "glitch_art": "فن الخلل",
+    "pixel_art": "فن البكسل",
+    "nft": "NFT",
+    "generatif": "توليدي",
+    "croquis": "رسم تخطيطي",
+    "manga": "مانغا",
+    "caricature": "كاريكاتير",
+    "tradicional": "تقليدي",
+    "contemporaneo": "معاصر",
+    "abstracto": "تجريدي",
+    "minimalista": "تقليلي",
+    "folclorico": "فلكلوري",
+    "autre": "آخر",
+    "mixte": "مختلط"
+  },
+  "groups": {
+    "modernes": "حديث",
+    "avantgardes": "طلائعي",
+    "contemporains": "معاصر",
+    "classique_traditionnel": "كلاسيكي / تقليدي",
+    "autres_styles": "أنماط أخرى"
+  },
+
+
+  "theme.select_label":"موضوع العمل الفني",
+  "select_label": "اختر دعم العمل الفني",
+  "canvas": "قماش",
+  "wood_panel": "لوح خشبي",
+  "paper": "ورق",
+  "metal": "معدن",
+  "cardboard": "كرتون",
+  "acrylic": {
+    "linen_canvas": "قماش كتان (أكريليك)",
+    "mdf_board": "لوح MDF",
+    "cotton_canvas": "قماش قطني"
+  },
+  "oil": {
+    "linen_canvas": "قماش كتان (زيت)",
+    "copper_plate": "لوح نحاسي",
+    "wood_mounted": "خشب مثبت"
+  },
+  "watercolor": {
+    "paper": "ورق ألوان مائية",
+    "arches": "ورق أرتشيس"
+  },
+  "sculpture": {
+    "bronze": "برونز",
+    "marble": "رخام",
+    "resin": "راتنج",
+    "wood": "خشب",
+    "ceramic": "سيراميك"
+  },
+  "photography": {
+    "photo_paper": "ورق صور",
+    "aluminum": "ألومنيوم ديبوند",
+    "acrylic": "زجاج أكريليك"
+  },
+  "drawing": {
+    "paper": "ورق رسم",
+    "parchment": "رق",
+    "vellum": "ورق شهامان"
+  },
+  "digital": {
+    "file": "ملف رقمي",
+    "canvas_print": "طباعة على قماش",
+    "acrylic_print": "طباعة أكريليك"
+  },
+  "textile": {
+    "fabric": "نسيج",
+    "tapestry": "نسيج حائطي",
+    "embroidery": "تطريز"
+  },
+  "other": "أخرى",
+  "mixed": "مختلط",
+  
+  "theme_groups": {
+    "styles": "أنماط",
+    "nature": "طبيعة",
+    "animaux": "حيوانات",
+    "culture": "ثقافة",
+    "urbain": "حضري",
+    "personnages": "شخصيات",
+    "fantastique": "خيالي",
+    "divers": "متنوع"
+  },
+  "size": {
+    "talle.label": "حجم العمل الفني",
+    "petit": "صغير",
+    "moyen": "متوسط",
+    "grand": "كبير",
+    "tres_grand": "كبير جدًا",
+    "select_label": "حجم العمل الفني",
+    "placeholder": "اختر الحجم"
+  },
+  "mesure": {
+    "labels.measurement": "الأبعاد",
+    "labels.medidas": "أدخل الأبعاد"
+  },
+  "unit": {
+    "label": "وحدة القياس",
+    "placeholder": "اختر وحدة",
+    "noOptions": "لا توجد خيارات متاحة",
+    "cm": "سنتيمترات (سم)",
+    "m": "أمتار (م)",
+    "cm2": "سنتيمترات مربعة (سم²)",
+    "m2": "أمتار مربعة (م²)",
+    "mm": "ميليمترات (مم)",
+    "in": "بوصات (إنش)"
+  },
+  "availability": {
+    "label": "توفر العمل الفني",
+    "placeholder": "اختر حالة التوفر",
+    "noOptions": "لا توجد خيارات متاحة",
+    "disponible": "متوفر",
+    "vendue": "تم بيعه",
+    "reservee": "محجوز",
+    "non_disponible": "غير متوفر",
+    "pas_a_vendre": "غير معروض للبيع",
+    "exposition_uniquement": "للعرض فقط"
+  },
+  "price": {
+    "labelsprice": "سعر العمل الفني",
+    "placeholders": "أدخل السعر"
+  },
+  "devise_vente": {
+    "label": "عملة البيع",
+    "placeholder": "اختر العملة",
+    "no_option": "لم يتم العثور على عملات"
+  },
+  "currency": {
+    "DZD": "دينار جزائري (DZD)",
+    "EUR": "يورو (EUR)",
+    "USD": "دولار أمريكي (USD)",
+    "CAD": "دولار كندي (CAD)",
+    "GBP": "جنيه إسترليني (GBP)",
+    "JPY": "ين ياباني (JPY)",
+    "MAD": "درهم مغربي (MAD)",
+    "XOF": "فرنك غرب أفريقي (XOF)"
+  },
+  "negociable": {
+    "fixedPrice": "سعر ثابت",
+    "negotiablePrice": "سعر قابل للتفاوض",
+    "selectOptionPlaceholder": "اختر خيارًا"
+  },
+  "packaging": {
+    "label": "طريقة التعبئة",
+    "placeholder": "اختر طريقة التعبئة",
+    "toile": "قماش ملفوف",
+    "toile_encadree": "قماش مؤطر",
+    "papier": "ورق حماية",
+    "papier_plaque": "ورق وكرتون فوم",
+    "boite": "صندوق مخصص",
+    "tube": "أنبوب شحن",
+    "caisse": "صندوق خشبي",
+    "sculpture_boite": "تعبئة للنحت",
+    "montage_plexi": "تركيب بليكسيجلاس",
+    "autre": "طريقة أخرى"
+  },
+  "labels": {
+    "salesOptions": "خيارات البيع"
+  },
+  "placeholders": {
+    "conditionOfWork": "اختر حالة العمل الفني"
+  },
+  "salesOptions": {
+    "originalWork": "عمل أصلي",
+    "limitedEdition": "طبعة محدودة",
+    "artPrint": "نسخة فنية",
+    "reproductionLicense": "رخصة استنساخ",
+    "rentalLeasing": "تأجير/استئجار",
+    "preOrder": "طلب مسبق"
+  },
+  
+  "labelss": {
+    "licenseUsage": "حقوق الطبع والنشر"
+  },
+  "placeholderss": {
+    "selectLicense": "اختر رخصة استخدام"
+  },
+
+
+  "messages": {
+    "noLicensesAvailable": "لا توجد رخص متاحة"
+  },
+  "validation": {
+    "requiredField": "هذا الحقل مطلوب"
+  },
+  "licenses": {
+    "allRightsReserved": "جميع الحقوق محفوظة ©",
+    "ccBy": "كريتيف كومونز نسبة (CC BY)",
+    "ccByNc": "كريتيف كومونز نسبة - غير تجاري (CC BY-NC)",
+    "ccBySa": "كريتيف كومونز نسبة - مشاركة بالمثل (CC BY-SA)",
+    "cc0": "كريتيف كومونز صفر (CC0) - الملكية العامة",
+    "personalUseOnly": "للاستخدام الشخصي فقط",
+    "commercialUseAllowed": "مسموح بالاستخدام التجاري"
+  },
+  "labelsss": {
+    "description1": "وصف العمل الفني"
+  },
+  "placeholdersss": {
+    "description": "اكتب وصفًا تفصيليًا للعمل الفني (التقنية، الإلهام، إلخ)..."
+  },
+  "labels0": {
+    "style": "الأسلوب"
+  },
+  "placeholders0": {
+    "selectStyle": "اختر أسلوباً",
+    "selectCategoryFirst": "أولاً اختر فئة"
+  },
+  "messages0": {
+    "noStylesFound": "لم يتم العثور على أساليب"
+  },
+  "support.select_label": "Soporte"
+}

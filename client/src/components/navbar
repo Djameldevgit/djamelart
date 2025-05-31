@@ -1,0 +1,173 @@
+import {
+  Navbar,
+  Nav,
+  Container,
+  Offcanvas,
+  NavDropdown
+} from 'react-bootstrap';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { GLOBALTYPES } from '../redux/actions/globalTypes';
+import { logout } from '../redux/actions/authAction';
+import { Link } from 'react-router-dom';
+import Avatar from './Avatar';
+import { useState } from 'react';
+import LanguageSelectorpc from './LanguageSelectorpc';
+
+const Navbar2 = () => {
+  const dispatch = useDispatch();
+  const { auth, theme } = useSelector(state => state);
+
+  const [showDrawer, setShowDrawer] = useState(false);
+
+  const handleCloseDrawer = () => setShowDrawer(false);
+  const handleOpenDrawer = () => setShowDrawer(true);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    handleCloseDrawer();
+  };
+
+  const toggleTheme = () => {
+    dispatch({ type: GLOBALTYPES.THEME, payload: !theme });
+    handleCloseDrawer();
+  };
+
+  const openStatusModal = () => {
+    dispatch({ type: GLOBALTYPES.STATUS, payload: true });
+    handleCloseDrawer();
+  };
+
+  return (
+    <Navbar expand="lg" bg="dark" variant="dark" className="mb-3">
+      <Container fluid className="px-3 px-lg-4">
+        <div className="d-flex w-100 align-items-center justify-content-between">
+          <Navbar.Brand href="/" className="py-2 me-0 me-lg-3">
+            Mi Aplicación
+          </Navbar.Brand>
+
+          <div className="d-flex align-items-center">
+            <Navbar.Toggle
+              aria-controls="navbar-offcanvas"
+              className="border-0 p-2 ms-auto"
+              style={{ marginRight: '-8px' }}
+              onClick={handleOpenDrawer}
+            />
+          </div>
+        </div>
+
+        <Navbar.Offcanvas
+          id="offcanvasNavbar"
+          show={showDrawer}
+          onHide={handleCloseDrawer}
+          placement="end"
+          style={{
+            top: '56px',
+            height: 'calc(100vh - 56px)'
+          }}
+        >
+          <Offcanvas.Body>
+            <Nav className="flex-grow-1 justify-content-end">
+              {auth.user ? (
+                <>
+                  {/* Opciones extra SOLO en escritorio */}
+                  <div className="d-none d-lg-block">
+                    <NavDropdown
+                      id="extra-options-dropdown"
+                      title="Opciones extra"
+                      align="end"
+                    >
+                   
+
+
+                   <LanguageSelectorpc/>
+                    </NavDropdown>
+                  </div>
+
+                  {/* Avatar Dropdown visible en TODAS las resoluciones */}
+                  <NavDropdown
+                    id="user-dropdown"
+                    align="end"
+                    title={
+                      <div className="d-flex dropdown-avatar">
+                        <Avatar src={auth.user.avatar} size="medium-avatar" />
+                      </div>
+                    }
+                  >
+                    <NavDropdown.Item onClick={openStatusModal}>
+                      Ajouter un annonce
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/informacionaplicacion" onClick={handleCloseDrawer}>
+                      Info aplicación
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/message" onClick={handleCloseDrawer}>
+                      Chat administración
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/administration/roles" onClick={handleCloseDrawer}>
+                      Roles
+                    </NavDropdown.Item>
+
+                    {auth.user.role === 'admin' && (
+                      <>
+                        <NavDropdown.Item as={Link} to="/administration/users/reportuser" onClick={handleCloseDrawer}>
+                          Reports user
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/administration/homepostspendientes" onClick={handleCloseDrawer}>
+                          Posts pendientes
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/administration/usersaction" onClick={handleCloseDrawer}>
+                          Usuarios acción
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/administration/usersedicion" onClick={handleCloseDrawer}>
+                          Edición de usuarios
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/administration/listadeusuariosbloqueadoss" onClick={handleCloseDrawer}>
+                          Usuarios bloqueados
+                        </NavDropdown.Item>
+                      </>
+                    )}
+
+                    <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`} onClick={handleCloseDrawer}>
+                      Perfil
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item onClick={toggleTheme}>
+                      {theme ? 'Light mode' : 'Dark mode'}
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Divider />
+
+                    <NavDropdown.Item onClick={handleLogout}>
+                      Desconexión
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </>
+              ) : (
+                <NavDropdown
+                  align="end"
+                  id="guest-dropdown"
+                  title={<span className="text-white">Cuenta</span>}
+                >
+                  <NavDropdown.Item as={Link} to="/informacionaplicacion" onClick={handleCloseDrawer}>
+                    Info aplicación
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/login" onClick={handleCloseDrawer}>
+                    Se connecter
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/register" onClick={handleCloseDrawer}>
+                    S'inscrire
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
+            </Nav>
+          </Offcanvas.Body>
+        </Navbar.Offcanvas>
+      </Container>
+    </Navbar>
+  );
+};
+
+export default Navbar2;

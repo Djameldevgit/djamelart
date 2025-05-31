@@ -5,15 +5,16 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function ItemsSubCategoryPhotographie({ handleChangeInput, postData }) {
-  const { t } = useTranslation();
   const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('subcategorias');  
+  const lang = languageReducer.language || 'en'; 
 
   const optionSubCategoryPhotographie = [
-    { value: "light_painting", label: t("light_painting", { lng: languageReducer.language }) },
-    { value: "photographie_argentique", label: t("photographie_argentique", { lng: languageReducer.language }) },
-    { value: "photographie_manipulee", label: t("photographie_manipulee", { lng: languageReducer.language }) },
-    { value: "photographie_non_manipulee", label: t("photographie_non_manipulee", { lng: languageReducer.language }) },
-    { value: "photographie_numerique", label: t("photographie_numerique", { lng: languageReducer.language }) },
+    { value: "light_painting", label: t("light_painting", { lng: lang }) },
+    { value: "photographie_argentique", label: t("photographie_argentique", { lng: lang }) },
+    { value: "photographie_manipulee", label: t("photographie_manipulee", { lng: lang }) },
+    { value: "photographie_non_manipulee", label: t("photographie_non_manipulee", { lng: lang }) },
+    { value: "photographie_numerique", label: t("photographie_numerique", { lng: lang }) },
   
   
   
@@ -23,7 +24,7 @@ export function ItemsSubCategoryPhotographie({ handleChangeInput, postData }) {
   return (
     <div className='mb-3'>
       <Form.Label>
-        {t("select_photography_type", { lng: languageReducer.language })}
+        {t("select_photography_type", { lng: lang })}
       </Form.Label>
 
       <Select
@@ -42,14 +43,14 @@ export function ItemsSubCategoryPhotographie({ handleChangeInput, postData }) {
             ? optionSubCategoryPhotographie.find(opt => opt.value === postData.subcategory)
             : null
         }
-        placeholder={t("categories", { lng: languageReducer.language })}
+        placeholder={t("categories", { lng: lang })}
         isDisabled={!postData?.category}
         className="basic-select"
         classNamePrefix="select"
       />
 
       <small className='text-danger'>
-        {t("field_required", { lng: languageReducer.language })}
+        {t("field_required", { lng: lang })}
       </small>
     </div>
   );

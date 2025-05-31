@@ -1,0 +1,16 @@
+{
+  "add_announcement": "添加公告",
+  "info_app": "应用信息",
+  "chat_admin": "管理员聊天",
+  "roles": "角色",
+  "reports_user": "用户举报",
+  "pending_posts": "待审帖子",
+  "users_action": "用户操作",
+  "edit_users": "编辑用户",
+  "blocked_users": "已封禁用户",
+  "profile": "个人资料",
+  "change_theme": "切换主题",
+  "logout": "注销",
+  "login": "登录",
+  "register": "注册"
+  }

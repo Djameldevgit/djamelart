@@ -6,20 +6,21 @@ import { useSelector } from 'react-redux';
 
 export function UniteMesure({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation();
+  const { t } = useTranslation('componentstatusmodal');  
+  const lang = languageReducer.language || 'en'; 
 
   const measurementUnits = [
-    { value: 'cm', label: t('unit.cm', { lng: languageReducer.language }) },
-    { value: 'm', label: t('unit.m', { lng: languageReducer.language }) },
-    { value: 'cm2', label: t('unit.cm2', { lng: languageReducer.language }) },
-    { value: 'm2', label: t('unit.m2', { lng: languageReducer.language }) },
-    { value: 'mm', label: t('unit.mm', { lng: languageReducer.language }) },
-    { value: 'in', label: t('unit.in', { lng: languageReducer.language }) }
+    { value: 'cm', label: t('unit.cm', { lng: lang }) },
+    { value: 'm', label: t('unit.m', { lng: lang }) },
+    { value: 'cm2', label: t('unit.cm2', { lng: lang }) },
+    { value: 'm2', label: t('unit.m2', { lng: lang }) },
+    { value: 'mm', label: t('unit.mm', { lng: lang }) },
+    { value: 'in', label: t('unit.in', { lng: lang }) }
   ];
 
   return (
     <div className="unit-selector-container mb-3">
-      <Form.Label>{t('unit.label', { lng: languageReducer.language })}</Form.Label>
+      <Form.Label>{t('unit.label', { lng: lang })}</Form.Label>
       <Select
         options={measurementUnits}
         onChange={(selectedOption) =>
@@ -33,11 +34,11 @@ export function UniteMesure({ handleChangeInput, postData }) {
         }
         name="measurementUnit"
         value={measurementUnits.find(opt => opt.value === postData?.measurementUnit) || null}
-        placeholder={t('unit.placeholder', { lng: languageReducer.language })}
+        placeholder={t('unit.placeholder', { lng: lang })}
         className="unit-select"
         classNamePrefix="us"
         isSearchable={false}
-        noOptionsMessage={() => t('unit.noOptions', { lng: languageReducer.language })}
+        noOptionsMessage={() => t('unit.noOptions', { lng: lang })}
         styles={{
           control: (base) => ({
             ...base,

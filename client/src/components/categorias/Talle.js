@@ -6,30 +6,31 @@ import { useSelector } from 'react-redux';
 
 export function TalleSelect({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation();
+  const { t } = useTranslation('componentstatusmodal');  
+  const lang = languageReducer.language || 'en'; 
 
   const sizes = [
     {
       value: 'petit',
-      label: t('size.petit', { lng: languageReducer.language })
+      label: t('size.petit', { lng: lang })
     },
     {
       value: 'moyen',
-      label: t('size.moyen', { lng: languageReducer.language })
+      label: t('size.moyen', { lng: lang })
     },
     {
       value: 'grand',
-      label: t('size.grand', { lng: languageReducer.language })
+      label: t('size.grand', { lng: lang })
     },
     {
       value: 'tres_grand',
-      label: t('size.tres_grand', { lng: languageReducer.language })
+      label: t('size.tres_grand', { lng: lang })
     }
   ];
 
   return (
     <Form.Group controlId="numberInput" className="mb-3">
-      <Form.Label>{t('size.talle.label', { lng: languageReducer.language })}</Form.Label>
+      <Form.Label>{t('size.talle.label', { lng: lang })}</Form.Label>
       <Select
         options={sizes}
         onChange={(selectedOption) =>
@@ -43,7 +44,7 @@ export function TalleSelect({ handleChangeInput, postData }) {
         }
         name="talle"
         value={postData ? sizes.find(opt => opt.value === postData.talle) : null}
-        placeholder={t('size.placeholder', { lng: languageReducer.language })}
+        placeholder={t('size.placeholder', { lng: lang })}
       />
     </Form.Group>
   );

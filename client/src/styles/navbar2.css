@@ -1,0 +1,40 @@
+/* Alinea correctamente el avatar con el dropdown */
+.dropdown-avatar {
+    line-height: 0;
+    padding: 0;
+    display: flex;
+ 
+  }
+  
+  /* Asegúrate que el componente Avatar tenga un tamaño coherente */
+  .medium-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Opcional: oculta la flechita del dropdown si no te gusta */
+  #user-dropdown::after {
+    display: none !important;
+  }
+  /* Alinea correctamente el avatar con el dropdown */
+.dropdown-avatar {
+    line-height: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Tamaño del avatar */
+  .medium-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Elimina la flechita del dropdown (opcional) */
+ 
+ 
+  

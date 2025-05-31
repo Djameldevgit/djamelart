@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function PriceInput({ handleChangeInput, postData }) {
-  const { t } = useTranslation();
   const { languageReducer } = useSelector(state => state);
-
+  const { t } = useTranslation('componentstatusmodal');  
+  const lang = languageReducer.language || 'en'; 
   return (
     <Form.Group controlId="numberInput" className="mb-3">
       <Form.Label>
-        {t('price.labelsprice', { lng: languageReducer.language })}
+        {t('price.labelsprice', { lng: lang })}
       </Form.Label>
 
       <Form.Control
@@ -18,7 +18,7 @@ export function PriceInput({ handleChangeInput, postData }) {
         name="price"
         value={postData.price || ''}
         onChange={handleChangeInput}
-        placeholder={t('price.placeholders', { lng: languageReducer.language })}
+        placeholder={t('price.placeholders', { lng: lang })}
         step="0.01"
         min="0"
       />
