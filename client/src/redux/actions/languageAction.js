@@ -1,6 +1,4 @@
-import { putDataAPI } from "../../utils/fetchData";
-
-// Constantes de tipos de acción
+import axios from 'axios'
 export const CHANGE_LANGUAGE = {
   EN: 'EN',
   FR: 'FR',
@@ -8,106 +6,90 @@ export const CHANGE_LANGUAGE = {
   ES: 'ES',
   RU: 'RU',
   KAB: 'KAB',
-  KAB: 'CHINO',
+  CHINO: 'CHINO', // Estaba mal duplicado como KAB
   SYNC: 'SYNC'
 };
 
+// Función auxiliar para enviar petición sin autenticación
+const sendLanguageChange = async (endpoint, language) => {
+  const res = await axios.put(`/api/language/${endpoint}`, { language });
+  return res.data;
+};
+
 // Acción para inglés
-export const inglishLanguage = (language, auth) => async (dispatch) => {
+export const inglishLanguage = (language) => async (dispatch) => {
   try {
-    const res = await putDataAPI('language/ingles', { language }, auth.token);
-    dispatch({
-      type: CHANGE_LANGUAGE.EN,
-      payload: { language, res: res.data },
-    });
+    const res = await sendLanguageChange('ingles', language);
+    dispatch({ type: CHANGE_LANGUAGE.EN, payload: { language, res } });
   } catch (error) {
     console.error(error);
   }
 };
 
 // Acción para francés
-export const franchLanguage = (language, auth) => async (dispatch) => {
+export const franchLanguage = (language) => async (dispatch) => {
   try {
-    const res = await putDataAPI('language/frances', { language }, auth.token);
-    dispatch({
-      type: CHANGE_LANGUAGE.FR,
-      payload: { language, res: res.data },
-    });
+    const res = await sendLanguageChange('frances', language);
+    dispatch({ type: CHANGE_LANGUAGE.FR, payload: { language, res } });
   } catch (error) {
     console.error(error);
   }
 };
 
 // Acción para árabe
-export const arabLanguage = (language, auth) => async (dispatch) => {
+export const arabLanguage = (language) => async (dispatch) => {
   try {
-    const res = await putDataAPI('language/arabe', { language }, auth.token);
-    dispatch({
-      type: CHANGE_LANGUAGE.AR,
-      payload: { language, res: res.data },
-    });
+    const res = await sendLanguageChange('arabe', language);
+    dispatch({ type: CHANGE_LANGUAGE.AR, payload: { language, res } });
   } catch (error) {
     console.error(error);
   }
 };
 
 // Acción para español
-export const spanishLanguage = (language, auth) => async (dispatch) => {
+export const spanishLanguage = (language) => async (dispatch) => {
   try {
-    const res = await putDataAPI('language/espanol', { language }, auth.token);
-    dispatch({
-      type: CHANGE_LANGUAGE.ES,
-      payload: { language, res: res.data },
-    });
+    const res = await sendLanguageChange('espanol', language);
+    dispatch({ type: CHANGE_LANGUAGE.ES, payload: { language, res } });
   } catch (error) {
     console.error(error);
   }
 };
 
 // Acción para ruso
-export const russianLanguage = (language, auth) => async (dispatch) => {
+export const russianLanguage = (language) => async (dispatch) => {
   try {
-    const res = await putDataAPI('language/ruso', { language }, auth.token);
-    dispatch({
-      type: CHANGE_LANGUAGE.RU,
-      payload: { language, res: res.data },
-    });
+    const res = await sendLanguageChange('ruso', language);
+    dispatch({ type: CHANGE_LANGUAGE.RU, payload: { language, res } });
   } catch (error) {
     console.error(error);
   }
 };
 
 // Acción para cabilio (Kabyle)
-export const kabyleLanguage = (language, auth) => async (dispatch) => {
+export const kabyleLanguage = (language) => async (dispatch) => {
   try {
-    const res = await putDataAPI('language/kabyle', { language }, auth.token);
-    dispatch({
-      type: CHANGE_LANGUAGE.KAB,
-      payload: { language, res: res.data },
-    });
+    const res = await sendLanguageChange('kabyle', language);
+    dispatch({ type: CHANGE_LANGUAGE.KAB, payload: { language, res } });
   } catch (error) {
     console.error(error);
   }
 };
 
-// Acción de sincronización general (fallback)
- 
-export const chinoLanguage = (language, auth) => async (dispatch) => {
+// Acción para chino
+export const chinoLanguage = (language) => async (dispatch) => {
   try {
-    const res = await putDataAPI('language/chino', { language }, auth.token);
-    dispatch({
-      type: CHANGE_LANGUAGE.CHINO,
-      payload: { language, res: res.data },
-    });
+    const res = await sendLanguageChange('chino', language);
+    dispatch({ type: CHANGE_LANGUAGE.CHINO, payload: { language, res } });
   } catch (error) {
     console.error(error);
   }
 };
 
-export const synchronizeLanguage = (language, auth) => async dispatch => {
+export const synchronizeLanguage = (language) => async dispatch => {
   try {
     await axios.patch('language', { language }, {
-      headers: { Authorization: auth.token }
+     
     });
 
     dispatch({ type: 'SET_LANGUAGE', payload: language });

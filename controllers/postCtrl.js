@@ -22,7 +22,7 @@ const postCtrl = {
     crearPostPendiente: async (req, res) => {
         try {
             const { postData, images } = req.body
-            const { category, subcategory, wilaya,description, commune, envolverobra,title,suporte,derechoautor, devisvente ,disponibilidad ,
+            const { category, subcategory, wilaya,description, commune, envolverobra,title,support,derechoautor, devisvente ,disponibilidad ,
                 measurementValue, venteOption, price, negociable, artStyle, talle, theme, measurementUnit,
             } = postData || {};
 
@@ -30,7 +30,7 @@ const postCtrl = {
                 return res.status(400).json({ msg: "Please add your photo." })
 
             const newPost = new Posts({
-                category, subcategory, wilaya,description, commune, envolverobra,title,suporte,derechoautor, devisvente ,disponibilidad ,
+                category, subcategory, wilaya,description, commune, envolverobra,title,support,derechoautor, devisvente ,disponibilidad ,
                 measurementValue, venteOption, price, negociable, artStyle, talle, theme, measurementUnit, images,
                 user: req.user._id,
             })
@@ -153,13 +153,13 @@ const postCtrl = {
     },
     updatePost: async (req, res) => {
         try {
-            const { category, subcategory, wilaya,description, commune, envolverobra,title,suporte,derechoautor, devisvente ,disponibilidad ,
+            const { category, subcategory, wilaya,description, commune, envolverobra,title,support,derechoautor, devisvente ,disponibilidad ,
                 measurementValue, venteOption, price, negociable, artStyle, talle, theme, measurementUnit, images
 
             } = req.body
 
             const post = await Posts.findOneAndUpdate({ _id: req.params.id }, {
-                category, subcategory, wilaya,description, commune, envolverobra,title,suporte,derechoautor, devisvente ,disponibilidad ,
+                category, subcategory, wilaya,description, commune, envolverobra,title,support,derechoautor, devisvente ,disponibilidad ,
                 measurementValue, venteOption, price, negociable, artStyle, talle, theme, measurementUnit,
                 images
 
@@ -177,7 +177,7 @@ const postCtrl = {
                 msg: "Updated Post!",
                 newPost: {
                     ...post._doc,
-                    category, subcategory, wilaya, description, commune, envolverobra,title,suporte,derechoautor, devisvente ,disponibilidad ,
+                    category, subcategory, wilaya, description, commune, envolverobra,title,support,derechoautor, devisvente ,disponibilidad ,
                     measurementValue, venteOption, price, negociable,   artStyle, talle, theme, measurementUnit, images
                 }
             })

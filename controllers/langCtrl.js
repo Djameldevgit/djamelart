@@ -1,156 +1,92 @@
-const Users = require('../models/userModel')
+const Users = require('../models/userModel');
 
- const langCtrl = {
- 
+const langCtrl = {
   updateUserLanguageToSpanish: async (req, res) => {
     const language = 'es';
-  
-    try {
-      const result = await Users.updateOne({ _id: req.user._id }, { language });
-  
-      if (result.modifiedCount === 0) {
-        return res.status(404).json({ message: 'No se encontró el usuario o el idioma ya estaba en español' });
-      }
-  
-      res.status(200).json({ message: 'Idioma actualizado a español' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error al actualizar el idioma del usuario' });
-    }
+    await handleLanguageUpdate(req, res, language, 'Idioma actualizado a español');
   },
-  
+
   updateUserLanguageToRussian: async (req, res) => {
     const language = 'ru';
-  
-    try {
-      const result = await Users.updateOne({ _id: req.user._id }, { language });
-  
-      if (result.modifiedCount === 0) {
-        return res.status(404).json({ message: 'No se encontró el usuario o el idioma ya estaba en ruso' });
-      }
-  
-      res.status(200).json({ message: 'Idioma actualizado a ruso' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error al actualizar el idioma del usuario' });
-    }
+    await handleLanguageUpdate(req, res, language, 'Idioma actualizado a ruso');
   },
-  
+
   updateUserLanguageToKabyle: async (req, res) => {
     const language = 'kab';
-  
-    try {
-      const result = await Users.updateOne({ _id: req.user._id }, { language });
-  
-      if (result.modifiedCount === 0) {
-        return res.status(404).json({ message: 'No se encontró el usuario o el idioma ya estaba en cabilio' });
-      }
-  
-      res.status(200).json({ message: 'Idioma actualizado a cabilio (kabyle)' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error al actualizar el idioma del usuario' });
-    }
+    await handleLanguageUpdate(req, res, language, 'Idioma actualizado a cabilio (kabyle)');
   },
-  
+
   updateUserLanguageChino: async (req, res) => {
     const language = 'chino';
-  
-    try {
-      const result = await Users.updateOne({ _id: req.user._id }, { language });
-  
-      if (result.modifiedCount === 0) {
-        return res.status(404).json({ message: 'No se encontró el usuario o el idioma ya estaba en cabilio' });
-      }
-  
-      res.status(200).json({ message: 'Idioma actualizado a cabilio (kabyle)' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error al actualizar el idioma del usuario' });
-    }
+    await handleLanguageUpdate(req, res, language, 'Idioma actualizado a chino');
   },
-  
 
-// Actualiza el idioma del usuario en la base de datos
-updateUserLanguage: async (req, res) => {
-  const { language } = req.body;
-  try {
-    const user = await Users.findById(req.user._id);
-    if (!user) return res.status(404).json({ message: req.__('user_not_found') });
-
-    user.language = language;
-    await user.save();
-
-    // Opcional: Guardar cookie con preferencia de idioma
-    res.cookie('lang', language, { maxAge: 900000, httpOnly: true });
-
-    res.status(200).json({ message: req.__('language_updated') });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: req.__('server_error') });
-  }
-},
-
- 
- updateUserLanguageToEnglish : async (req, res) => {
-    
+  updateUserLanguageToEnglish: async (req, res) => {
     const language = 'en';
-  
-    try {
-      await Users.updateOne({ _id: req.user._id }, { language });
-      res.status(200).json({ message: 'Idioma actualizado a inglés' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error al actualizar el idioma del usuario' });
-    }
-    
+    await handleLanguageUpdate(req, res, language, 'Idioma actualizado a inglés');
   },
-  
+
   updateUserLanguageToFrench: async (req, res) => {
     const language = 'fr';
-
-    try {
-     
-        const result = await Users.updateOne({ _id: req.user._id }, { language });
-
-           if (result.modifiedCount === 0) {
-              return res.status(404).json({ message: 'Usuario no encontrado o idioma ya en francés' });
-        }
-
-        res.status(200).json({ message: 'Idioma actualizado a francés' });
-    } catch (error) {
-        console.error('❌ Error en el controlador:', error);
-        res.status(500).json({ message: 'Error interno en el servidor' });
-    }
-},
-
-
-  
- 
-  // updateUserLanguageToArabic
-  updateUserLanguageToArabic: async (req, res) => {
-    const language = 'ar';
-  
-    try {
-        const result = await Users.updateOne({ _id: req.user._id }, { language });
-  
-        if (result.modifiedCount === 0) {
-            return res.status(404).json({ message: 'No se encontró el usuario o el idioma ya estaba en árabe' });
-        }
-  
-        res.status(200).json({ message: 'Idioma actualizado a árabe' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error al actualizar el idioma del usuario' });
-    }
+    await handleLanguageUpdate(req, res, language, 'Idioma actualizado a francés');
   },
 
+  updateUserLanguageToArabic: async (req, res) => {
+    const language = 'ar';
+    await handleLanguageUpdate(req, res, language, 'Idioma actualizado a árabe');
+  },
 
+  updateUserLanguage: async (req, res) => {
+    const { language } = req.body;
+    if (!language) return res.status(400).json({ message: 'Idioma no especificado' });
 
+    await handleLanguageUpdate(req, res, language, 'Idioma actualizado');
+  },
 
+  setLanguagePublic: async (req, res) => {
+    const { language } = req.body;
+    if (!language) return res.status(400).json({ message: 'Idioma no especificado' });
 
+    try {
+      // Solo guarda la cookie sin tocar la base de datos
+      res.cookie('lang', language, {
+        maxAge: 1000 * 60 * 60 * 24 * 30, // 30 días
+        httpOnly: true,
+        sameSite: 'strict'
+      });
 
+      res.status(200).json({ message: 'Idioma guardado para visitante' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error al guardar idioma para visitante' });
+    }
+  }
+};
 
+// 👉 Función compartida para evitar duplicación de lógica
+const handleLanguageUpdate = async (req, res, language, successMsg) => {
+  try {
+    // Guardar cookie para todos los usuarios (autenticados o no)
+    res.cookie('lang', language, {
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 días
+      httpOnly: true,
+      sameSite: 'strict'
+    });
 
- }
- module.exports = langCtrl
+    // Si el usuario está autenticado, actualizar en la base de datos
+    if (req.user && req.user._id) {
+      const result = await Users.updateOne({ _id: req.user._id }, { language });
+
+      if (result.modifiedCount === 0) {
+        return res.status(404).json({ message: 'Usuario no encontrado o idioma ya actualizado' });
+      }
+    }
+
+    return res.status(200).json({ message: successMsg });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Error al actualizar el idioma' });
+  }
+};
+
+module.exports = langCtrl;

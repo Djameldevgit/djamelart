@@ -1,16 +1,19 @@
 const router = require('express').Router();
 const langCtrl = require('../controllers/langCtrl');
-const auth = require('../middleware/auth');
 
-router.put('/language', auth, langCtrl.updateUserLanguage);
+// Ruta pública (sin autenticación) para visitantes
+router.post('/language/public', langCtrl.setLanguagePublic);
 
-router.put('/language/ingles', auth, langCtrl.updateUserLanguageToEnglish);
-router.put('/language/frances', auth, langCtrl.updateUserLanguageToFrench);
-router.put('/language/arabe', auth, langCtrl.updateUserLanguageToArabic);
+// Rutas para usuarios autenticados o no (guardan cookie + DB si autenticado)
+router.put('/language', langCtrl.updateUserLanguage);
 
-// Nuevas rutas agregadas para los otros idiomas
-router.put('/language/espanol', auth, langCtrl.updateUserLanguageToSpanish);
-router.put('/language/ruso', auth, langCtrl.updateUserLanguageToRussian);
-router.put('/language/kabyle', auth, langCtrl.updateUserLanguageToKabyle);
-router.put('/language/chino', auth, langCtrl.updateUserLanguageChino);
+router.put('/language/ingles', langCtrl.updateUserLanguageToEnglish);
+router.put('/language/frances', langCtrl.updateUserLanguageToFrench);
+router.put('/language/arabe', langCtrl.updateUserLanguageToArabic);
+
+router.put('/language/espanol', langCtrl.updateUserLanguageToSpanish);
+router.put('/language/ruso', langCtrl.updateUserLanguageToRussian);
+router.put('/language/kabyle', langCtrl.updateUserLanguageToKabyle);
+router.put('/language/chino', langCtrl.updateUserLanguageChino);
+
 module.exports = router;

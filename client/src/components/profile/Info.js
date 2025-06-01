@@ -5,13 +5,18 @@ import FollowBtn from '../FollowBtn'
 import Followers from './Followers'
 import Following from './Following'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
+import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 const Info = ({id, auth, profile, dispatch}) => {
     const [userData, setUserData] = useState([])
     const [onEdit, setOnEdit] = useState(false)
-
     const [showFollowers, setShowFollowers] = useState(false)
     const [showFollowing, setShowFollowing] = useState(false)
+    
+    const { languageReducer } = useSelector(state => state)
+    const { t } = useTranslation('profile')
+    const lang = languageReducer?.language || 'en'
 
     useEffect(() => {
         if(id === auth.user._id){
@@ -22,7 +27,6 @@ const Info = ({id, auth, profile, dispatch}) => {
         }
     }, [id, auth, dispatch, profile.users])
 
-
     useEffect(() => {
         if(showFollowers || showFollowing || onEdit){
             dispatch({ type: GLOBALTYPES.MODAL, payload: true})
@@ -30,70 +34,51 @@ const Info = ({id, auth, profile, dispatch}) => {
             dispatch({ type: GLOBALTYPES.MODAL, payload: false})
         }
     },[showFollowers, showFollowing, onEdit, dispatch])
-    
 
     return (
         <div className="info">
-            {
-                userData.map(user => (
-                    <div className="info_container" key={user._id}>
-                        <Avatar src={user.avatar} size="supper-avatar" />
+            {userData.map(user => (
+                <div className="info_container" key={user._id}>
+                    <Avatar src={user.avatar} size="supper-avatar" />
 
-                        <div className="info_content">
-                            <div className="info_content_title">
-                                <h2>{user.username}</h2>
-                                {
-                                    user._id === auth.user._id
-                                    ?  <button className="btn btn-outline-info"
+                    <div className="info_content">
+                        <div className="info_content_title">
+                            <h2>{user.username}</h2>
+                            {
+                                user._id === auth.user._id
+                                ? <button className="btn btn-outline-info"
                                     onClick={() => setOnEdit(true)}>
-                                        Edit Profile
-                                    </button>
-                                    
-                                    : <FollowBtn user={user} />
-                                }
-                               
-                                
-                            </div>
+                                    {t('editProfile', { lng: lang })}
+                                </button>
+                                : <FollowBtn user={user} />
+                            }
+                        </div>
 
-                            <div className="follow_btn">
-                                <span className="mr-4" onClick={() => setShowFollowers(true)}>
-                                    {user.followers.length} Followers
-                                </span>
-                                <span className="ml-4" onClick={() => setShowFollowing(true)}>
-                                    {user.following.length} Following
-                                </span>
-                            </div>
+                        <div className="follow_btn">
+                            <span className="mr-4" onClick={() => setShowFollowers(true)}>
+                                {user.followers.length} {t('followers', { lng: lang })}
+                            </span>
+                            <span className="ml-4" onClick={() => setShowFollowing(true)}>
+                                {user.following.length} {t('following', { lng: lang })}
+                            </span>
+                        </div>
 
-                            <h6>{user.username} <span className="text-danger">{user.mobile}</span></h6>
-                            <p className="m-0">{user.address}</p>
-                            <h6 className="m-0">{user.email}</h6>
+                        <h6>{user.username} {user.mobile && <span className="text-danger">{user.mobile}</span>}</h6>
+                        {user.address && <p className="m-0">{user.address}</p>}
+                        {user.email && <h6 className="m-0">{user.email}</h6>}
+                        {user.website && (
                             <a href={user.website} target="_blank" rel="noreferrer">
                                 {user.website}
                             </a>
-                            <p>{user.story}</p>
-                        </div>
-
-                        {
-                            onEdit && <EditProfile setOnEdit={setOnEdit} />
-                        }
-
-                        {
-                            showFollowers &&
-                            <Followers 
-                            users={user.followers} 
-                            setShowFollowers={setShowFollowers} 
-                            />
-                        }
-                        {
-                            showFollowing &&
-                            <Following 
-                            users={user.following} 
-                            setShowFollowing={setShowFollowing} 
-                            />
-                        }
+                        )}
+                        {user.story && <p>{user.story}</p>}
                     </div>
-                ))
-            }
+
+                    {onEdit && <EditProfile setOnEdit={setOnEdit} />}
+                    {showFollowers && <Followers users={user.followers} setShowFollowers={setShowFollowers} />}
+                    {showFollowing && <Following users={user.following} setShowFollowing={setShowFollowing} />}
+                </div>
+            ))}
         </div>
     )
 }

@@ -12,7 +12,7 @@ const postSchema = new mongoose.Schema({
   derechoautor: {
     type: String,
   },
-  suporte: {
+  support: {
     type: String,
   },
 

@@ -3,32 +3,31 @@ import { useSelector, useDispatch } from 'react-redux'
 import { checkImage } from '../../utils/imageUpload'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import { updateProfileUser } from '../../redux/actions/profileAction'
+import { useTranslation } from 'react-i18next'
 
 const EditProfile = ({setOnEdit}) => {
     const initState = {
-         mobile: '', address: '', website: '', story: '' 
+        mobile: '', address: '', website: '', story: '' 
     }
     const [userData, setUserData] = useState(initState)
-    const {   mobile, address, website, story  } = userData
-
+    const { mobile, address, website, story } = userData
     const [avatar, setAvatar] = useState('')
 
-    const { auth, theme } = useSelector(state => state)
+    const { auth, theme, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
+    const { t } = useTranslation('profile')
+    const lang = languageReducer?.language || 'en'
 
     useEffect(() => {
         setUserData(auth.user)
     }, [auth.user])
 
-
     const changeAvatar = (e) => {
         const file = e.target.files[0]
-
         const err = checkImage(file)
         if(err) return dispatch({
             type: GLOBALTYPES.ALERT, payload: {error: err}
         })
-
         setAvatar(file)
     }
 
@@ -46,7 +45,7 @@ const EditProfile = ({setOnEdit}) => {
         <div className="edit_profile">
             <button className="btn btn-danger btn_close"
             onClick={() => setOnEdit(false)}>
-                Close
+                {t('close', { lng: lang })}
             </button>
 
             <form onSubmit={handleSubmit}>
@@ -55,45 +54,43 @@ const EditProfile = ({setOnEdit}) => {
                     alt="avatar" style={{filter: theme ? 'invert(1)' : 'invert(0)'}} />
                     <span>
                         <i className="fas fa-camera" />
-                        <p>Change</p>
+                        <p>{t('change', { lng: lang })}</p>
                         <input type="file" name="file" id="file_up"
                         accept="image/*" onChange={changeAvatar} />
                     </span>
                 </div>
 
-                
-
                 <div className="form-group">
-                    <label htmlFor="mobile">Mobile</label>
-                    <input type="text" name="mobile" value={mobile}
+                    <label htmlFor="mobile">{t('mobile', { lng: lang })}</label>
+                    <input type="text" name="mobile" value={mobile || ''}
                     className="form-control" onChange={handleInput} />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="address">Address</label>
-                    <input type="text" name="address" value={address}
+                    <label htmlFor="address">{t('address', { lng: lang })}</label>
+                    <input type="text" name="address" value={address || ''}
                     className="form-control" onChange={handleInput} />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="website">Website</label>
-                    <input type="text" name="website" value={website}
+                    <label htmlFor="website">{t('website', { lng: lang })}</label>
+                    <input type="text" name="website" value={website || ''}
                     className="form-control" onChange={handleInput} />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="story">Story</label>
-                    <textarea name="story" value={story} cols="30" rows="4"
+                    <label htmlFor="story">{t('story', { lng: lang })}</label>
+                    <textarea name="story" value={story || ''} cols="30" rows="4"
                     className="form-control" onChange={handleInput} />
 
                     <small className="text-danger d-block text-right">
-                        {story.length}/200
+                        {story?.length || 0}/200
                     </small>
                 </div>
 
-               
-
-                <button className="btn btn-info w-100" type="submit">Save</button>
+                <button className="btn btn-info w-100" type="submit">
+                    {t('save', { lng: lang })}
+                </button>
             </form>
         </div>
     )

@@ -113,7 +113,7 @@ export const updatePost = ({ postData, images,  auth, status }) => async (dispat
         && console.log("status.wilaya:", status.wilaya, "postData.wilaya:", postData.wilaya)
         && console.log("status.commune:", status.commune, "postData.commune:", postData.commune)
          && status.envolverobra === postData.envolverobra
-         && status.suporte === postData.suporte
+         && status.support === postData.support
         && status.measurementValue === postData.measurementValue
         && status.negociable === postData.negociable
         && status.venteOption === postData.venteOption

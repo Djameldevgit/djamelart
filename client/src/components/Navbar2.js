@@ -1,11 +1,10 @@
 import {
   Navbar,
-  Nav,
+  Nav,Card,
   Container,
   Offcanvas,
   NavDropdown
 } from 'react-bootstrap';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { GLOBALTYPES } from '../redux/actions/globalTypes';
 import { logout } from '../redux/actions/authAction';
@@ -13,11 +12,13 @@ import { Link } from 'react-router-dom';
 import Avatar from './Avatar';
 import { useState } from 'react';
 import LanguageSelectorpc from './LanguageSelectorpc';
+import { useTranslation } from 'react-i18next';
 
 const Navbar2 = () => {
   const dispatch = useDispatch();
-  const { auth, theme } = useSelector(state => state);
-
+  const { auth, theme, languageReducer } = useSelector(state => state);
+  const { t } = useTranslation(['navbar']);
+  const lang = languageReducer?.language || 'fr';
   const [showDrawer, setShowDrawer] = useState(false);
 
   const handleCloseDrawer = () => setShowDrawer(false);
@@ -43,7 +44,7 @@ const Navbar2 = () => {
       <Container fluid className="px-3 px-lg-4">
         <div className="d-flex w-100 align-items-center justify-content-between">
           <Navbar.Brand href="/" className="py-2 me-0 me-lg-3">
-            Mi Aplicación
+          <Card.Title> {t('navbar:appName', { lng: lang })}</Card.Title>    
           </Navbar.Brand>
 
           <div className="d-flex align-items-center">
@@ -66,20 +67,19 @@ const Navbar2 = () => {
             height: 'calc(100vh - 56px)'
           }}
         > 
-        <Offcanvas.Header closeButton  >
-              {/* Puedes dejar el título vacío o agregar algo si quieres */}
-            </Offcanvas.Header>
+          <Offcanvas.Header closeButton>
+            {/* Puedes dejar el título vacío o agregar algo si quieres */}
+          </Offcanvas.Header>
 
           <Offcanvas.Body className="position-relative">
+            {/* Mostrar siempre el selector de idioma en pantallas grandes */}
+            <div className="d-none d-lg-block mb-3">
+              <LanguageSelectorpc />
+            </div>
 
-           
             <Nav className="flex-grow-1 justify-content-end mt-4">
               {auth.user ? (
                 <>
-                  <div className="d-none d-lg-block">
-                    <LanguageSelectorpc />
-                  </div>
-
                   <NavDropdown
                     id="user-dropdown"
                     align="end"
@@ -90,53 +90,53 @@ const Navbar2 = () => {
                     }
                   >
                     <NavDropdown.Item onClick={openStatusModal}>
-                      Ajouter un annonce
+                      {t('navbar:addPost', { lng: lang })}
                     </NavDropdown.Item>
 
                     <NavDropdown.Item as={Link} to="/informacionaplicacion" onClick={handleCloseDrawer}>
-                      Info aplicación
+                      {t('navbar:appInfo', { lng: lang })}
                     </NavDropdown.Item>
 
                     <NavDropdown.Item as={Link} to="/message" onClick={handleCloseDrawer}>
-                      Chat administración
+                      {t('navbar:adminChat', { lng: lang })}
                     </NavDropdown.Item>
 
                     <NavDropdown.Item as={Link} to="/administration/roles" onClick={handleCloseDrawer}>
-                      Roles
+                      {t('navbar:roles', { lng: lang })}
                     </NavDropdown.Item>
 
                     {auth.user.role === 'admin' && (
                       <>
                         <NavDropdown.Item as={Link} to="/administration/users/reportuser" onClick={handleCloseDrawer}>
-                          Reports user
+                          {t('navbar:reportedUsers', { lng: lang })}
                         </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/administration/homepostspendientes" onClick={handleCloseDrawer}>
-                          Posts pendientes
+                          {t('navbar:pendingPosts', { lng: lang })}
                         </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/administration/usersaction" onClick={handleCloseDrawer}>
-                          Usuarios acción
+                          {t('navbar:userActions', { lng: lang })}
                         </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/administration/usersedicion" onClick={handleCloseDrawer}>
-                          Edición de usuarios
+                          {t('navbar:userEditing', { lng: lang })}
                         </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/administration/listadeusuariosbloqueadoss" onClick={handleCloseDrawer}>
-                          Usuarios bloqueados
+                          {t('navbar:blockedUsers', { lng: lang })}
                         </NavDropdown.Item>
                       </>
                     )}
 
                     <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`} onClick={handleCloseDrawer}>
-                      Perfil
+                      {t('navbar:profile', { lng: lang })}
                     </NavDropdown.Item>
 
                     <NavDropdown.Item onClick={toggleTheme}>
-                      {theme ? 'Light mode' : 'Dark mode'}
+                      {theme ? t('navbar:lightMode', { lng: lang }) : t('navbar:darkMode', { lng: lang })}
                     </NavDropdown.Item>
 
                     <NavDropdown.Divider />
 
                     <NavDropdown.Item onClick={handleLogout}>
-                      Desconexión
+                      {t('navbar:logout', { lng: lang })}
                     </NavDropdown.Item>
                   </NavDropdown>
                 </>
@@ -144,16 +144,16 @@ const Navbar2 = () => {
                 <NavDropdown
                   align="end"
                   id="guest-dropdown"
-                  title={<span className="text-white">Cuenta</span>}
+                  title={<span className="text-white">{t('navbar:account', { lng: lang })}</span>}
                 >
                   <NavDropdown.Item as={Link} to="/informacionaplicacion" onClick={handleCloseDrawer}>
-                    Info aplicación
+                    {t('navbar:appInfo', { lng: lang })}
                   </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/login" onClick={handleCloseDrawer}>
-                    Se connecter
+                    {t('navbar:login', { lng: lang })}
                   </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/register" onClick={handleCloseDrawer}>
-                    S'inscrire
+                    {t('navbar:register', { lng: lang })}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}

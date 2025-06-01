@@ -4,107 +4,86 @@ import { useCookies } from 'react-cookie';
 import { useTranslation } from 'react-i18next';
 import * as languageActions from '../redux/actions/languageAction';
 import { Dropdown, ButtonGroup } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 function LanguageSelectorandroid() {
   const dispatch = useDispatch();
-  const { auth, languageReducer } = useSelector(state => state);
-  const { t } = useTranslation();
+  const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('language');
   const [cookies, setCookie] = useCookies(['language']);
+  const lang = languageReducer?.language || 'fr';
 
   const handleLanguageChange = useCallback((language) => {
-    if (!auth || !auth.token) return;
-
     switch (language) {
       case 'en':
-        dispatch(languageActions.inglishLanguage(language, auth));
+        dispatch(languageActions.inglishLanguage(language));
         break;
       case 'fr':
-        dispatch(languageActions.franchLanguage(language, auth));
+        dispatch(languageActions.franchLanguage(language));
         break;
       case 'ar':
-        dispatch(languageActions.arabLanguage(language, auth));
-        break;
       case 'es':
-        dispatch(languageActions.synchronizeLanguage(language, auth));
-        break;
       case 'ru':
-        dispatch(languageActions.synchronizeLanguage(language, auth));
-        break;
       case 'kab':
-        dispatch(languageActions.synchronizeLanguage(language, auth));
+      case 'chino':
+        dispatch(languageActions.synchronizeLanguage(language));
         break;
-        case 'chino':
-          dispatch(languageActions.synchronizeLanguage(language, auth));
-          break;
       default:
-        dispatch(languageActions.synchronizeLanguage(language, auth));
+        dispatch(languageActions.synchronizeLanguage(language));
         break;
     }
-
     setCookie('language', language, { path: '/' });
-  }, [auth, dispatch, setCookie]);
+  }, [dispatch, setCookie]);
 
   useEffect(() => {
     const defaultLanguage = cookies.language || 'fr';
     handleLanguageChange(defaultLanguage);
   }, [cookies.language, handleLanguageChange]);
 
+  const flagPath = (lang) => `/flags/${lang}.png`;
+
+  const flagStyle = {
+    width: '20px',
+    height: '14px',
+    objectFit: 'cover',
+    marginRight: '8px',
+    borderRadius: '2px',
+    verticalAlign: 'middle'
+  };
+
+  const languageNames = {
+    en: t('language.en', { lng: lang }),
+    fr: t('language.fr', { lng: lang }),
+    ar: t('language.ar', { lng: lang }),
+    es: t('language.es', { lng: lang }),
+    ru: t('language.ru', { lng: lang }),
+    kab: t('language.kab', { lng: lang }),
+    chino: t('language.chino', { lng: lang })
+  };
+
   return (
     <div className="d-block d-md-none" style={{ width: '100%', padding: 0, margin: 0 }}>
-      <div
-        style={{
-          display: 'flex',
-          width: '100%',
-          margin: 0,
-          padding: 0,
-          gap: '3px'
-        }}
-      >
-        {/* Columna izquierda: Logo */}
-        <div style={{ flex: '1 1 0', margin: 0, padding: 0 }}>
-          <img
-            src="/icon-web-01.png"
-            alt="Art Painting - Tienda de arte"
-            style={{
-              width: '100%',
-              maxHeight: '40px',
-              objectFit: 'contain',
-              display: 'block'
-            }}
-          />
-        </div>
+      <div style={{ display: 'flex', width: '100%', gap: '3px' }}>
+      
 
-        {/* Columna derecha: Dropdown */}
-        <div style={{ flex: '1 1 0', margin: 0, padding: 0 }}>
+        <h3 className='ml-4 mt-2' style={{ flex: '1 1 0' }} >
+        {t('Tassili', { lng: lang })}
+        </h3>
+
+        {/* Selector de idioma */}
+        <div style={{ flex: '1 1 0' }}>
           <Dropdown as={ButtonGroup} className="w-100">
             <Dropdown.Toggle variant="secondary" id="dropdown-language" className="w-100">
-              🌐 {t(languageReducer.language.toUpperCase())}
+              <img src={flagPath(lang)} alt="flag" style={flagStyle} />
+              {languageNames[lang]}
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="w-100">
-              <Dropdown.Item onClick={() => handleLanguageChange('ar')}>
-                {t('AR', { lng: languageReducer.language })}
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleLanguageChange('fr')}>
-                {t('FR', { lng: languageReducer.language })}
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleLanguageChange('en')}>
-                {t('EN', { lng: languageReducer.language })}
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleLanguageChange('es')}>
-                {t('ES', { lng: languageReducer.language })}
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleLanguageChange('ru')}>
-                {t('RU', { lng: languageReducer.language })}
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleLanguageChange('kab')}>
-                {t('KAB', { lng: languageReducer.language })}
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleLanguageChange('chino')}>
-                {t('CHINO', { lng: languageReducer.language })}
-              </Dropdown.Item>
-
+              {['ar', 'fr', 'en', 'es', 'ru', 'kab', 'chino'].map((langCode) => (
+                <Dropdown.Item key={langCode} onClick={() => handleLanguageChange(langCode)}>
+                  <img src={flagPath(langCode)} alt={`${langCode} flag`} style={flagStyle} />
+                  {languageNames[langCode]}
+                </Dropdown.Item>
+              ))}
             </Dropdown.Menu>
           </Dropdown>
         </div>

@@ -1,11 +1,13 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteComment } from '../../../redux/actions/commentAction'
+import { useTranslation } from 'react-i18next'
 
 const CommentMenu = ({post, comment, setOnEdit}) => {
-
-    const { auth, socket } = useSelector(state => state)
+    const { auth, socket, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
+    const { t } = useTranslation('home')
+    const lang = languageReducer?.language || 'en'
 
     const handleRemove = () => {
         if(post.user._id === auth.user._id || comment.user._id === auth.user._id){
@@ -17,15 +19,14 @@ const CommentMenu = ({post, comment, setOnEdit}) => {
         return(
             <>
                 <div className="dropdown-item" onClick={() => setOnEdit(true)}>
-                    <span className="material-icons">create</span> Edit
+                    <span className="material-icons">create</span> {t('edit', { lng: lang })}
                 </div>
                 <div className="dropdown-item" onClick={handleRemove}>
-                    <span className="material-icons">delete_outline</span> Remove
+                    <span className="material-icons">delete_outline</span> {t('remove', { lng: lang })}
                 </div>
             </>
         )
     }
-
 
     return (
         <div className="menu">
@@ -42,15 +43,13 @@ const CommentMenu = ({post, comment, setOnEdit}) => {
                             ? comment.user._id === auth.user._id
                                 ? MenuItem()
                                 : <div className="dropdown-item" onClick={handleRemove}>
-                                    <span className="material-icons">delete_outline</span> Remove
-                                </div>
+                                    <span className="material-icons">delete_outline</span> {t('remove', { lng: lang })}
+                                  </div>
                             : comment.user._id === auth.user._id && MenuItem()
                         }
                     </div>
-
                 </div>
             }
-            
         </div>
     )
 }

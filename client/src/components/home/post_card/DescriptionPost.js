@@ -39,11 +39,11 @@ const DescriptionPost = ({ post }) => {
             <span className="metadata-value">{t(post.subcategory, { lng: lang })}</span>
           </div>
         )}
-        {post.suporte && (
+        {post.support && (
           <div className="metadata-item">
             <i className="fas fa-brush"></i>
             <span className="metadata-label">{t('support', { lng: lang })}:</span>
-            <span className="metadata-value">{post.suporte}</span>
+            <span className="metadata-value">{post.support}</span>
           </div>
         )}
         {post.artStyle && (

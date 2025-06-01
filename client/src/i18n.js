@@ -1,6 +1,44 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+
+
+import arLanguage from './locales/ar/language.json';
+import chLanguage from './locales/ch/language.json';
+import enLanguage from './locales/en/language.json';
+import esLanguage from './locales/es/language.json';
+import frLanguage from './locales/fr/language.json';
+import kaLanguage from './locales/ka/language.json';
+import ruLanguage from './locales/ru/language.json';
+
+
+
+import arProfile from './locales/ar/profile.json';
+import chProfile from './locales/ch/profile.json';
+import enProfile from './locales/en/profile.json';
+import esProfile from './locales/es/profile.json';
+import frProfile from './locales/fr/profile.json';
+import kaProfile from './locales/ka/profile.json';
+import ruProfile from './locales/ru/profile.json';
+
+
+import arAuth from './locales/ar/auth.json';
+import chAuth from './locales/ch/auth.json';
+import enAuth from './locales/en/auth.json';
+import esAuth from './locales/es/auth.json';
+import frAuth from './locales/fr/auth.json';
+import kaAuth from './locales/ka/auth.json';
+import ruAuth from './locales/ru/auth.json';
+
+
+import arHome from './locales/ar/home.json';
+import chHome from './locales/ch/home.json';
+import enHome from './locales/en/home.json';
+import esHome from './locales/es/home.json';
+import frHome from './locales/fr/home.json';
+import kaHome from './locales/ka/home.json';
+import ruHome from './locales/ru/home.json';
+
 // Importaciones organizadas alfabéticamente por idioma
 import arComponentstatusmodal from './locales/ar/componentstatusmodal.json';
 import chComponentstatusmodal from './locales/ch/componentstatusmodal.json';
@@ -63,6 +101,10 @@ import chNavbar from './locales/ch/navbar.json';             // Nuevo
 
 const resources = {
   ar: {
+    language: arLanguage,
+    profile: arProfile,
+    auth: arAuth,
+    home: arHome,
     categorias: arCategorias,
     aplicacion: arAplicacion,
     postDetail: arPostDetail,
@@ -70,8 +112,13 @@ const resources = {
     navbar: arNavbar,
     subcategorias: arSubcategorias,
     componentstatusmodal: arComponentstatusmodal
+
   },
   ch: {
+    language: chLanguage,
+ profile: chProfile,
+    auth: chAuth,
+    home: chHome,
     categorias: chCategorias,
     aplicacion: chAplicacion,
     postDetail: chPostDetail,
@@ -81,6 +128,10 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
+    language: enLanguage,
+    profile: enProfile,
+    auth: enAuth,
+    home: enHome,
     categorias: enCategorias,
     aplicacion: enAplicacion,
     postDetail: enPostDetail,
@@ -90,6 +141,10 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
+    language: esLanguage,
+    profile: esProfile,
+    auth: esAuth,
+    home: esHome,
     categorias: esCategorias,
     aplicacion: esAplicacion,
     postDetail: esPostDetail,
@@ -99,6 +154,10 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
+    language: frLanguage,
+    profile: frProfile,
+    auth: frAuth,
+    home: frHome,
     categorias: frCategorias,
     aplicacion: frAplicacion,
     postDetail: frPostDetail,
@@ -108,6 +167,10 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   ka: {
+    language: kaLanguage,
+    profile: kaProfile,
+    auth: kaAuth,
+    home: kaHome,
     categorias: kaCategorias,
     aplicacion: kaAplicacion,
     postDetail: kaPostDetail,
@@ -117,6 +180,10 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
+    language: ruLanguage,
+    profile: ruProfile,
+    auth: ruAuth,
+    home: ruHome,
     categorias: ruCategorias,
     aplicacion: ruAplicacion,
     postDetail: ruPostDetail,

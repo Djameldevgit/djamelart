@@ -8,19 +8,23 @@ const CardBodyTitle = ({ post }) => {
   const isDetailPage = location.pathname === `/post/${post._id}`;
 
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('postDetail'); // namespace postDetail
-
+  const { t } = useTranslation('postDetail');  
+  const lang = languageReducer.language || 'en'; 
   return (
     <div className="cardtitle">
       <div className="card-header">
         {!isDetailPage && (
           <div className="title-post">
             <div className="title0">
-              {t('category', { lng: languageReducer.language })}: {t(post.category, { lng: languageReducer.language })}
+           {t(post.category, { lng: lang })}:
             </div>
             <div className="title0">
-              {t('subcategory', { lng: languageReducer.language })}: {t(post.subcategory, { lng: languageReducer.language })}
+               {t(post.subcategory, { lng: lang })}  
             </div>
+            <div className="title0">
+               {t(post.support, { lng: lang })}
+            </div>
+
           </div>
         )}
       </div>
@@ -29,10 +33,10 @@ const CardBodyTitle = ({ post }) => {
         <div className="titlelocation">
           <span><i className="fas fa-map-marker-alt"></i></span>
           <div className="title4">
-            {t('region', { lng: languageReducer.language })}: {post.wilaya}
+            {t('region', { lng: lang })}: {post.wilaya}
           </div>
           <div className="title4">
-            {t('city', { lng: languageReducer.language })}: {post.commune}
+            {t('city', { lng: lang })}: {post.commune}
           </div>
           <div>
             <span className="ml-1 mr-1 text-danger">{post.price}</span>{" "}
