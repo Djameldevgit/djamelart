@@ -1,7 +1,13 @@
-{"en": "الإنجليزية",
-"fr": "الفرنسية",
-"ar": "العربية",
-"es": "الإسبانية",
-"ru": "الروسية",
-"kab": "القبائلية",
-"chino": "الصينية"}
+{
+    "Tassili": "Tassili",
+    "language": {
+      "en": "igles",
+      "fr": "Français",
+      "ar": "Arabe",
+      "es": "Espagnol",
+      "ru": "Russe",
+      "kab": "Kabyle",
+      "chino": "Chinois"
+    }
+  }
+  
