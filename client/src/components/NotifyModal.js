@@ -71,7 +71,8 @@ const NotifyModal = () => {
                                         {
                                             msg.image.match(/video/i)
                                             ? <video src={msg.image} width="100%" />
-                                            : <Avatar src={msg.image} size="medium-avatar" />
+                                            : <Avatar src={msg.image} size="medium-avatar" /> 
+                                            
                                         }
                                     </div>
                                 }

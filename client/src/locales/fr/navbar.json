@@ -1,20 +1,20 @@
 {
-   
-  "appName": "L'art en ligne",
-  
-  "art_painting": "Art et Peinture",
-  "add_announcement": "Ajouter une annonce",
-  "info_app": "Info application",
-  "chat_admin": "Chat d'administration",
+  "art_painting": "Art et peinture",
+  "appName": "Vente de tableaux d'art",
+  "addPost": "Ajouter une annonce",
+  "appInfo": "Informations sur l'application",
+  "adminChat": "Discussion admin",
   "roles": "Rôles",
-  "reports_user": "Rapports utilisateur",
-  "pending_posts": "Publications en attente",
-  "users_action": "Actions des utilisateurs",
-  "edit_users": "Édition des utilisateurs",
-  "blocked_users": "Utilisateurs bloqués",
+  "reportedUsers": "Utilisateurs signalés",
+  "pendingPosts": "Annonces en attente",
+  "userActions": "Actions des utilisateurs",
+  "userEditing": "Modification des utilisateurs",
+  "blockedUsers": "Utilisateurs bloqués",
   "profile": "Profil",
-  "change_theme": "Changer le thème",
+  "lightMode": "Mode clair",
+  "darkMode": "Mode sombre",
   "logout": "Déconnexion",
-  "login": "Se connecter",
+  "account": "Compte",
+  "login": "Connexion",
   "register": "S'inscrire"
-  }
+}

@@ -1,79 +1,242 @@
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import Offcanvas from 'react-bootstrap/Offcanvas';
-import { useDispatch, useSelector } from 'react-redux';
-import { GLOBALTYPES } from '../redux/actions/globalTypes';
-import { logout } from '../redux/actions/authAction';
-import { Link } from 'react-router-dom';
-import Avatar from './Avatar';
-import './Navbar.css'; // Archivo CSS adicional
+import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout } from '../redux/actions/authAction'
+import { GLOBALTYPES } from '../redux/actions/globalTypes'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+import NotifyModal from './NotifyModal'
+import Avatar from './Avatar'
+
+
+import Card from 'react-bootstrap/Card'
+import {
+  Navbar,
+  Container,
+  NavDropdown,
+  Offcanvas,
+  Button,
+  Dropdown,
+} from 'react-bootstrap'
+import { FaUserCircle } from 'react-icons/fa'
+
 
 const Navbar2 = () => {
-    const dispatch = useDispatch();
-    const { auth, theme } = useSelector(state => state);
+  const { auth, theme } = useSelector((state) => state)
+  const dispatch = useDispatch()
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language
 
-    return (
-        <Navbar expand="lg" className="bg-body-tertiary mb-3" bg="dark" variant="dark">
-            <Container fluid>
-                <Navbar.Brand href="#">Mi Aplicación</Navbar.Brand>
-                <Navbar.Toggle aria-controls="navbar-offcanvas" />
-                <Navbar.Offcanvas
-                    id="navbar-offcanvas"
-                    aria-labelledby="navbar-offcanvas-label"
-                    placement="end"
-                    className="custom-offcanvas"
+  const [showDrawer, setShowDrawer] = useState(false)
+
+  const openStatusModal = () => {
+    dispatch({ type: GLOBALTYPES.STATUS, payload: true })
+  }
+
+  const handleLogout = () => {
+    dispatch(logout())
+  }
+
+  const toggleTheme = () => {
+    dispatch({ type: GLOBALTYPES.THEME, payload: !theme })
+  }
+
+  const handleCloseDrawer = () => setShowDrawer(false)
+  const handleShowDrawer = () => setShowDrawer(true)
+
+  return (
+    <>
+      <Navbar expand="lg" className="navbar bg-body-tertiary mb-2 shadow-sm px-3">
+        <Container fluid className="align-items-center">
+          <div className="d-flex align-items-center">
+            <div className="d-block d-lg-none">
+              {auth.user ? (
+                <NavDropdown
+                  id="user-dropdown-mobile"
+                  align="start"
+                  title={
+                    <div className="d-flex dropdown-avatar">
+                      <Avatar src={auth.user.avatar} size="medium-avatar" />
+                    </div>
+                  }
                 >
-                    <Offcanvas.Header closeButton closeVariant="white">
-                        <Offcanvas.Title id="navbar-offcanvas-label">Menú</Offcanvas.Title>
-                    </Offcanvas.Header>
-                    <Offcanvas.Body>
-                        <Nav className="ms-auto"> {/* Cambiado a ms-auto para mejor alineación */}
-                            <NavDropdown
-                                title="Opciones"
-                                id="main-dropdown"
-                                renderMenuOnMount={true} // Importante para asegurar renderizado
-                            >
-                                <NavDropdown.Item onClick={() => dispatch({ type: GLOBALTYPES.STATUS, payload: true })}>
-                                    Ajouter un annonce
-                                </NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action5">
-                                    Something else here
-                                </NavDropdown.Item>
-                            </NavDropdown>
+                  <NavDropdown.Item onClick={openStatusModal}>
+                    {t('navbar:addPost', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/informacionaplicacion" onClick={handleCloseDrawer}>
+                    {t('navbar:appInfo', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/message" onClick={handleCloseDrawer}>
+                    {t('navbar:adminChat', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/administration/roles" onClick={handleCloseDrawer}>
+                    {t('navbar:roles', { lng: lang })}
+                  </NavDropdown.Item>
+                  {auth.user.role === 'admin' && (
+                    <>
+                      <NavDropdown.Item as={Link} to="/administration/users/reportuser" onClick={handleCloseDrawer}>
+                        {t('navbar:reportedUsers', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/administration/homepostspendientes" onClick={handleCloseDrawer}>
+                        {t('navbar:pendingPosts', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/administration/usersaction" onClick={handleCloseDrawer}>
+                        {t('navbar:userActions', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/administration/usersedicion" onClick={handleCloseDrawer}>
+                        {t('navbar:userEditing', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/administration/listadeusuariosbloqueadoss" onClick={handleCloseDrawer}>
+                        {t('navbar:blockedUsers', { lng: lang })}
+                      </NavDropdown.Item>
+                    </>
+                  )}
+                  <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`} onClick={handleCloseDrawer}>
+                    {t('navbar:profile', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={toggleTheme}>
+                    {theme ? t('navbar:lightMode', { lng: lang }) : t('navbar:darkMode', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleLogout}>
+                    {t('navbar:logout', { lng: lang })}
+                  </NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <NavDropdown
+                  align="start"
+                  title={<FaUserCircle size={25} />}
+                  id="guest-dropdown-mobile"
+                >
+                  <NavDropdown.Item as={Link} to="/login">
+                    {t('navbar:login', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/register">
+                    {t('navbar:register', { lng: lang })}
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
+            </div>
 
-                            {auth.token && (
-                                <NavDropdown
-                                    title={
-                                        <div className="d-flex align-items-center">
-                                            <Avatar src={auth.user?.avatar} size="medium-avatar" />
-                                        </div>
-                                    }
-                                    id="user-dropdown"
-                                    align="end"
-                                    drop="start" // Cambia la dirección del dropdown si es necesario
-                                    renderMenuOnMount={true}
-                                >
-                                    <NavDropdown.Item as={Link} to={`/profile/${auth.user?._id}`}>
-                                        Profile
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item onClick={() => dispatch({ type: GLOBALTYPES.THEME, payload: !theme })}>
-                                        {theme ? 'Light mode' : 'Dark mode'}
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Divider />
-                                    <NavDropdown.Item as={Link} to="/" onClick={() => dispatch(logout())}>
-                                        Logout
-                                    </NavDropdown.Item>
-                                </NavDropdown>
-                            )}
-                        </Nav>
-                    </Offcanvas.Body>
-                </Navbar.Offcanvas>
-            </Container>
-        </Navbar>
-    );
+            <Navbar.Brand href="/" className="py-2 me-0 me-lg-3 d-none d-lg-block">
+              <Card.Title>{t('navbar:appName', { lng: lang })}</Card.Title>
+            </Navbar.Brand>
+          </div>
+
+          <div className="d-flex align-items-center justify-content-center gap-3">
+          
+ 
+         
+
+            <Dropdown>
+              <Dropdown.Toggle variant="secondary" id="custom-dropdown">
+                {t('navbar:options', { lng: lang })}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item as={Link} to="/custompage1">
+                  {t('navbar:customPage1', { lng: lang })}
+                </Dropdown.Item>
+                <Dropdown.Item as={Link} to="/custompage2">
+                  {t('navbar:customPage2', { lng: lang })}
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+
+            {/* Botón simple sin íconos para abrir el menú móvil */}
+            <Button className="d-lg-none" onClick={handleShowDrawer} size="sm" variant="outline-primary">
+              {t('navbar:menu', { lng: lang })}
+            </Button>
+
+            <div className="d-none d-lg-block">
+              {auth.user ? (
+                <NavDropdown
+                  id="user-dropdown"
+                  align="end"
+                  title={
+                    <div className="d-flex dropdown-avatar">
+                      <Avatar src={auth.user.avatar} size="medium-avatar" />
+                    </div>
+                  }
+                >
+                  <NavDropdown.Item onClick={openStatusModal}>
+                    {t('navbar:addPost', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/informacionaplicacion">
+                    {t('navbar:appInfo', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/message">
+                    {t('navbar:adminChat', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/administration/roles">
+                    {t('navbar:roles', { lng: lang })}
+                  </NavDropdown.Item>
+                  {auth.user.role === 'admin' && (
+                    <>
+                      <NavDropdown.Item as={Link} to="/administration/users/reportuser">
+                        {t('navbar:reportedUsers', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/administration/homepostspendientes">
+                        {t('navbar:pendingPosts', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/administration/usersaction">
+                        {t('navbar:userActions', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/administration/usersedicion">
+                        {t('navbar:userEditing', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/administration/listadeusuariosbloqueadoss">
+                        {t('navbar:blockedUsers', { lng: lang })}
+                      </NavDropdown.Item>
+                    </>
+                  )}
+                  <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
+                    {t('navbar:profile', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={toggleTheme}>
+                    {theme ? t('navbar:lightMode', { lng: lang }) : t('navbar:darkMode', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleLogout}>
+                    {t('navbar:logout', { lng: lang })}
+                  </NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <NavDropdown
+                  align="end"
+                  title={<FaUserCircle size={25} />}
+                  id="guest-dropdown-desktop"
+                >
+                  <NavDropdown.Item as={Link} to="/login">
+                    {t('navbar:login', { lng: lang })}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/register">
+                    {t('navbar:register', { lng: lang })}
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
+            </div>
+          </div>
+        </Container>
+      </Navbar>
+
+      <Offcanvas show={showDrawer} onHide={handleCloseDrawer} placement="start">
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>{t('navbar:menu', { lng: lang })}</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+          <Button variant="link" as={Link} to="/" onClick={handleCloseDrawer}>
+            {t('navbar:home', { lng: lang })}
+          </Button>
+          <br />
+          <Button variant="link" as={Link} to="/profile" onClick={handleCloseDrawer}>
+            {t('navbar:profile', { lng: lang })}
+          </Button>
+        </Offcanvas.Body>
+      </Offcanvas>
+
+
+    </>
+  )
 }
 
-export default Navbar2;
+export default Navbar2
+
