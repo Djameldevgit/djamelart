@@ -26,15 +26,44 @@
     align-items: center;
   }
   
-  /* Tamaño del avatar */
-  .medium-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
+ 
+ 
+  /* Estilos para el Navbar */
+.navbar {
+  padding: 0.5rem 1rem;
+}
+
+.dropdown-avatar {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem;
+}
+
+.notification-icon {
+  display: flex;
+  align-items: center;
+  margin-right: 0.5rem;
+}
+
+/* Mejora los dropdowns */
+.navbar .dropdown-menu {
+  margin-top: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto hover para los íconos */
+.navbar .dropdown-toggle:hover {
+  opacity: 0.8;
+}
+
+/* Ajustes para móviles */
+@media (max-width: 992px) {
+  .navbar-brand {
+    margin-left: 0.5rem;
   }
   
-  /* Elimina la flechita del dropdown (opcional) */
- 
- 
-  
+  .notification-icon {
+    margin-right: 0;
+  }
+}

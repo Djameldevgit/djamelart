@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import Avatar from './Avatar'
 import Card from 'react-bootstrap/Card'
-import { FaBars } from 'react-icons/fa'  // asegúrate de tener FaBars aquí
 import {
   Navbar,
   Container,
@@ -15,7 +14,6 @@ import {
   Button,
   Dropdown,
   Badge
-
 } from 'react-bootstrap'
 import { FaUserCircle } from 'react-icons/fa'
 import { BsCartFill } from 'react-icons/bs'
@@ -125,18 +123,9 @@ const Navbar2 = () => {
 
           <div className="d-flex align-items-center justify-content-center gap-3">
             {/* Dropdown de Opciones */}
-            <Dropdown
-              title={
-                <div className="position-relative">
-                  <i className="fas fa-bell text-danger"
-                    style={{ fontSize: '1.2rem', cursor: 'pointer' }}
-                  />
-
-                </div>
-              }
-            >
+            <Dropdown>
               <Dropdown.Toggle variant="secondary" id="custom-dropdown">
-
+                {t('navbar:options', { lng: lang })}
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 <Dropdown.Item as={Link} to="/custompage1">
@@ -148,32 +137,16 @@ const Navbar2 = () => {
               </Dropdown.Menu>
             </Dropdown>
 
-            {auth.user &&
+            {/* Componente de Notificaciones */}
+            {auth.user && <NotifyModal user={auth.user} />}
 
-              <NavDropdown
-                title={
-                  <div className="position-relative">
-                    <i className="fas fa-bell text-danger"
-                      style={{ fontSize: '1.2rem', cursor: 'pointer' }}
-                    />
-
-                  </div>
-                }
-              >
-                <NavDropdown.Item  >
-                  <NotifyModal user={auth.user} />
-                </NavDropdown.Item>
-              </NavDropdown>
-
-
-            }
-
+            {/* Ícono de Carrito de Compras */}
             {auth.user && (
               <Link to="/cart" className="position-relative text-decoration-none mx-2">
                 <BsCartFill size={20} className="text-dark" />
-                <Badge
-                  pill
-                  bg="danger"
+                <Badge 
+                  pill 
+                  bg="danger" 
                   className="position-absolute top-0 start-100 translate-middle"
                   style={{ fontSize: '0.6rem' }}
                 >
@@ -182,10 +155,10 @@ const Navbar2 = () => {
               </Link>
             )}
 
-            <Button className="d-lg-none" onClick={handleShowDrawer} variant="outline-primary">
-              <FaBars size={20} />
+            {/* Menú móvil */}
+            <Button className="d-lg-none" onClick={handleShowDrawer} size="sm" variant="outline-primary">
+              {t('navbar:menu', { lng: lang })}
             </Button>
-
 
             {/* Dropdown de Avatar (solo desktop) */}
             <div className="d-none d-lg-block">
@@ -266,25 +239,10 @@ const Navbar2 = () => {
         placement="start"
         style={{
           top: '56px',
-          height: 'calc(100vh - 56px)',
-          width: '270px'
+          height: 'calc(100vh - 56px)'
         }}
       >
-        <Offcanvas.Header closeButton className="py-2 custom-close-btn">
-          <style>
-            {`
-  .custom-close-btn .btn-close {
-    font-size: 1.5rem;
-    background-color: #0d6efd; /* rojo tipo Bootstrap "danger" */
-    border-radius: 50%;
-    padding: 0.5rem;
-    opacity: 1;
-  }
-  }
-`}
-          </style>
-
-
+        <Offcanvas.Header closeButton className="py-2">
           <Offcanvas.Title>{t('navbar:menu', { lng: lang })}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body
@@ -294,13 +252,11 @@ const Navbar2 = () => {
             padding: '0.5rem'
           }}
         >
-          <h1>MENU</h1>
           <div className="d-flex flex-column gap-1">
             <Button
               variant="link"
               as={Link}
               to="/"
-
               onClick={handleCloseDrawer}
               className="text-start py-1"
             >
@@ -322,7 +278,6 @@ const Navbar2 = () => {
                 to="/cart"
                 onClick={handleCloseDrawer}
                 className="text-start py-1"
-
               >
                 {t('navbar:cart', { lng: lang })}
               </Button>

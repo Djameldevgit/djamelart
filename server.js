@@ -61,7 +61,8 @@ app.use('/api', require('./routes/languageRouter'))
 const URI = process.env.MONGODB_URL
 mongoose.connect(URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify:false
 }, err => {
   if (err) throw err
   console.log('Connected to MongoDB')
