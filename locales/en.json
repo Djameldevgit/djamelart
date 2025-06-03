@@ -1,6 +1,22 @@
 {
-	"auth": {
-		"login_success": "auth.login_success",
-		"incorrect_password": "auth.incorrect_password"
-	}
+
+
+	"user_not_exist": "User does not exist.",
+	"username_required": "Please add your user name.",
+	"update_success": "Update Success!",
+	"already_following": "You followed this user.",
+
+ 
+
+
+ 
+		"create_success": "Create Success!",
+		"delete_success": "Delete Success!"
+	 
+	  
+
+
+
+
+
 }

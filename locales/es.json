@@ -1,8 +1,26 @@
 {
-  "auth": {
-    "login_success": "¡Inicio de sesión exitoso!",
-    "email_not_exist": "Este correo no existe.",
-    "incorrect_password": "Contraseña incorrecta.",
-    "server_error": "Error del servidor."
-  }
+	"auth": {
+		"login_success": "¡Inicio de sesión exitoso!",
+		"email_not_exist": "Este correo no existe.",
+		"incorrect_password": "Contraseña incorrecta.",
+		"server_error": "Error del servidor."
+	},
+	"language": {
+		"add_photo": "Por favor añade al menos una foto.",
+		"created_post": "Publicación creada exitosamente.",
+		"updated_post": "Publicación actualizada.",
+		"post_approved": "Publicación aprobada.",
+		"post_not_found": "Publicación no encontrada.",
+		"post_not_exist": "La publicación no existe.",
+		"liked_post": "Has dado like a la publicación.",
+		"unliked_post": "Has quitado el like.",
+		"already_liked": "Ya le diste like a esta publicación.",
+		"already_saved": "Ya guardaste esta publicación.",
+		"saved_post": "Publicación guardada.",
+		"unsaved_post": "Publicación eliminada de guardados.",
+		"deleted_post": "Publicación eliminada.",
+		"user_not_exist": "El usuario no existe.",
+		"success": "Operación exitosa.",
+		"updated_french": "language.updated_french"
+	}
 }

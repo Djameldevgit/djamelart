@@ -1,9 +1,13 @@
 {
-    "auth": {
-      "login_success": "frances login!",
-      "email_not_exist": "Este correo no existe.",
-      "incorrect_password": "Contraseña incorrecta.",
-      "server_error": "Error del servidor."
-    }
-  }
-  
+	"auth": {
+		"login_success": "frances login!",
+		"email_not_exist": "Este correo no existe.",
+		"incorrect_password": "Contraseña incorrecta.",
+		"server_error": "Error del servidor."
+	},
+	"language": {
+		"updated_arabic": "language.updated_arabic",
+		"updated_french": "language.updated_french",
+		"success": "language.success"
+	}
+}

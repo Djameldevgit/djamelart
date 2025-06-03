@@ -1,12 +1,15 @@
 {
-  "painting": "لوحة",
+  "categorias":{
+"painting": "لوحة",
   "sculpture": "نحت",
   "photography": "تصوير فوتوغرافي",
   "drawing": "رسم",
   "engraving": "نقش و مطبوعات",
   "digital_art": "فن رقمي",
   "collage": "كولاج",
-  "textile_art": "فن النسيج",
-  "title":"jjjjjjjjjjjjjjlklklkljjjj"
+  "textile_art": "فن النسيج"
+  }
+  
+ 
 
 }

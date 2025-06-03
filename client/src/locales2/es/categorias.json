@@ -1,5 +1,7 @@
 {
-  "painting": "Pintura",
+
+  "categorias":{
+     "painting": "Pintura",
   "sculpture": "Escultura",
   "photography": "Fotografía",
   "drawing": "Dibujo",
@@ -7,6 +9,8 @@
   "digital_art": "Arte digital",
   "collage": "Collages",
   "textile_art": "Arte textil"
+  }
+ 
  
 
 }

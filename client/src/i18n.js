@@ -3,6 +3,18 @@ import { initReactI18next } from 'react-i18next';
 
 
 
+
+import arToastvalid from './locales/ar/toastvalid.json';
+import chToastvalid from './locales/ch/toastvalid.json';
+import enToastvalid from './locales/en/toastvalid.json';
+import esToastvalid from './locales/es/toastvalid.json';
+import frToastvalid from './locales/fr/toastvalid.json';
+import kaToastvalid from './locales/ka/toastvalid.json';
+import ruToastvalid from './locales/ru/toastvalid.json';
+
+
+
+
 import arLanguage from './locales/ar/language.json';
 import chLanguage from './locales/ch/language.json';
 import enLanguage from './locales/en/language.json';
@@ -101,6 +113,8 @@ import chNavbar from './locales/ch/navbar.json';             // Nuevo
 
 const resources = {
   ar: {
+
+    toastvalid: arToastvalid,
     language: arLanguage,
     profile: arProfile,
     auth: arAuth,
@@ -115,6 +129,7 @@ const resources = {
 
   },
   ch: {
+    toastvalid: chToastvalid,
     language: chLanguage,
  profile: chProfile,
     auth: chAuth,
@@ -128,6 +143,7 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
+    toastvalid: enToastvalid,
     language: enLanguage,
     profile: enProfile,
     auth: enAuth,
@@ -141,6 +157,7 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
+    toastvalid: esToastvalid,
     language: esLanguage,
     profile: esProfile,
     auth: esAuth,
@@ -154,6 +171,7 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
+    toastvalid: frToastvalid,
     language: frLanguage,
     profile: frProfile,
     auth: frAuth,
@@ -167,6 +185,8 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   ka: {
+
+    toastvalid: kaToastvalid,
     language: kaLanguage,
     profile: kaProfile,
     auth: kaAuth,
@@ -180,6 +200,7 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
+    toastvalid: ruToastvalid,
     language: ruLanguage,
     profile: ruProfile,
     auth: ruAuth,

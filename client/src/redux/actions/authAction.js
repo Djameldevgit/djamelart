@@ -62,8 +62,8 @@ export const refreshToken = () => async (dispatch) => {
     }
 }
 
-export const register = (data) => async (dispatch) => {
-    const check = valid(data)
+export const register = (data, t, lang) => async (dispatch) => {
+    const check = valid(data, t, lang);
     if(check.errLength > 0)
     return dispatch({type: GLOBALTYPES.ALERT, payload: check.errMsg})
 

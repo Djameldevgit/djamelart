@@ -32,17 +32,17 @@ export function SuporteDeLaObra({ handleChangeInput, postData, technique, catego
         { value: "arches_paper", label: t('watercolor.arches', { lng: lang }) }
       ]
     },
-    Sculpture: [
-      { value: "bronze", label: t('sculpture.bronze', { lng: lang }) },
-      { value: "marble", label: t('sculpture.marble', { lng: lang }) },
-      { value: "resin", label: t('sculpture.resin', { lng: lang }) },
-      { value: "wood", label: t('sculpture.wood', { lng: lang }) },
-      { value: "ceramic", label: t('sculpture.ceramic', { lng: lang }) }
+    sculpture: [
+      { value: "bronze", label: t('bronze', { lng: lang }) },
+      { value: "marble", label: t('marble', { lng: lang }) },
+      { value: "resin", label: t('resin', { lng: lang }) },
+      { value: "wood", label: t('wood', { lng: lang }) },
+      { value: "ceramic", label: t('ceramic', { lng: lang }) }
     ],
     Photography: [
-      { value: "photo_paper", label: t('photography.photo_paper', { lng: lang }) },
-      { value: "aluminum_dibond", label: t('photography.aluminum', { lng: lang }) },
-      { value: "acrylic_glass", label: t('photography.acrylic', { lng: lang }) }
+      { value: "photo_paper", label: t('photo_paper', { lng: lang }) },
+      { value: "aluminum_dibond", label: t('aluminum', { lng: lang }) },
+      { value: "acrylic_glass", label: t('acrylic', { lng: lang }) }
     ],
     Drawing: [
       { value: "drawing_paper", label: t('drawing.paper', { lng: lang }) },

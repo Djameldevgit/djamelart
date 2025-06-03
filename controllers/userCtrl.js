@@ -3,81 +3,90 @@ const Users = require('../models/userModel')
 const userCtrl = {
     searchUser: async (req, res) => {
         try {
-            const users = await Users.find({username: {$regex: req.query.username}})
-            .limit(10).select("username username avatar")
-            
-            res.json({users})
+            const users = await Users.find({ username: { $regex: req.query.username } })
+                .limit(10)
+                .select("username username avatar")
+
+            res.json({ users })
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
+
     getUser: async (req, res) => {
         try {
-            const user = await Users.findById(req.params.id).select('-password')
-            .populate("followers following", "-password")
-            if(!user) return res.status(400).json({msg: "User does not exist."})
-            
-            res.json({user})
+            const user = await Users.findById(req.params.id)
+                .select('-password')
+                .populate("followers following", "-password")
+
+            if (!user)
+                return res.status(400).json({ msg: req.__('language.user_not_exist') })
+
+            res.json({ user })
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
+
     updateUser: async (req, res) => {
         try {
-            const { avatar, username, mobile, address, story, website  } = req.body
-            if(!username) return res.status(400).json({msg: "Please add your user name."})
+            const { avatar, username, mobile, address, story, website } = req.body
+            if (!username)
+                return res.status(400).json({ msg: req.__('language.username_required') })
 
-            await Users.findOneAndUpdate({_id: req.user._id}, {
-                avatar, username, mobile, address, story, website 
+            await Users.findOneAndUpdate({ _id: req.user._id }, {
+                avatar, username, mobile, address, story, website
             })
 
-            res.json({msg: "Update Success!"})
+            res.json({ msg: req.__('language.update_success') })
 
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
+
     follow: async (req, res) => {
         try {
-            const user = await Users.find({_id: req.params.id, followers: req.user._id})
-            if(user.length > 0) return res.status(500).json({msg: "You followed this user."})
+            const user = await Users.find({ _id: req.params.id, followers: req.user._id })
+            if (user.length > 0)
+                return res.status(500).json({ msg: req.__('language.already_following') })
 
-            const newUser = await Users.findOneAndUpdate({_id: req.params.id}, { 
-                $push: {followers: req.user._id}
-            }, {new: true}).populate("followers following", "-password")
+            const newUser = await Users.findOneAndUpdate({ _id: req.params.id }, {
+                $push: { followers: req.user._id }
+            }, { new: true }).populate("followers following", "-password")
 
-            await Users.findOneAndUpdate({_id: req.user._id}, {
-                $push: {following: req.params.id}
-            }, {new: true})
+            await Users.findOneAndUpdate({ _id: req.user._id }, {
+                $push: { following: req.params.id }
+            }, { new: true })
 
-            res.json({newUser})
+            res.json({ newUser })
 
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
+
     unfollow: async (req, res) => {
         try {
+            const newUser = await Users.findOneAndUpdate({ _id: req.params.id }, {
+                $pull: { followers: req.user._id }
+            }, { new: true }).populate("followers following", "-password")
 
-            const newUser = await Users.findOneAndUpdate({_id: req.params.id}, { 
-                $pull: {followers: req.user._id}
-            }, {new: true}).populate("followers following", "-password")
+            await Users.findOneAndUpdate({ _id: req.user._id }, {
+                $pull: { following: req.params.id }
+            }, { new: true })
 
-            await Users.findOneAndUpdate({_id: req.user._id}, {
-                $pull: {following: req.params.id}
-            }, {new: true})
-
-            res.json({newUser})
+            res.json({ newUser })
 
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
+
     suggestionsUser: async (req, res) => {
         try {
             const newArr = [...req.user.following, req.user._id]
-
-            const num  = req.query.num || 10
+            const num = req.query.num || 10
 
             const users = await Users.aggregate([
                 { $match: { _id: { $nin: newArr } } },
@@ -92,10 +101,9 @@ const userCtrl = {
             })
 
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
 }
-
 
 module.exports = userCtrl

@@ -16,14 +16,19 @@
   "region": "المنطقة",
   "city": "المدينة",
   "category": "الفئة",
-  "Paintingg": "الرسم",
-  "Sculpture": "النحت",
+  "Painting": "الرسم",
+ 
+  "photography": "التصوير الفوتوغرافي",
   "Photography": "التصوير الفوتوغرافي",
   "Drawing": "الرسم باليد",
   "Engraving": "النقش",
   "Digital_art": "الفن الرقمي",
   "Collage": "الكولاج",
   "Textile_art": "الفن النسيجي",
+   
+    "photo_paper": "ورق صور",
+    "aluminum_dibond": "ألومنيوم ديبوند",
+    
  
  
     "subcategory": "الفئة الفرعية",
@@ -106,5 +111,75 @@
   "patchwork": "ترقيع",
   "string_art": "فن الخيط",
   "tapisserie": "نَسِيج جداري",
-  "tissu": "قماش"
+  "tissu": "قماش",
+
+
+
+  "theme.select_label":"موضوع العمل الفني",
+  "select_label": "اختر دعم العمل الفني",
+  "canvas": "قماش",
+  "wood_panel": "لوح خشبي",
+  "paper": "ورق",
+  "metal": "معدن",
+  "cardboard": "كرتون",
+  "acrylic": {
+    "linen_canvas": "قماش كتان (أكريليك)",
+    "mdf_board": "لوح MDF",
+    "cotton_canvas": "قماش قطني"
+  },
+  "oil": {
+    "linen_canvas": "قماش كتان (زيت)",
+    "copper_plate": "لوح نحاسي",
+    "wood_mounted": "خشب مثبت"
+  },
+  "watercolor": {
+    "paper": "ورق ألوان مائية",
+    "arches": "ورق أرتشيس"
+  },
+  "sculpture": {
+    "bronze": "برونز",
+    "marble": "رخام",
+    "resin": "راتنج",
+    "wood": "خشب",
+    "ceramic": "سيراميك"
+  },
+  "Potography": {
+    "photo_paper": "ورق صور",
+    "aluminum_dibond": "ألومنيوم ديبوند",
+    "acrylic": "زجاج أكريليك"
+  },
+  "drawing": {
+    "paper": "ورق رسم",
+    "parchment": "رق",
+    "vellum": "ورق شهامان"
+  },
+  "digital": {
+    "file": "ملف رقمي",
+    "canvas_print": "طباعة على قماش",
+    "acrylic_print": "طباعة أكريليك"
+  },
+  "textile": {
+    "fabric": "نسيج",
+    "tapestry": "نسيج حائطي",
+    "embroidery": "تطريز"
+  },
+  "other": "أخرى",
+  "mixed": "مختلط",
+  
+  "theme_groups": {
+    "styles": "أنماط",
+    "nature": "طبيعة",
+    "animaux": "حيوانات",
+    "culture": "ثقافة",
+    "urbain": "حضري",
+    "personnages": "شخصيات",
+    "fantastique": "خيالي",
+    "divers": "متنوع"
+  }
+
+
+
+
+
+
 }

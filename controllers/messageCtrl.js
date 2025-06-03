@@ -21,12 +21,12 @@ const messageCtrl = {
         try {
             const { sender, recipient, text, media, call } = req.body
 
-            if(!recipient || (!text.trim() && media.length === 0 && !call)) return;
+            if (!recipient || (!text.trim() && media.length === 0 && !call)) return;
 
             const newConversation = await Conversations.findOneAndUpdate({
                 $or: [
-                    {recipients: [sender, recipient]},
-                    {recipients: [recipient, sender]}
+                    { recipients: [sender, recipient] },
+                    { recipients: [recipient, sender] }
                 ]
             }, {
                 recipients: [sender, recipient],
@@ -41,12 +41,13 @@ const messageCtrl = {
 
             await newMessage.save()
 
-            res.json({msg: 'Create Success!'})
+            res.json({ msg: req.__('language.create_success') })
 
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
+
     getConversations: async (req, res) => {
         try {
             const features = new APIfeatures(Conversations.find({
@@ -54,7 +55,7 @@ const messageCtrl = {
             }), req.query).paginating()
 
             const conversations = await features.query.sort('-updatedAt')
-            .populate('recipients', 'avatar username')
+                .populate('recipients', 'avatar username fullname')
 
             res.json({
                 conversations,
@@ -62,15 +63,16 @@ const messageCtrl = {
             })
 
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
+
     getMessages: async (req, res) => {
         try {
             const features = new APIfeatures(Messages.find({
                 $or: [
-                    {sender: req.user._id, recipient: req.params.id},
-                    {sender: req.params.id, recipient: req.user._id}
+                    { sender: req.user._id, recipient: req.params.id },
+                    { sender: req.params.id, recipient: req.user._id }
                 ]
             }), req.query).paginating()
 
@@ -82,33 +84,34 @@ const messageCtrl = {
             })
 
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
+
     deleteMessages: async (req, res) => {
         try {
-            await Messages.findOneAndDelete({_id: req.params.id, sender: req.user._id})
-            res.json({msg: 'Delete Success!'})
+            await Messages.findOneAndDelete({ _id: req.params.id, sender: req.user._id })
+            res.json({ msg: req.__('language.delete_success') })
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
+
     deleteConversation: async (req, res) => {
         try {
             const newConver = await Conversations.findOneAndDelete({
                 $or: [
-                    {recipients: [req.user._id, req.params.id]},
-                    {recipients: [req.params.id, req.user._id]}
+                    { recipients: [req.user._id, req.params.id] },
+                    { recipients: [req.params.id, req.user._id] }
                 ]
             })
-            await Messages.deleteMany({conversation: newConver._id})
-            
-            res.json({msg: 'Delete Success!'})
+            await Messages.deleteMany({ conversation: newConver._id })
+
+            res.json({ msg: req.__('language.delete_success') })
         } catch (err) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({ msg: err.message })
         }
     },
 }
-
 
 module.exports = messageCtrl

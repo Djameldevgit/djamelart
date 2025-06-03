@@ -1,13 +1,17 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
+import { useTranslation } from 'react-i18next'
 
 import Loading from './Loading'
 import Toast from './Toast'
 
 const Notify = () => {
     const { alert } = useSelector(state => state)
+    const { languageReducer } = useSelector(state => state)
+    const { t } = useTranslation('toastvalid')
     const dispatch = useDispatch()
+    const lang = languageReducer.language || 'en'
 
     return (
         <div>
@@ -15,16 +19,26 @@ const Notify = () => {
 
             {
                 alert.error && 
-                <Toast msg={{title: 'Error', body: alert.error}}
-                handleShow={() => dispatch({type: GLOBALTYPES.ALERT, payload: {}})} 
-                bgColor="bg-danger" />
+                <Toast 
+                    msg={{
+                        title: t('errorTitle', { lng: lang }), 
+                        body: alert.error
+                    }}
+                    handleShow={() => dispatch({type: GLOBALTYPES.ALERT, payload: {}})} 
+                    bgColor="bg-danger" 
+                />
             }
 
             {
                 alert.success && 
-                <Toast msg={{title: 'Success', body: alert.success}} 
-                handleShow={() => dispatch({type: GLOBALTYPES.ALERT, payload: {}})}
-                bgColor="bg-success" />
+                <Toast 
+                    msg={{
+                        title: t('successTitle', { lng: lang }), 
+                        body: alert.success
+                    }} 
+                    handleShow={() => dispatch({type: GLOBALTYPES.ALERT, payload: {}})}
+                    bgColor="bg-success" 
+                />
             }
         </div>
     )

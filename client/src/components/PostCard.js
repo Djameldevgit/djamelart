@@ -13,8 +13,10 @@ import DescriptionPost from './home/post_card/DescriptionPost'
 import { useSelector } from 'react-redux';
  
 import CommentDate from './home/post_card/CommentDate'
+import Location from './home/post_card/Location'
 
 const PostCard = ({ post, theme }) => {
+ 
     const location = useLocation();
     const isPostDetailPage = location.pathname === `/post/${post._id}`;
     const { auth } = useSelector(state => state); // 🔹 Obtiene la autenticación desde Redux
@@ -36,7 +38,7 @@ const PostCard = ({ post, theme }) => {
 
             {isPostDetailPage && <DescriptionPost post={post} />}
 
-         
+            {isPostDetailPage && <Location post={post} />}
             {isAuthenticated && isPostDetailPage && (
                 <>
 
