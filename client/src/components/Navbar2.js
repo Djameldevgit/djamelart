@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import Avatar from './Avatar'
 import Card from 'react-bootstrap/Card'
-import { FaBars } from 'react-icons/fa'  // asegúrate de tener FaBars aquí
+import { FaBars } from 'react-icons/fa'
 import {
   Navbar,
   Container,
@@ -15,18 +15,20 @@ import {
   Button,
   Dropdown,
   Badge
-
 } from 'react-bootstrap'
 import { FaUserCircle } from 'react-icons/fa'
 import { BsCartFill } from 'react-icons/bs'
 import NotifyModal from './NotifyModal'
+import LanguageSelectorpc from './LanguageSelectorpc'
+import SearchAcordion from './SearchAcordion'
+
 
 const Navbar2 = () => {
   const { auth, theme } = useSelector((state) => state)
   const dispatch = useDispatch()
-  const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('navbar');
-  const lang = languageReducer.language || 'en';
+  const { languageReducer } = useSelector(state => state)
+  const { t } = useTranslation('navbar')
+  const lang = languageReducer.language || 'en'
   const [showDrawer, setShowDrawer] = useState(false)
 
   const openStatusModal = () => {
@@ -44,8 +46,10 @@ const Navbar2 = () => {
   const handleCloseDrawer = () => setShowDrawer(false)
   const handleShowDrawer = () => setShowDrawer(true)
 
+
+
   return (
-    <>
+    <div>
       <Navbar expand="lg" className="navbar bg-body-tertiary mb-2 shadow-sm px-3">
         <Container fluid className="align-items-center">
           <div className="d-flex align-items-center">
@@ -124,49 +128,42 @@ const Navbar2 = () => {
           </div>
 
           <div className="d-flex align-items-center justify-content-center gap-3">
-            {/* Dropdown de Opciones */}
+            <div className="d-none d-lg-block ms-3">
+              <LanguageSelectorpc />
+            </div>
+
+
             <Dropdown
               title={
                 <div className="position-relative">
-                  <i className="fas fa-bell text-danger"
-                    style={{ fontSize: '1.2rem', cursor: 'pointer' }}
-                  />
-
+                  <i className="fas fa-bell text-danger" style={{ fontSize: '1.2rem', cursor: 'pointer' }} />
                 </div>
               }
             >
-              <Dropdown.Toggle variant="secondary" id="custom-dropdown">
-
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item as={Link} to="/custompage1">
-                  {t('navbar:customPage1', { lng: lang })}
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to="/custompage2">
-                  {t('navbar:customPage2', { lng: lang })}
-                </Dropdown.Item>
-              </Dropdown.Menu>
+              <Dropdown />
+    
+                <span  >
+                  <i className="fas fa-search"></i>
+                  <span className="ml-1">
+                    {t('Search', { lng: languageReducer.language })}
+                  </span>
+                </span>
+ 
             </Dropdown>
 
-            {auth.user &&
-
+            {auth.user && (
               <NavDropdown
                 title={
                   <div className="position-relative">
-                    <i className="fas fa-bell text-danger"
-                      style={{ fontSize: '1.2rem', cursor: 'pointer' }}
-                    />
-
+                    <i className="fas fa-bell text-danger" style={{ fontSize: '1.2rem', cursor: 'pointer' }} />
                   </div>
                 }
               >
-                <NavDropdown.Item  >
+                <NavDropdown.Item>
                   <NotifyModal user={auth.user} />
                 </NavDropdown.Item>
               </NavDropdown>
-
-
-            }
+            )}
 
             {auth.user && (
               <Link to="/cart" className="position-relative text-decoration-none mx-2">
@@ -177,7 +174,7 @@ const Navbar2 = () => {
                   className="position-absolute top-0 start-100 translate-middle"
                   style={{ fontSize: '0.6rem' }}
                 >
-                  3 {/* Puedes reemplazar con el número real de items */}
+                  3
                 </Badge>
               </Link>
             )}
@@ -186,8 +183,6 @@ const Navbar2 = () => {
               <FaBars size={20} />
             </Button>
 
-
-            {/* Dropdown de Avatar (solo desktop) */}
             <div className="d-none d-lg-block">
               {auth.user ? (
                 <NavDropdown
@@ -208,21 +203,24 @@ const Navbar2 = () => {
                   <NavDropdown.Item as={Link} to="/message">
                     {t('navbar:adminChat', { lng: lang })}
                   </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/administration/roles">
-                    {t('navbar:roles', { lng: lang })}
+                  <NavDropdown.Item as={Link} to="/rolesuser">
+                    {t('navbar:rolesuser', { lng: lang })}
                   </NavDropdown.Item>
                   {auth.user.role === 'admin' && (
                     <>
-                      <NavDropdown.Item as={Link} to="/administration/users/reportuser">
-                        {t('navbar:reportedUsers', { lng: lang })}
+                      <NavDropdown.Item as={Link} to="/users">
+                        {t('navbar:users', { lng: lang })}
                       </NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/administration/homepostspendientes">
+                      <NavDropdown.Item as={Link} to="/postspendientes">
                         {t('navbar:pendingPosts', { lng: lang })}
                       </NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/administration/usersaction">
+                      <NavDropdown.Item as={Link} to="/rolesuser">
+                        {t('navbar:rorlesUsers', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/usersaction">
                         {t('navbar:userActions', { lng: lang })}
                       </NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/administration/usersedicion">
+                      <NavDropdown.Item as={Link} to="/usersedicion">
                         {t('navbar:userEditing', { lng: lang })}
                       </NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/administration/listadeusuariosbloqueadoss">
@@ -273,18 +271,15 @@ const Navbar2 = () => {
         <Offcanvas.Header closeButton className="py-2 custom-close-btn">
           <style>
             {`
-  .custom-close-btn .btn-close {
-    font-size: 1.5rem;
-    background-color: #0d6efd; /* rojo tipo Bootstrap "danger" */
-    border-radius: 50%;
-    padding: 0.5rem;
-    opacity: 1;
-  }
-  }
-`}
+          .custom-close-btn .btn-close {
+            font-size: 1.5rem;
+            background-color: #0d6efd;
+            border-radius: 50%;
+            padding: 0.5rem;
+            opacity: 1;
+          }
+          `}
           </style>
-
-
           <Offcanvas.Title>{t('navbar:menu', { lng: lang })}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body
@@ -294,44 +289,16 @@ const Navbar2 = () => {
             padding: '0.5rem'
           }}
         >
-          <h1>MENU</h1>
-          <div className="d-flex flex-column gap-1">
-            <Button
-              variant="link"
-              as={Link}
-              to="/"
-
-              onClick={handleCloseDrawer}
-              className="text-start py-1"
-            >
-              {t('navbar:home', { lng: lang })}
-            </Button>
-            <Button
-              variant="link"
-              as={Link}
-              to="/profile"
-              onClick={handleCloseDrawer}
-              className="text-start py-1"
-            >
-              {t('navbar:profile', { lng: lang })}
-            </Button>
-            {auth.user && (
-              <Button
-                variant="link"
-                as={Link}
-                to="/cart"
-                onClick={handleCloseDrawer}
-                className="text-start py-1"
-
-              >
-                {t('navbar:cart', { lng: lang })}
-              </Button>
-            )}
-          </div>
+          <SearchAcordion />
         </Offcanvas.Body>
       </Offcanvas>
-    </>
+
+    </div>
+
+
   )
+
+
 }
 
 export default Navbar2

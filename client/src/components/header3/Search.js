@@ -14,7 +14,7 @@ const Search = () => {
                 </span>
                 <span className="search-text">
                     <span style={{ fontSize: '1rem', color: '#6c757d', flex: 1, display: 'flex', justifyContent: languageReducer.language === 'ar' ? 'right' : 'flex-start', flexDirection: 'row' }}>
-                        {t('Advanced search...', { lng: languageReducer.language })}
+                        {t('Adviiiiahhhnced search...', { lng: languageReducer.language })}
                     </span>
                 </span>
             </nav>

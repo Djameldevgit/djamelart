@@ -6,7 +6,7 @@ const carritoCtrl = {
         try {
             const post = await Posts.findById(req.params.id);
             if (!post || !post.price) {
-                return res.status(404).json({ msg: req.__('language.post_not_found_or_no_price') });
+                return res.status(404).json({ msg: req.__('cart.post_not_found_or_no_price') });
             }
 
             const user = await Users.findById(req.user._id);
@@ -31,7 +31,7 @@ const carritoCtrl = {
             await user.save();
 
             res.json({
-                msg: req.__('language.item_added_to_cart'),
+                msg: req.__('cart.item_added_to_cart'),
                 cart: user.cart
             });
 
@@ -44,15 +44,15 @@ const carritoCtrl = {
         try {
             const price = parseFloat(req.body.price);
             if (isNaN(price)) {
-                return res.status(400).json({ msg: req.__('language.price_must_be_number') });
+                return res.status(400).json({ msg: req.__('cart.price_must_be_number') });
             }
             if (price <= 0) {
-                return res.status(400).json({ msg: req.__('language.price_must_be_positive') });
+                return res.status(400).json({ msg: req.__('cart.price_must_be_positive') });
             }
 
             const quantity = parseInt(req.body.quantity) || 1;
             if (quantity < 1) {
-                return res.status(400).json({ msg: req.__('language.quantity_at_least_1') });
+                return res.status(400).json({ msg: req.__('cart.quantity_at_least_1') });
             }
 
             const user = await Users.findOneAndUpdate(
@@ -64,10 +64,10 @@ const carritoCtrl = {
                 { new: true }
             );
 
-            res.json({ msg: req.__('language.product_removed'), user });
+            res.json({ msg: req.__('cart.product_removed'), user });
 
         } catch (err) {
-            res.status(500).json({ msg: req.__('language.server_error') });
+            res.status(500).json({ msg: req.__('cart.server_error') });
         }
     },
 
@@ -90,7 +90,7 @@ const carritoCtrl = {
         try {
             const { quantity } = req.body;
             if (!quantity || quantity < 1) {
-                return res.status(400).json({ msg: req.__('language.invalid_quantity') });
+                return res.status(400).json({ msg: req.__('cart.invalid_quantity') });
             }
 
             const user = await Users.findById(req.user._id);
@@ -99,7 +99,7 @@ const carritoCtrl = {
             );
 
             if (!item) {
-                return res.status(404).json({ msg: req.__('language.product_not_found_in_cart') });
+                return res.status(404).json({ msg: req.__('cart.product_not_found_in_cart') });
             }
 
             const priceDifference = (quantity - item.quantity) * item.price;
@@ -109,7 +109,7 @@ const carritoCtrl = {
             await user.save();
 
             res.json({
-                msg: req.__('language.quantity_updated'),
+                msg: req.__('cart.quantity_updated'),
                 cart: user.cart
             });
 

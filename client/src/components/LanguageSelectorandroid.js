@@ -23,7 +23,11 @@ function LanguageSelectorandroid() {
       case 'ar':
         dispatch(languageActions.arabLanguage(language));
         break;
-      case 'es':
+        case 'es':
+          dispatch(languageActions.spanishLanguage(language));
+          break;
+
+     
       case 'ru':
       case 'kab':
       case 'chino':

@@ -8,12 +8,12 @@ const commentCtrl = {
 
             const post = await Posts.findById(postId)
             if (!post)
-                return res.status(400).json({ msg: req.__('language.post_not_exist') })
+                return res.status(400).json({ msg: req.__('comment.post_not_exist') })
 
             if (reply) {
                 const cm = await Comments.findById(reply)
                 if (!cm)
-                    return res.status(400).json({ msg: req.__('language.comment_not_exist') })
+                    return res.status(400).json({ msg: req.__('comment.comment_not_exist') })
             }
 
             const newComment = new Comments({
@@ -41,7 +41,7 @@ const commentCtrl = {
                 _id: req.params.id, user: req.user._id
             }, { content })
 
-            res.json({ msg: req.__('language.comment_updated') })
+            res.json({ msg: req.__('comment.comment_updated') })
 
         } catch (err) {
             return res.status(500).json({ msg: err.message })
@@ -52,13 +52,13 @@ const commentCtrl = {
         try {
             const comment = await Comments.find({ _id: req.params.id, likes: req.user._id })
             if (comment.length > 0)
-                return res.status(400).json({ msg: req.__('language.comment_already_liked') })
+                return res.status(400).json({ msg: req.__('comment.comment_already_liked') })
 
             await Comments.findOneAndUpdate({ _id: req.params.id }, {
                 $push: { likes: req.user._id }
             }, { new: true })
 
-            res.json({ msg: req.__('language.comment_liked') })
+            res.json({ msg: req.__('comment.comment_liked') })
 
         } catch (err) {
             return res.status(500).json({ msg: err.message })
@@ -71,7 +71,7 @@ const commentCtrl = {
                 $pull: { likes: req.user._id }
             }, { new: true })
 
-            res.json({ msg: req.__('language.comment_unliked') })
+            res.json({ msg: req.__('comment.comment_unliked') })
 
         } catch (err) {
             return res.status(500).json({ msg: err.message })
@@ -92,7 +92,7 @@ const commentCtrl = {
                 $pull: { comments: req.params.id }
             })
 
-            res.json({ msg: req.__('language.comment_deleted') })
+            res.json({ msg: req.__('comment.comment_deleted') })
 
         } catch (err) {
             return res.status(500).json({ msg: err.message })

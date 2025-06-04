@@ -1,1 +1,86 @@
-{}
+{
+	"auth": {
+		"username_exists": "Имя пользователя уже существует.",
+		"email_exists": "Этот email уже зарегистрирован.",
+		"password_too_short": "Пароль должен содержать минимум 6 символов.",
+		"register_success": "Регистрация прошла успешно!",
+		"email_not_exist": "Этот email не существует.",
+		"incorrect_password": "Неверный пароль.",
+		"login_success": "Вход выполнен успешно!",
+		"logout_success": "Выход выполнен успешно!",
+		"login_required": "Пожалуйста, войдите в систему.",
+		"user_not_found": "Пользователь не найден.",
+		"server_error": "Ошибка сервера."
+	},
+	"post": {
+		"POST": "ПОСТ",
+		"created_post": "Ваша публикация получена и находится на рассмотрении. Мы уведомим вас после одобрения.",
+		"updated_post": "Публикация обновлена!",
+		"deleted_post": "Публикация удалена!",
+		"liked_post": "Вам понравилась эта публикация!",
+		"unliked_post": "Вы больше не любите эту публикацию!",
+		"saved_post": "Публикация сохранена!",
+		"unsaved_post": "Публикация удалена из сохранённых!",
+		"post_not_exist": "Эта публикация не существует.",
+		"user_not_exist": "Этот пользователь не существует.",
+		"already_liked": "Вам уже нравится эта публикация.",
+		"already_saved": "Вы уже сохранили эту публикацию.",
+		"please_add_photo": "Пожалуйста, добавьте фото.",
+		"post_approved": "Публикация одобрена!",
+		"post_not_found": "Публикация не найдена.",
+		"success": "Успех!",
+		"USER": "ПОЛЬЗОВАТЕЛЬ",
+		"user_not_found": "Пользователь не найден.",
+		"please_add_username": "Пожалуйста, укажите имя пользователя.",
+		"update_success": "Обновление прошло успешно!",
+		"already_followed": "Вы уже подписаны на этого пользователя.",
+		"follow_success": "Вы подписались на этого пользователя!",
+		"unfollow_success": "Вы отписались от этого пользователя!",
+		"search_failed": "Не удалось найти пользователей.",
+		"suggestions_loaded": "Рекомендации пользователей загружены.",
+		"error": "Ошибка.",
+		"no_users_found": "Пользователи не найдены.",
+		"invalid_user_id": "Некорректный ID пользователя.",
+		"updated_arabic": "Язык изменён на арабский.",
+		"updated_french": "Язык изменён на французский.",
+		"updated_spanish": "Язык изменён на испанский."
+	},
+	"comment": {
+		"error_post_not_exist": "Эта публикация не существует.",
+		"error_comment_not_exist": "Этот комментарий не существует.",
+		"success": "Комментарий создан!"
+	},
+	"message": {
+		"createMessage.empty": "Сообщение не может быть пустым.",
+		"createMessage.success": "Сообщение успешно отправлено!",
+		"deleteMessage.success": "Сообщение удалено!",
+		"deleteConversation.success": "Диалог удалён!"
+	},
+	"lang": {
+		"langUpdatedToSpanish": "Язык изменён на испанский.",
+		"langUpdatedToRussian": "Язык изменён на русский.",
+		"langUpdatedToKabyle": "Язык изменён на кабильский.",
+		"langUpdatedToChinese": "Язык изменён на китайский.",
+		"langUpdatedToEnglish": "Язык изменён на английский.",
+		"langUpdatedToFrench": "Язык изменён на французский.",
+		"langUpdatedToArabic": "Язык изменён на арабский.",
+		"langUpdated": "Язык обновлён.",
+		"languageNotSpecified": "Язык не указан.",
+		"userNotFoundOrAlreadyUpdated": "Пользователь не найден или язык уже обновлён.",
+		"errorUpdatingLanguage": "Ошибка при изменении языка.",
+		"languageSavedForVisitor": "Язык сохранён для гостя.",
+		"errorSavingLanguageForVisitor": "Ошибка сохранения языка для гостя."
+	},
+	"cart": {
+		"postNotFoundOrNoPrice": "Публикация не найдена или без цены.",
+		"postAddedToCart": "Публикация добавлена в корзину!",
+		"priceMustBeNumber": "Цена должна быть числом.",
+		"priceMustBePositive": "Цена должна быть положительной.",
+		"quantityAtLeastOne": "Количество должно быть не менее 1.",
+		"productRemoved": "Товар удалён.",
+		"serverError": "Ошибка сервера.",
+		"invalidQuantity": "Некорректное количество.",
+		"productNotFoundInCart": "Товар не найден в корзине.",
+		"quantityUpdated": "Количество обновлено."
+	}
+}

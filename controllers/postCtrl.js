@@ -28,7 +28,7 @@ const postCtrl = {
             } = postData || {};
 
             if (images.length === 0)
-                return res.status(400).json({ msg: req.__('language.add_photo') });
+                return res.status(400).json({ msg: req.__('post.add_photo') });
 
             const newPost = new Posts({
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
@@ -40,7 +40,7 @@ const postCtrl = {
             await newPost.save();
 
             res.json({
-                msg: req.__('language.created_post'),
+                msg: req.__('post.created_post'),
                 newPost: {
                     ...newPost._doc,
                     user: req.user
@@ -54,12 +54,12 @@ const postCtrl = {
     aprobarPostPendiente: async (req, res) => {
         try {
             const post = await Posts.findById(req.params.id);
-            if (!post) return res.status(404).json({ msg: req.__('language.post_not_found') });
+            if (!post) return res.status(404).json({ msg: req.__('post.post_not_found') });
 
             post.estado = 'aprobado';
             await post.save();
 
-            res.json({ msg: req.__('language.post_approved'), _id: post._id });
+            res.json({ msg: req.__('post.post_approved'), _id: post._id });
         } catch (err) {
             return res.status(500).json({ msg: err.message });
         }
@@ -80,7 +80,7 @@ const postCtrl = {
                 });
 
             res.json({
-                msg: req.__('language.success'),
+                msg: req.__('post.success'),
                 result: posts.length,
                 posts
             });
@@ -178,7 +178,7 @@ const postCtrl = {
               });
 
             res.json({
-                msg: req.__('language.updated_post'),
+                msg: req.__('post.updated_post'),
                 newPost: {
                     ...post._doc,
                     category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
@@ -195,16 +195,16 @@ const postCtrl = {
         try {
             const post = await Posts.find({ _id: req.params.id, likes: req.user._id });
             if (post.length > 0)
-                return res.status(400).json({ msg: req.__('language.already_liked') });
+                return res.status(400).json({ msg: req.__('post.already_liked') });
 
             const like = await Posts.findOneAndUpdate({ _id: req.params.id }, {
                 $push: { likes: req.user._id }
             }, { new: true });
 
             if (!like)
-                return res.status(400).json({ msg: req.__('language.post_not_exist') });
+                return res.status(400).json({ msg: req.__('post.post_not_exist') });
 
-            res.json({ msg: req.__('language.liked_post') });
+            res.json({ msg: req.__('post.liked_post') });
         } catch (err) {
             return res.status(500).json({ msg: err.message });
         }
@@ -217,9 +217,9 @@ const postCtrl = {
             }, { new: true });
 
             if (!like)
-                return res.status(400).json({ msg: req.__('language.post_not_exist') });
+                return res.status(400).json({ msg: req.__('post.post_not_exist') });
 
-            res.json({ msg: req.__('language.unliked_post') });
+            res.json({ msg: req.__('post.unliked_post') });
         } catch (err) {
             return res.status(500).json({ msg: err.message });
         }
@@ -251,7 +251,7 @@ const postCtrl = {
                     }
                 });
 
-            if (!post) return res.status(400).json({ msg: req.__('language.post_not_exist') });
+            if (!post) return res.status(400).json({ msg: req.__('post.post_not_exist') });
 
             res.json({ post });
         } catch (err) {
@@ -270,7 +270,7 @@ const postCtrl = {
             ]);
 
             return res.json({
-                msg: req.__('language.success'),
+                msg: req.__('post.success'),
                 result: posts.length,
                 posts
             });
@@ -285,7 +285,7 @@ const postCtrl = {
             await Comments.deleteMany({ _id: { $in: post.comments } });
 
             res.json({
-                msg: req.__('language.deleted_post'),
+                msg: req.__('post.deleted_post'),
                 newPost: {
                     ...post,
                     user: req.user
@@ -300,16 +300,16 @@ const postCtrl = {
         try {
             const user = await Users.find({ _id: req.user._id, saved: req.params.id });
             if (user.length > 0)
-                return res.status(400).json({ msg: req.__('language.already_saved') });
+                return res.status(400).json({ msg: req.__('post.already_saved') });
 
             const save = await Users.findOneAndUpdate({ _id: req.user._id }, {
                 $push: { saved: req.params.id }
             }, { new: true });
 
             if (!save)
-                return res.status(400).json({ msg: req.__('language.user_not_exist') });
+                return res.status(400).json({ msg: req.__('post.user_not_exist') });
 
-            res.json({ msg: req.__('language.saved_post') });
+            res.json({ msg: req.__('post.saved_post') });
         } catch (err) {
             return res.status(500).json({ msg: err.message });
         }
@@ -322,9 +322,9 @@ const postCtrl = {
             }, { new: true });
 
             if (!save)
-                return res.status(400).json({ msg: req.__('language.user_not_exist') });
+                return res.status(400).json({ msg: req.__('post.user_not_exist') });
 
-            res.json({ msg: req.__('language.unsaved_post') });
+            res.json({ msg: req.__('post.unsaved_post') });
         } catch (err) {
             return res.status(500).json({ msg: err.message });
         }

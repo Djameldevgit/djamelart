@@ -35,6 +35,8 @@ import Navbarr from './pages/navbarr'
 import Navbar2 from './components/Navbar2'
  
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
+import Roles from './pages/roles';
+import UsersActionn from './pages/UsersActionn';
  
 function App() {
   const { auth, status, modal, call,languageReducer } = useSelector(state => state)
@@ -114,6 +116,9 @@ function App() {
           <Route exact path="/post/:id" component={Post}/> 
           <Route exact path="/drawerr" component={Drawerr}/> 
           <Route exact path="/navbar" component={Navbarr}/> 
+          <Route exact path="/rolesuser"   component={Roles} />
+          <Route exact path="/users"   component={UsersActionn} />
+          <Route exact path="/postspendientes"   component={Postspendientes} />
           <PrivateRouter exact path="/:page" component={PageRender} />
           <PrivateRouter exact path="/:page/:id" component={PageRender} />
           

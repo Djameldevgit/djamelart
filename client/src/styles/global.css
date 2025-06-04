@@ -150,4 +150,7 @@ body.rtl .container {
 }
  
 
- 
+ /* Elimina las flechas del dropdown */
+.dropdown-toggle::after {
+  display: none !important;
+}

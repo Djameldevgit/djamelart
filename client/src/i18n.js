@@ -2,7 +2,13 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 
-
+import arCardbodytitle from './locales/ar/cardbodytitle.json';
+import chCardbodytitle from './locales/ch/cardbodytitle.json';
+import enCardbodytitle from './locales/en/cardbodytitle.json';
+import esCardbodytitle from './locales/es/cardbodytitle.json';
+import frCardbodytitle from './locales/fr/cardbodytitle.json';
+import kaCardbodytitle from './locales/ka/cardbodytitle.json';
+import ruCardbodytitle from './locales/ru/cardbodytitle.json';
 
 import arToastvalid from './locales/ar/toastvalid.json';
 import chToastvalid from './locales/ch/toastvalid.json';
@@ -113,7 +119,7 @@ import chNavbar from './locales/ch/navbar.json';             // Nuevo
 
 const resources = {
   ar: {
-
+  cardbodytitle: arCardbodytitle,
     toastvalid: arToastvalid,
     language: arLanguage,
     profile: arProfile,
@@ -129,6 +135,7 @@ const resources = {
 
   },
   ch: {
+    cardbodytitle: chCardbodytitle,
     toastvalid: chToastvalid,
     language: chLanguage,
  profile: chProfile,
@@ -143,6 +150,8 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
+
+    cardbodytitle: enCardbodytitle,
     toastvalid: enToastvalid,
     language: enLanguage,
     profile: enProfile,
@@ -157,6 +166,7 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
+    cardbodytitle: esCardbodytitle,
     toastvalid: esToastvalid,
     language: esLanguage,
     profile: esProfile,
@@ -171,6 +181,7 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
+    cardbodytitle: frCardbodytitle,
     toastvalid: frToastvalid,
     language: frLanguage,
     profile: frProfile,
@@ -185,7 +196,7 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   ka: {
-
+    cardbodytitle: kaCardbodytitle,
     toastvalid: kaToastvalid,
     language: kaLanguage,
     profile: kaProfile,
@@ -200,6 +211,7 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
+    cardbodytitle: ruCardbodytitle,
     toastvalid: ruToastvalid,
     language: ruLanguage,
     profile: ruProfile,

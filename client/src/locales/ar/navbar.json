@@ -5,9 +5,10 @@
   "addPost": "إضافة إعلان",
   "appInfo": "معلومات التطبيق",
   "adminChat": "دردشة الإدارة",
-  "roles": "الأدوار",
+  "rolesuser": "الأدوار",
   "reportedUsers": "المستخدمون المبلغ عنهم",
   "pendingPosts": "المنشورات المعلقة",
+ 
   "userActions": "إجراءات المستخدم",
   "userEditing": "تحرير المستخدمين",
   "blockedUsers": "المستخدمون المحظورون",

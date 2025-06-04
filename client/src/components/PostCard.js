@@ -5,15 +5,15 @@ import CardBodyCarousel from './home/post_card/CardBodyCarousel'
 
 import Comments from './home/Comments'
 import InputComment from './home/InputComment'
-import CardBodyTitle from './home/post_card/CardBodyTitle'
-
+ 
 import { useLocation } from "react-router-dom";
 import DescriptionPost from './home/post_card/DescriptionPost'
  
 import { useSelector } from 'react-redux';
  
-import CommentDate from './home/post_card/CommentDate'
+//import CommentDate from './home/post_card/CommentDate'
 import Location from './home/post_card/Location'
+import CardFooter from './home/post_card/CardFooter';
 
 const PostCard = ({ post, theme }) => {
  
@@ -29,10 +29,10 @@ const PostCard = ({ post, theme }) => {
 
 
             <CardHeader post={post} />
-            <CardBodyTitle post={post} />
+         
             <CardBodyCarousel post={post} theme={theme} />
 
-<CommentDate post={post} theme={theme}/>
+<CardFooter post={post} theme={theme}/>
 
 
 

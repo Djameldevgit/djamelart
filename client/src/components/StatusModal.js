@@ -653,6 +653,10 @@ const StatusModal = () => {
                 <div>
                     {Descriptionnn()}
                 </div>
+
+                <div>
+                    {wilayascommunes()}
+                </div>
                 <div>
                     {paisess()}
                 </div>

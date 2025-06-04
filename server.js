@@ -54,7 +54,7 @@ app.use('/api', require('./routes/notifyRouter'))
 app.use('/api', require('./routes/messageRouter'))
 app.use('/api', require('./routes/cartRouter'))
 app.use('/api', require('./routes/languageRouter'))
-
+app.use('/api', require('./routes/rolesRouter'))
 // --- RUTA PARA CAMBIAR EL IDIOMA ---
 
 // --- CONEXIÓN A MONGODB ---
