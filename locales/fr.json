@@ -81,10 +81,13 @@
 		"serverError": "Erreur du serveur.",
 		"invalidQuantity": "Quantité invalide.",
 		"productNotFoundInCart": "Produit non trouvé dans le panier.",
-		"quantityUpdated": "Quantité mise à jour."
+		"quantityUpdated": "Quantité mise à jour.",
+		"item_added_to_cart": "cart.item_added_to_cart",
+		"post_not_found_or_no_price": "cart.post_not_found_or_no_price"
 	},
 	"language": {
 		"updated_french": "language.updated_french",
-		"updated_arabic": "language.updated_arabic"
+		"updated_arabic": "language.updated_arabic",
+		"updated_spanish": "language.updated_spanish"
 	}
 }

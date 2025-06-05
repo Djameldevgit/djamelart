@@ -7,7 +7,7 @@ import { getDataAPI } from '../../utils/fetchData';
 import { POST_TYPES } from '../../redux/actions/postAction';
 
 const Posts = ({ filters }) => {
-    const { homePosts, auth, theme } = useSelector(state => state);
+    const { homePosts,   theme } = useSelector(state => state);
     const dispatch = useDispatch();
     const [load, setLoad] = useState(false);
 
@@ -63,7 +63,7 @@ const Posts = ({ filters }) => {
 
     const handleLoadMore = async () => {
         setLoad(true);
-        const res = await getDataAPI(`posts?limit=${homePosts.page * 9}`, auth.token);
+        const res = await getDataAPI(`posts?limit=${homePosts.page * 9}` );
 
         dispatch({
             type: POST_TYPES.GET_POSTS,

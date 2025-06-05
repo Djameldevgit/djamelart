@@ -21,15 +21,18 @@ import { BsCartFill } from 'react-icons/bs'
 import NotifyModal from './NotifyModal'
 import LanguageSelectorpc from './LanguageSelectorpc'
 import SearchAcordion from './SearchAcordion'
-
+ 
 
 const Navbar2 = () => {
-  const { auth, theme } = useSelector((state) => state)
+  const { auth, theme,cart } = useSelector((state) => state)
   const dispatch = useDispatch()
   const { languageReducer } = useSelector(state => state)
   const { t } = useTranslation('navbar')
   const lang = languageReducer.language || 'en'
   const [showDrawer, setShowDrawer] = useState(false)
+
+  const totalItems = auth?.user?.cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+
 
   const openStatusModal = () => {
     dispatch({ type: GLOBALTYPES.STATUS, payload: true })
@@ -81,7 +84,7 @@ const Navbar2 = () => {
                       <NavDropdown.Item as={Link} to="/administration/users/reportuser" onClick={handleCloseDrawer}>
                         {t('reportedUsers', { lng: lang })}
                       </NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/administration/homepostspendientes" onClick={handleCloseDrawer}>
+                      <NavDropdown.Item as={Link} to="/postspendientes" onClick={handleCloseDrawer}>
                         {t('pendingPosts', { lng: lang })}
                       </NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/administration/usersaction" onClick={handleCloseDrawer}>
@@ -166,17 +169,19 @@ const Navbar2 = () => {
             )}
 
             {auth.user && (
-              <Link to="/cart" className="position-relative text-decoration-none mx-2">
-                <BsCartFill size={20} className="text-dark" />
-                <Badge
-                  pill
-                  bg="danger"
-                  className="position-absolute top-0 start-100 translate-middle"
-                  style={{ fontSize: '0.6rem' }}
-                >
-                  3
-                </Badge>
-              </Link>
+                 <Link to="/cart" className="position-relative text-decoration-none mx-2">
+                 <BsCartFill size={20} className="text-dark" />
+                 {totalItems > 0 && (
+                   <Badge
+                     pill
+                     bg="danger"
+                     className="position-absolute top-0 start-100 translate-middle"
+                     style={{ fontSize: '0.6rem' }}
+                   >
+                    <span>{cart.items?.length || 0}</span>
+                   </Badge>
+                 )}
+               </Link>
             )}
 
             <Button className="d-lg-none" onClick={handleShowDrawer} variant="outline-primary">
@@ -268,20 +273,11 @@ const Navbar2 = () => {
           width: '270px'
         }}
       >
-        <Offcanvas.Header closeButton className="py-2 custom-close-btn">
-          <style>
-            {`
-          .custom-close-btn .btn-close {
-            font-size: 1.5rem;
-            background-color: #0d6efd;
-            border-radius: 50%;
-            padding: 0.5rem;
-            opacity: 1;
-          }
-          `}
-          </style>
-          <Offcanvas.Title>{t('navbar:menu', { lng: lang })}</Offcanvas.Title>
-        </Offcanvas.Header>
+          <Offcanvas.Header closeButton>
+                <Offcanvas.Title id={`offcanvasNavbarLabel-expand-`}>
+                  Offcanvas
+                </Offcanvas.Title>
+              </Offcanvas.Header>
         <Offcanvas.Body
           style={{
             maxHeight: 'calc(70vh - 60px)',

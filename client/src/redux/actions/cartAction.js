@@ -2,20 +2,43 @@
 import { GLOBALTYPES } from './globalTypes'
 import { putDataAPI, deleteDataAPI, patchDataAPI,getDataAPI } from '../../utils/fetchData'
 
-export const addToCart = ({ post, auth }) => async (dispatch) => {
-  dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true })
+ 
+
+export const loadCart = (token) => async (dispatch) => {
+  try {
+    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true });
+    const res = await getDataAPI('/cart', { headers: { Authorization: token } });
+    
+    dispatch({ 
+      type: GLOBALTYPES.LOAD_CART, 
+      payload: res.data 
+    });
+    
+  } catch (err) {
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { error: err.response?.data?.msg || "Error al cargar carrito" }
+    });
+  } finally {
+    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: false });
+  }
+};
+
+export const buyProduct = ({ post, auth }) => async (dispatch) => {
+  dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true });
 
   try {
-    await putDataAPI(`cart/add/${post._id}`, null, auth.token)
+    await putDataAPI(`cart/add/${post._id}`, null, auth.token);
 
     const updatedItems = [...auth.user.cart.items, {
-      postId: post._id,  // Cambié productId a postId para coincidir con tu schema
+      postId: post._id,
       title: post.title,
-      images: post.images,  // Pasa todo el array de imágenes
+      images: post.images,
       quantity: 1,
       price: post.price
-    }]
-    const updatedPrice = auth.user.cart.totalPrice + post.price
+    }];
+    
+    const updatedPrice = auth.user.cart.totalPrice + post.price;
 
     dispatch({
       type: GLOBALTYPES.ADD_TO_CART,
@@ -25,16 +48,20 @@ export const addToCart = ({ post, auth }) => async (dispatch) => {
           cart: { items: updatedItems, totalPrice: updatedPrice }
         }
       }
-    })
+    });
+    
+    return true; // Para manejar el éxito en el componente
+    
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,
       payload: { error: err.response?.data?.msg || "Error al agregar al carrito" }
-    })
+    });
+    return false; // Para manejar el error en el componente
   } finally {
-    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: false })
+    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: false });
   }
-}
+};
 export const removeFromCart = ({ post, auth }) => async (dispatch) => {
   try {
     dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true });

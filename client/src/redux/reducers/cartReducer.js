@@ -1,33 +1,21 @@
 import { GLOBALTYPES } from '../actions/globalTypes'
 
 const initialState = {
-  loading: false,
   items: [],
-  totalPrice: 0
+  totalPrice: 0,
+  loading: false
 }
 
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
-    case GLOBALTYPES.AUTH:
-      return {
-        ...state,
-        items: action.payload.user && action.payload.user.cart 
-          ? action.payload.user.cart.items 
-          : [],
-        totalPrice: action.payload.user && action.payload.user.cart 
-          ? action.payload.user.cart.totalPrice 
-          : 0
-      }
-      case GLOBALTYPES.GET_CART:
-        return {
-          ...state,
-          items: action.payload.items,
-          totalPrice: action.payload.totalPrice
-        };
     case GLOBALTYPES.LOADING_CART:
+      return { ...state, loading: action.payload }
+
+    case GLOBALTYPES.GET_CART:
       return {
         ...state,
-        loading: action.payload
+        items: action.payload.items,
+        totalPrice: action.payload.totalPrice
       }
 
     case GLOBALTYPES.ADD_TO_CART:
@@ -38,12 +26,7 @@ const cartReducer = (state = initialState, action) => {
         items: action.payload.user.cart.items,
         totalPrice: action.payload.user.cart.totalPrice
       }
-      case GLOBALTYPES.AUTH:
-        return {
-          ...state,
-          items: action.payload.user?.cart?.items || [],
-          totalPrice: action.payload.user?.cart?.totalPrice || 0
-        }
+
     default:
       return state
   }

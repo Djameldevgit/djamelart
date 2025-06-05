@@ -1,4 +1,18 @@
 const Users = require('../models/userModel')
+class APIfeatures {
+    constructor(query, queryString) {
+        this.query = query;
+        this.queryString = queryString;
+    }
+
+    paginating() {
+        const page = this.queryString.page * 1 || 1;
+        const limit = this.queryString.limit * 1 || 9;
+        const skip = (page - 1) * limit;
+        this.query = this.query.skip(skip).limit(limit);
+        return this;
+    }
+}
 
 const userCtrl = {
     searchUser: async (req, res) => {
@@ -174,15 +188,15 @@ const userCtrl = {
         let query = Users.find();
 
         // Aplicar paginación
-        const features = new APIfeatures(query, req.query).paginating();
-
+        
+        const features = new APIfeatures(Users.find(query), req.query).paginating();
         // Obtener la lista de usuarios
         let users = await features.query
         .populate({
             path: "user", // Rellena el campo "user"
-            select: "avatar username followers following esBloqueado" // Selecciona los campos que necesitas
+            select: "avatar username followers following" // Selecciona los campos que necesitas
           })
-          .populate("likes", "avatar username followers following esBloqueado ") // Rellena los "likes"
+          .populate("likes", "avatar username followers following") // Rellena los "likes"
           .populate({
             path: "comments",
             populate: {

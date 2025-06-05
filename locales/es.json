@@ -81,7 +81,9 @@
 		"serverError": "Error del servidor.",
 		"invalidQuantity": "Cantidad inválida.",
 		"productNotFoundInCart": "Producto no encontrado en el carrito.",
-		"quantityUpdated": "Cantidad actualizada."
+		"quantityUpdated": "Cantidad actualizada.",
+		"post_not_found_or_no_price": "cart.post_not_found_or_no_price",
+		"item_added_to_cart": "cart.item_added_to_cart"
 	},
 	"language": {
 		"updated_spanish": "language.updated_spanish",

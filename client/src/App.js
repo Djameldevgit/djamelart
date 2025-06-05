@@ -37,6 +37,8 @@ import Navbar2 from './components/Navbar2'
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
 import Roles from './pages/roles';
 import UsersActionn from './pages/UsersActionn';
+import { getUsers } from './redux/actions/userAction';
+import { getCart } from './redux/actions/cartAction';
  
 function App() {
   const { auth, status, modal, call,languageReducer } = useSelector(state => state)
@@ -67,9 +69,13 @@ function App() {
     return () => socket.close()
   },[dispatch])
 
-  useEffect(() => {   
-       dispatch(getPosts(auth.token))
+  useEffect(() => {  
+    
+       dispatch(getPosts())
     if(auth.token) {
+      dispatch(getCart((auth.token)))
+       
+      dispatch(getUsers(auth.token))
       dispatch(getPostsPendientes(auth.token))
 
       dispatch(getSuggestions(auth.token))
@@ -93,7 +99,7 @@ function App() {
 
  
 
-
+ 
   return (
  
   <Router>
@@ -114,8 +120,7 @@ function App() {
           <Route exact path="/register" component={Register} />
            <Route exact path="/bloqueos" component={Bloqueoss} />
           <Route exact path="/post/:id" component={Post}/> 
-          <Route exact path="/drawerr" component={Drawerr}/> 
-          <Route exact path="/navbar" component={Navbarr}/> 
+     
           <Route exact path="/rolesuser"   component={Roles} />
           <Route exact path="/users"   component={UsersActionn} />
           <Route exact path="/postspendientes"   component={Postspendientes} />

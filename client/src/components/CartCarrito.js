@@ -54,8 +54,7 @@ const CartCarrito = () => {
 />
             <h4>{item.title}</h4>
             <p>${(item.price * (item.quantity || 1)).toFixed(2)}</p>
-          
-
+    
             <button onClick={() => handleRemove(item)}>
     Eliminar
 </button>
