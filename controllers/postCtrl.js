@@ -24,7 +24,7 @@ const postCtrl = {
             const {
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
                 devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
-                artStyle, talle, theme, measurementUnit
+                style, talle, theme, measurementUnit
             } = postData || {};
 
             if (images.length === 0)
@@ -33,7 +33,7 @@ const postCtrl = {
             const newPost = new Posts({
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
                 devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
-                artStyle, talle, theme, measurementUnit, images,
+                style, talle, theme, measurementUnit, images,
                 user: req.user._id
             });
 
@@ -88,11 +88,11 @@ const postCtrl = {
             return res.status(500).json({ msg: err.message });
         }
     },
-
+    
     getPosts: async (req, res) => {
         try {
             // Extraer los parámetros de filtro desde req.query
-            const { category, wilaya,description, commune, startDate, endDate, minPrice, maxPrice } = req.query;
+            const { category, theme,style, minPrice, maxPrice } = req.query;
 
             // Definir la consulta básica para los posts aprobados
             const query = { estado: "aprobado" };
@@ -102,21 +102,13 @@ const postCtrl = {
                 query.category = category;
             }
 
-            if (wilaya) {
-                query.wilaya = wilaya;
+            if (theme) {
+                query.theme = theme;
             }
-            if (commune) {
-                query.commune = commune;
+            if (style) {
+                query.theme = theme;
             }
-            if (startDate || endDate) {
-                query.createdAt = {}; // Campo de fecha en tu modelo
-                if (startDate) {
-                    query.createdAt.$gte = new Date(startDate); // Fecha de inicio
-                }
-                if (endDate) {
-                    query.createdAt.$lte = new Date(endDate); // Fecha de fin
-                }
-            }
+         
             if (minPrice || maxPrice) {
                 query.price = {}; // Campo de precio en tu modelo
                 if (minPrice) {
@@ -155,19 +147,19 @@ const postCtrl = {
             return res.status(500).json({ msg: err.message });
         }
     },
-
+ 
     updatePost: async (req, res) => {
         try {
             const {
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
                 devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
-                artStyle, talle, theme, measurementUnit, images
+                style, talle, theme, measurementUnit, images
             } = req.body;
 
             const post = await Posts.findOneAndUpdate({ _id: req.params.id }, {
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
                 devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
-                artStyle, talle, theme, measurementUnit, images
+                style, talle, theme, measurementUnit, images
             }).populate("user likes", "avatar username")
               .populate({
                   path: "comments",
@@ -183,7 +175,7 @@ const postCtrl = {
                     ...post._doc,
                     category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
                     devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
-                    artStyle, talle, theme, measurementUnit, images
+                    style, talle, theme, measurementUnit, images
                 }
             });
         } catch (err) {

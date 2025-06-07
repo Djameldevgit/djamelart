@@ -1,0 +1,27 @@
+{
+    "art_style": {
+      "select_style": "Select Style",
+      "group_universal": "Universal Styles",
+      "realism": "Realism",
+      "impressionism": "Impressionism",
+      "abstract": "Abstract",
+      "surrealism": "Surrealism",
+      "cubism": "Cubism",
+      "minimalism": "Minimalism",
+      "group_painting": "Painting Styles",
+      "oil_technique": "Oil Technique",
+      "watercolor_style": "Watercolor",
+      "hyperrealism": "Hyperrealism",
+      "group_sculpture": "Sculpture Styles",
+      "figurative": "Figurative",
+      "kinetic_style": "Kinetic",
+      "group_photography": "Photography Styles",
+      "vintage": "Vintage",
+      "group_digital": "Digital Art Styles",
+      "vector_art": "Vector Art",
+      "pixel_art": "Pixel Art",
+      "group_textile": "Textile Art Styles",
+      "batik": "Batik",
+      "japanese_sashiko": "Japanese Sashiko"
+    }
+  }

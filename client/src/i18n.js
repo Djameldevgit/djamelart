@@ -1,6 +1,15 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import arSearch from './locales/ar/search.json';
+import chSearch from './locales/ch/search.json';
+import enSearch from './locales/en/search.json';
+import esSearch from './locales/es/search.json';
+import frSearch from './locales/fr/search.json';
+import kaSearch from './locales/ka/search.json';
+import ruSearch from './locales/ru/search.json';
+
+
 
 import arCardbodytitle from './locales/ar/cardbodytitle.json';
 import chCardbodytitle from './locales/ch/cardbodytitle.json';
@@ -119,6 +128,9 @@ import chNavbar from './locales/ch/navbar.json';             // Nuevo
 
 const resources = {
   ar: {
+
+
+    search: arSearch,
   cardbodytitle: arCardbodytitle,
     toastvalid: arToastvalid,
     language: arLanguage,
@@ -135,6 +147,7 @@ const resources = {
 
   },
   ch: {
+    search: chSearch,
     cardbodytitle: chCardbodytitle,
     toastvalid: chToastvalid,
     language: chLanguage,
@@ -150,7 +163,7 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
-
+    search: enSearch,
     cardbodytitle: enCardbodytitle,
     toastvalid: enToastvalid,
     language: enLanguage,
@@ -166,6 +179,7 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
+    search: esSearch,
     cardbodytitle: esCardbodytitle,
     toastvalid: esToastvalid,
     language: esLanguage,
@@ -181,6 +195,8 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
+
+    search: frSearch,
     cardbodytitle: frCardbodytitle,
     toastvalid: frToastvalid,
     language: frLanguage,
@@ -196,6 +212,8 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   ka: {
+
+    search: kaSearch,
     cardbodytitle: kaCardbodytitle,
     toastvalid: kaToastvalid,
     language: kaLanguage,
@@ -211,6 +229,8 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
+
+    search: ruSearch,
     cardbodytitle: ruCardbodytitle,
     toastvalid: ruToastvalid,
     language: ruLanguage,

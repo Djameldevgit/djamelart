@@ -120,7 +120,7 @@ export const updatePost = ({ postData, images,  auth, status }) => async (dispat
         && status.description === postData.description
         && status.price === postData.price
         && status.devisvente === postData.devisvente
-        && status.artStyle === postData.artStyle
+        && status.style === postData.style
         && status.disponibilidad === postData.disponibilidad
         && status.devisvente === postData.devisvente
         && status.talle === postData.talle

@@ -4,14 +4,18 @@ import { putDataAPI, deleteDataAPI, patchDataAPI,getDataAPI } from '../../utils/
 
  
 
+// En cartAction.js
 export const loadCart = (token) => async (dispatch) => {
   try {
     dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true });
-    const res = await getDataAPI('/cart', { headers: { Authorization: token } });
+    const res = await getDataAPI('cart', token);
     
     dispatch({ 
       type: GLOBALTYPES.LOAD_CART, 
-      payload: res.data 
+      payload: {
+        items: res.data.items || [],
+        totalPrice: res.data.totalPrice || 0
+      }
     });
     
   } catch (err) {
@@ -19,6 +23,44 @@ export const loadCart = (token) => async (dispatch) => {
       type: GLOBALTYPES.ALERT,
       payload: { error: err.response?.data?.msg || "Error al cargar carrito" }
     });
+  } finally {
+    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: false });
+  }
+};
+
+export const removeFromCart = ({ postId, auth }) => async (dispatch) => {
+  try {
+    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true });
+    if (!postId || typeof postId !== 'string') {
+      throw new Error('ID de producto inválido');
+    }
+
+    // Asegúrate de enviar solo el ID como string
+    await deleteDataAPI(`cart/remove/${postId}`, auth.token);
+    
+    // Actualización optimista
+    dispatch({
+      type: GLOBALTYPES.AUTH, // Usamos AUTH para mantener consistencia
+      payload: {
+        user: {
+          ...auth.user,
+          cart: {
+            items: auth.user.cart.items.filter(item => item.postId !== postId),
+            totalPrice: auth.user.cart.items
+              .filter(item => item.postId !== postId)
+              .reduce((total, item) => total + (item.price * item.quantity), 0)
+          }
+        }
+      }
+    });
+    
+    return true;
+  } catch (err) {
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { error: err.response?.data?.msg || 'Error al eliminar' }
+    });
+    return false;
   } finally {
     dispatch({ type: GLOBALTYPES.LOADING_CART, payload: false });
   }
@@ -62,43 +104,7 @@ export const buyProduct = ({ post, auth }) => async (dispatch) => {
     dispatch({ type: GLOBALTYPES.LOADING_CART, payload: false });
   }
 };
-export const removeFromCart = ({ post, auth }) => async (dispatch) => {
-  try {
-    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true });
-    
-    const res = await deleteDataAPI(`cart/remove/${post._id}`, auth.token, {
-      price: post.price,
-      quantity: post.quantity || 1
-    });
-
-    // Verificación completa de la respuesta
-    if (!res?.data?.user) {
-      throw new Error('La respuesta del servidor no contiene datos válidos');
-    }
-
-    dispatch({
-      type: GLOBALTYPES.REMOVE_FROM_CART,
-      payload: { user: res.data.user }
-    });
-
-  } catch (err) {
-    console.error('Error detallado:', {
-      error: err.message,
-      response: err.response?.data
-    });
-    
-    dispatch({
-      type: GLOBALTYPES.ALERT,
-      payload: { 
-        error: err.response?.data?.msg || 
-               err.message || 
-               'Error al procesar la solicitud' 
-      }
-    });
-  } finally {
-    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: false });
-  }
-};
+ 
 export const updateCartItem = ({ post, auth, quantity }) => async (dispatch) => {
   dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true })
 
@@ -106,7 +112,8 @@ export const updateCartItem = ({ post, auth, quantity }) => async (dispatch) => 
     await patchDataAPI(`update/${post._id}`, { quantity }, auth.token)
 
     const items = auth.user.cart.items.map(item => {
-      if (item.productId === post._id) {
+      if  (item.postId === post._id)
+      {
         const priceDiff = (quantity - item.quantity) * post.price
         return { ...item, quantity }
       }

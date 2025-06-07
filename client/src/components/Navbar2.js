@@ -169,7 +169,7 @@ const Navbar2 = () => {
             )}
 
             {auth.user && (
-                 <Link to="/cart" className="position-relative text-decoration-none mx-2">
+                 <Link to="/cart/cartcarrito" className="position-relative text-decoration-none mx-2">
                  <BsCartFill size={20} className="text-dark" />
                  {totalItems > 0 && (
                    <Badge

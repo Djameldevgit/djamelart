@@ -83,7 +83,9 @@
 		"productNotFoundInCart": "Produit non trouvé dans le panier.",
 		"quantityUpdated": "Quantité mise à jour.",
 		"item_added_to_cart": "cart.item_added_to_cart",
-		"post_not_found_or_no_price": "cart.post_not_found_or_no_price"
+		"post_not_found_or_no_price": "cart.post_not_found_or_no_price",
+		"product_not_found_in_cart": "cart.product_not_found_in_cart",
+		"server_error": "cart.server_error"
 	},
 	"language": {
 		"updated_french": "language.updated_french",

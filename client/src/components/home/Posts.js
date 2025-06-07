@@ -14,7 +14,7 @@ const Posts = ({ filters }) => {
     // Filtrar los posts según los filtros
     const filteredPosts = homePosts.posts.filter(post => {
         // Filtro por subCategory
-        if (filters.subCategory && post.subCategory !== filters.subCategory) {
+        if (filters.category && post.category !== filters.category) {
             return false;
         }
 
@@ -22,14 +22,11 @@ const Posts = ({ filters }) => {
         if (filters.title && !post.title.toLowerCase().includes(filters.title.toLowerCase())) {
             return false;
         }
-
-        // Filtro por wilaya
-        if (filters.wilaya && post.wilaya !== filters.wilaya) {
+        if (filters.theme && !post.theme.toLowerCase().includes(filters.theme.toLowerCase())) {
             return false;
         }
 
-        // Filtro por commune
-        if (filters.commune && post.commune !== filters.commune) {
+        if (filters.style && !post.style.toLowerCase().includes(filters.style.toLowerCase())) {
             return false;
         }
 

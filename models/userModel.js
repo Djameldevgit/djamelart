@@ -45,20 +45,35 @@ const userSchema = new mongoose.Schema({
         default: 'ar' 
       },
       
-    cart: {
-        items: [{
-            postId: { type: mongoose.Types.ObjectId, ref: 'post' },
-            quantity: { type: Number, default: 1, min: 1 },
-            price: { type: Number, required: true }
-        }],
-        totalPrice: { 
-            type: Number, 
-            default: 0,
-            set: function(value) {
-                return isNaN(value) ? 0 : parseFloat(value.toFixed(2));
-            }
-        }
+  // En tu userModel.js
+cart: {
+    items: [{
+      postId: { 
+        type: mongoose.Types.ObjectId, 
+        ref: 'post',
+        required: true 
+      },
+      quantity: { 
+        type: Number, 
+        default: 1, 
+        min: 1 
+      },
+      price: { 
+        type: Number, 
+        required: true 
+      },
+      // Campos adicionales para cache
+      title: String,
+      images: [String]
+    }],
+    totalPrice: { 
+      type: Number, 
+      default: 0,
+      set: function(value) {
+        return isNaN(value) ? 0 : parseFloat(value.toFixed(2));
+      }
     }
+  }
     
     
 }, {

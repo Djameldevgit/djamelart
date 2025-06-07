@@ -1,0 +1,71 @@
+{
+ 
+    "art_theme": {
+      "select_theme": "Select theme",
+      "group_painting": "Painting",
+      "landscape": "Landscape",
+      "portrait": "Portrait",
+      "animals": "Animals",
+      "seascape": "Seascape",
+      "urban": "Urban",
+      "abstract": "Abstract",
+      "still_life": "Still life",
+      "botanical": "Botanical",
+      
+      "group_sculpture": "Sculpture",
+      "human_figure": "Human figure",
+      "animals_sculpture": "Animals",
+      "abstract_sculpture": "Abstract",
+      "mythological": "Mythological",
+      "kinetic": "Kinetic",
+      "minimalist": "Minimalist",
+      
+      "group_photography": "Photography",
+      "portrait_photo": "Portrait",
+      "wildlife": "Wildlife",
+      "street": "Street",
+      "architectural": "Architectural",
+      "conceptual": "Conceptual",
+      
+      "group_textile": "Textile art",
+      "tapestry_patterns": "Tapestry patterns",
+      "ethnic": "Ethnic",
+      "abstract_textile": "Abstract",
+      "nature_inspired": "Nature inspired",
+      
+      "group_digital": "Digital art",
+      "fantasy": "Fantasy",
+      "sci_fi": "Sci-Fi",
+      "concept_art": "Concept Art",
+      "pop_culture": "Pop Culture"
+    
+  },
+
+
+
+    "style": {
+      "select_style": "Select Style",
+      "group_universal": "Universal Styles",
+      "realism": "Realism",
+      "impressionism": "Impressionism",
+      "abstract": "Abstract",
+      "surrealism": "Surrealism",
+      "cubism": "Cubism",
+      "minimalism": "Minimalism",
+      "group_painting": "Painting Styles",
+      "oil_technique": "Oil Technique",
+      "watercolor_style": "Watercolor",
+      "hyperrealism": "Hyperrealism",
+      "group_sculpture": "Sculpture Styles",
+      "figurative": "Figurative",
+      "kinetic_style": "Kinetic",
+      "group_photography": "Photography Styles",
+      "vintage": "Vintage",
+      "group_digital": "Digital Art Styles",
+      "vector_art": "Vector Art",
+      "pixel_art": "Pixel Art",
+      "group_textile": "Textile Art Styles",
+      "batik": "Batik",
+      "japanese_sashiko": "Japanese Sashiko"
+    }
+  }

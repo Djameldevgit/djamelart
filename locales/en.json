@@ -81,6 +81,11 @@
 		"serverError": "Server error.",
 		"invalidQuantity": "Invalid quantity.",
 		"productNotFoundInCart": "Product not found in cart.",
-		"quantityUpdated": "Quantity updated."
+		"quantityUpdated": "Quantity updated.",
+		"product_not_found_in_cart": "cart.product_not_found_in_cart"
+	},
+	"language": {
+		"updated_english": "language.updated_english",
+		"updated_spanish": "language.updated_spanish"
 	}
 }

@@ -103,13 +103,13 @@ export function ItemsSubCategoryStyle({ handleChangeInput, postData, category })
         onChange={(selectedOption) =>
           handleChangeInput({
             target: {
-              name: 'artStyle',
+              name: 'style',
               value: selectedOption?.value || '',
               type: 'text'
             }
           })
         }
-        value={currentStyles.find(style => style.value === postData?.artStyle)}
+        value={currentStyles.find(style => style.value === postData?.style)}
         placeholder={category
           ? t('placeholders0.selectStyle', { lng: lang })
           : t('placeholders0.selectCategoryFirst', { lng: lang })}

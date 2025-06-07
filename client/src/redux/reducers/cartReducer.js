@@ -10,7 +10,12 @@ const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case GLOBALTYPES.LOADING_CART:
       return { ...state, loading: action.payload }
-
+      case GLOBALTYPES.LOAD_CART:
+        return {
+          ...state,
+          items: action.payload.items,
+          totalPrice: action.payload.totalPrice
+        }
     case GLOBALTYPES.GET_CART:
       return {
         ...state,
@@ -26,7 +31,8 @@ const cartReducer = (state = initialState, action) => {
         items: action.payload.user.cart.items,
         totalPrice: action.payload.user.cart.totalPrice
       }
-
+    
+    
     default:
       return state
   }

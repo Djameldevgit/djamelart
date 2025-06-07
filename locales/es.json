@@ -87,6 +87,7 @@
 	},
 	"language": {
 		"updated_spanish": "language.updated_spanish",
-		"updated_french": "language.updated_french"
+		"updated_french": "language.updated_french",
+		"updated_arabic": "language.updated_arabic"
 	}
 }

@@ -9,11 +9,12 @@ export const GLOBALTYPES = {
     OFFLINE: 'OFFLINE',
     CALL: 'CALL',
     PEER: 'PEER',
+    LOADING_CART: 'LOADING_CART',
+    GET_CART: 'GET_CART',
     ADD_TO_CART: 'ADD_TO_CART',
     REMOVE_FROM_CART: 'REMOVE_FROM_CART',
     UPDATE_CART_ITEM: 'UPDATE_CART_ITEM',
-    LOADING_CART: 'LOADING_CART',
-    GET_CART:'GET_CART'
+    LOAD_CART: 'LOAD_CART', // si decides mantenerlo
 }
 
 export const EditData = (data, id, post) => {

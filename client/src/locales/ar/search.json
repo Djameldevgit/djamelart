@@ -1,0 +1,72 @@
+{
+  "art_theme": {
+    "select_theme": "اختر الموضوع",
+    "group_painting": "الرسم",
+    "landscape": "المناظر الطبيعية",
+    "portrait": "بورتريه",
+    "animals": "الحيوانات",
+    "seascape": "المناظر البحرية",
+    "urban": "الحضري",
+    "abstract": "الفن التجريدي",
+    "still_life": "الطبيعة الصامتة",
+    "botanical": "النباتي",
+    
+    "group_sculpture": "النحت",
+    "human_figure": "الشكل البشري",
+    "animals_sculpture": "الحيوانات",
+    "abstract_sculpture": "تجريدي",
+    "mythological": "الأساطير",
+    "kinetic": "الحركي",
+    "minimalist": "الحد الأدنى",
+    
+    "group_photography": "التصوير الفوتوغرافي",
+    "portrait_photo": "بورتريه",
+    "wildlife": "الحياة البرية",
+    "street": "التصوير الشارعي",
+    "architectural": "الهندسة المعمارية",
+    "conceptual": "المفاهيمي",
+    
+    "group_textile": "الفن النسيجي",
+    "tapestry_patterns": "أنماط النسيج",
+    "ethnic": "الإثني",
+    "abstract_textile": "تجريدي",
+    "nature_inspired": "مستوحى من الطبيعة",
+    
+    "group_digital": "الفن الرقمي",
+    "fantasy": "الخيال",
+    "sci_fi": "الخيال العلمي",
+    "concept_art": "فن المفاهيم",
+    "pop_culture": "الثقافة الشعبية"
+  },
+
+  "style": {
+    "select_style": "اختر النمط",
+    "group_universal": "الأنماط العالمية",
+    "realism": "الواقعية",
+    "impressionism": "الانطباعية",
+    "abstract": "التجريدية",
+    "surrealism": "السريالية",
+    "cubism": "التكعيبية",
+    "minimalism": "الحد الأدنى",
+    
+    "group_painting": "أنماط الرسم",
+    "oil_technique": "الزيتي",
+    "watercolor_style": "الألوان المائية",
+    "hyperrealism": "فائق الواقعية",
+    
+    "group_sculpture": "أنماط النحت",
+    "figurative": "التصويري",
+    "kinetic_style": "الحركي",
+    
+    "group_photography": "أنماط التصوير",
+    "vintage": "الكلاسيكي",
+    
+    "group_digital": "أنماط الفن الرقمي",
+    "vector_art": "فن المتجهات",
+    "pixel_art": "فن البكسل",
+    
+    "group_textile": "أنماط النسيج",
+    "batik": "الباتيك",
+    "japanese_sashiko": "الساشيكو الياباني"
+  }
+}

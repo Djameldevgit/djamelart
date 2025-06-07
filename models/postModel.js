@@ -55,7 +55,7 @@ const postSchema = new mongoose.Schema({
     type: String,
 
   },
-  artStyle: {
+  style: {
     type: String,
 
   },

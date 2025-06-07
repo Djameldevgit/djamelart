@@ -5,7 +5,6 @@ import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
 
 const CardBodyCarousel = ({ post }) => {
   const [isLike, setIsLike] = useState(false);
@@ -13,6 +12,7 @@ const CardBodyCarousel = ({ post }) => {
   const [saved, setSaved] = useState(false);
   const [saveLoad, setSaveLoad] = useState(false);
   const [buyLoad, setBuyLoad] = useState(false);
+  const [inCart, setInCart] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showBuyMessage, setShowBuyMessage] = useState(false);
 
@@ -21,17 +21,10 @@ const CardBodyCarousel = ({ post }) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  // Función para verificar si el producto está en el carrito
-  const isInCart = auth.user?.cart?.items?.some(item => item.postId === post._id);
-
-  // Efecto para cargar el carrito al montar el componente
   useEffect(() => {
-    if (auth.token) {
-      dispatch(loadCart(auth.token));
-    }
+    if (auth.token) dispatch(loadCart(auth.token));
   }, [auth.token, dispatch]);
 
-  // Efectos para likes y posts guardados (se mantienen igual)
   useEffect(() => {
     if (auth.user && post.likes.find((like) => like._id === auth.user._id)) {
       setIsLike(true);
@@ -48,7 +41,12 @@ const CardBodyCarousel = ({ post }) => {
     }
   }, [auth.user, post._id]);
 
-  // Funciones para likes y guardar posts (se mantienen igual)
+  // Sincronizar carrito con estado global
+  useEffect(() => {
+    const cartItems = auth.user?.cart?.items || [];
+    setInCart(cartItems.some(item => item.postId === post._id));
+  }, [auth.user?.cart, post._id]); // Observa auth.user.cart completo, no solo items
+  
   const handleLike = async () => {
     if (!auth.token) return setShowModal(true);
     if (loadLike) return;
@@ -84,10 +82,13 @@ const CardBodyCarousel = ({ post }) => {
   const handleBuyProduct = async () => {
     if (!auth.token) return setShowModal(true);
     if (buyLoad) return;
-    
     setBuyLoad(true);
     try {
       await dispatch(buyProduct({ post, auth }));
+      // Actualiza el estado local inmediatamente
+      setInCart(prev => !prev);
+      // Luego recarga el carrito para sincronizar
+      await dispatch(loadCart(auth.token));
       setShowBuyMessage(true);
       setTimeout(() => setShowBuyMessage(false), 3000);
     } catch (error) {
@@ -102,7 +103,7 @@ const CardBodyCarousel = ({ post }) => {
       <div className="card_body">
         {post.images.length > 0 && (
           <div className="carousel-container" style={{ position: "relative" }}>
-            {/* Botón Guardar (se mantiene igual) */}
+            {/* Guardar */}
             <div
               style={{
                 position: "absolute",
@@ -131,7 +132,7 @@ const CardBodyCarousel = ({ post }) => {
               </span>
             </div>
 
-            {/* Likes (se mantiene igual) */}
+            {/* Likes */}
             <div
               style={{
                 position: "absolute",
@@ -153,7 +154,6 @@ const CardBodyCarousel = ({ post }) => {
               >
                 {post.likes.length}
               </span>
-
               <div
                 style={{
                   cursor: "pointer",
@@ -179,7 +179,7 @@ const CardBodyCarousel = ({ post }) => {
               </div>
             </div>
 
-            {/* Botón Comprar - Adaptado a tu lógica */}
+            {/* Comprar */}
             <div
               style={{
                 position: "absolute",
@@ -193,24 +193,24 @@ const CardBodyCarousel = ({ post }) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `2px solid ${isInCart ? "#F44336" : "#4CAF50"}`,
+                border: `2px solid ${inCart ? "#F44336" : "#4CAF50"}`,
                 opacity: buyLoad ? 0.7 : 1
               }}
               onClick={handleBuyProduct}
-              title={isInCart ? "Quitar del carrito" : "Añadir al carrito"}
+              title={inCart ? "Quitar del carrito" : "Añadir al carrito"}
             >
               <span 
                 className="material-icons" 
                 style={{ 
                   fontSize: "24px",
-                  color: isInCart ? "#F44336" : "#4CAF50"
+                  color: inCart ? "#F44336" : "#4CAF50"
                 }}
               >
                 {buyLoad ? "hourglass_empty" : "shopping_cart"}
               </span>
             </div>
 
-            {/* Imagen / Carousel (se mantiene igual) */}
+            {/* Carousel */}
             <div className="card">
               <div
                 className="card__image"
@@ -223,7 +223,7 @@ const CardBodyCarousel = ({ post }) => {
         )}
       </div>
 
-      {/* Modal para Login/Register (se mantiene igual) */}
+      {/* Modal Login/Register */}
       {showModal && (
         <div className="modal">
           <div className="modal-content">
@@ -244,7 +244,7 @@ const CardBodyCarousel = ({ post }) => {
         </div>
       )}
 
-      {/* Mensaje de compra */}
+      {/* Mensaje compra */}
       {showBuyMessage && (
         <div
           className="buy-message"
@@ -253,7 +253,7 @@ const CardBodyCarousel = ({ post }) => {
             bottom: "20px",
             left: "50%",
             transform: "translateX(-50%)",
-            backgroundColor: isInCart ? "#4CAF50" : "#F44336",
+            backgroundColor: inCart ? "#4CAF50" : "#F44336",
             color: "white",
             padding: "10px 20px",
             borderRadius: "5px",
@@ -264,9 +264,9 @@ const CardBodyCarousel = ({ post }) => {
           }}
         >
           <span className="material-icons" style={{ marginRight: "8px" }}>
-            {isInCart ? "check_circle" : "shopping_cart"}
+            {inCart ? "check_circle" : "shopping_cart"}
           </span>
-          {isInCart ? "Producto añadido al carrito" : "¡Gracias por tu compra!"}
+          {inCart ? "Producto añadido al carrito" : "¡Gracias por tu compra!"}
         </div>
       )}
     </div>
@@ -274,3 +274,4 @@ const CardBodyCarousel = ({ post }) => {
 };
 
 export default React.memo(CardBodyCarousel);
+

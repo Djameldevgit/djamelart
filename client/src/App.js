@@ -40,6 +40,9 @@ import UsersActionn from './pages/UsersActionn';
 import { getUsers } from './redux/actions/userAction';
 import { getCart } from './redux/actions/cartAction';
  
+import Cart from './pages/carte/cart';
+import Chekoutt from './pages/carte/Chekoutt';
+ 
 function App() {
   const { auth, status, modal, call,languageReducer } = useSelector(state => state)
   const dispatch = useDispatch()
@@ -120,7 +123,8 @@ function App() {
           <Route exact path="/register" component={Register} />
            <Route exact path="/bloqueos" component={Bloqueoss} />
           <Route exact path="/post/:id" component={Post}/> 
-     
+          <Route exact path="/cart/cartcarrito" component={Cart}/> 
+          <Route exact path="/cart/chekout" component={Chekoutt}/> 
           <Route exact path="/rolesuser"   component={Roles} />
           <Route exact path="/users"   component={UsersActionn} />
           <Route exact path="/postspendientes"   component={Postspendientes} />
