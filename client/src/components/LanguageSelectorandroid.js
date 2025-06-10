@@ -4,7 +4,7 @@ import { useCookies } from 'react-cookie';
 import { useTranslation } from 'react-i18next';
 import * as languageActions from '../redux/actions/languageAction';
 import { Dropdown, ButtonGroup } from 'react-bootstrap';
-
+import { Link } from 'react-router-dom';
 function LanguageSelectorandroid() {
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
@@ -23,11 +23,11 @@ function LanguageSelectorandroid() {
       case 'ar':
         dispatch(languageActions.arabLanguage(language));
         break;
-        case 'es':
-          dispatch(languageActions.spanishLanguage(language));
-          break;
+      case 'es':
+        dispatch(languageActions.spanishLanguage(language));
+        break;
 
-     
+
       case 'ru':
       case 'kab':
       case 'chino':
@@ -68,35 +68,37 @@ function LanguageSelectorandroid() {
 
   return (
     <div className="d-block d-md-none" style={{ width: '100%', padding: 0, margin: 0 }}>
-    <div style={{ display: 'flex', width: '100%', gap: '3px' }}>
-    
+      <div style={{ display: 'flex', width: '100%', gap: '3px' }}>
 
-      <h3 className='ml-4 mt-2' style={{ flex: '1 1 0' }} >
-      {t('Tassili', { lng: lang })}
-      </h3>
+        <Link to="/"  >
+          <h3 className='ml-4 mt-2' style={{ flex: '1 1 0' }} >
+            {t('Tassili', { lng: lang })}
+          </h3>
+        </Link>
 
-      {/* Selector de idioma */}
-      <div style={{ flex: '1 1 0' }}>
-        <Dropdown as={ButtonGroup} className="w-100">
-          <Dropdown.Toggle variant="secondary" id="dropdown-language" className="w-100">
-            <img src={flagPath(lang)} alt="flag" style={flagStyle} />
-            {languageNames[lang]}
-          </Dropdown.Toggle>
 
-          <Dropdown.Menu className="w-100">
-            {['ar', 'fr', 'en', 'es', 'ru', 'kab', 'chino'].map((langCode) => (
-              <Dropdown.Item key={langCode} onClick={() => handleLanguageChange(langCode)}>
-                <img src={flagPath(langCode)} alt={`${langCode} flag`} style={flagStyle} />
-                {languageNames[langCode]}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
+        {/* Selector de idioma */}
+        <div style={{ flex: '1 1 0' }}>
+          <Dropdown as={ButtonGroup} className="w-100">
+            <Dropdown.Toggle variant="secondary" id="dropdown-language" className="w-100">
+              <img src={flagPath(lang)} alt="flag" style={flagStyle} />
+              {languageNames[lang]}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu className="w-100">
+              {['ar', 'fr', 'en', 'es', 'ru', 'kab', 'chino'].map((langCode) => (
+                <Dropdown.Item key={langCode} onClick={() => handleLanguageChange(langCode)}>
+                  <img src={flagPath(langCode)} alt={`${langCode} flag`} style={flagStyle} />
+                  {languageNames[langCode]}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 
- 
+
 export default LanguageSelectorandroid;
