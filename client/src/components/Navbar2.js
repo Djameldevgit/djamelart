@@ -31,7 +31,7 @@ const Navbar2 = () => {
   const lang = languageReducer.language || 'en'
   const [showDrawer, setShowDrawer] = useState(false)
 
-  const totalItems = auth?.user?.cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+  const totalItems = cart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
 
   const openStatusModal = () => {

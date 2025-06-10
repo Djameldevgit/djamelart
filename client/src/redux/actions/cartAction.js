@@ -29,36 +29,35 @@ export const loadCart = (token) => async (dispatch) => {
 };
 
 export const removeFromCart = ({ postId, auth }) => async (dispatch) => {
+  
   try {
-    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true });
-    if (!postId || typeof postId !== 'string') {
-      throw new Error('ID de producto inválido');
+    if (!postId || typeof postId !== 'string' || postId.length !== 24) {
+      throw new Error(`ID inválido: ${postId} (debe ser string de 24 caracteres)`);
     }
 
-    // Asegúrate de enviar solo el ID como string
-    await deleteDataAPI(`cart/remove/${postId}`, auth.token);
-    
-    // Actualización optimista
+    dispatch({ type: GLOBALTYPES.LOADING_CART, payload: true });
+
+    const encodedId = encodeURIComponent(postId);
+    const res = await deleteDataAPI(`cart/remove/${encodedId}`, auth.token);
+
+    // Verificación defensiva (opcional si tu backend siempre devuelve cart)
+    const newTotal = res.data.cart?.totalPrice || 0;
+
     dispatch({
-      type: GLOBALTYPES.AUTH, // Usamos AUTH para mantener consistencia
+      type: GLOBALTYPES.REMOVE_FROM_CART,
       payload: {
-        user: {
-          ...auth.user,
-          cart: {
-            items: auth.user.cart.items.filter(item => item.postId !== postId),
-            totalPrice: auth.user.cart.items
-              .filter(item => item.postId !== postId)
-              .reduce((total, item) => total + (item.price * item.quantity), 0)
-          }
-        }
+        postId, // ✅ ahora usamos la variable correcta
+        newTotal // ✅ total actualizado desde el backend
       }
     });
-    
+
     return true;
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,
-      payload: { error: err.response?.data?.msg || 'Error al eliminar' }
+      payload: {
+        error: err.response?.data?.msg || err.message || 'Error al eliminar'
+      }
     });
     return false;
   } finally {

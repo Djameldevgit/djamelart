@@ -22,9 +22,15 @@ const cartReducer = (state = initialState, action) => {
         items: action.payload.items,
         totalPrice: action.payload.totalPrice
       }
-
+      case GLOBALTYPES.REMOVE_FROM_CART:
+        return {
+          ...state,
+          items: state.items.filter(item => item.postId !== action.payload.postId),
+          totalPrice: action.payload.newTotal,
+          loading: false
+        };
     case GLOBALTYPES.ADD_TO_CART:
-    case GLOBALTYPES.REMOVE_FROM_CART:
+ 
     case GLOBALTYPES.UPDATE_CART_ITEM:
       return {
         ...state,

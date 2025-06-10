@@ -55,26 +55,24 @@ export const getActiveUsersLast3h = (token) => async (dispatch) => {
         console.error(error);
     }
 };
-
-// Acción para obtener todos los usuarios
-export const getUsers = (token, page = 1, limit = 9) => async (dispatch) => {
+export const getUsers = (token) => async (dispatch) => {
     try {
-        dispatch({ type: USER_TYPES.LOADING_USER, payload: true });
-        const res = await getDataAPI(`users?page=${page}&limit=${limit}`, token);
-         console.log(res) 
+        dispatch({ type: USER_TYPES.LOADING_USER, payload: true })
+        const res = await getDataAPI('users',token)
+        
         dispatch({
             type: USER_TYPES.GET_USERS,
-            payload: { users: res.data.users, result: res.data.result, page: page + 1 }
-        });
-        
-        dispatch({ type: USER_TYPES.LOADING_USER, payload: false });
+            payload: {...res.data, page: 2}
+        })
+
+        dispatch({ type: USER_TYPES.LOADING_USER, payload: false })
     } catch (err) {
         dispatch({
             type: GLOBALTYPES.ALERT,
-            payload: { error: err.response.data.msg }
-        });
+            payload: {error: err.response.data.msg}
+        })
     }
-};
+}
 
 
 // Acción para actualizar un usuario
@@ -181,8 +179,7 @@ export const createDenuncia = ({ razones, auth, post }) => async (dispatch) => {
             usuarioReportante: auth.user._id, // El id del usuario que está denunciando
         }, auth.token);
 
-        console.log("Respuesta de la API:", res);
-
+     
         // Despacha la acción de alerta con el estado de carga actualizado
         dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
 
@@ -205,8 +202,7 @@ export const createDenuncia = ({ razones, auth, post }) => async (dispatch) => {
 export const getDenuncias = (user, token) => async (dispatch) => {
     try {
         const res = await getDataAPI(`denunciar/${user.id}`, token); // Asegúrate de que la ruta esté correcta
-        console.log(res)
-        dispatch({
+         dispatch({
             type: USER_TYPES.GET_DENUNCIAS,
             payload: res.data,
         });

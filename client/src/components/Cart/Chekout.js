@@ -19,8 +19,7 @@ function Chekout({
       normalizedCountry: normalizeCountry(values?.country),
       isAlgeria: isAlgeria()
     };
-    console.log('Debug Info:', debugData);
-    setDebugInfo(JSON.stringify(debugData, null, 2));
+       setDebugInfo(JSON.stringify(debugData, null, 2));
   }, [values]);
 
   // Manejar cambios genéricos
