@@ -86,6 +86,7 @@
 	"language": {
 		"updated_arabic": "language.updated_arabic",
 		"updated_spanish": "language.updated_spanish",
-		"updated_english": "language.updated_english"
+		"updated_english": "language.updated_english",
+		"updated_french": "language.updated_french"
 	}
 }

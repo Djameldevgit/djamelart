@@ -1,15 +1,15 @@
 {
-  "editProfile": "تعديل الملف الشخصي",
-  "followers": "متابعون",
-  "following": "يتابع",
-  "close": "إغلاق",
-  "change": "تغيير",
-  "mobile": "الهاتف المحمول",
-  "address": "العنوان",
-  "website": "الموقع الإلكتروني",
-  "story": "القصة",
-  "save": "حفظ",
-  "posts": "منشورات",
-  "saved": "محفوظات"
-  }
+  "editProfile": "Edit Profile",
+  "followers": "Followers",
+  "following": "Following",
+  "close": "Close",
+  "change": "Change",
+  "mobile": "Mobile",
+  "address": "Address",
+  "website": "Website",
+  "story": "Story",
+  "save": "Save",
+  "posts": "Posts",
+  "saved": "Saved"
+}
   

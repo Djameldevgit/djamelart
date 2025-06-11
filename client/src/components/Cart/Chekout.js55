@@ -2,15 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import CountrySelect from './CountrySelect';
 import { FaTrashAlt } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next';
 
 const Chekout = () => {
-  const { cart, languageReducer } = useSelector(state => state);
+  const { cart } = useSelector(state => state);
   const [countryCode, setCountryCode] = useState('');
   const isAlgeria = countryCode === 'DZ';
   const currency = isAlgeria ? 'DA' : '€';
-  const { t } = useTranslation('cart');
-  const lang = languageReducer.language || 'es';
 
   const total = cart.items?.reduce((sum, item) => {
     return sum + (item.price || 0) * (item.quantity || 1);
@@ -22,48 +19,49 @@ const Chekout = () => {
 
   return (
     <div className="checkout-form">
-      <h2 className="checkout-title">{t('paymentForm', { lng: lang })}</h2>
+      <h2 className="checkout-title">Formulario de Pago</h2>
 
       {/* ✅ RESUMEN DE LA OBRA(S) - VERSIÓN COMPACTA */}
       <div className="checkout-summary">
-        <h3>{t('orderSummary', { lng: lang })}</h3>
+        <h3>🧾 Resumen del Pedido</h3>
         {cart.items?.map((item) => {
           const postId = item.postId?._id || 'sin-id';
           return (
             <div key={postId} className="cart-item-card-chekout">
               <img
                 src={item.postId?.images?.[0]?.url || 'imagen_por_defecto.jpg'}
-                alt={item.postId?.title || t('artwork', { lng: lang })}
+                alt={item.postId?.title || 'obra'}
                 className="cart-item-image-chekout"
               />
               <div className="cart-item-details-checkout">
-                <p className="cart-item-title-chekout">{item.postId?.title || t('noTitle', { lng: lang })}</p>
+                <p className="cart-item-title-chekout">{item.postId?.title || 'Sin título'}</p>
                 <p className="compact-price">
                   {item.quantity} x {item.price?.toFixed(2)} {currency}
                 </p>
                 <p className="compact-subtotal">
-                  <strong>{t('total', { lng: lang })}:</strong> {(item.quantity * item.price).toLocaleString()} {currency}
+                  <strong>Total:</strong> {(item.quantity * item.price).toLocaleString()} {currency}
                 </p>
               </div>
             </div>
           );
         })}
         <p className="checkout-total">
-          <strong>{t('totalToPay', { lng: lang })}:</strong> {total.toLocaleString()} {currency}
+          <strong>Total a pagar:</strong> {total.toLocaleString()} {currency}
         </p>
       </div>
 
       {/* ✅ GUÍA */}
       <div className="checkout-guide">
-        <h3>{t('paymentInfoTitle', { lng: lang })}</h3>
+        <h3>📌 Información previa al pago</h3>
         <p>
-          {t('countrySelectionGuide', { lng: lang })}
+          Por favor selecciona tu <strong>país de residencia</strong> para continuar.
+          Dependiendo de tu ubicación, te mostraremos las opciones bancarias disponibles.
         </p>
       </div>
 
       {/* ✅ SELECTOR DE PAÍS */}
       <div className="selector-wrapper">
-        <label htmlFor="country" className="label-country">{t('selectCountryLabel', { lng: lang })}</label>
+        <label htmlFor="country" className="label-country">🌍 Selecciona tu país:</label>
         <CountrySelect onChange={setCountryCode} />
       </div>
 
@@ -71,18 +69,18 @@ const Chekout = () => {
       <div className="bank-section">
         {isAlgeria ? (
           <div className="bank-info algeria">
-            <h4>{t('algeriaPostTitle', { lng: lang })}</h4>
-            <p><strong>{t('account', { lng: lang })}:</strong> 12345.78.90</p>
-            <p><strong>{t('key', { lng: lang })}:</strong> 89</p>
-            <p><strong>{t('documents', { lng: lang })}:</strong> {t('algeriaDocuments', { lng: lang })}</p>
-            <p><strong>{t('dailyLimits', { lng: lang })}:</strong> {t('algeriaLimits', { lng: lang })}</p>
-            <p><strong>{t('inquiries', { lng: lang })}:</strong> {t('algeriaInquiries', { lng: lang })}</p>
+            <h4>📬 Información CCP – Algérie Poste</h4>
+            <p><strong>Cuenta CCP:</strong> 12345.78.90</p>
+            <p><strong>Clave:</strong> 89</p>
+            <p><strong>Documentos:</strong> Identidad, residencia, CH1, firma CH25</p>
+            <p><strong>Límites diario:</strong> 200 000 DA; rápido: 30 000 DA</p>
+            <p><strong>Consultas:</strong> Presencial, e‑CCP, SMS (603), Teléfono (15‑30)</p>
           </div>
         ) : (
           <div className="bank-info international">
-            <h4>{t('bankInfoTitle', { lng: lang })}</h4>
-            <p><strong>{t('name', { lng: lang })}:</strong> Mohamed Benali</p>
-            <p><strong>{t('bank', { lng: lang })}:</strong> Société Générale</p>
+            <h4>🏦 Información Bancaria - SWIFT</h4>
+            <p><strong>Nombre:</strong> Mohamed Benali</p>
+            <p><strong>Banco:</strong> Société Générale</p>
             <p><strong>IBAN:</strong> FR76 3000 3036 2000 0500 0001 234</p>
             <p><strong>SWIFT:</strong> SOGEFRPP</p>
           </div>
@@ -92,13 +90,13 @@ const Chekout = () => {
       {/* ✅ MENSAJE FINAL */}
       <div className="payment-notice">
         <p>
-          {t('paymentNotice', { lng: lang })}
+          📸 <strong>Importante:</strong> Una vez realizado el pago, por favor envíame un justificante (foto o captura) por email o WhatsApp para poder proceder con la entrega de tu obra.
         </p>
       </div>
 
       <div className="contact-info">
-        <h4>{t('whereToSend', { lng: lang })}</h4>
-        <p><strong>📧 {t('email', { lng: lang })}:</strong> mohamed.artista@example.com</p>
+        <h4>📤 ¿Dónde enviar el justificante de pago?</h4>
+        <p><strong>📧 Correo:</strong> mohamed.artista@example.com</p>
         <p><strong>📱 WhatsApp:</strong> +213 661 23 45 67</p>
       </div>
     </div>

@@ -1,0 +1,50 @@
+{
+
+  "CARTCARRITO": "CARTCARRITO",
+  "yourShoppingCart": "Tu Carrito de Compras",
+  "yourCartIsEmpty": "Tu carrito está vacío",
+  "pleaseLoginToViewCart": "Por favor inicia sesión para ver tu carrito",
+  "login": "Iniciar Sesión",
+  "loadingYourCart": "Cargando tu carrito...",
+  "continueShopping": "¡Sigue comprando!",
+  "unnamedProduct": "Producto sin nombre",
+  "unitPrice": "Precio unitario",
+  "quantity": "Cantidad",
+  "subtotal": "Subtotal",
+  "remove": "Eliminar",
+  "orderSummary": "Resumen del Pedido",
+  "totalProducts": "Total Productos",
+  "totalToPay": "Total a Pagar",
+  "proceedToCheckout": "Proceder al Pago",
+  "productRemovedSuccessfully": "Producto eliminado correctamente",
+  "removalError": "Error al eliminar",
+  "invalidProductId": "El ID del producto no es válido",
+  
+
+
+
+    "CHEKOUT": "CHEKOUT",
+    "paymentForm": "Formulario de Pago",
+    "artwork": "obra",
+    "noTitle": "Sin título",
+    "total": "Total",
+    "paymentInfoTitle": "📌 Información previa al pago",
+    "countrySelectionGuide": "Por favor selecciona tu <strong>país de residencia</strong> para continuar. Dependiendo de tu ubicación, te mostraremos las opciones bancarias disponibles.",
+    "selectCountryLabel": "🌍 Selecciona tu país:",
+    "algeriaPostTitle": "📬 Información CCP – Algérie Poste",
+    "account": "Cuenta CCP",
+    "key": "Clave",
+    "documents": "Documentos",
+    "algeriaDocuments": "Identidad, residencia, CH1, firma CH25",
+    "dailyLimits": "Límites diario",
+    "algeriaLimits": "200 000 DA; rápido: 30 000 DA",
+    "inquiries": "Consultas",
+    "algeriaInquiries": "Presencial, e‑CCP, SMS (603), Teléfono (15‑30)",
+    "bankInfoTitle": "🏦 Información Bancaria - SWIFT",
+    "name": "Nombre",
+    "bank": "Banco",
+    "paymentNotice": "📸 <strong>Importante:</strong> Una vez realizado el pago, por favor envíame un justificante (foto o captura) por email o WhatsApp para poder proceder con la entrega de tu obra.",
+    "whereToSend": "📤 ¿Dónde enviar el justificante de pago?",
+    "email": "Correo"
+ 
+}

@@ -1,0 +1,20 @@
+{
+    "yourShoppingCart": "Tu Carrito de Compras",
+    "yourCartIsEmpty": "Tu carrito está vacío",
+    "pleaseLoginToViewCart": "Por favor inicia sesión para ver tu carrito",
+    "login": "Iniciar Sesión",
+    "loadingYourCart": "Cargando tu carrito...",
+    "continueShopping": "¡Sigue comprando!",
+    "unnamedProduct": "Producto sin nombre",
+    "unitPrice": "Precio unitario",
+    "quantity": "Cantidad",
+    "subtotal": "Subtotal",
+    "remove": "Eliminar",
+    "orderSummary": "Resumen del Pedido",
+    "totalProducts": "Total Productos",
+    "totalToPay": "Total a Pagar",
+    "proceedToCheckout": "Proceder al Pago",
+    "productRemovedSuccessfully": "Producto eliminado correctamente",
+    "removalError": "Error al eliminar",
+    "invalidProductId": "El ID del producto no es válido"
+  }

@@ -1,6 +1,15 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import arCart from './locales/ar/cart.json';
+import chCart from './locales/ch/cart.json';
+import enCart from './locales/en/cart.json';
+import esCart from './locales/es/cart.json';
+import frCart from './locales/fr/cart.json';
+import kaCart from './locales/ka/cart.json';
+import ruCart from './locales/ru/cart.json';
+
+
 import arSearch from './locales/ar/search.json';
 import chSearch from './locales/ch/search.json';
 import enSearch from './locales/en/search.json';
@@ -129,7 +138,7 @@ import chNavbar from './locales/ch/navbar.json';             // Nuevo
 const resources = {
   ar: {
 
-
+    cart: arCart,
     search: arSearch,
   cardbodytitle: arCardbodytitle,
     toastvalid: arToastvalid,
@@ -147,6 +156,7 @@ const resources = {
 
   },
   ch: {
+    cart: chCart,
     search: chSearch,
     cardbodytitle: chCardbodytitle,
     toastvalid: chToastvalid,
@@ -163,6 +173,7 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
+    cart: enCart,
     search: enSearch,
     cardbodytitle: enCardbodytitle,
     toastvalid: enToastvalid,
@@ -179,6 +190,7 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
+    cart: esCart,
     search: esSearch,
     cardbodytitle: esCardbodytitle,
     toastvalid: esToastvalid,
@@ -195,7 +207,7 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
-
+    cart: frCart,
     search: frSearch,
     cardbodytitle: frCardbodytitle,
     toastvalid: frToastvalid,
@@ -212,7 +224,7 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   ka: {
-
+    cart: kaCart,
     search: kaSearch,
     cardbodytitle: kaCardbodytitle,
     toastvalid: kaToastvalid,
@@ -229,7 +241,7 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
-
+    cart: ruCart,
     search: ruSearch,
     cardbodytitle: ruCardbodytitle,
     toastvalid: ruToastvalid,

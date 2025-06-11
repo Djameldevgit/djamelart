@@ -157,14 +157,16 @@ const Navbar2 = () => {
             {auth.user && (
               <NavDropdown
                 title={
-                  <div className="position-relative">
+                  <div className=" ">
                     <i className="fas fa-bell text-danger" style={{ fontSize: '1.2rem', cursor: 'pointer' }} />
                   </div>
                 }
               >
-                <NavDropdown.Item>
-                  <NotifyModal user={auth.user} />
-                </NavDropdown.Item>
+                 <div className='mx-auto'>
+                      <NotifyModal user={auth.user} />
+                 </div>
+              
+                
               </NavDropdown>
             )}
 

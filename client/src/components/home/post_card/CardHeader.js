@@ -1,29 +1,23 @@
 import React, { useState } from 'react';
-import Avatar from '../../Avatar';
+import { Card, Dropdown, Modal } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
+import Avatar from '../../Avatar';
 import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
 import { deletePost } from '../../../redux/actions/postAction';
 import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
- 
+
 const CardHeader = ({ post }) => {
     const { auth, socket } = useSelector(state => state);
     const [showReportModal, setShowReportModal] = useState(false);
-
     const dispatch = useDispatch();
     const history = useHistory();
 
-    // Función para iniciar un chat con el dueño del p
-    
-    
     const handleChatWithOwner = () => {
-      
+        history.push('/message');
+    };
 
-            // Redirige a la página de chat con el dueño del post
-            history.push('/message');
-    }
-      
     const handleAprove = () => {
         if (window.confirm("¿Vous voulez aprouve ce post?")) {
             dispatch(aprovarPostPendiente(post, 'aprovado', auth));
@@ -35,7 +29,6 @@ const CardHeader = ({ post }) => {
         dispatch({ type: GLOBALTYPES.STATUS, payload: { ...post, onEdit: true } });
     };
 
-
     const handleDeletePost = () => {
         if (window.confirm("Are you sure want to delete this post?")) {
             dispatch(deletePost({ post, auth, socket }));
@@ -43,88 +36,101 @@ const CardHeader = ({ post }) => {
         }
     };
 
-    const handleReportPost = async (reportData) => {
-        try {
-              alert("Post reportado correctamente.");
-        } catch (error) {
-            console.error("Error al reportar el post:", error);
-            alert("Error al reportar el post.");
-        }
-    };
-
     return (
-        <div className="cardheaderpost">
+        <Card.Header className="d-flex justify-content-between align-items-center p-3">
+            {/* Sección del usuario (avatar + nombre) */}
             {auth.user?.role === "superuser" && (
-                <div className="d-flex">
+                <div className="d-flex align-items-center">
                     <Avatar src={post.user.avatar} size="big-avatar" />
-                    <div className="card_name">
-                        <h6 className="m-0">
+                    <div className="ml-3">
+                        <Card.Title className="m-0">
                             <Link to={`/profile/${post.user._id}`} className="text-dark">
                                 {post.user.username}
                             </Link>
-                        </h6>
-                        <small className="text-muted">{moment(post.createdAt).fromNow()}</small>
+                        </Card.Title>
+                        <Card.Text className="text-muted small">
+                            {moment(post.createdAt).fromNow()}
+                        </Card.Text>
                     </div>
                 </div>
             )}
 
+            {/* Dropdown de acciones */}
             {auth.user && (
-                <div className="nav-item dropdown">
-                    <span className="material-icons dropdown-toggle" data-toggle="dropdown">
-                        more_horiz
-                    </span>
+                <Dropdown>
+                    <Dropdown.Toggle variant="light" id="dropdown-actions" className="p-0 border-0">
+                        <span className="material-icons">more_horiz</span>
+                    </Dropdown.Toggle>
 
-                    <div className="dropdown-menu">
+                    <Dropdown.Menu align="right">
                         {auth.user.role === "admin" && (
                             <>
-                                <DropdownItem icon="check_circle" text="Approuver le post" onClick={handleAprove} />
-                                <DropdownItem icon="create" text="Modifier le post" onClick={handleEditPost} />
-                                <DropdownItem icon="delete_outline" text="Supprimer le post" onClick={handleDeletePost} />
+                                <Dropdown.Item onClick={handleAprove}>
+                                    <span className="material-icons mr-2">check_circle</span>
+                                    Approuver le post
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={handleEditPost}>
+                                    <span className="material-icons mr-2">create</span>
+                                    Modifier le post
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={handleDeletePost}>
+                                    <span className="material-icons mr-2">delete_outline</span>
+                                    Supprimer le post
+                                </Dropdown.Item>
                             </>
                         )}
 
                         {auth.user._id === post.user._id && (
                             <>
-                                <DropdownItem icon="create" text="Modifier le post" onClick={handleEditPost} />
-                                <DropdownItem icon="delete_outline" text="Supprimer le post" onClick={handleDeletePost} />
+                                <Dropdown.Item onClick={handleEditPost}>
+                                    <span className="material-icons mr-2">create</span>
+                                    Modifier le post
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={handleDeletePost}>
+                                    <span className="material-icons mr-2">delete_outline</span>
+                                    Supprimer le post
+                                </Dropdown.Item>
                             </>
                         )}
 
-                        {/* Botón para chatear con el dueño del post */}
-                        <DropdownItem
-                            icon="chat"
-                            text="Chat Administation"
-                            onClick={handleChatWithOwner}
-                        />
-
-                        {/* Botón para chatear con un administrador (opcional) */}
-                        {/* <DropdownItem
-                            icon="chat"
-                            text="Chat with Admin"
-                            onClick={handleChatWithAdmin}
-                        /> */}
-
-                        <DropdownItem icon="person_add" text="Suivre l'auteur" />
-                        <DropdownItem icon="report" text="Signaler le post" onClick={() => setShowReportModal(true)} />
-                        <DropdownItem icon="bookmark" text="Sauvegarder le post" />
-                    </div>
-                </div>
+                        <Dropdown.Item onClick={handleChatWithOwner}>
+                            <span className="material-icons mr-2">chat</span>
+                            Chat Administation
+                        </Dropdown.Item>
+                        <Dropdown.Item>
+                            <span className="material-icons mr-2">person_add</span>
+                            Suivre l'auteur
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => setShowReportModal(true)}>
+                            <span className="material-icons mr-2">report</span>
+                            Signaler le post
+                        </Dropdown.Item>
+                        <Dropdown.Item>
+                            <span className="material-icons mr-2">bookmark</span>
+                            Sauvegarder le post
+                        </Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
             )}
 
-            {showReportModal && (
-                <div className="modal-overlay">
-                   
-                </div>
-            )}
-        </div>
+            {/* Modal para reportar (puedes personalizarlo) */}
+            <Modal show={showReportModal} onHide={() => setShowReportModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Signaler le post</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {/* Contenido del modal aquí */}
+                    <p>¿Por qué deseas reportar este post?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <button className="btn btn-secondary" onClick={() => setShowReportModal(false)}>
+                        Annuler
+                    </button>
+                    <button className="btn btn-danger">Signaler</button>
+                </Modal.Footer>
+            </Modal>
+        </Card.Header>
     );
 };
-
-const DropdownItem = ({ icon, text, onClick }) => (
-    <div className="dropdown-item" onClick={onClick}>
-        <span className="material-icons">{icon}</span>
-        <span>{text}</span>
-    </div>
-);
 
 export default CardHeader;
