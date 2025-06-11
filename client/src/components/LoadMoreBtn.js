@@ -1,6 +1,12 @@
 import React from 'react'
-
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 const LoadMoreBtn = ({result, page, load, handleLoadMore}) => {
+
+    const { languageReducer } = useSelector(state => state);
+    const { t } = useTranslation('home');  
+    const lang = languageReducer.language || 'en'; 
+
     return (
         <>
             {
@@ -8,7 +14,7 @@ const LoadMoreBtn = ({result, page, load, handleLoadMore}) => {
 
                 !load && <button className="btn btn-dark mx-auto d-block"
                 onClick={handleLoadMore}>
-                    Load more
+                   {t('loadmore', { lng: lang })}
                 </button>
             }
             

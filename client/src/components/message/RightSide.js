@@ -9,9 +9,10 @@ import { imageShow, videoShow } from '../../utils/mediaShow'
 import { imageUpload } from '../../utils/imageUpload'
 import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '../../redux/actions/messageAction'
 import LoadIcon from '../../images/loading.gif'
-
+import { useTranslation } from 'react-i18next';
+ 
 const RightSide = () => {
-    const { auth, message, theme, socket, peer } = useSelector(state => state)
+    const { auth, message, theme, socket, peer,languageReducer  } = useSelector(state => state)
     const dispatch = useDispatch()
 
     const { id } = useParams()
@@ -30,6 +31,9 @@ const RightSide = () => {
 
     const history = useHistory()
 
+ 
+    const { t } = useTranslation('home');  
+    const lang = languageReducer.language || 'en'; 
     useEffect(() => {
         const newData = message.data.find(item => item._id === id)
         if(newData){
@@ -203,7 +207,7 @@ const RightSide = () => {
             style={{height: media.length > 0 ? 'calc(100% - 180px)' : ''}} >
                 <div className="chat_display" ref={refDisplay}>
                     <button style={{marginTop: '-25px', opacity: 0}} ref={pageEnd}>
-                        Load more
+                    {t('loadmore', { lng: lang })}
                     </button>
 
                     {

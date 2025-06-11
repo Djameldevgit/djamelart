@@ -27,7 +27,7 @@
     box-shadow: 0 4px 10px var(--color-shadow);
     padding: 10px 15px;
     border: none;
-  
+ padding: 30px;
     margin-bottom: 100px;
     transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
 }

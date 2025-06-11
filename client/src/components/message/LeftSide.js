@@ -5,10 +5,11 @@ import { getDataAPI } from '../../utils/fetchData'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import { useHistory, useParams } from 'react-router-dom'
 import { MESS_TYPES, getConversations } from '../../redux/actions/messageAction'
-
+import { useTranslation } from 'react-i18next';
+ 
 
 const LeftSide = () => {
-    const { auth, message, online } = useSelector(state => state)
+    const { auth, message, online ,languageReducer} = useSelector(state => state)
     const dispatch = useDispatch()
 
     const [search, setSearch] = useState('')
@@ -20,6 +21,8 @@ const LeftSide = () => {
     const pageEnd = useRef()
     const [page, setPage] = useState(0)
 
+    const { t } = useTranslation('home');  
+    const lang = languageReducer.language || 'en'; 
     
     const handleSearch = async e => {
         e.preventDefault()
@@ -126,7 +129,7 @@ const LeftSide = () => {
                     </>
                 }
                
-               <button ref={pageEnd} style={{opacity: 0}} >Load More</button>
+               <button ref={pageEnd} style={{opacity: 0}} > {t('loadmore', { lng: lang })}</button>
             </div>
         </>
     )

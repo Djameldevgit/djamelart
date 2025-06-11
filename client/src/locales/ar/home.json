@@ -1,6 +1,11 @@
   {
     "art_painting": "بيع الفن",
     
+"loadmore":"تحميل المزيد",
+
+
+
+
     "titleDeLaObra": "عنوان العمل",
     "introduceUnTituloParaLaObra": "أدخل عنوانًا للعمل",
     "hideContent": "إخفاء المحتوى",

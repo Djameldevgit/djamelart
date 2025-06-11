@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
-import i18n from './i18n'; // Asegúrate de que la ruta sea correcta
+import i18n from './i18n';  
 
 import PageRender from './customRouter/PageRender'
 import PrivateRouter from './customRouter/PrivateRouter'
@@ -8,9 +8,9 @@ import PrivateRouter from './customRouter/PrivateRouter'
 import Home from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
-import Drawerr from './pages/drawerr'
+ 
 import Alert from './components/alert/Alert'
-//import Header from './components/header/Header'
+ 
 import StatusModal from './components/StatusModal'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -30,8 +30,7 @@ import Postspendientes from './pages/postspendientes'
  
 import Post from './pages/post'
 import Bloqueoss from './components/Bloqueoss';
-import Drawer from './components/Drawer';
-import Navbarr from './pages/navbarr'
+ 
 import Navbar2 from './components/Navbar2'
  
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
@@ -42,6 +41,9 @@ import { getCart } from './redux/actions/cartAction';
  
 import Cart from './pages/carte/cart';
 import Chekoutt from './pages/carte/Chekoutt';
+import Profile from './pages/profile.';
+import Message from './pages/message';
+import Informacionaplicacion from './pages/informacionaplicacion';
  
 function App() {
   const { auth, status, modal, call,languageReducer } = useSelector(state => state)
@@ -85,7 +87,6 @@ function App() {
       dispatch(getNotifies(auth.token))
     }
   }, [dispatch, auth.token])
- //<Route exact path="/drawer" component={Drawerr} />
  
   
   useEffect(() => {
@@ -123,13 +124,15 @@ function App() {
           <Route exact path="/register" component={Register} />
            <Route exact path="/bloqueos" component={Bloqueoss} />
           <Route exact path="/post/:id" component={Post}/> 
+          <Route exact path="/message/:id" component={Message}/> 
+          <Route exact path="/profile/:id" component={Profile}/> 
           <Route exact path="/cart/cartcarrito" component={Cart}/> 
           <Route exact path="/cart/chekout" component={Chekoutt}/> 
           <Route exact path="/rolesuser"   component={Roles} />
           <Route exact path="/users"   component={UsersActionn} />
           <Route exact path="/postspendientes"   component={Postspendientes} />
-          <PrivateRouter exact path="/:page" component={PageRender} />
-          <PrivateRouter exact path="/:page/:id" component={PageRender} />
+          <Route exact path="/informacionaplicacion" component={ Informacionaplicacion } />
+        
           
         </div>
       </div>

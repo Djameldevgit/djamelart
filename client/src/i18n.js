@@ -1,6 +1,21 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+
+
+
+import arInfo from './locales/ar/info.json';
+import chInfo from './locales/ch/info.json';
+import enInfo from './locales/en/info.json';
+import esInfo from './locales/es/info.json';
+import frInfo from './locales/fr/info.json';
+import kaInfo from './locales/ka/info.json';
+import ruInfo from './locales/ru/info.json';
+
+
+
+
+
 import arCart from './locales/ar/cart.json';
 import chCart from './locales/ch/cart.json';
 import enCart from './locales/en/cart.json';
@@ -90,7 +105,7 @@ import arSubcategorias from './locales/ar/subcategorias.json';
 import esSubcategorias from './locales/es/subcategorias.json';
 import ruSubcategorias from './locales/ru/subcategorias.json';      // Nuevo
 import kaSubcategorias from './locales/ka/subcategorias.json';      // Nuevo
-import chSubcategorias from './locales/ch/subcategorias.json'; 
+import chSubcategorias from './locales/ch/subcategorias.json';
 // Categorías
 import frCategorias from './locales/fr/categorias.json';
 import enCategorias from './locales/en/categorias.json';
@@ -137,10 +152,10 @@ import chNavbar from './locales/ch/navbar.json';             // Nuevo
 
 const resources = {
   ar: {
-
+    info: arInfo,
     cart: arCart,
     search: arSearch,
-  cardbodytitle: arCardbodytitle,
+    cardbodytitle: arCardbodytitle,
     toastvalid: arToastvalid,
     language: arLanguage,
     profile: arProfile,
@@ -156,12 +171,13 @@ const resources = {
 
   },
   ch: {
+    info: chInfo,
     cart: chCart,
     search: chSearch,
     cardbodytitle: chCardbodytitle,
     toastvalid: chToastvalid,
     language: chLanguage,
- profile: chProfile,
+    profile: chProfile,
     auth: chAuth,
     home: chHome,
     categorias: chCategorias,
@@ -173,6 +189,7 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
+    info: enInfo,
     cart: enCart,
     search: enSearch,
     cardbodytitle: enCardbodytitle,
@@ -190,6 +207,7 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
+    info: esInfo,
     cart: esCart,
     search: esSearch,
     cardbodytitle: esCardbodytitle,
@@ -207,6 +225,7 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
+    info: frInfo,
     cart: frCart,
     search: frSearch,
     cardbodytitle: frCardbodytitle,
@@ -224,6 +243,7 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   ka: {
+    info: kaInfo,
     cart: kaCart,
     search: kaSearch,
     cardbodytitle: kaCardbodytitle,
@@ -241,6 +261,7 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
+    info: ruInfo,
     cart: ruCart,
     search: ruSearch,
     cardbodytitle: ruCardbodytitle,
