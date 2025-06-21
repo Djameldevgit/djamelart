@@ -37,6 +37,7 @@ const Info = ({id, auth, profile, dispatch}) => {
 
     return (
         <div className="info">
+            
             {userData.map(user => (
                 <div className="info_container" key={user._id}>
                     <Avatar src={user.avatar} size="supper-avatar" />

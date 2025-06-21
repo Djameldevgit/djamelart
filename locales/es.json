@@ -48,7 +48,8 @@
 	"comment": {
 		"error_post_not_exist": "Esta publicación no existe.",
 		"error_comment_not_exist": "Este comentario no existe.",
-		"success": "¡Comentario creado!"
+		"success": "¡Comentario creado!",
+		"comment_liked": "comment.comment_liked"
 	},
 	"message": {
 		"createMessage.empty": "El mensaje no puede estar vacío.",

@@ -1,11 +1,15 @@
 const Users = require('../models/userModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const sendMail = require('./sendMail')
 
+const {CLIENT_URL} = process.env
 const authCtrl = {
     register: async (req, res) => {
         try {
             const { username, email, password } = req.body
+         
+         
             let newUserName = username.toLowerCase().replace(/ /g, '')
 
             const user_name = await Users.findOne({ username: newUserName })
@@ -48,6 +52,48 @@ const authCtrl = {
             return res.status(500).json({ msg: req.__('auth.server_error') })
         }
     },
+
+    sendActivationEmail: async (req, res) => {
+        try {
+            const user = await Users.findById(req.user._id);
+            if (!user) return res.status(400).json({ msg: "Usuario no encontrado." });
+            if (user.isVerified) return res.status(400).json({ msg: "La cuenta ya está verificada." });
+    
+            const activation_token = createActivationToken({ id: user._id });
+            const url = `${CLIENT_URL}/user/activate/${activation_token}`;
+    
+            // ✅ Se usa user.email aquí:
+            await sendMail(user.email, url, "Activar cuenta")
+
+    
+            res.json({ msg: "Se ha enviado el correo de activación." });
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    
+
+
+    activationAccount: async (req, res) => {
+ 
+            try {
+              const { activation_token } = req.body;
+              const decoded = jwt.verify(activation_token, process.env.ACTIVATION_TOKEN_SECRET);
+              const { id } = decoded;
+          
+              const user = await Users.findById(id);
+              if (!user) return res.status(400).json({ msg: "Usuario no encontrado." });
+              if (user.isVerified) return res.status(400).json({ msg: "La cuenta ya está verificada." });
+          
+              user.isVerified = true;
+              await user.save();
+          
+              res.json({ msg: "✅ Cuenta activada correctamente." });
+            } catch (err) {
+              return res.status(500).json({ msg: err.message });
+            }
+          },
+          
 
     login: async (req, res) => {
         try {
@@ -120,7 +166,9 @@ const authCtrl = {
         }
     }
 }
-
+const createActivationToken = (payload) => {
+    return jwt.sign(payload, process.env.ACTIVATION_TOKEN_SECRET, {expiresIn: '5m'})
+    }
 const createAccessToken = (payload) => {
     return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
 }

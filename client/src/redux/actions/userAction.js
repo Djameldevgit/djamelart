@@ -1,79 +1,56 @@
 import { GLOBALTYPES } from './globalTypes';
 import { imageUpload } from '../../utils/imageUpload';
-import { getDataAPI, patchDataAPI, deleteDataAPI, postDataAPI } from '../../utils/fetchData';
+import { getDataAPI, patchDataAPI, deleteDataAPI  } from '../../utils/fetchData';
 import { removeNotify } from './notifyAction';
 
 export const USER_TYPES = {
-    LOADING_USER: 'LOADING_USER',
+    LOADING_USERS: 'LOADING_USERS',
     GET_USERS: 'GET_USERS',
     UPDATE_USER: 'UPDATE_USER',
-    GET_USER: 'GET_USER',
+   
     DELETE_USER: 'DELETE_USER',
-    GET_ACTIVE_USERS_LAST_24H: 'GET_ACTIVE_USERS_LAST_24H',  // Acción para usuarios activos en 24h
-    GET_ACTIVE_USERS_LAST_3H: 'GET_ACTIVE_USERS_LAST_3H',    // Acción para usuarios activos en 3h
-    GET_TOTAL_USERS_COUNT: 'GET_TOTAL_USERS_COUNT',
-    GET_TOTAL_POSTS_USER: 'GET_TOTAL_POSTS_USER',
-    UPDATE_USER_STATUS: 'UPDATE_USER_STATUS',
-    CREAR_DENUNCIA: 'CREAR_DENUNCIA',
-    GET_DENUNCIAS: 'GET_DENUNCIAS',
+ 
 
 
 };
+ 
 
-// Acción para obtener la cuenta total de usuarios
-export const fetchTotalUsersCount = (token) => async (dispatch) => {
-    try {
-        const res = await getDataAPI('users/counttotal', token); // Llama al endpoint que cuenta los usuarios
-        dispatch({ type: USER_TYPES.GET_TOTAL_USERS_COUNT, payload: res.data.counttotal });
-    } catch (error) {
-        console.error('Error al obtener el total de usuarios:', error);
-    }
-};
-
-// Acción para obtener usuarios activos en las últimas 24 horas
-export const getActiveUsersLast24h = (token) => async (dispatch) => {
-    try {
-        const res = await getDataAPI('users/active-last-24h', token);
-        dispatch({
-            type: USER_TYPES.GET_ACTIVE_USERS_LAST_24H,
-            payload: res.data.users
-        });
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-// Acción para obtener usuarios activos en las últimas 3 horas
-export const getActiveUsersLast3h = (token) => async (dispatch) => {
-    try {
-        const res = await getDataAPI('users/active-last-3h', token);
-        dispatch({
-            type: USER_TYPES.GET_ACTIVE_USERS_LAST_3H,
-            payload: res.data.users
-        });
-    } catch (error) {
-        console.error(error);
-    }
-};
 export const getUsers = (token) => async (dispatch) => {
     try {
-        dispatch({ type: USER_TYPES.LOADING_USER, payload: true })
-        const res = await getDataAPI('users',token)
+        // Usa exactamente el mismo nombre que definiste en USER_TYPES
+        dispatch({ type: USER_TYPES.LOADING_USERS, payload: true });
+        
+        const res = await getDataAPI('users?limit=9&page=1', token);
+        
+        // Verifica que la respuesta tenga datos antes de dispatch
+        if (!res.data) {
+            throw new Error('No data received');
+        }
+
+        dispatch({
+            type: USER_TYPES.GET_USERS,  // Asegúrate que coincida exactamente
+            payload: {
+                users: res.data.users || [],
+                result: res.data.result || 0,
+                page: 1
+            }
+        });
+
+    } catch (err) {
+        console.error('Error in getUsers:', err);
         
         dispatch({
-            type: USER_TYPES.GET_USERS,
-            payload: {...res.data, page: 2}
-        })
-
-        dispatch({ type: USER_TYPES.LOADING_USER, payload: false })
-    } catch (err) {
-        dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: {error: err.response.data.msg}
-        })
+            type: GLOBALTYPES.ALERT,  // Verifica también esta constante
+            payload: {
+                error: err.response?.data?.msg || 
+                      err.message || 
+                      'Error loading users'
+            }
+        });
+    } finally {
+        dispatch({ type: USER_TYPES.LOADING_USERS, payload: false });
     }
-}
-
+};
 
 // Acción para actualizar un usuario
 export const updateUser = ({ content, images, auth, status }) => async (dispatch) => {
@@ -103,113 +80,36 @@ export const updateUser = ({ content, images, auth, status }) => async (dispatch
         });
     }
 };
-
-// Acción para obtener un usuario por su ID
-export const getUser = ({ detailUser, id, auth }) => async (dispatch) => {
-    if (detailUser.every(user => user._id !== id)) {
-        try {
-            const res = await getDataAPI(`user/${id}`, auth.token);
-            dispatch({ type: USER_TYPES.GET_USER, payload: res.data.user });
-        } catch (err) {
-            dispatch({
-                type: GLOBALTYPES.ALERT,
-                payload: { error: err.response.data.msg }
-            });
-        }
-    }
-};
- 
-// Acción para eliminar un usuario
-export const deleteUser = ({ user, auth, socket }) => async (dispatch) => {
-    dispatch({ type: USER_TYPES.DELETE_USER, payload: user });
-
+export const deleteUser = ({id, auth}) => async (dispatch) => {
     try {
-        const res = await deleteDataAPI(`user/${user._id}`, auth.token);
-
-        // Notificación
-        const msg = {
-            id: user._id,
-            text: 'added a new user.',
-            recipients: res.data.newUser.user.followers,
-            url: `/user/${user._id}`,
-        };
-        dispatch(removeNotify({ msg, auth, socket }));
-
+      dispatch({ type: USER_TYPES.LOADING_USERS, payload: true });
+      
+      await deleteDataAPI(`user/${id}`, auth.token);
+      
+      dispatch({
+        type: USER_TYPES.DELETE_USER,
+        payload: id // Envía solo el ID string
+      });
+  
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { success: 'Usuario eliminado correctamente' }
+      });
+  
     } catch (err) {
-        dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: { error: err.response.data.msg }
-        });
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: err.response?.data?.msg || 'Error al eliminar usuario' }
+      });
+    } finally {
+      dispatch({ type: USER_TYPES.LOADING_USERS, payload: false });
     }
-};
-
+  };
 
 
 
  
  
 
-// Acción para actualizar el estado del usuario (suspender o activar)
-export const updateUserStatus = (userId, newStatus, token) => async (dispatch) => {
-    try {
-        await patchDataAPI(`admin/user/${userId}/status`, { status: newStatus }, token);
-        dispatch({
-            type: USER_TYPES.UPDATE_USER_STATUS,
-            payload: { userId, newStatus },
-        });
-    } catch (err) {
-        dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: { error: err.response.data.msg },
-        });
-    }
-};
  
-export const createDenuncia = ({ razones, auth, post }) => async (dispatch) => {
-
-    try {
-        // Despacha el loading para la acción
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
-
-
-        // Aquí usamos el id del post y la información adicional necesaria para la denuncia
-        const res = await postDataAPI(`denunciar/${post._id}`, {
-            razones,
-
-            usuarioReportante: auth.user._id, // El id del usuario que está denunciando
-        }, auth.token);
-
-     
-        // Despacha la acción de alerta con el estado de carga actualizado
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
-
-        // Despacha la acción para actualizar el estado global con la denuncia creada
-        dispatch({
-            type: USER_TYPES.CREAR_DENUNCIA,
-            payload: res.data,
-        });
-
-    } catch (err) {
-        console.error('Error al crear la denuncia:', err);
-
-        // Despacha el error si ocurre
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false, error: err.message } });
-    }
-};
-
-
-// Acción para obtener las denuncias de un usuario
-export const getDenuncias = (user, token) => async (dispatch) => {
-    try {
-        const res = await getDataAPI(`denunciar/${user.id}`, token); // Asegúrate de que la ruta esté correcta
-         dispatch({
-            type: USER_TYPES.GET_DENUNCIAS,
-            payload: res.data,
-        });
-    } catch (err) {
-        console.error("Error al obtener las denuncias:", err);
-    }
-};
-
-
-
+  

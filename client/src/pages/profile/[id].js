@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import { useTranslation } from 'react-i18next'
-
+ 
 const Profile = () => {
     const { profile, auth, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
@@ -26,6 +26,7 @@ const Profile = () => {
 
     return (
         <div>
+           
             <Nav variant="pills" activeKey="1">
                 <Nav.Item>
                     <Nav.Link eventKey="1" href="#/home">

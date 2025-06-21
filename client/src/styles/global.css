@@ -82,7 +82,8 @@ url("./header.css"); */
 @import url("./navbar2.css");
 @import url("./cart.css");
 @import url("./banco.css");
-
+@import url("./chekout.css");
+@import url("./login.css");
 
 @import url("./usersadministration/userstable.css");
 @import url("./usersadministration/modalbloquear.css");
@@ -109,6 +110,8 @@ url("./header.css"); */
 @import url("./estadoactividaduser.css");
 @import url("./estadoactividaduser11.css");
 @import url("./navbarandroid.css");
+ 
+
 /* @import url("./notifymodal.css");--------- Responsive ------ */
 @media (max-width: 766px){
   

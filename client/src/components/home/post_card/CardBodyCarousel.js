@@ -34,12 +34,13 @@ const CardBodyCarousel = ({ post }) => {
   }, [post.likes, auth.user]);
 
   useEffect(() => {
-    if (auth.user && auth.user.saved.includes(post._id)) {
+    if (auth.user && Array.isArray(auth.user.saved) && auth.user.saved.includes(post._id)) {
       setSaved(true);
     } else {
       setSaved(false);
     }
   }, [auth.user, post._id]);
+  
 
   // Sincronizar carrito con estado global
   useEffect(() => {

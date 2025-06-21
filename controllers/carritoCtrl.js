@@ -1,6 +1,6 @@
 const Posts = require('../models/postModel');
 const Users = require('../models/userModel');
-
+const Orders = require('../models/orderModel');
 const mongoose = require('mongoose');
 
 const calculateTotal = (items) => {
@@ -140,7 +140,12 @@ const carritoCtrl = {
         } catch (err) {
             return res.status(500).json({ msg: err.message });
         }
-    }
+    },
+
+ 
+
+
+
 };
 
 module.exports = carritoCtrl;

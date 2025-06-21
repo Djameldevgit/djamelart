@@ -10,6 +10,6 @@ router.delete('/cart/remove/:id', auth, carritoCtrl.removeFromCart);
 router.get('/cart', auth, carritoCtrl.getCart);
 router.put('/update/:id', auth, carritoCtrl.updateCartItemQuantity);
 
-
+ 
 
 module.exports = router

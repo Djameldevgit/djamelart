@@ -19,6 +19,7 @@ import homePostsAprove from './posAprovetReducer'
 import cart from './cartReducer'
 import languageReducer from './languageReducer';
 import homeUsers from './userReducer';
+import orders from './orderReducer'
  
 export default combineReducers({
     auth,
@@ -36,6 +37,6 @@ export default combineReducers({
     message,
     online,
     call,
-   homePostsAprove ,cart,languageReducer,roleReducer,homeUsers
+   homePostsAprove ,cart,languageReducer,roleReducer,homeUsers,orders
 
 })

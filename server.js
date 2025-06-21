@@ -11,7 +11,16 @@ const app = express()
 
 // Middleware base
 app.use(express.json())
+ const corsOptions = {
+  origin: [
+    "http://localhost:3000",
+    "https://djamelart.onrender.com/"
+  ],
+  credentials: true
+};
 app.use(cors({ origin: true, credentials: true })) // habilita cookies cross-origin si es necesario
+
+
 app.use(cookieParser())
 
 // Configurar i18n en el servidor
@@ -55,6 +64,8 @@ app.use('/api', require('./routes/messageRouter'))
 app.use('/api', require('./routes/cartRouter'))
 app.use('/api', require('./routes/languageRouter'))
 app.use('/api', require('./routes/rolesRouter'))
+app.use('/api', require('./routes/orderRouter'))
+
 // --- RUTA PARA CAMBIAR EL IDIOMA ---
 
 // --- CONEXIÓN A MONGODB ---

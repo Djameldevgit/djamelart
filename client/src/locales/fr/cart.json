@@ -27,7 +27,7 @@
   "paymentInfoTitle": "📌 Informations avant paiement",
   "countrySelectionGuide": "Veuillez sélectionner votre <strong>pays de résidence</strong> pour continuer. Selon votre localisation, nous afficherons les options de paiement disponibles.",
   "selectCountryLabel": "🌍 Sélectionnez votre pays :",
-  "algeriaPostTitle": "📬 Informations CCP - Poste Algérie",
+  "algeriaPostTitleeeeeeeee": "📬 Informations CCP - Poste Algérie",
   "account": "Compte postal",
   "key": "Clé",
   "documents": "Documents",
@@ -41,5 +41,27 @@
   "bank": "Banque",
   "paymentNotice": "📸 Après avoir effectué le paiement, envoyez le reçu (photo ou capture) par e-mail ou WhatsApp pour traiter votre commande.",
   "whereToSend": "📤 Où envoyer le reçu ?",
-  "email": "E-mail"
+  "email": "E-mail",
+
+
+
+
+
+
+
+  "algeriaPostTitle": "Paiement par CCP (Algérie)",
+  "accountNumberCCP": "Numéro de compte CCP",
+  "ccpKey": "Clé CCP",
+  "ccpInstruction1": "1. Présentez ce numéro dans n'importe quel bureau postal en Algérie",
+  "ccpInstruction2": "2. Le paiement peut prendre 24-48 heures à être traité",
+  "internationalBankTitle": "Virement Bancaire International",
+  "internationalNotice1": "Les virements internationaux peuvent prendre 3-5 jours ouvrés.",
+  "internationalNotice2": "Veuillez inclure le numéro de commande comme référence."
+
+
+
+
+
+
+
 }

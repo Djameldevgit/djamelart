@@ -273,20 +273,18 @@ const postCtrl = {
 
     deletePost: async (req, res) => {
         try {
-            const post = await Posts.findOneAndDelete({ _id: req.params.id, user: req.user._id });
-            await Comments.deleteMany({ _id: { $in: post.comments } });
-
-            res.json({
-                msg: req.__('post.deleted_post'),
-                newPost: {
-                    ...post,
-                    user: req.user
-                }
-            });
-        } catch (err) {
+            const post = await Posts.findByIdAndDelete(req.params.id);
+        
+            if (!post)
+              return res.status(404).json({ msg: 'Post no encontrado' });
+        
+            await Comments.deleteMany({ _id: { $in: post.comments || [] } });
+        
+            res.json({ msg: 'Post eliminado por admin', id: post._id });
+          } catch (err) {
             return res.status(500).json({ msg: err.message });
-        }
-    },
+          }
+        },
 
     savePost: async (req, res) => {
         try {

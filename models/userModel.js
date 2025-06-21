@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Posts = require('./postModel'); // Asegúrate que la ruta es correcta
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -27,29 +28,50 @@ const userSchema = new mongoose.Schema({
     enum: ['Utilisateur-No-authentifié', 'user', 'superuser', 'moderador', 'admin'],
     default: 'user'
   },
-
-  mobile: { type: String, default: '' },
-  address: { type: String, default: '' },
+  mobile: {
+    type: String,
+    default: ''
+  },
+  address: {
+    type: String,
+    default: ''
+  },
   story: {
     type: String,
     default: '',
     maxlength: 200
   },
-  website: { type: String, default: '' },
-  followers: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
-  following: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
-  saved: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
+  website: {
+    type: String,
+    default: ''
+  },
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
+  }],
+  following: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
+  }],
+  saved: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'post' // Cambiado a 'post' si guardas posts, o mantener 'user' si son usuarios
+  }],
   language: {
     type: String,
-    enum: ['en', 'fr', 'ar', 'es', 'ru', 'chino', 'kab'], // Incluye todos los idiomas que usas
+    enum: ['en', 'fr', 'ar', 'es', 'ru', 'chino', 'kab'],
     default: 'ar'
   },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
 
-  // En tu userModel.js
+
   cart: {
     items: [{
       postId: {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'post',
         required: true
       },
@@ -62,24 +84,37 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: true
       },
-      // Campos adicionales para cache
       title: String,
       images: Array
- 
     }],
-    
     totalPrice: {
       type: Number,
       default: 0,
       set: function (value) {
         return isNaN(value) ? 0 : parseFloat(value.toFixed(2));
       }
-    }
+    },
+   
   }
-
-
 }, {
-  timestamps: true
-})
+  timestamps: true // Correctamente definido
+});
 
-module.exports = mongoose.model('user', userSchema)
+// Middleware pre-remove mejorado
+userSchema.pre('remove', async function (next) {
+  try {
+    const userId = this._id;
+
+    // Actualizar posts que este usuario haya liked
+    await Posts.updateMany(
+      { likes: userId },
+      { $pull: { likes: userId } }
+    ).exec();
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+module.exports = mongoose.model('user', userSchema);

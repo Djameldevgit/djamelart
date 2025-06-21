@@ -84,6 +84,9 @@ const Navbar2 = () => {
                       <NavDropdown.Item as={Link} to="/administration/users/reportuser" onClick={handleCloseDrawer}>
                         {t('reportedUsers', { lng: lang })}
                       </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/cart/orderss" onClick={handleCloseDrawer}>
+                        {t('orders', { lng: lang })}
+                      </NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/postspendientes" onClick={handleCloseDrawer}>
                         {t('pendingPosts', { lng: lang })}
                       </NavDropdown.Item>
@@ -213,6 +216,9 @@ const Navbar2 = () => {
                   <NavDropdown.Item as={Link} to="/rolesuser">
                     {t('navbar:rolesuser', { lng: lang })}
                   </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/cart/orderss" onClick={handleCloseDrawer}>
+                        {t('orders', { lng: lang })}
+                      </NavDropdown.Item>
                   {auth.user.role === 'admin' && (
                     <>
                       <NavDropdown.Item as={Link} to="/users">
@@ -232,6 +238,9 @@ const Navbar2 = () => {
                       </NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/administration/listadeusuariosbloqueadoss">
                         {t('navbar:blockedUsers', { lng: lang })}
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/cart/orderss" onClick={handleCloseDrawer}>
+                        {t('orders', { lng: lang })}
                       </NavDropdown.Item>
                     </>
                   )}

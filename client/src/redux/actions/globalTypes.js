@@ -15,6 +15,10 @@ export const GLOBALTYPES = {
     REMOVE_FROM_CART: 'REMOVE_FROM_CART',
     UPDATE_CART_ITEM: 'UPDATE_CART_ITEM',
     LOAD_CART: 'LOAD_CART', // si decides mantenerlo
+    GET_ORDERS: 'GET_ORDERS',
+    CREATE_ORDER: 'CREATE_ORDER',
+    LOGIN :"LOGIN"
+
 }
 
 export const EditData = (data, id, post) => {

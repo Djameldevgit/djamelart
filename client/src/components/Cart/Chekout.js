@@ -1,105 +1,108 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import CountrySelect from './CountrySelect';
-import { FaTrashAlt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+ 
 
 const Chekout = () => {
   const { cart, languageReducer } = useSelector(state => state);
   const [countryCode, setCountryCode] = useState('');
-  const isAlgeria = countryCode === 'DZ';
-  const currency = isAlgeria ? 'DA' : '€';
+  const [paymentMethod, setPaymentMethod] = useState('CCP');
+  const [orderConfirmed, setOrderConfirmed] = useState(false);
   const { t } = useTranslation('cart');
   const lang = languageReducer.language || 'es';
+
+  const isAlgeria = countryCode === 'DZ';
+  const currency = isAlgeria ? 'DA' : '€';
 
   const total = cart.items?.reduce((sum, item) => {
     return sum + (item.price || 0) * (item.quantity || 1);
   }, 0) || 0;
 
   useEffect(() => {
-    window.scrollTo(0, 0); // UX
+    window.scrollTo(0, 0);
   }, []);
 
   return (
-    <div className="checkout-form">
+    <div className="checkout-container">
       <h2 className="checkout-title">{t('paymentForm', { lng: lang })}</h2>
 
-      {/* ✅ RESUMEN DE LA OBRA(S) - VERSIÓN COMPACTA */}
-      <div className="checkout-summary">
-        <h3>{t('orderSummary', { lng: lang })}</h3>
-        {cart.items?.map((item) => {
-          const postId = item.postId?._id || 'sin-id';
-          return (
-            <div key={postId} className="cart-item-card-chekout">
-              <img
-                src={item.postId?.images?.[0]?.url || 'imagen_por_defecto.jpg'}
-                alt={item.postId?.title || t('artwork', { lng: lang })}
-                className="cart-item-image-chekout"
-              />
-              <div className="cart-item-details-checkout">
-                <p className="cart-item-title-chekout">{item.postId?.title || t('noTitle', { lng: lang })}</p>
-                <p className="compact-price">
-                  {item.quantity} x {item.price?.toFixed(2)} {currency}
-                </p>
-                <p className="compact-subtotal">
-                  <strong>{t('total', { lng: lang })}:</strong> {(item.quantity * item.price).toLocaleString()} {currency}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-        <p className="checkout-total">
-          <strong>{t('totalToPay', { lng: lang })}:</strong> {total.toLocaleString()} {currency}
-        </p>
-      </div>
+      {/* Resumen del Pedido (igual que antes) */}
 
-      {/* ✅ GUÍA */}
-      <div className="checkout-guide">
-        <h3>{t('paymentInfoTitle', { lng: lang })}</h3>
-        <p>
-          {t('countrySelectionGuide', { lng: lang })}
-        </p>
-      </div>
-
-      {/* ✅ SELECTOR DE PAÍS */}
-      <div className="selector-wrapper">
-        <label htmlFor="country" className="label-country">{t('selectCountryLabel', { lng: lang })}</label>
+      {/* Selector de País */}
+      <div className="form-group">
+        <label>{t('selectCountryLabel', { lng: lang })}</label>
         <CountrySelect onChange={setCountryCode} />
       </div>
 
-      {/* ✅ OPCIONES DE PAGO */}
-      <div className="bank-section">
-        {isAlgeria ? (
-          <div className="bank-info algeria">
-            <h4>{t('algeriaPostTitle', { lng: lang })}</h4>
-            <p><strong>{t('account', { lng: lang })}:</strong> 12345.78.90</p>
-            <p><strong>{t('key', { lng: lang })}:</strong> 89</p>
-            <p><strong>{t('documents', { lng: lang })}:</strong> {t('algeriaDocuments', { lng: lang })}</p>
-            <p><strong>{t('dailyLimits', { lng: lang })}:</strong> {t('algeriaLimits', { lng: lang })}</p>
-            <p><strong>{t('inquiries', { lng: lang })}:</strong> {t('algeriaInquiries', { lng: lang })}</p>
+      {/* Bloque de Pago Dinámico */}
+      {isAlgeria ? (
+        <div className="payment-method-algeria">
+          <div className="form-group">
+            <label>{t('paymentMethod', { lng: lang })}</label>
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="CCP">CCP (Compte Courant Postal)</option>
+              <option value="D17PAY">D17PAY</option>
+            </select>
           </div>
-        ) : (
-          <div className="bank-info international">
-            <h4>{t('bankInfoTitle', { lng: lang })}</h4>
-            <p><strong>{t('name', { lng: lang })}:</strong> Mohamed Benali</p>
-            <p><strong>{t('bank', { lng: lang })}:</strong> Société Générale</p>
+
+          {paymentMethod === 'CCP' && (
+            <div className="ccp-details">
+              <h4>{t('algeriaPostTitle', { lng: lang })}</h4>
+              <div className="bank-info-box">
+                <p><strong>{t('accountName', { lng: lang })}:</strong> Mohamed Benali</p>
+                <p><strong>{t('accountNumberCCP', { lng: lang })}:</strong> 123 456 78 90</p>
+                <p><strong>{t('postalCode', { lng: lang })}:</strong> 16000 (Algiers)</p>
+                <p><strong>{t('ccpKey', { lng: lang })}:</strong> 95</p>
+              </div>
+              <div className="payment-instructions">
+                <p>{t('ccpInstruction1', { lng: lang })}</p>
+                <p>{t('ccpInstruction2', { lng: lang })}</p>
+              </div>
+            </div>
+          )}
+
+          {paymentMethod === 'D17PAY' && (
+            <div className="d17pay-info">
+              <p>{t('d17payInstruction', { lng: lang })}</p>
+              <button className="d17pay-button">
+                {t('payWithD17PAY', { lng: lang })}
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="payment-method-international">
+          <div className="bank-info-box">
+            <h4>{t('internationalBankTitle', { lng: lang })}</h4>
+            <p><strong>{t('beneficiary', { lng: lang })}:</strong> Mohamed Benali</p>
+            <p><strong>{t('bankName', { lng: lang })}:</strong> Société Générale</p>
             <p><strong>IBAN:</strong> FR76 3000 3036 2000 0500 0001 234</p>
-            <p><strong>SWIFT:</strong> SOGEFRPP</p>
+            <p><strong>SWIFT/BIC:</strong> SOGEFRPP</p>
+            <p><strong>{t('bankAddress', { lng: lang })}:</strong> 29 Blvd Haussmann, 75009 Paris, France</p>
           </div>
-        )}
-      </div>
+          <div className="payment-notice">
+            <p>{t('internationalNotice1', { lng: lang })}</p>
+            <p>{t('internationalNotice2', { lng: lang })}</p>
+          </div>
+        </div>
+      )}
 
-      {/* ✅ MENSAJE FINAL */}
-      <div className="payment-notice">
-        <p>
-          {t('paymentNotice', { lng: lang })}
-        </p>
-      </div>
+      {/* Botón de Confirmación */}
+      <button 
+        className="confirm-button"
+        onClick={() => setOrderConfirmed(true)}
+      >
+        {t('confirmOrder', { lng: lang })}
+      </button>
 
-      <div className="contact-info">
-        <h4>{t('whereToSend', { lng: lang })}</h4>
-        <p><strong>📧 {t('email', { lng: lang })}:</strong> mohamed.artista@example.com</p>
-        <p><strong>📱 WhatsApp:</strong> +213 661 23 45 67</p>
+      {/* Contacto */}
+      <div className="contact-section">
+        <p>{t('needHelp', { lng: lang })}</p>
+        <p>📧 contact@artista.com | 📱 +213 123 456 789</p>
       </div>
     </div>
   );

@@ -130,28 +130,33 @@ export const getPost = ({detailPost, id }) => async (dispatch) => {
     }
 }
 
-export const deletePost = ({post, auth, socket}) => async (dispatch) => {
-    dispatch({ type: POST_TYPES.DELETE_POST, payload: post })
-
+export const deletePost = ({ post, auth, socket }) => async (dispatch) => {
+    dispatch({ type: POST_TYPES.DELETE_POST, payload: post });
+  
     try {
-        const res = await deleteDataAPI(`post/${post._id}`, auth.token)
-
-        // Notify
-        const msg = {
-            id: post._id,
-            text: 'added a new post.',
-            recipients: res.data.newPost.user.followers,
-            url: `/post/${post._id}`,
-        }
-        dispatch(removeNotify({msg, auth, socket}))
-        
+      const res = await deleteDataAPI(`post/${post._id}`, auth.token);
+  
+      const recipients = res.data?.newPost?.user?.followers || [];
+  
+      const msg = {
+        id: post._id,
+        text: 'added a new post.',
+        recipients,
+        url: `/post/${post._id}`,
+      };
+  
+      dispatch(removeNotify({ msg, auth, socket }));
     } catch (err) {
-        dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: {error: err.response.data.msg}
-        })
+      const errorMsg =
+        err?.response?.data?.msg || err?.message || 'Error al eliminar post';
+  
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: errorMsg },
+      });
     }
-}
+  };
+  
 
 export const savePost = ({post, auth}) => async (dispatch) => {
     const newUser = {...auth.user, saved: [...auth.user.saved, post._id]}

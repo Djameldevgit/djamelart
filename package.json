@@ -17,13 +17,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sendgrid/mail": "^8.1.1",
     "bcrypt": "^5.0.0",
     "concurrently": "^6.0.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "googleapis": "^61.0.0",
     "i18n": "^0.15.1",
     "i18next": "^23.4.4",
     "i18next-fs-backend": "^2.6.0",
@@ -31,6 +31,7 @@
     "i18next-http-middleware": "^3.3.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.13",
+    "nodemailer": "^7.0.3",
     "react-i18next": "^13.1.2",
     "socket.io": "^3.1.2"
   },
