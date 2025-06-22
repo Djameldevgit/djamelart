@@ -26,6 +26,45 @@ class APIfeatures {
   }
 }
 const userCtrl = {
+
+
+  validateUserActivity: async (req, res, next) => {
+    const user = await Users.findById(req.user._id);
+    if (!user) return res.status(401).json({ msg: 'Usuario no encontrado.' });
+
+    // Si no está verificado y tiene más de 3 días
+    const accountAge = Date.now() - new Date(user.createdAt).getTime();
+    const threeDays = 3 * 24 * 60 * 60 * 1000;
+
+    if (!user.isVerified && accountAge > threeDays) {
+      await Users.findByIdAndDelete(user._id);
+      return res.status(403).json({
+        msg: 'Tu cuenta ha sido eliminada por no verificarla a tiempo. Regístrate de nuevo si deseas acceder.',
+      });
+    }
+
+    next(); // pasa a la siguiente acción si todo está bien
+  },
+
+
+
+  toggleActiveStatus: async (req, res) => {
+    try {
+      const user = await Users.findById(req.params.id);
+      if (!user) return res.status(404).json({ msg: "Usuario no encontrado." });
+
+      user.isActive = !user.isActive;
+      await user.save();
+
+      res.json({ msg: "Estado actualizado", user });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+
+
+
   searchUser: async (req, res) => {
     try {
       const users = await Users.find({ username: { $regex: req.query.username } })
@@ -460,7 +499,7 @@ const userCtrl = {
 
     try {
 
-    
+
       if (!req.user || req.user.role !== 'admin') {
         await session.abortTransaction();
         return res.status(403).json({
@@ -468,7 +507,7 @@ const userCtrl = {
           msg: 'Acceso denegado. Se requieren privilegios de administrador'
         });
       }
-  
+
       const orphanedPosts = await Posts.aggregate([
         {
           $lookup: {
@@ -494,13 +533,13 @@ const userCtrl = {
           }
         }
       ]).session(session);
-  
+
       console.log('Orphaned posts:', orphanedPosts);
-  
+
       const idsToDelete = orphanedPosts.map(post => post._id);
       const commentIdsToDelete = orphanedPosts.flatMap(post => post.comments || []);
       const idsToDeleteObjectId = idsToDelete.map(id => new mongoose.Types.ObjectId(id));
-  
+
       await Promise.all([
         Posts.deleteMany({ _id: { $in: idsToDeleteObjectId } }).session(session),
         Comments.deleteMany({ _id: { $in: commentIdsToDelete } }).session(session),
@@ -511,23 +550,23 @@ const userCtrl = {
           { $pull: { "cart.items": { postId: { $in: idsToDeleteObjectId } } } }
         ).session(session)
       ]);
-  
+
       await session.commitTransaction();
-  
+
       res.json({
         success: true,
         deletedPosts: idsToDelete.length,
         deletedComments: commentIdsToDelete.length,
         message: `Limpieza completada: ${idsToDelete.length} posts y ${commentIdsToDelete.length} comentarios eliminados`
       });
-  
+
     } catch (err) {
 
       console.error('Error en limpieza de posts huérfanos:');
       console.error(err);
       console.error('Stack Trace:');
-    
-      
+
+
       await session.abortTransaction();
       console.error('Error en limpieza de posts huérfanos:', err);
       res.status(500).json({
@@ -542,7 +581,7 @@ const userCtrl = {
       session.endSession();
     }
   }
-  
+
 
 
 

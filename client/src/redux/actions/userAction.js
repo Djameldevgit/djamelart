@@ -80,6 +80,19 @@ export const updateUser = ({ content, images, auth, status }) => async (dispatch
         });
     }
 };
+export const toggleActiveStatus = (userId, token) => async (dispatch) => {
+  try {
+    const res = await patchDataAPI(`toggle_active/${userId}`, null, token);
+    dispatch({
+      type: USER_TYPES.UPDATE_USER,
+      payload: res.data.user,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
 export const deleteUser = ({id, auth}) => async (dispatch) => {
     try {
       dispatch({ type: USER_TYPES.LOADING_USERS, payload: true });

@@ -1,0 +1,15 @@
+{  "authRequiredTitle": "ⵉⵏⴰⵔⵣⵓ ⵓⵎⵏⴰⵢ ⵜⵉⵜⵎⵎⵓⵔⵜ",
+"authRequiredMessage": "ⴰⵣⵓⵍ ⴳⴻⵔ ⵉⵎⵎⴰⵔⵓⴷ ⴷ ⴷⵓⵔ ⴳⵓⴷⵓⵏ ⴷ ⵙⵉⵜⵉⵍⴻⵏ ⵓⵙⵏⵓⵎⵏ ⵉⵎⵎⵓⵔⴰⵍ.",
+
+"login": "ⵉⵎⵎⴰⵔⵓⴷ",
+"register": "ⵙⵉⵜⵉⵍⴻⵏ",
+"close": "ⵔⵉⵙⵉ",
+
+"productAddedToCart": "ⵜⴰⴳⵙⴻⵏⵜ ⵜⴰⵏⴰⵢⵏ ⵏ ⵜⴰⴳⵍⴰⵍⵉⵜ",
+"thanksForPurchase": "ⵢⵓⵎⴰⵏ ⵉⵡⵉⵏⵓ ⵓⵜⵓⵍⴻⴷ!",
+
+"addToCart": "ⵜⴰⵏⴰⵢ ⵏ ⵏⵜⴰⴳⵍⴰⵍⵉⵜ",
+"removeFromCart": "ⵜⴰⵙⴽⴳⴰⵔⵜ ⵏ ⵜⴰⴳⵍⴰⵍⵉⵜ"
+
+
+}

@@ -1,0 +1,16 @@
+{
+    "authRequiredTitle": "操作未允许",
+    "authRequiredMessage": "请注册或登录以继续。",
+    "login": "登录",
+    "register": "注册",
+    "close": "关闭",
+    "productAddedToCart": "商品已添加到购物车",
+    "thanksForPurchase": "感谢您的购买！",
+    "addToCart": "添加到购物车",
+    "removeFromCart": "从购物车移除",
+    "noVerificada": "帐户未验证",
+    "activar": "激活我的帐户"
+
+
+  }
+  

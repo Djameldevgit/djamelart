@@ -1,0 +1,12 @@
+{
+    "authRequiredTitle": "Action not allowed",
+    "authRequiredMessage": "Please register or log in to perform this action.",
+    "login": "Log in",
+    "register": "Register",
+    "close": "Close",
+    "productAddedToCart": "Product added to cart",
+    "thanksForPurchase": "Thanks for your purchase!",
+    "addToCart": "Add to cart",
+    "removeFromCart": "Remove from cart"
+  }
+  

@@ -1,4 +1,4 @@
- 
+// Archivo: Navbar2.js
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../redux/actions/authAction'
@@ -7,21 +7,21 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import Avatar from './Avatar'
 import Card from 'react-bootstrap/Card'
-import { FaBars, FaSignOutAlt, FaUserCircle, FaSignInAlt, FaUserPlus } from 'react-icons/fa'
+import { FaBars } from 'react-icons/fa'
 import {
   Navbar,
   Container,
   NavDropdown,
   Offcanvas,
   Button,
- 
+  Dropdown,
   Badge
 } from 'react-bootstrap'
+import { FaUserCircle } from 'react-icons/fa'
 import { BsCartFill } from 'react-icons/bs'
 import NotifyModal from './NotifyModal'
 import LanguageSelectorpc from './LanguageSelectorpc'
 import Acordion from './Acordion'
-//import ActivateButton from '../auth/ActivateButton'
 
 const Navbar2 = () => {
   const { auth, theme, cart } = useSelector((state) => state)
@@ -39,7 +39,6 @@ const Navbar2 = () => {
 
   const handleLogout = () => {
     dispatch(logout())
-    handleCloseDrawer()
   }
 
   const toggleTheme = () => {
@@ -57,10 +56,10 @@ const Navbar2 = () => {
             <Button onClick={handleShowDrawer} variant="outline-primary" className="me-2">
               {showDrawer ? '✖' : <FaBars size={20} />}
             </Button>
-            <Navbar.Brand href="/" className="py-2 d-none d-lg-block">
+
+            <Navbar.Brand href="/" className="py-2">
               <Card.Title>{t('appName', { lng: lang })}</Card.Title>
             </Navbar.Brand>
-
           </div>
 
           <div className="d-flex align-items-center gap-3">
@@ -145,34 +144,21 @@ const Navbar2 = () => {
         style={{ top: '56px', height: 'calc(100vh - 56px)', width: '270px' }}
       >
         <Offcanvas.Header closeButton>
-   
+          <Offcanvas.Title>{t('menu', { lng: lang })}</Offcanvas.Title>
         </Offcanvas.Header>
-
         <Offcanvas.Body style={{ overflowY: 'auto', padding: '0.5rem' }}>
-          {/* Mostrar login/register o cuenta según autenticación (solo móviles) */}
-          <div className="d-lg-none mb-3">
-            {!auth.user ? (
-              <div className="text-center">
-                <Link to="/login" onClick={handleCloseDrawer} className="btn btn-outline-primary w-100 mb-2">
-                  <FaSignInAlt className="me-2" /> {t('login', { lng: lang })}
-                </Link>
-                <Link to="/register" onClick={handleCloseDrawer} className="btn btn-outline-secondary w-100">
-                  <FaUserPlus className="me-2" /> {t('register', { lng: lang })}
-                </Link>
-              </div>
-            ) : (
-              <div className="">
-                <h6 className=""> </h6>
-                <Link to={`/profile/${auth.user._id}`} onClick={handleCloseDrawer} className="btn btn-outline-success w-100 my-2">
-                  <FaUserCircle className="me-2" /> {t('profile', { lng: lang })}
-                </Link>
-                <Button variant="outline-danger" onClick={handleLogout} className="w-100">
-                  <FaSignOutAlt className="me-2" /> {t('logout', { lng: lang })}
-                </Button>
+          {/* Puedes mostrar diferente contenido en móvil/PC si deseas */}
+        
+        
+          <div className="d-lg-none mb-3 text-center">
+            {auth.user && (
+              <div>
+              
+                <h6 className="mt-2">{auth.user.username}</h6>
               </div>
             )}
           </div>
-
+          
           <Acordion />
         </Offcanvas.Body>
       </Offcanvas>

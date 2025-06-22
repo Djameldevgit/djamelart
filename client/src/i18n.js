@@ -3,6 +3,15 @@ import { initReactI18next } from 'react-i18next';
 
 
 
+import arCardbodycarousel from './locales/ar/cardbodycarousel.json';
+import chCardbodycarousel from './locales/ch/cardbodycarousel.json';
+import enCardbodycarousel from './locales/en/cardbodycarousel.json';
+import esCardbodycarousel from './locales/es/cardbodycarousel.json';
+import frCardbodycarousel from './locales/fr/cardbodycarousel.json';
+import kaCardbodycarousel from './locales/ka/cardbodycarousel.json';
+import ruCardbodycarousel from './locales/ru/cardbodycarousel.json';
+
+
 
 import arInfo from './locales/ar/info.json';
 import chInfo from './locales/ch/info.json';
@@ -152,7 +161,9 @@ import chNavbar from './locales/ch/navbar.json';             // Nuevo
 
 const resources = {
   ar: {
-    info: arInfo,
+
+    cardbodycarousel: arCardbodycarousel,
+ info: arInfo,
     cart: arCart,
     search: arSearch,
     cardbodytitle: arCardbodytitle,
@@ -171,6 +182,7 @@ const resources = {
 
   },
   ch: {
+    cardbodycarousel: chCardbodycarousel,
     info: chInfo,
     cart: chCart,
     search: chSearch,
@@ -189,6 +201,8 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
+
+    cardbodycarousel: enCardbodycarousel,
     info: enInfo,
     cart: enCart,
     search: enSearch,
@@ -207,6 +221,8 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
+
+    cardbodycarousel: esCardbodycarousel,
     info: esInfo,
     cart: esCart,
     search: esSearch,
@@ -225,6 +241,8 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
+
+    cardbodycarousel: frCardbodycarousel,
     info: frInfo,
     cart: frCart,
     search: frSearch,
@@ -243,6 +261,8 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   ka: {
+
+    cardbodycarousel: kaCardbodycarousel,
     info: kaInfo,
     cart: kaCart,
     search: kaSearch,
@@ -261,6 +281,8 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
+
+    cardbodycarousel: ruCardbodycarousel,
     info: ruInfo,
     cart: ruCart,
     search: ruSearch,

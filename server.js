@@ -6,12 +6,16 @@ const cookieParser = require('cookie-parser')
 const path = require('path')
 const i18n = require('i18n') // Solo usamos este i18n en el servidor
 const SocketServer = require('./socketServer')
+require('./cronJobs/DeleteUsersNoVerified');
 
 const app = express()
 
-// Middleware base
+
+
+
+
 app.use(express.json())
- const corsOptions = {
+const corsOptions = {
   origin: [
     "http://localhost:3000",
     "https://djamelart.onrender.com/"
@@ -34,8 +38,8 @@ i18n.configure({
 })
 
 app.use(cookieParser()); // primero las cookies
-app.use(i18n.init);  
- 
+app.use(i18n.init);
+
 
 // --- SOCKET.IO ---
 const http = require('http').createServer(app)
@@ -73,7 +77,7 @@ const URI = process.env.MONGODB_URL
 mongoose.connect(URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify:false
+  useFindAndModify: false
 }, err => {
   if (err) throw err
   console.log('Connected to MongoDB')

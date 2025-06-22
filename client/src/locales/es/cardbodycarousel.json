@@ -1,0 +1,19 @@
+{
+    "authRequiredTitle": "Acción no permitida",
+    "authRequiredMessage": "Por favor regístrate o inicia sesión para hacer esta acción.",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "close": "Cerrar",
+    "productAddedToCart": "Producto añadido al carrito",
+    "thanksForPurchase": "¡Gracias por tu compra!",
+    "addToCart": "Añadir al carrito",
+    "removeFromCart": "Quitar del carrito",
+ 
+        "title": "Cuenta desactivada",
+        "message": "Tu cuenta ha sido desactivada por los administradores. Si crees que es un error, contáctanos."
+ 
+   
+      
+
+
+}

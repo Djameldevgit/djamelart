@@ -88,7 +88,7 @@ export const chinoLanguage = (language) => async (dispatch) => {
 
 export const synchronizeLanguage = (language) => async dispatch => {
   try {
-    await axios.patch('language', { language }, {
+    await axios.put('/language', { language }, {
      
     });
 

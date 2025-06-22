@@ -93,8 +93,31 @@ const authCtrl = {
               return res.status(500).json({ msg: err.message });
             }
           },
+ 
           
 
+
+
+
+
+
+          /*
+          deactivateAccount: async (req, res) => {
+            try {
+              const user = await Users.findById(req.user._id);
+              if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
+          
+              if (!user.isActive) return res.status(400).json({ msg: 'La cuenta ya está desactivada' });
+          
+              user.isActive = false;
+              await user.save();
+          
+              res.json({ msg: '🔒 Cuenta desactivada con éxito.' });
+            } catch (err) {
+              return res.status(500).json({ msg: err.message });
+            }
+          },*/
+          
     login: async (req, res) => {
         try {
             const { email, password } = req.body

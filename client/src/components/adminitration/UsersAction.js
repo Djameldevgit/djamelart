@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getDataAPI } from "../../utils/fetchData";
-import { deleteUser, USER_TYPES } from "../../redux/actions/userAction";
+import { deleteUser, toggleActiveStatus, USER_TYPES } from "../../redux/actions/userAction";
 import LoadMoreBtn from "../LoadMoreBtn";
 import LoadIcon from "../../images/loading.gif";
 import UserCard from "../UserCard";
 import { Dropdown } from "react-bootstrap"; // Importamos Dropdown de react-bootstrap
+/*
+   <td>
+                    {user.isActive ? (
+                      <span className="badge bg-success">🟢 Activa</span>
+                    ) : (
+                      <span className="badge bg-secondary">🔴 Inactiva</span>
+                    )}
+                  </td>*/
+
 
 const UsersAction = () => {
   const { homeUsers, auth } = useSelector((state) => state);
@@ -59,7 +68,6 @@ const UsersAction = () => {
       try {
         await dispatch(deleteUser({ id: userId, auth }));
 
-        // Actualizar la lista de usuarios después de eliminar
         const res = await getDataAPI(`users?limit=${homeUsers.page * 9}`, auth.token);
         dispatch({
           type: USER_TYPES.GET_USERS,
@@ -90,6 +98,8 @@ const UsersAction = () => {
               <th width="15%">Email</th>
               <th width="15%">Username</th>
               <th width="15%">Registro</th>
+              <th width="15%">Verificación</th>
+              <th width="15%">Estado</th>
               <th width="15%">Acciones</th>
             </tr>
           </thead>
@@ -104,11 +114,16 @@ const UsersAction = () => {
                   <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                   <td>
                     {user.isVerified ? (
-                      <span className="badge bg-success">✔ Activado</span>
+                      <span className="badge bg-success">✔ Verificado</span>
                     ) : (
-                      <span className="badge bg-danger">✘ No activado</span>
+                      <span className="badge bg-danger">✘ No verificado</span>
                     )}
                   </td>
+               <td>
+  {user.isVerified ? <span className="badge bg-success">🟢 Verificado</span> : <span className="badge bg-danger">🔴 No verificado</span>}
+  <br/>
+  {user.isActive ? <span className="badge bg-success">🟢 Activo</span> : <span className="badge bg-secondary">🔴 Desactivado</span>}
+</td>
 
                   <td>
                     <Dropdown>
@@ -119,7 +134,6 @@ const UsersAction = () => {
                       >
                         Acciones
                       </Dropdown.Toggle>
-
                       <Dropdown.Menu>
                         <Dropdown.Item
                           as="button"
@@ -138,22 +152,12 @@ const UsersAction = () => {
                         </Dropdown.Item>
                         <Dropdown.Item
                           as="button"
-                          className="text-warning"
-                          onClick={() => {
-                            // Función para bloquear
-                          }}
+                          className={user.isActive ? "text-warning" : "text-success"}
+                          onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
                         >
-                          🚫 Bloquear
+                          {user.isActive ? "🔒 Desactivar cuenta" : "🔓 Activar cuenta"}
                         </Dropdown.Item>
-                        <Dropdown.Item
-                          as="button"
-                          className="text-warning"
-                          onClick={() => {
-                            // Función para desactivar
-                          }}
-                        >
-                          🔇 Desactivar
-                        </Dropdown.Item>
+
                       </Dropdown.Menu>
                     </Dropdown>
                   </td>
@@ -161,7 +165,7 @@ const UsersAction = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="text-center py-4">
+                <td colSpan="8" className="text-center py-4">
                   No se encontraron usuarios
                 </td>
               </tr>

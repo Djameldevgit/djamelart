@@ -22,4 +22,7 @@ router.patch('/user/:id/unfollow', auth, userCtrl.unfollow)
 router.delete('/user/:id', auth, userCtrl.deleteUser)
  
 router.delete('/posts', auth  ,userCtrl.eliminaRrestosDePosts)
+
+ 
+router.patch('/toggle_active/:id', auth, userCtrl.toggleActiveStatus);
 module.exports = router

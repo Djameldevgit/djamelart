@@ -6,10 +6,8 @@ import LoadIcon from '../images/loading.gif';
 import Modalsearchhome from './../components/Modalsearchhome';
 
 import { useTranslation } from 'react-i18next';
-import ActivateButton from '../auth/ActivateButton';
-import EliminarDesechosdeseLaBaseDAOS from '../components/EliminarDesechosdeseLaBaseDAOS';
  
-
+ 
 const Home = () => {
 
     
@@ -64,8 +62,7 @@ const Home = () => {
                 </span>
 
             </button>
-<ActivateButton/>
-<EliminarDesechosdeseLaBaseDAOS />
+ 
             <Modalsearchhome isOpen={isModalOpen} onClose={closeModal}>
                 <div className="modalcontentsearch">
                     <div className="titlebusqueda">

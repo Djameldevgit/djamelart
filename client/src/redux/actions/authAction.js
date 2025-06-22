@@ -53,8 +53,40 @@ export const sendActivationEmail = (token) => async (dispatch) => {
         });
     }
 };
+/*
+export const deactivateAccount = (token) => async (dispatch) => {
+    try {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
+  
+      const res = await patchDataAPI('deactivate', null, token);
+  
+      dispatch({
+        type: GLOBALTYPES.AUTH,
+        payload: {
+          user: { isActive: false },
+          token: '',
+        },
+      });
+  
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { success: res.data.msg }
+      });
+  
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: {
+          error: err.response?.data?.msg || 'Error al desactivar cuenta'
+        }
+      });
+    }
+  };
+  */
 
  
+  
+
 export const login = (data) => async (dispatch) => {
     try {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } })

@@ -30,7 +30,15 @@ const userReducer = (state = initialState, action) => {
                     user._id === action.payload._id ? action.payload : user
                 ),
             };
-
+            case USER_TYPES.TOGGLE_ACTIVE_STATUS:
+                return {
+                  ...state,
+                  users: state.users.map(user =>
+                    user._id === action.payload.id
+                      ? { ...user, isActive: !user.isActive }
+                      : user
+                  )
+                };
             case USER_TYPES.DELETE_USER:
                 return {
                   ...state,
