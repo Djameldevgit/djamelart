@@ -1,45 +1,65 @@
-// /cron/cleanUnverifiedUsers.js (por ejemplo)
 const cron = require('node-cron');
-const Users = require('../models/userModel'); // ajusta la ruta según tu estructura
-/*
+const Users = require('../models/userModel');
+const Posts = require('../models/postModel');
+const Comments = require('../models/commentModel');
 
-const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);            // ⏱ Hace 5 minutos
-const halfHourAgo = new Date(Date.now() - 30 * 60 * 1000);              // ⏱ Hace 30 minutos
-const twentyFiveHoursAgo = new Date(Date.now() - 25 * 60 * 60 * 1000);  // ⏱ Hace 25 horas
-const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);    // 📅 Hace 3 días
-const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);      // 📅 Hace 1 semana
-*/
+// Ejecutar a las 00:00 todos los días
+cron.schedule('0 0 * * *', async () => {
+  console.log('🧹 Iniciando limpieza profunda diaria de usuarios no verificados y restos...');
 
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-
-
-// ⏱ Ejecutar cada minuto
-cron.schedule('* * * * *', async () => {
-  console.log('⏰ Ejecutando limpieza automática de usuarios no verificados...');
-
-    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);      // 📅 Hace 1 semana
   try {
-    const pendingUsers = await Users.find({
+    const usersToDelete = await Users.find({
       isVerified: false,
-      createdAt: { $lt: oneWeekAgo }
-    }).select('email username createdAt');
+      createdAt: { $lt: twentyFourHoursAgo }
+    }).select('_id username email createdAt');
 
-    if (pendingUsers.length === 0) {
-      console.log('⚠️ No hay usuarios pendientes de eliminar.');
-      return;
+    const userIds = usersToDelete.map(user => user._id);
+
+    if (userIds.length === 0) {
+      console.log('✅ No hay usuarios antiguos no verificados.');
+    } else {
+      await Users.deleteMany({ _id: { $in: userIds } });
+      await Posts.deleteMany({ user: { $in: userIds } });
+      await Comments.deleteMany({ user: { $in: userIds } });
+
+      await Users.updateMany({}, {
+        $pull: {
+          followers: { $in: userIds },
+          following: { $in: userIds }
+        }
+      });
+
+      usersToDelete.forEach(user => {
+        console.log(`🗑️ Usuario eliminado: ${user.username} (${user.email})`);
+      });
+
+      console.log(`✅ Usuarios eliminados: ${userIds.length}`);
     }
 
-    const result = await Users.deleteMany({
-      isVerified: false,
-      createdAt: { $lt: oneWeekAgo }
-    });
+    const allUserIds = await Users.find({}).select('_id');
+    const existingIds = new Set(allUserIds.map(u => u._id.toString()));
 
-    console.log(`✅ Usuarios eliminados: ${result.deletedCount}`);
-    pendingUsers.forEach(user => {
-      console.log(`🗑️ - ${user.username} (${user.email}) → creado el ${user.createdAt}`);
-    });
+    const remainingPosts = await Posts.find({});
+    for (const post of remainingPosts) {
+      if (post.user && !existingIds.has(post.user.toString())) {
+        await Posts.findByIdAndDelete(post._id);
+        console.log(`🚫 Post eliminado por user inexistente: ${post._id}`);
+      }
+    }
+
+    const remainingComments = await Comments.find({});
+    for (const comment of remainingComments) {
+      if (comment.user && !existingIds.has(comment.user.toString())) {
+        await Comments.findByIdAndDelete(comment._id);
+        console.log(`🚫 Comentario eliminado por user inexistente: ${comment._id}`);
+      }
+    }
+
+    console.log('✅ Limpieza de referencias completada.');
 
   } catch (err) {
-    console.error('❌ Error al eliminar usuarios no verificados:', err.message);
+    console.error('❌ Error en limpieza profunda:', err.message);
   }
 });

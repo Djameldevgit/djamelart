@@ -1,11 +1,11 @@
 import React from 'react'
-import UsersAction from '../components/adminitration/UsersAction'
- 
+import UsersAction from '../../components/adminitration/UsersAction'
+
+
 const UsersActionn = () => {
   return (
- 
     <div>
-        <UsersAction/>
+      <UsersAction />
     </div>
   )
 }

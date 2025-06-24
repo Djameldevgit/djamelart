@@ -1,4 +1,6 @@
-require('dotenv').config()
+require('dotenv').config() 
+require('./cronJobs/DeleteUsersNoVerified');
+
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
@@ -6,7 +8,7 @@ const cookieParser = require('cookie-parser')
 const path = require('path')
 const i18n = require('i18n') // Solo usamos este i18n en el servidor
 const SocketServer = require('./socketServer')
-require('./cronJobs/DeleteUsersNoVerified');
+const { autoUnblockUsers } = require('./controllers/autoUnBlockUser')
 
 const app = express()
 
@@ -69,8 +71,12 @@ app.use('/api', require('./routes/cartRouter'))
 app.use('/api', require('./routes/languageRouter'))
 app.use('/api', require('./routes/rolesRouter'))
 app.use('/api', require('./routes/orderRouter'))
-
+app.use('/api', require('./routes/userActionRouter'))
+app.use('/api', require('./routes/blockUserRouter'))
 // --- RUTA PARA CAMBIAR EL IDIOMA ---
+
+
+setInterval(autoUnblockUsers , 5 * 60 * 1000);
 
 // --- CONEXIÓN A MONGODB ---
 const URI = process.env.MONGODB_URL

@@ -125,7 +125,7 @@ const UsersEdicion = () => {
           </button>
           <div className="dropdown-menu">
             <button className="dropdown-item text-warning" onClick={() => handleOpenModal(user)}>
-              {user.esBloqueado ? "🔓 Desbloquear" : "🚫 Bloquear"} {/* Cambia el texto según el estado */}
+              {user.esBloqueado ? "🔓 Desbloquear" : "🚫 Bloquear"}  
             </button>
             <button className="dropdown-item">✏️ Editar</button>
             <button className="dropdown-item text-danger">🗑️ Eliminar</button>

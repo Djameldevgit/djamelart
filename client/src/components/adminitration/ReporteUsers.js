@@ -39,13 +39,13 @@ const ReportedUsers = () => {
           <table className="table table-striped table-bordered">
             <thead className="thead-dark">
               <tr>
-                <th>ID Reporte</th>
+                
                 <th>Usuario que Reporta</th>
                 <th>Usuario Reportado</th>
                 <th>Título del Post</th>
-                <th>Contenido del Post</th>
+               
                 <th>Razón</th>
-                <th>Estado</th>
+            
                 <th>Fecha</th>
                 <th>Acciones</th>
               </tr>
@@ -53,21 +53,18 @@ const ReportedUsers = () => {
             <tbody>
               {reports.map((report) => (
                 <tr key={report._id}>
-                  <td className="p-2">{report._id}</td>
+                
                   <td className="p-2">
                     <UserInfo user={report.reportedBy} />
                   </td>
                   <td className="p-2">
                     <UserInfo user={report.userId} />
                   </td>
+                 
                   <td className="p-2">{report.postId?.title || "N/A"}</td>
-                  <td className="p-2">
-                    {report.postId?.content
-                      ? report.postId.content.slice(0, 50) + "..."
-                      : "Publicación eliminada"}
-                  </td>
+                 
                   <td className="p-2">{report.reason}</td>
-                  <td className="p-2">{report.status || "Pendiente"}</td>
+                  
                   <td className="p-2">
                     {new Date(report.createdAt).toLocaleString()}
                   </td>

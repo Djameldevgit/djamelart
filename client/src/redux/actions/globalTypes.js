@@ -17,8 +17,8 @@ export const GLOBALTYPES = {
     LOAD_CART: 'LOAD_CART', // si decides mantenerlo
     GET_ORDERS: 'GET_ORDERS',
     CREATE_ORDER: 'CREATE_ORDER',
-    LOGIN :"LOGIN"
-
+    LOGIN :"LOGIN",
+ 
 }
 
 export const EditData = (data, id, post) => {

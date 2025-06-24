@@ -2,9 +2,6 @@ import { useEffect } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import i18n from './i18n';
 
-import PageRender from './customRouter/PageRender'
-import PrivateRouter from './customRouter/PrivateRouter'
-
 import Home from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
@@ -35,8 +32,8 @@ import Navbar2 from './components/Navbar2'
 
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
 import Roles from './pages/roles';
-import UsersActionn from './pages/UsersActionn';
-import { getUsers } from './redux/actions/userAction';
+
+
 import { getCart } from './redux/actions/cartAction';
 
 import Cart from './pages/carte/cart';
@@ -48,11 +45,21 @@ import Orderss from './pages/carte/orderss';
 import { getOrders } from './redux/actions/orderAction';
 import ForgotPassword from './auth/ForgotPassword';
 import ResetPassword from './auth/ResetPassword';
- 
+
 import NotFound from './components/NotFound';
- 
+
 import ActivatePage from './auth/ActivatePage';
  
+import { getUsers } from './redux/actions/userAction';
+import { getBlockedUsers } from './redux/actions/userBlockAction';
+import Usersblock from './pages/usersblock';
+import UsersActionAction from './pages/users/UsersActionAction';
+ 
+import Paginabloqueos from './pages/users/paginabloqueos';
+import Userss from './pages/users/userss';
+import UsersActionn from './pages/users/UsersActionn';
+import ListaUseariosbloqueadoss from './pages/listaUseariosbloqueadoss';
+
 function App() {
   const { auth, status, modal, call, languageReducer } = useSelector(state => state)
   const { isLogged, isAdmin } = auth
@@ -85,13 +92,14 @@ function App() {
 
   useEffect(() => {
 
-    dispatch(getPosts())
+    dispatch(getPosts())//EHECUTAR LAS ACCIONES GETUSER Y GETUSERSACTION EN SUS PROPIOS COMPONENTE
     if (auth.token) {
       dispatch(getCart((auth.token)))
       dispatch(getOrders((auth.token)))
       dispatch(getUsers(auth.token))
+ 
       dispatch(getPostsPendientes(auth.token))
-
+      dispatch(getBlockedUsers(auth.token))
       dispatch(getSuggestions(auth.token))
       dispatch(getNotifies(auth.token))
     }
@@ -114,7 +122,7 @@ function App() {
 
 
   return (
-    
+
 
     <Router>
       <Alert />
@@ -135,22 +143,27 @@ function App() {
           <Route exact path="/bloqueos" component={Bloqueoss} />
           <Route exact path="/post/:id" component={Post} />
           <Route exact path="/message/:id" component={Message} />
-          <Route exact path="/profile/:id" component={Profile} />
-          <Route exact path="/cart/cartcarrito" component={Cart} />
-          <Route exact path="/cart/chekout" component={Chekoutt} />
-          <Route exact path="/rolesuser" component={Roles} />
-          <Route exact path="/users" component={UsersActionn} />
-          <Route exact path="/postspendientes" component={Postspendientes} />
+
+          <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
+          <Route exact path="/cart/cartcarrito" component={auth.token ? Cart : Login} />
+          <Route exact path="/chekout" component={auth.token ? Chekoutt : Login} />
+          <Route exact path="/rolesuser" component={auth.token ? Roles : Login} />
+          <Route exact path="/users/userss" component={auth.token ? Userss : Login} />
+          <Route exact path="/users/usersaction" component={auth.token ? UsersActionn : Login} />
+
+          <Route exact path="/users/usersedicion" component={auth.token ? UsersActionAction : Login} />
+           <Route exact path="/postspendientes" component={auth.token ? Postspendientes : Login} />
+
+          <Route exact path="/users/bloqueos" component={auth.token ? ListaUseariosbloqueadoss : Login} />
+
           <Route exact path="/informacionaplicacion" component={Informacionaplicacion} />
-          <Route exact path="/cart/orderss" component={Orderss} />
+          <Route exact path="/orderss" component={auth.token ? Orderss : Login} />
+          <Route exact path="/usersblock" component={auth.token ? Usersblock : Login} />
+          <Route exact path="/forgot_password" component={ForgotPassword} />
+          <Route exact path="/user/reset/:token" component={ResetPassword} />
+          <Route exact path="/activatepage" component={auth.token ? ActivatePage : Login} />
 
-          <Route path="/forgot_password" component={isLogged ? NotFound : ForgotPassword} exact />
-          <Route path="/user/reset/:token" component={isLogged ? NotFound : ResetPassword} exact />
-
-          <Route path="/user/activate/:activation_token" component={ActivatePage} exact />
-
-          <Route path="/profile" component={isLogged ? Profile : NotFound} exact />
-          <Route path="/edit_user/:id" component={isAdmin ? EditUser : NotFound} exact />
+          <Route exact path="/activatepage" component={auth.token ? ActivatePage : Login} />
         </div>
       </div>
     </Router>

@@ -26,23 +26,25 @@ const CardBodyCarousel = ({ post }) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
- 
-const canProceed = () => {
-  if (!auth.token) {
-    setShowModal(true);
-    return false;
-  }
-  if (!auth.user?.isVerified) {
-    setShowVerifyModal(true);
-    return false;
-  }
-  if (auth.user?.isActive === false) {
-    setShowDeactivatedModal(true);
-    return false;
-  }
-  return true;
-};
-
+  const canProceed = () => {
+    if (!auth.token || !auth.user) {
+      setShowModal(true); // ✅ Mostrar “Conéctate o regístrate”
+      return false;
+    }
+  
+    if (!auth.user.isVerified) {
+      setShowVerifyModal(true);
+      return false;
+    }
+  
+    if (auth.user.isActive === false) {
+      setShowDeactivatedModal(true);
+      return false;
+    }
+  
+    return true;
+  };
+  
   
 
   useEffect(() => {
@@ -219,17 +221,17 @@ const canProceed = () => {
         ×
       </button>
 
-      <h4>{t("title", { lng: languageReducer.language })}</h4>
-      <p>{t("message", { lng: languageReducer.language })}</p>
+      <h4>{t("title2", { lng: languageReducer.language })}</h4>
+      <p>{t("message2", { lng: languageReducer.language })}</p>
       <div className="modal-buttons">
         <button onClick={() => history.push("/login")}>
-          {t("login", { lng: languageReducer.language })}
+          {t("login2", { lng: languageReducer.language })}
         </button>
         <button onClick={() => history.push("/register")}>
-          {t("register", { lng: languageReducer.language })}
+          {t("register2", { lng: languageReducer.language })}
         </button>
         <button onClick={() => setShowModal(false)}>
-          {t("close", { lng: languageReducer.language })}
+          {t("close2", { lng: languageReducer.language })}
         </button>
       </div>
     </div>

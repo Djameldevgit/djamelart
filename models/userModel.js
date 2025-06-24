@@ -71,6 +71,23 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+
+
+  createdAt: { type: Date, default: Date.now },
+  lastLogin: { type: Date, default: null },
+  post: [{ type: mongoose.Types.ObjectId, ref: 'post' }],
+  report: [{ type: mongoose.Types.ObjectId, ref: 'report' }],
+  totalReportGiven: { type: Number, default: 0 },
+  likesGiven: { type: Number, default: 0 },
+  likesReceived: { type: Number, default: 0 },
+  commentsMade: { type: Number, default: 0 },
+  commentsReceived: { type: Number, default: 0 },
+
+  esBloqueado: { type: Boolean, default: false },
+
+
+
+
   cart: {
     items: [{
       postId: {
@@ -97,7 +114,7 @@ const userSchema = new mongoose.Schema({
         return isNaN(value) ? 0 : parseFloat(value.toFixed(2));
       }
     },
-   
+
   }
 }, {
   timestamps: true // Correctamente definido

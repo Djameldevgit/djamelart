@@ -10,9 +10,16 @@
     "removeFromCart": "Quitar del carrito",
  
         "title": "Cuenta desactivada",
-        "message": "Tu cuenta ha sido desactivada por los administradores. Si crees que es un error, contáctanos."
+        "message": "Tu cuenta ha sido desactivada por los administradores. Si crees que es un error, contáctanos.",
  
-   
+    
+            "title2": "¡Atención!",
+            "message2": "Por favor inicia sesión o regístrate para continuar.",
+            "login2": "Iniciar sesión",
+            "register2": "Registrarse",
+            "close2": "Cerrar"
+       
+          
       
 
 

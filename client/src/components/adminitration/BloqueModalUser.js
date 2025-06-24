@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { bloquearUsuario } from "../../redux/actions/userBlockAction";
 
-const BloqueModalUser = ({ setOpenBlockModal, user }) => {
+const BloqueModalUser = ({ handleClose, user }) => {
   const { auth } = useSelector(state => state);
   const dispatch = useDispatch();
 
@@ -43,6 +43,8 @@ const BloqueModalUser = ({ setOpenBlockModal, user }) => {
     }
 
     dispatch(bloquearUsuario({ auth, datosBloqueo, user }));
+    handleClose(); // Cierra el modal después del dispatch
+    
   };
 
   return (
@@ -51,7 +53,7 @@ const BloqueModalUser = ({ setOpenBlockModal, user }) => {
         <div className="modalbloquar-content">
           <div className="modalbloquear-header">
             <h5 className="modalbloquear-title">Confirmar bloqueo</h5>
-            <button type="button" className="btnbloquear btn-secondary" onClick={() => setOpenBlockModal(false)}>Cerrar</button>
+            <button type="button" className="btnbloquear btn-secondary" onClick={() => handleClose(false)}>Cerrar</button>
           </div>
           <form onSubmit={handleBloqueo}>
             <div className="modalbloquear-body">
@@ -87,7 +89,7 @@ const BloqueModalUser = ({ setOpenBlockModal, user }) => {
             </div>
             <div className="modal-footer">
               <button type="submit" className="btn btn-danger">Bloquear</button>
-              <button type="button" className="btn btn-secondary" onClick={() => setOpenBlockModal(false)}>Cerrar</button>
+              <button type="button" className="btn btn-secondary" onClick={() => handleClose(false)}>Cerrar</button>
             </div>
           </form>
         </div>

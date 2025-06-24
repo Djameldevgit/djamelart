@@ -43,7 +43,7 @@ const CardFooter = ({ post }) => {
           </Card.Body>
           <ListGroup className="list-group-flush">
          
-          <ListGroup.Item> Artist: {post.user.username} </ListGroup.Item>
+          <ListGroup.Item> Artist:   </ListGroup.Item>
      
             <ListGroup.Item>{t('category', { lng: lang })}: {t(post.category, { lng: lang })}</ListGroup.Item>
             <ListGroup.Item>{t('subcategory', { lng: lang })}: {t(post.subcategory, { lng: lang })}</ListGroup.Item>

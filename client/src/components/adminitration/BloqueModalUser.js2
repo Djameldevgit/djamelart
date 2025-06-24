@@ -1,0 +1,95 @@
+import React, { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { blockUser } from "../../redux/actions/userBlockAction";
+
+const BloqueModalUser = ({ handleClose, user }) => {
+  const { auth } = useSelector(state => state);
+  const dispatch = useDispatch();
+
+  const [datosBloqueo, setDatosBloqueo] = useState({
+    motivo: "",
+    content: ""
+  });
+
+  const handleChangeInput = (e) => {
+    const { name, value } = e.target;
+    setDatosBloqueo({ ...datosBloqueo, [name]: value });
+  };
+
+  const handleBloqueo = (e) => {
+    e.preventDefault();
+
+    const { motivo } = datosBloqueo;
+
+    if (!motivo.trim()) {
+      alert("❌ Selecciona un motivo de bloqueo.");
+      return;
+    }
+
+    dispatch(blockUser({ auth, datosBloqueo, user }));
+    handleClose(); // Cierra el modal después del dispatch
+  };
+
+  return (
+    <div className="modalbloquear">
+      <div className="modalbloquear-dialog">
+        <div className="modalbloquar-content">
+          <div className="modalbloquear-header">
+            <h5 className="modalbloquear-title">Confirmar bloqueo</h5>
+            <button type="button" className="btnbloquear btn-secondary" onClick={handleClose}>
+              Cerrar
+            </button>
+          </div>
+
+          <form onSubmit={handleBloqueo}>
+            <div className="modalbloquear-body">
+              <div className="form-group-bloquear">
+                <label>Raison du blocage</label>
+                <select
+                  className="form-control-bloquar"
+                  name="motivo"
+                  value={datosBloqueo.motivo}
+                  onChange={handleChangeInput}
+                  required
+                >
+                  <option value="">Sélectionner le motif</option>
+                  <option value="Comportement abusif">Comportement abusif</option>
+                  <option value="Spam">Spam</option>
+                  <option value="Violation des conditions d'utilisation">Violation des conditions d'utilisation</option>
+                  <option value="Langage offensant">Langage offensant</option>
+                  <option value="Fraude">Fraude</option>
+                  <option value="Usurpation d'identité">Usurpation d'identité</option>
+                  <option value="Contenu inapproprié">Contenu inapproprié</option>
+                  <option value="Violation de la vie privée">Violation de la vie privée</option>
+                  <option value="Interruption du service">Interruption du service</option>
+                  <option value="Activité suspecte">Activité suspecte</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Detalles adicionales</label>
+                <textarea
+                  name="content"
+                  value={datosBloqueo.content}
+                  onChange={handleChangeInput}
+                  placeholder="Proporciona más detalles sobre el motivo del bloqueo"
+                  className="form-control"
+                />
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button type="submit" className="btn btn-danger">Bloquear</button>
+              <button type="button" className="btn btn-secondary" onClick={handleClose}>
+                Cerrar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BloqueModalUser;

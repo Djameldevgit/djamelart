@@ -11,6 +11,8 @@ router.put('/update/:id', auth, carritoCtrl.updateCartItemQuantity)
 
 // Rutas de usuarios
 router.get('/users', auth, userCtrl.getUsers)
+router.get('/users/usersaction', auth, userCtrl.getUsersAction)
+
 router.get('/search', auth, userCtrl.searchUser)
 router.get('/user/:id', auth, userCtrl.getUser)
 router.patch('/user', auth, userCtrl.updateUser)

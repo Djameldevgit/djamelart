@@ -1,0 +1,280 @@
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getDataAPI } from "../../utils/fetchData";
+import {
+  deleteUser,
+  toggleActiveStatus,
+  USER_TYPES,
+} from "../../redux/actions/userAction";
+import {
+  bloquearUsuario,
+  unBlockUser,
+  getBlockedUsers,
+} from "../../redux/actions/userBlockAction";
+import LoadMoreBtn from "../LoadMoreBtn";
+import LoadIcon from "../../images/loading.gif";
+import UserCard from "../UserCard";
+import { Dropdown } from "react-bootstrap";
+import BloqueModalUser from "./BloqueModalUser";
+ 
+const Users = () => {
+  const { homeUsers, auth,userBlockReducer} = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+  const [load, setLoad] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showBlockModal, setShowBlockModal] = useState(false);
+
+  // Cargar usuarios bloqueados al inicio
+  useEffect(() => {
+    if (auth.token) {
+      dispatch(getBlockedUsers(auth.token));
+    }
+  }, [auth.token, dispatch]);
+
+  // Cargar usuarios al inicio
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoad(true);
+        const res = await getDataAPI(`users?limit=9`, auth.token);
+        if (res.data && res.data.users) {
+          dispatch({
+            type: USER_TYPES.GET_USERS,
+            payload: { ...res.data, page: 1 },
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      } finally {
+        setLoad(false);
+        setInitialLoad(false);
+      }
+    };
+
+    if (initialLoad && auth.token) {
+      fetchUsers();
+    }
+  }, [auth.token, dispatch, initialLoad]);
+
+  const handleLoadMore = async () => {
+    setLoad(true);
+    try {
+      const res = await getDataAPI(
+        `users?limit=${homeUsers.page * 9}`,
+        auth.token
+      );
+      dispatch({
+        type: USER_TYPES.GET_USERS,
+        payload: { ...res.data, page: homeUsers.page + 1 },
+      });
+    } catch (err) {
+      console.error("Error loading more users:", err);
+    } finally {
+      setLoad(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (window.confirm("¿Estás seguro de eliminar este usuario permanentemente?")) {
+      try {
+        await dispatch(deleteUser({ id: userId, auth }));
+        const res = await getDataAPI(
+          `users?limit=${homeUsers.page * 9}`,
+          auth.token
+        );
+        dispatch({
+          type: USER_TYPES.GET_USERS,
+          payload: { ...res.data, page: homeUsers.page },
+        });
+      } catch (err) {
+        console.error("Error al eliminar usuario:", err);
+      }
+    }
+  };
+
+  const handleOpenModal = (user) => {
+    setSelectedUser(user);
+    setShowBlockModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowBlockModal(false);
+    setSelectedUser(null);
+  };
+  const handleBlockUser = async (datosBloqueo) => {
+    try {
+      await dispatch(bloquearUsuario({ auth, datosBloqueo, user: selectedUser }));
+
+      dispatch({
+        type: USER_TYPES.UPDATE_USER_BLOCK_STATUS,
+        payload: {
+          userId: selectedUser._id,
+          esBloqueado: true, // ✅ Esto es lo que actualiza el estado en tiempo real
+        },
+      });
+
+      dispatch(getBlockedUsers(auth.token));
+      handleCloseModal();
+    } catch (err) {
+      console.error("Error al bloquear usuario:", err);
+    }
+  };
+
+
+
+
+  const handleUnblockUser = async (user) => {
+    try {
+      await dispatch(unBlockUser({ user, auth }));
+
+      dispatch({
+        type: USER_TYPES.UPDATE_USER_BLOCK_STATUS,
+        payload: {
+          userId: user._id,
+          esBloqueado: false,
+        },
+      });
+
+      dispatch(getBlockedUsers(auth.token));
+    } catch (err) {
+      console.error("Error al desbloquear usuario:", err);
+    }
+  };
+
+  if (initialLoad) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "50vh" }}
+      >
+        <img src={LoadIcon} alt="loading" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="container-fluid">
+      <div className="table-responsive">
+        <table className="table table-striped table-hover">
+          <thead className="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Usuario</th>
+              <th>Registro</th>
+              <th>Verificación</th>
+              <th>Estado</th>
+              <th>Activación</th> {/* ✅ Nueva columna */}
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {homeUsers.users.length > 0 ? (
+              homeUsers.users.map((user, index) => (
+                <tr key={user._id}>
+                  <td>{index + 1}</td>
+                  <td><UserCard user={user} /></td>
+                  <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    {user.isVerified ? (
+                      <span className="badge bg-success">✔ Verificado</span>
+                    ) : (
+                      <span className="badge bg-danger">✘ No verificado</span>
+                    )}
+                  </td>
+                  <td>
+                    {user.isActive ? (
+                      <span className="text-success">🟢 Activo</span>
+                    ) : (
+                      <span className="text-warning">🟠 Inactivo</span>
+                    )}
+                  </td>
+ 
+                  <td>
+                    {user.esBloqueado ? (
+                      <span className="text-danger">🚫 Bloqueado</span>
+                    ) : (
+                      <span className="text-success">✅ No bloqueado</span>
+                    )}
+                  </td>
+                  <td>
+                    <Dropdown>
+                      <Dropdown.Toggle variant="outline-secondary" size="sm">
+                        Acciones
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item as="button">✏️ Editar</Dropdown.Item>
+                        <Dropdown.Item
+                          className="text-danger"
+                          as="button"
+                          onClick={() => handleDeleteUser(user._id)}
+                        >
+                          🗑️ Eliminar
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          as="button"
+                          className={user.isActive ? "text-warning" : "text-success"}
+                          onClick={() =>
+                            dispatch(toggleActiveStatus(user._id, auth.token))
+                          }
+                        >
+                          {user.isActive
+                            ? "🔒 Desactivar cuenta"
+                            : "🔓 Activar cuenta"}
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          as="button"
+                          className={user.esBloqueado ? "text-success" : "text-danger"}
+                          onClick={() =>
+                            user.esBloqueado
+                              ? handleUnblockUser(user)
+                              : handleOpenModal(user)
+                          }
+                        >
+                          {user.esBloqueado
+                            ? "🔓 Desbloquear usuario"
+                            : "🚫 Bloquear usuario"}
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="text-center py-4">
+                  No se encontraron usuarios
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {load && <img src={LoadIcon} alt="loading" className="d-block mx-auto my-3" />}
+
+      {homeUsers.users.length > 0 && (
+        <div className="d-flex justify-content-center my-3">
+          <LoadMoreBtn
+            result={homeUsers.result}
+            page={homeUsers.page}
+            load={load}
+            handleLoadMore={handleLoadMore}
+          />
+        </div>
+      )}
+
+      {showBlockModal && selectedUser && (
+        <BloqueModalUser
+          show={showBlockModal}
+          handleClose={handleCloseModal}
+          handleBlock={handleBlockUser}
+          user={selectedUser}
+        />
+      )}
+    </div>
+  );
+};
+
+export default Users;

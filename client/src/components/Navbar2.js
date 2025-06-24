@@ -113,12 +113,14 @@ const Navbar2 = () => {
                   <NavDropdown.Item as={Link} to="/rolesuser">{t('roles', { lng: lang })}</NavDropdown.Item>
                   {auth.user.role === 'admin' && (
                     <>
-                      <NavDropdown.Item as={Link} to="/users">{t('users', { lng: lang })}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/users/userss">{t('users', { lng: lang })}</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/postspendientes">{t('pendingPosts', { lng: lang })}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/usersaction">{t('userActions', { lng: lang })}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/usersedicion">{t('userEditing', { lng: lang })}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/administration/listadeusuariosbloqueadoss">{t('blockedUsers', { lng: lang })}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/cart/orderss">{t('orders', { lng: lang })}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/users/usersaction">users action</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/users/usersedicion">users edition</NavDropdown.Item>
+                
+                      <NavDropdown.Item as={Link} to="/users/bloqueos">obtener users bloqueados</NavDropdown.Item>
+                     
+                        <NavDropdown.Item as={Link} to="/cart/orderss">{t('orders', { lng: lang })}</NavDropdown.Item>
                     </>
                   )}
                   <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>{t('profile', { lng: lang })}</NavDropdown.Item>

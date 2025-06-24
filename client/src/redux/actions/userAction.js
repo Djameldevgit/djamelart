@@ -1,16 +1,15 @@
 import { GLOBALTYPES } from './globalTypes';
 import { imageUpload } from '../../utils/imageUpload';
 import { getDataAPI, patchDataAPI, deleteDataAPI  } from '../../utils/fetchData';
-import { removeNotify } from './notifyAction';
-
+ 
 export const USER_TYPES = {
     LOADING_USERS: 'LOADING_USERS',
     GET_USERS: 'GET_USERS',
     UPDATE_USER: 'UPDATE_USER',
    
     DELETE_USER: 'DELETE_USER',
- 
-
+    UPDATE_USER_BLOCK_STATUS: "UPDATE_USER_BLOCK_STATUS", // nuevo
+    
 
 };
  
@@ -19,21 +18,20 @@ export const getUsers = (token) => async (dispatch) => {
     try {
         // Usa exactamente el mismo nombre que definiste en USER_TYPES
         dispatch({ type: USER_TYPES.LOADING_USERS, payload: true });
-        
-        const res = await getDataAPI('users?limit=9&page=1', token);
-        
+       
+        const res = await getDataAPI('users', token);
+         if (!res || !res.data) {
+          console.error("Respuesta inválida en getUsers:", res);
+          return;
+        }
         // Verifica que la respuesta tenga datos antes de dispatch
         if (!res.data) {
             throw new Error('No data received');
         }
 
         dispatch({
-            type: USER_TYPES.GET_USERS,  // Asegúrate que coincida exactamente
-            payload: {
-                users: res.data.users || [],
-                result: res.data.result || 0,
-                page: 1
-            }
+          type: USER_TYPES.GET_USERS,
+          payload: { ...res.data, page: 1 },
         });
 
     } catch (err) {
@@ -51,7 +49,25 @@ export const getUsers = (token) => async (dispatch) => {
         dispatch({ type: USER_TYPES.LOADING_USERS, payload: false });
     }
 };
+export const getUsersAction= (token) => async (dispatch) => {
+  try {
+      dispatch({ type: USER_TYPES.LOADING_USER, payload: true });
+      const res = await getDataAPI(`users/usersaction`, token);
+    
+      dispatch({
+        type: USER_TYPES.GET_USERS,
+        payload: { ...res.data, page: 1 },
+      });
 
+      
+      dispatch({ type: USER_TYPES.LOADING_USERS, payload: false });
+  } catch (err) {
+      dispatch({
+          type: GLOBALTYPES.ALERT,
+          payload: { error: err.response.data.msg }
+      });
+  }
+};
 // Acción para actualizar un usuario
 export const updateUser = ({ content, images, auth, status }) => async (dispatch) => {
     let media = [];

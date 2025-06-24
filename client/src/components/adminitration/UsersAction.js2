@@ -1,51 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getDataAPI } from "../../utils/fetchData";
- import { USERS_TYPES_ACTION } from "../../redux/actions/usersActionAction";
-
- 
+import { deleteUser, USER_TYPES } from "../../redux/actions/userAction";
 import LoadMoreBtn from "../LoadMoreBtn";
 import LoadIcon from "../../images/loading.gif";
 import UserCard from "../UserCard";
+import { Dropdown } from "react-bootstrap"; // Importamos Dropdown de react-bootstrap
 
 
 const UsersAction = () => {
-  const { usersActionReducer, auth } = useSelector((state) => state);
+  const { homeUsers, auth } = useSelector((state) => state);
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
   const [search, setSearch] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState(usersActionReducer.users || []);
+  const [filteredUsers, setFilteredUsers] = useState(homeUsers.users || []);
 
   const handleLoadMore = async () => {
     setLoad(true);
-    const res = await getDataAPI(`users?limit=${usersActionReducer.page * 9}`, auth.token);
+    const res = await getDataAPI(`users/usersaction?limit=${homeUsers.page * 9}`, auth.token);
     dispatch({
-      type: USERS_TYPES_ACTION.GET_USERS_ACTION,
-      payload: { ...res.data, page: usersActionReducer.page + 1 },
+      type: USER_TYPES.GET_USERS,
+      payload: { ...res.data, page: homeUsers.page + 1 },
     });
     setLoad(false);
   };
 
   useEffect(() => {
-    setFilteredUsers(usersActionReducer.users || []);
-  }, [usersActionReducer.users]);
+    setFilteredUsers(homeUsers.users || []);
+  }, [homeUsers.users]);
 
   const filteredResults = filteredUsers.filter(
     (user) =>
       user.username.toLowerCase().includes(search.toLowerCase()) ||
       user.email.toLowerCase().includes(search.toLowerCase())
   );
- 
- 
+
+
   const handleDeleteUser = (user) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       dispatch(deleteUser({ user, auth }));
       // history.push("/"); // Redirigir si es necesario
     }
-  }; 
+  };
 
   const handleFilter = (criteria) => {
-    let sortedUsers = [...usersActionReducer.users];
+    let sortedUsers = [...homeUsers.users];
 
     switch (criteria) {
       case "mostFollowing":
@@ -54,7 +53,7 @@ const UsersAction = () => {
       case "mostFollowers":
         sortedUsers.sort((a, b) => b.followers.length - a.followers.length);
         break;
-          case "mostLikesReceived":
+      case "mostLikesReceived":
         sortedUsers.sort((a, b) => b.totalLikesReceived - a.totalLikesReceived);
         break;
       case "mostLikesGiven":
@@ -67,7 +66,7 @@ const UsersAction = () => {
         sortedUsers.sort((a, b) => new Date(b.lastLogin) - new Date(a.lastLogin));
         break;
       default:
-        sortedUsers = usersActionReducer.users;
+        sortedUsers = homeUsers.users;
     }
 
     setFilteredUsers(sortedUsers);
@@ -82,7 +81,7 @@ const UsersAction = () => {
         <ul className="dropdown-menu">
           <li><button className="dropdown-item" onClick={() => handleFilter("mostFollowing")}>📌 Más following</button></li>
           <li><button className="dropdown-item" onClick={() => handleFilter("mostFollowers")}>📌 Más followers</button></li>
-            <li><button className="dropdown-item" onClick={() => handleFilter("mostLikesReceived")}>❤️ Más likes recibidos</button></li>
+          <li><button className="dropdown-item" onClick={() => handleFilter("mostLikesReceived")}>❤️ Más likes recibidos</button></li>
           <li><button className="dropdown-item" onClick={() => handleFilter("mostLikesGiven")}>👍 Más likes dados</button></li>
           <li><button className="dropdown-item" onClick={() => handleFilter("mostCommentsMade")}>💬 Más comentarios hechos</button></li>
           <li><button className="dropdown-item" onClick={() => handleFilter("lastLogin")}>🔄 Últimos en iniciar sesión</button></li>
@@ -97,7 +96,7 @@ const UsersAction = () => {
             <th>Usuario</th>
             <th>Registro</th>
             <th>Login</th>
-            
+
             <th>Reportes</th>
             <th>LikesDados</th>
             <th>Likes Recibidos</th>
@@ -115,7 +114,7 @@ const UsersAction = () => {
               <th><UserCard user={user} /></th>
               <td>{new Date(user.createdAt).toLocaleDateString()}</td>
               <td>{new Date(user.lastLogin).toLocaleDateString()}</td>
-             
+
               <td>{user.report.length}</td>
               <td>{user.likesGiven}</td>
               <td>{user.totalLikesReceived}</td>
@@ -124,41 +123,39 @@ const UsersAction = () => {
               <td>{user.totalFollowing}</td>
               <td>{user.totalFollowers}</td>
               <td>
-                <div className="action-dropdown" style={{ position: "relative" }}>
-                  <button className="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    Acción
-                  </button>
-                  <div className="dropdown-menu" data-bs-autoClose="false">
-                    <button className="dropdown-item">✏️ Editar</button>
 
-                    <button
-                      className="dropdown-item text-danger"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleDeleteUser(user); // Pasar el usuario a la función
-                  
-                      }}
+                <td>
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      variant="outline-secondary"
+                      size="sm"
+                      id={`dropdown-actions-${user._id}`}
                     >
-                      🗑️ Eliminar
-                    </button>
+                      Acciones
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                    
+                      <Dropdown.Item
+                        as="button"
+                        className="text-danger"
+                        onClick={() => handleDeleteUser(user._id)}
+                      >
+                        🗑️ Bloquear
+                      </Dropdown.Item>
+                     
+
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </td>
 
 
-                    <button className="dropdown-item text-warning">🚫 Bloquear</button>
-                    <button className="dropdown-item text-warning">🔇 Silenciar</button>
-                    <button className="dropdown-item">📩 Enviar mensaje</button>
-                    <button className="dropdown-item">👤 Ver perfil</button>
-                    <button className="dropdown-item">🚨 Ver reportes</button>
-                    <button className="dropdown-item text-info">🔑 Iniciar sesión como usuario</button>
-                  </div>
-                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
       {load && <img src={LoadIcon} alt="loading" className="loading-icon" />}
-      <LoadMoreBtn result={usersActionReducer.result} page={usersActionReducer.page} load={load} handleLoadMore={handleLoadMore} />
+      <LoadMoreBtn result={homeUsers.result} page={homeUsers.page} load={load} handleLoadMore={handleLoadMore} />
     </div>
   );
 };
