@@ -1,69 +1,81 @@
-import React, {useState} from 'react'
-import axios from 'axios'
-import {useParams} from 'react-router-dom'
-import {showErrMsg, showSuccessMsg} from '../utils/notification/Notification'
-import { isLength,isMatch } from '../utils/Validation'
-  
-const initialState = {
-    password: '',
-    cf_password: '',
-    err: '',
-    success: ''
-}
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams, useHistory } from 'react-router-dom'
+import { resetPassword } from '../redux/actions/authAction'
+import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 
-const ResetPassword = ()=> {
-    const [data, setData] = useState(initialState)
-    const {token} = useParams()
+const ResetPassword = () => {
+  const [password, setPassword] = useState('')
+  const [success, setSuccess] = useState(false)
+  const dispatch = useDispatch()
+  const { token } = useParams()
+  const history = useHistory()
 
-    const {password, cf_password, err, success} = data
+  const { languageReducer } = useSelector(state => state)
+  const lang = languageReducer.language || 'es'
+  const { t } = useTranslation('auth')
 
-    const handleChangeInput = e => {
-        const {name, value} = e.target
-        setData({...data, [name]:value, err: '', success: ''})
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      await dispatch(resetPassword(password, token))
+      setSuccess(true)
+    } catch (err) {
+      console.error(err)
     }
+  }
 
+  const handleGoToLogin = () => {
+    history.push('/login')
+  }
 
-    const handleResetPass = async () => {
-        if(isLength(password))
-            return setData({...data, err: "Password must be at least 6 characters.", success: ''})
+  return (
+    <Container className="d-flex justify-content-center align-items-center min-vh-100">
+      <Row className="w-100 justify-content-center">
+        <Col xs={12} sm={10} md={8} lg={6}>
+          <Card className="shadow-sm p-4">
+            <h3 className="text-center mb-4">
+              {t('resetPassword.title', { lng: lang })}
+            </h3>
 
-        if(!isMatch(password, cf_password))
-            return setData({...data, err: "Password did not match.", success: ''})
-        
-        try {
-            const res = await axios.post('/user/reset', {password}, {
-                headers: {Authorization: token}
-            })
+            {!success ? (
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="formPassword">
+                  <Form.Label>{t('resetPassword.passwordLabel', { lng: lang })}</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder={t('resetPassword.passwordPlaceholder', { lng: lang })}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                  />
+                </Form.Group>
 
-            return setData({...data, err: "", success: res.data.msg})
-
-        } catch (err) {
-            err.response.data.msg && setData({...data, err: err.response.data.msg, success: ''})
-        }
-        
-    }
-
-
-    return (
-        <div className="fg_pass">
-            <h2>Reset Your Password</h2>
-
-            <div className="row">
-                {err && showErrMsg(err)}
-                {success && showSuccessMsg(success)}
-
-                <label htmlFor="password">Password</label>
-                <input type="password" name="password" id="password" value={password}
-                onChange={handleChangeInput} />
-
-                <label htmlFor="cf_password">Confirm Password</label>
-                <input type="password" name="cf_password" id="cf_password" value={cf_password}
-                onChange={handleChangeInput} />         
-
-                <button onClick={handleResetPass}>Reset Password</button>
-            </div>
-        </div>
-    )
+                <Button variant="success" type="submit" className="w-100">
+                  {t('resetPassword.submitButton', { lng: lang })}
+                </Button>
+              </Form>
+            ) : (
+              <>
+                <Alert variant="success" className="text-center">
+                  {t('resetPassword.successMessage', { lng: lang })}
+                </Alert>
+                <div className="text-center mt-3">
+                  <Button variant="primary" onClick={handleGoToLogin}>
+                    {t('resetPassword.goToLogin', { lng: lang })}
+                  </Button>
+                </div>
+              </>
+            )}
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  )
 }
 
 export default ResetPassword
+
+
+

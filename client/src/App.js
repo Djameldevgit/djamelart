@@ -59,6 +59,7 @@ import Paginabloqueos from './pages/users/paginabloqueos';
 import Userss from './pages/users/userss';
 import UsersActionn from './pages/users/UsersActionn';
 import ListaUseariosbloqueadoss from './pages/listaUseariosbloqueadoss';
+import AdminSendEmails from './pages/users/adminSendEmails';
 
 function App() {
   const { auth, status, modal, call, languageReducer } = useSelector(state => state)
@@ -143,9 +144,9 @@ function App() {
           <Route exact path="/bloqueos" component={Bloqueoss} />
           <Route exact path="/post/:id" component={Post} />
           <Route exact path="/message/:id" component={Message} />
-
           <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
-          <Route exact path="/cart/cartcarrito" component={auth.token ? Cart : Login} />
+          <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
+          <Route exact path="/users/adminsendemail" component={auth.token ? AdminSendEmails : Login} />
           <Route exact path="/chekout" component={auth.token ? Chekoutt : Login} />
           <Route exact path="/rolesuser" component={auth.token ? Roles : Login} />
           <Route exact path="/users/userss" component={auth.token ? Userss : Login} />
@@ -159,8 +160,11 @@ function App() {
           <Route exact path="/informacionaplicacion" component={Informacionaplicacion} />
           <Route exact path="/orderss" component={auth.token ? Orderss : Login} />
           <Route exact path="/usersblock" component={auth.token ? Usersblock : Login} />
-          <Route exact path="/forgot_password" component={ForgotPassword} />
-          <Route exact path="/user/reset/:token" component={ResetPassword} />
+
+          <Route exact path="/forgot_password" component={ForgotPassword } />
+          <Route path="/user/reset/:token" component={ResetPassword} exact />
+
+
           <Route exact path="/activatepage" component={auth.token ? ActivatePage : Login} />
 
           <Route exact path="/activatepage" component={auth.token ? ActivatePage : Login} />

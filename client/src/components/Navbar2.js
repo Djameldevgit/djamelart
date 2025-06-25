@@ -113,11 +113,13 @@ const Navbar2 = () => {
                   <NavDropdown.Item as={Link} to="/rolesuser">{t('roles', { lng: lang })}</NavDropdown.Item>
                   {auth.user.role === 'admin' && (
                     <>
+ <NavDropdown.Item as={Link} to="/users/adminsendemail">send email admin</NavDropdown.Item>
+                       
+
                       <NavDropdown.Item as={Link} to="/users/userss">{t('users', { lng: lang })}</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/postspendientes">{t('pendingPosts', { lng: lang })}</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/users/usersaction">users action</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/users/usersedicion">users edition</NavDropdown.Item>
-                
+                      
                       <NavDropdown.Item as={Link} to="/users/bloqueos">obtener users bloqueados</NavDropdown.Item>
                      
                         <NavDropdown.Item as={Link} to="/cart/orderss">{t('orders', { lng: lang })}</NavDropdown.Item>

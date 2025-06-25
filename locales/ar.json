@@ -10,7 +10,16 @@
 		"logout_success": "تم تسجيل الخروج!",
 		"login_required": "يرجى تسجيل الدخول الآن.",
 		"user_not_found": "هذا المستخدم غير موجود.",
-		"server_error": "حدث خطأ في الخادم."
+		"server_error": "حدث خطأ في الخادم.",
+		
+		"activation_email_sent": "auth.activation_email_sent",
+		"forgot_email_sent": "auth.forgot_email_sent",
+		"account_activated": "✅ تم تفعيل الحساب بنجاح.",
+		"reset_email_sent": "تم إرسال رابط إعادة تعيين كلمة المرور.",
+		"password_changed": "تم تغيير كلمة المرور بنجاح."
+
+
+
 	},
 	"post": {
 		"POST": "POST",
@@ -88,5 +97,17 @@
 		"updated_spanish": "language.updated_spanish",
 		"updated_english": "language.updated_english",
 		"updated_french": "language.updated_french"
-	}
+	},
+	"email": {
+		"subject": "جمال آرت",
+		"title": "مرحبًا بك في فن الطاسيلي",
+		"body": "مبروك! أنت على وشك استخدام التطبيق. اضغط على الزر أو الرابط أدناه لتأكيد بريدك الإلكتروني.",
+		"button": "تأكيد البريد الإلكتروني",
+		"alt": "إذا لم يعمل الزر، يمكنك أيضًا النقر على الرابط التالي:",
+		"reset_button": "email.reset_button"
+	},
+	"user_not_found": "المستخدم غير موجود.",
+	"already_verified": "تم التحقق من الحساب بالفعل.",
+	"activation_email_sent": "تم إرسال رسالة التفعيل إلى بريدك الإلكتروني.",
+	"server_error": "خطأ في الخادم الداخلي."
 }

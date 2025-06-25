@@ -2,14 +2,19 @@ const Users = require('../models/userModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sendMail = require('./sendMail')
+const sendCustomEmail = require('./sendCustomEmail')
+const { google } = require('googleapis')
+const { OAuth2 } = google.auth
+const { CLIENT_URL } = process.env
+const client = new OAuth2(process.env.MAILING_SERVICE_CLIENT_ID)
 
-const {CLIENT_URL} = process.env
 const authCtrl = {
+
     register: async (req, res) => {
         try {
             const { username, email, password } = req.body
-         
-         
+
+
             let newUserName = username.toLowerCase().replace(/ /g, '')
 
             const user_name = await Users.findOne({ username: newUserName })
@@ -56,68 +61,107 @@ const authCtrl = {
     sendActivationEmail: async (req, res) => {
         try {
             const user = await Users.findById(req.user._id);
-            if (!user) return res.status(400).json({ msg: "Usuario no encontrado." });
-            if (user.isVerified) return res.status(400).json({ msg: "La cuenta ya está verificada." });
-    
+            if (!user)
+                return res.status(400).json({ msg: req.__('auth.user_not_found') });
+
+            if (user.isVerified)
+                return res.status(400).json({ msg: req.__('auth.already_verified') });
+
             const activation_token = createActivationToken({ id: user._id });
             const url = `${CLIENT_URL}/user/activate/${activation_token}`;
-    
-            // ✅ Se usa user.email aquí:
-            await sendMail(user.email, url, "Activar cuenta")
 
-    
-            res.json({ msg: "Se ha enviado el correo de activación." });
+            // ✅ Pasamos el idioma correctamente desde req:
+            await sendMail(user.email, url, req.getLocale());
+
+            res.json({ msg: req.__('auth.activation_email_sent') });
         } catch (err) {
-            return res.status(500).json({ msg: err.message });
+            return res.status(500).json({ msg: req.__('auth.server_error') });
         }
     },
-    
+
 
 
     activationAccount: async (req, res) => {
- 
-            try {
-              const { activation_token } = req.body;
-              const decoded = jwt.verify(activation_token, process.env.ACTIVATION_TOKEN_SECRET);
-              const { id } = decoded;
-          
-              const user = await Users.findById(id);
-              if (!user) return res.status(400).json({ msg: "Usuario no encontrado." });
-              if (user.isVerified) return res.status(400).json({ msg: "La cuenta ya está verificada." });
-          
-              user.isVerified = true;
-              await user.save();
-          
-              res.json({ msg: "✅ Cuenta activada correctamente." });
-            } catch (err) {
-              return res.status(500).json({ msg: err.message });
+        try {
+            const { activation_token } = req.body;
+            const decoded = jwt.verify(activation_token, process.env.ACTIVATION_TOKEN_SECRET);
+            const { id } = decoded;
+
+            const user = await Users.findById(id);
+            if (!user) return res.status(400).json({ msg: req.__('auth.user_not_found') });
+
+            if (user.isVerified)
+                return res.status(400).json({ msg: req.__('auth.already_verified') });
+
+            user.isVerified = true;
+            await user.save();
+
+            res.json({ msg: req.__('auth.account_activated') });
+        } catch (err) {
+            return res.status(500).json({ msg: req.__('auth.server_error') });
+        }
+    },
+
+
+    forgotPassword: async (req, res) => {
+        try {
+            const { email } = req.body;
+            const user = await Users.findOne({ email });
+            if (!user)
+                return res.status(400).json({ msg: req.__('auth.email_not_exist') });
+
+            const access_token = createAccessToken({ id: user._id });
+            const url = `${CLIENT_URL}/user/reset/${access_token}`;
+
+            sendMail(email, url, req.getLocale());
+
+            res.json({ msg: req.__('auth.reset_email_sent') });
+        } catch (err) {
+            return res.status(500).json({ msg: req.__('auth.server_error') });
+        }
+    },
+
+    resetPassword: async (req, res) => {
+        try {
+            const { password } = req.body;
+            const passwordHash = await bcrypt.hash(password, 12);
+
+            await Users.findOneAndUpdate(
+                { _id: req.user.id },
+                { password: passwordHash }
+            );
+
+            res.json({ msg: req.__('auth.password_changed') });
+        } catch (err) {
+            return res.status(500).json({ msg: req.__('auth.server_error') });
+        }
+    },
+
+
+
+
+    sendEmailAdmin: async (req, res) => {
+        try {
+            const { recipients, subject, message } = req.body
+
+            if (!recipients || !Array.isArray(recipients) || recipients.length === 0)
+                return res.status(400).json({ msg: 'No se seleccionaron destinatarios.' })
+
+            const users = await Users.find({ _id: { $in: recipients } })
+            const emails = users.map(user => user.email)
+
+            for (const email of emails) {
+                await sendCustomEmail(email, subject, message)
             }
-          },
- 
-          
+
+            return res.json({ msg: `✅ Correos enviados a ${emails.length} usuarios.` })
+
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
 
 
-
-
-
-
-          /*
-          deactivateAccount: async (req, res) => {
-            try {
-              const user = await Users.findById(req.user._id);
-              if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
-          
-              if (!user.isActive) return res.status(400).json({ msg: 'La cuenta ya está desactivada' });
-          
-              user.isActive = false;
-              await user.save();
-          
-              res.json({ msg: '🔒 Cuenta desactivada con éxito.' });
-            } catch (err) {
-              return res.status(500).json({ msg: err.message });
-            }
-          },*/
-          
     login: async (req, res) => {
         try {
             const { email, password } = req.body
@@ -152,6 +196,112 @@ const authCtrl = {
         }
     },
 
+
+
+
+
+    googleLogin: async (req, res) => {
+        try {
+            const { tokenId } = req.body
+
+            const verify = await client.verifyIdToken({ idToken: tokenId, audience: process.env.MAILING_SERVICE_CLIENT_ID })
+
+            const { email_verified, email, name, picture } = verify.payload
+
+            const password = email + process.env.GOOGLE_SECRET
+
+            const passwordHash = await bcrypt.hash(password, 12)
+
+            if (!email_verified) return res.status(400).json({ msg: "Email verification failed." })
+
+            const user = await Users.findOne({ email })
+
+            if (user) {
+                const isMatch = await bcrypt.compare(password, user.password)
+                if (!isMatch) return res.status(400).json({ msg: "Password is incorrect." })
+
+                const refresh_token = createRefreshToken({ id: user._id })
+                res.cookie('refreshtoken', refresh_token, {
+                    httpOnly: true,
+                    path: '/user/refresh_token',
+                    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+                })
+
+                res.json({ msg: "Login success!" })
+            } else {
+                const newUser = new Users({
+                    name, email, password: passwordHash, avatar: picture
+                })
+
+                await newUser.save()
+
+                const refresh_token = createRefreshToken({ id: newUser._id })
+                res.cookie('refreshtoken', refresh_token, {
+                    httpOnly: true,
+                    path: '/user/refresh_token',
+                    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+                })
+
+                res.json({ msg: "Login success!" })
+            }
+
+
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
+    facebookLogin: async (req, res) => {
+        try {
+            const { accessToken, userID } = req.body
+
+            const URL = `https://graph.facebook.com/v2.9/${userID}/?fields=id,name,email,picture&access_token=${accessToken}`
+
+            const data = await fetch(URL).then(res => res.json()).then(res => { return res })
+
+            const { email, name, picture } = data
+
+            const password = email + process.env.FACEBOOK_SECRET
+
+            const passwordHash = await bcrypt.hash(password, 12)
+
+            const user = await Users.findOne({ email })
+
+            if (user) {
+                const isMatch = await bcrypt.compare(password, user.password)
+                if (!isMatch) return res.status(400).json({ msg: "Password is incorrect." })
+
+                const refresh_token = createRefreshToken({ id: user._id })
+                res.cookie('refreshtoken', refresh_token, {
+                    httpOnly: true,
+                    path: '/user/refresh_token',
+                    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+                })
+
+                res.json({ msg: "Login success!" })
+            } else {
+                const newUser = new Users({
+                    name, email, password: passwordHash, avatar: picture.data.url
+                })
+
+                await newUser.save()
+
+                const refresh_token = createRefreshToken({ id: newUser._id })
+                res.cookie('refreshtoken', refresh_token, {
+                    httpOnly: true,
+                    path: '/user/refresh_token',
+                    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+                })
+
+                res.json({ msg: "Login success!" })
+            }
+
+
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
+
+
     logout: async (req, res) => {
         try {
             res.clearCookie('refreshtoken', { path: '/api/refresh_token' })
@@ -160,6 +310,13 @@ const authCtrl = {
             return res.status(500).json({ msg: req.__('auth.server_error') })
         }
     },
+
+
+
+
+
+
+
 
     generateAccessToken: async (req, res) => {
         try {
@@ -189,9 +346,10 @@ const authCtrl = {
         }
     }
 }
+ 
 const createActivationToken = (payload) => {
-    return jwt.sign(payload, process.env.ACTIVATION_TOKEN_SECRET, {expiresIn: '5m'})
-    }
+    return jwt.sign(payload, process.env.ACTIVATION_TOKEN_SECRET, { expiresIn: '5m' })
+}
 const createAccessToken = (payload) => {
     return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
 }

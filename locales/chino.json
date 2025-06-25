@@ -10,7 +10,17 @@
 		"logout_success": "退出登录成功！",
 		"login_required": "请先登录。",
 		"user_not_found": "用户未找到。",
-		"server_error": "服务器错误。"
+		"server_error": "服务器错误。",
+
+ 
+		"already_verified": "该账户已验证。",
+		"activation_email_sent": "激活邮件已发送",
+		"account_activated": "✅ 账户激活成功。",
+		"reset_email_sent": "重置链接已发送至您的邮箱。",
+		"password_changed": "密码修改成功。"
+	 
+
+
 	},
 	"post": {
 		"POST": "帖子",
@@ -82,5 +92,22 @@
 		"invalidQuantity": "无效数量。",
 		"productNotFoundInCart": "购物车中未找到商品。",
 		"quantityUpdated": "数量已更新。"
-	}
+	},
+
+	"email": {
+		"subject": "贾迈勒艺术",
+		"title": "欢迎来到塔西利艺术",
+		"body": "恭喜！您已接近完成注册。请点击下方按钮或链接以验证您的电子邮件地址。",
+		"button": "验证邮箱",
+		"alt": "如果按钮无法使用，您也可以点击以下链接："
+	  }
+	 
+	 
+
+
+
+
+
+
+
 }

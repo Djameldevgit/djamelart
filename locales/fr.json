@@ -10,7 +10,14 @@
 		"logout_success": "Déconnexion réussie !",
 		"login_required": "Veuillez vous connecter d'abord.",
 		"user_not_found": "Utilisateur non trouvé.",
-		"server_error": "Erreur du serveur."
+		"server_error": "Erreur du serveur.",
+		"already_verified": "Le compte est déjà vérifié.",
+
+		"activation_email_sent": "L'e-mail d'activation a été envoyé.",
+		"account_activated": "✅ Compte activé avec succès.",
+		"reset_email_sent": "Un lien de réinitialisation a été envoyé à votre e-mail.",
+		"password_changed": "Mot de passe modifié avec succès."
+		
 	},
 	"post": {
 		"POST": "PUBLICATION",
@@ -91,5 +98,12 @@
 		"updated_french": "language.updated_french",
 		"updated_arabic": "language.updated_arabic",
 		"updated_spanish": "language.updated_spanish"
+	},
+	"email": {
+		"subject": "Djamel Art",
+		"title": "Bienvenue chez Tassili Art",
+		"body": "Félicitations ! Vous êtes sur le point d'accéder à l'application. Cliquez sur le bouton ou le lien ci-dessous pour valider votre adresse e-mail.",
+		"button": "Vérifier l'adresse e-mail",
+		"alt": "Si le bouton ne fonctionne pas, vous pouvez également cliquer sur le lien ci-dessous :"
 	}
 }

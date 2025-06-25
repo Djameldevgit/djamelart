@@ -1,53 +1,53 @@
-import React, {useState} from 'react'
-import axios from 'axios'
-import {isEmail} from '../utils/validation/Validation'
-import {showErrMsg, showSuccessMsg} from '../utils/notification/Notification'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { forgotPassword } from '../redux/actions/authAction'
+import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 
-const initialState = {
-    email: '',
-    err: '',
-    success: ''
-}
+const ForgotPassword = () => {
+  const [email, setEmail] = useState('')
+  const dispatch = useDispatch()
 
-const  ForgotPassword =() =>{
-    const [data, setData] = useState(initialState)
+  const { languageReducer } = useSelector(state => state)
+  const lang = languageReducer.language || 'es'
+  const { t } = useTranslation('auth')
 
-    const {email, err, success} = data
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    dispatch(forgotPassword(email))
+  }
 
-    const handleChangeInput = e => {
-        const {name, value} = e.target
-        setData({...data, [name]:value, err: '', success: ''})
-    }
+  return (
+    <Container className="d-flex justify-content-center align-items-center min-vh-100">
+      <Row className="w-100 justify-content-center">
+        <Col xs={12} sm={10} md={8} lg={6}>
+          <Card className="shadow-sm p-4">
+            <h3 className="text-center mb-4">
+              {t('forgotPassword.title', { lng: lang })}
+            </h3>
 
-    const forgotPassword = async () => {
-        if(!isEmail(email))
-            return setData({...data, err: 'Invalid emails.', success: ''})
-            
-        try {
-            const res = await axios.post('/user/forgot', {email})
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="formEmail">
+                <Form.Label>{t('forgotPassword.emailLabel', { lng: lang })}</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder={t('forgotPassword.emailPlaceholder', { lng: lang })}
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            return setData({...data, err: '', success: res.data.msg})
-        } catch (err) {
-            err.response.data.msg && setData({...data, err:  err.response.data.msg, success: ''})
-        }
-    }
-    
-    return (
-        <div className="fg_pass">
-            <h2>Forgot Your Password?</h2>
-
-            <div className="row">
-                {err && showErrMsg(err)}
-                {success && showSuccessMsg(success)}
-
-                <label htmlFor="email">Enter your email address</label>
-                <input type="email" name="email" id="email" value={email}
-                onChange={handleChangeInput} />
-                <button onClick={forgotPassword}>Verify your email</button>
-            </div>
-        </div>
-    )
+              <Button variant="primary" type="submit" className="w-100">
+                {t('forgotPassword.submitButton', { lng: lang })}
+              </Button>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  )
 }
 
 export default ForgotPassword
- 
+

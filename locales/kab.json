@@ -1,1 +1,23 @@
-{}
+{
+    "username_exists": "Isem n useqdac yella yakan.",
+    "email_exists": "Imayl-agi yella yakan.",
+    "password_too_short": "Awal uffir yessefk ad yili s 6 n isekcumen neq ugar.",
+    "register_success": "Ttawil tura d imezgi.",
+    "server_error": "Tuccfa seg uqerru.",
+    "user_not_found": "Aseqdac ur yettwaf.",
+    "already_verified": "Amiḍan yettwasentem yakan.",
+    "activation_email_sent": "Imayl n usentem yettwazen.",
+    "email_not_exist": "Imayl-agi ur yella ara.",
+    "incorrect_password": "Awal uffir d arameɣtu.",
+    "login_success": "Kcem tura.",
+    "logout_success": "Ffeḍ-ed akken iwata.",
+    "login_required": "Kcem s awal uffir akken ad tkemleḍ.",
+    "account_activated": "✅ Amiḍan yettwasentem s tugna.",
+    "reset_email_sent": "Aseɣwen n ubeddel n awal uffir yettwazen.",
+    "password_changed": "Awal uffir yebeddel s tugna."
+
+
+
+
+
+}

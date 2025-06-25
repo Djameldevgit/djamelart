@@ -10,7 +10,11 @@
 		"logout_success": "Logged out successfully!",
 		"login_required": "Please log in first.",
 		"user_not_found": "User not found.",
-		"server_error": "Server error."
+		"server_error": "Server error.",
+
+		"already_verified": "Account is already verified.",
+		"activation_email_sent": "Activation email has been sent."
+
 	},
 	"post": {
 		"POST": "POST",
@@ -87,5 +91,15 @@
 	"language": {
 		"updated_english": "language.updated_english",
 		"updated_spanish": "language.updated_spanish"
-	}
+	},
+ 
+		"email": {
+		  "subject": "Djamel Art",
+		  "title": "Welcome to Tassili Art",
+		  "body": "Congratulations! You're almost ready to use the app. Click the button or link below to validate your email.",
+		  "button": "Verify Email",
+		  "alt": "If the button doesn't work, you can also click on the link below:"
+		 
+	  }
+	  
 }

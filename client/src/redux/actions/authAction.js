@@ -2,6 +2,63 @@ import { GLOBALTYPES } from './globalTypes'
 import { postDataAPI } from '../../utils/fetchData'
 import valid from '../../utils/valid'
 
+
+
+
+ 
+   
+    export const sendAdminEmail = ({ recipients, subject, message, token, onSuccess }) => async (dispatch) => {
+      try {
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
+    
+        const res = await postDataAPI('send-email-admin', {
+          recipients, subject, message
+        }, token);
+    
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });
+    
+        // Puedes actualizar estado si necesitas
+        if (onSuccess) onSuccess();
+        
+      } catch (err) {
+        dispatch({
+          type: GLOBALTYPES.ALERT,
+          payload: { error: err.response?.data?.msg || 'Error al enviar correos.' }
+        });
+      }
+    };
+    
+
+ 
+export const forgotPassword = (email) => async (dispatch) => {
+  try {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } })
+
+    const res = await postDataAPI('forgot', { email })
+
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } })
+  } catch (err) {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+  }
+}
+
+export const resetPassword = (password, token) => async (dispatch) => {
+    try {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } })
+  
+      const res = await postDataAPI('reset', { password }, token)
+  
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } })
+    } catch (err) {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+    }
+  }
+  
+
+
+
+
+
 export const activationAccount = (activation_token) => async (dispatch) => {
     try {
       dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });

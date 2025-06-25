@@ -4,6 +4,7 @@ import { login } from '../redux/actions/authAction'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import ForgotPassword from '../auth/ForgotPassword'
+import Loginfacegoogle from '../auth/Loginfacegoogle'
 //import Loginfacegoogle from '../auth/Loginfacegoogle'
 
 const Login = () => {
@@ -35,16 +36,18 @@ const Login = () => {
     return (
         <div className="auth_page">
 
- 
+
             <form onSubmit={handleSubmit}>
                 <h3 className="text-uppercase text-center mb-4">{t('namelogin', { lng: lang })}</h3>
-                
+                <div className="form-group">
+                    <Loginfacegoogle />
+                </div>
                 <div className="form-group">
                     <label htmlFor="exampleInputEmail1">{t('emailAddress', { lng: lang })}</label>
                     <input type="email" className="form-control" id="exampleInputEmail1" name="email"
                         aria-describedby="emailHelp" onChange={handleChangeInput} value={email} />
                 </div>
-
+                
                 <div className="form-group">
                     <label htmlFor="exampleInputPassword1">{t('password', { lng: lang })}</label>
                     <div className="pass">
@@ -54,16 +57,16 @@ const Login = () => {
                         <small onClick={() => setTypePass(!typePass)}>
                             {typePass ? t('hide', { lng: lang }) : t('show', { lng: lang })}
                         </small>
-                    </div> 
+                    </div>
                     <div className="form-group">
-                      <small>
-                      <Link to="/forgot_password" >forgot password ?
-                      </Link>
+                        <small>
+                            <Link to="/forgot_password" >forgot password ?
+                            </Link>
                         </small>
-                    
+
+                    </div>
                 </div>
-                </div>
-               
+
 
                 <button type="submit" className="btn btn-dark w-100"
                     disabled={email && password ? false : true}>
