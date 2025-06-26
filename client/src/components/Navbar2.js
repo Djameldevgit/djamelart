@@ -1,4 +1,4 @@
- 
+
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../redux/actions/authAction'
@@ -14,7 +14,7 @@ import {
   NavDropdown,
   Offcanvas,
   Button,
- 
+
   Badge
 } from 'react-bootstrap'
 import { BsCartFill } from 'react-icons/bs'
@@ -113,16 +113,16 @@ const Navbar2 = () => {
                   <NavDropdown.Item as={Link} to="/rolesuser">{t('roles', { lng: lang })}</NavDropdown.Item>
                   {auth.user.role === 'admin' && (
                     <>
- <NavDropdown.Item as={Link} to="/users/adminsendemail">send email admin</NavDropdown.Item>
-                       
+                      <NavDropdown.Item as={Link} to="/users/adminsendemail">send email admin</NavDropdown.Item>
+
 
                       <NavDropdown.Item as={Link} to="/users/userss">{t('users', { lng: lang })}</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/postspendientes">{t('pendingPosts', { lng: lang })}</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/users/usersaction">users action</NavDropdown.Item>
-                      
+
                       <NavDropdown.Item as={Link} to="/users/bloqueos">obtener users bloqueados</NavDropdown.Item>
-                     
-                        <NavDropdown.Item as={Link} to="/cart/orderss">{t('orders', { lng: lang })}</NavDropdown.Item>
+
+                      <NavDropdown.Item as={Link} to="/cart/orderss">{t('orders', { lng: lang })}</NavDropdown.Item>
                     </>
                   )}
                   <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>{t('profile', { lng: lang })}</NavDropdown.Item>
@@ -149,7 +149,7 @@ const Navbar2 = () => {
         style={{ top: '56px', height: 'calc(100vh - 56px)', width: '270px' }}
       >
         <Offcanvas.Header closeButton>
-   
+
         </Offcanvas.Header>
 
         <Offcanvas.Body style={{ overflowY: 'auto', padding: '0.5rem' }}>

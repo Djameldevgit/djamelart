@@ -6,7 +6,8 @@ const sendCustomEmail = require('./sendCustomEmail')
 const { google } = require('googleapis')
 const { OAuth2 } = google.auth
 const { CLIENT_URL } = process.env
-const client = new OAuth2(process.env.MAILING_SERVICE_CLIENT_ID)
+
+const client = new OAuth2(process.env.GOOGLE_CLIENT_ID)
 
 const authCtrl = {
 
@@ -197,59 +198,76 @@ const authCtrl = {
     },
 
 
-
-
-
     googleLogin: async (req, res) => {
         try {
-            const { tokenId } = req.body
+            const { tokenId } = req.body;
 
-            const verify = await client.verifyIdToken({ idToken: tokenId, audience: process.env.MAILING_SERVICE_CLIENT_ID })
+            const verify = await client.verifyIdToken({
+                idToken: tokenId,
+                audience: process.env.GOOGLE_CLIENT_ID
+            });
 
-            const { email_verified, email, name, picture } = verify.payload
+            const { email_verified, email, name, picture } = verify.payload;
 
-            const password = email + process.env.GOOGLE_SECRET
+            if (!email_verified) {
+                return res.status(400).json({ msg: "Email verification failed." });
+            }
 
-            const passwordHash = await bcrypt.hash(password, 12)
+            const password = email + process.env.GOOGLE_SECRET;
+            const passwordHash = await bcrypt.hash(password, 12);
 
-            if (!email_verified) return res.status(400).json({ msg: "Email verification failed." })
-
-            const user = await Users.findOne({ email })
+            let user = await Users.findOne({ email });
 
             if (user) {
-                const isMatch = await bcrypt.compare(password, user.password)
-                if (!isMatch) return res.status(400).json({ msg: "Password is incorrect." })
+                const isMatch = await bcrypt.compare(password, user.password);
+                if (!isMatch)
+                    return res.status(400).json({ msg: "Password is incorrect." });
+                // ✅ Si existe pero aún no está verificado, lo marcamos como verificado:
+                if (!user.isVerified) {
+                    user.isVerified = true;
+                    await user.save();
+                }
 
-                const refresh_token = createRefreshToken({ id: user._id })
-                res.cookie('refreshtoken', refresh_token, {
-                    httpOnly: true,
-                    path: '/user/refresh_token',
-                    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-                })
-
-                res.json({ msg: "Login success!" })
             } else {
-                const newUser = new Users({
-                    name, email, password: passwordHash, avatar: picture
-                })
+                const username = email.split("@")[0].toLowerCase().replace(/\s/g, '');
 
-                await newUser.save()
+                user = new Users({
+                    name,
+                    username,
+                    email,
+                    password: passwordHash,
+                    avatar: picture,
+                    isVerified: true // ✅ Usuario de confianza, marcado como verificado
+                });
 
-                const refresh_token = createRefreshToken({ id: newUser._id })
-                res.cookie('refreshtoken', refresh_token, {
-                    httpOnly: true,
-                    path: '/user/refresh_token',
-                    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-                })
-
-                res.json({ msg: "Login success!" })
+                await user.save();
             }
 
 
+            const access_token = createAccessToken({ id: user._id });
+            const refresh_token = createRefreshToken({ id: user._id });
+
+            res.cookie("refreshtoken", refresh_token, {
+                httpOnly: true,
+                path: "/api/refresh_token",
+                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días
+            });
+
+            res.json({
+                msg: "Login success!",
+                access_token,
+                user: {
+                    ...user._doc,
+                    password: ''
+                }
+            });
+
         } catch (err) {
-            return res.status(500).json({ msg: err.message })
+            return res.status(500).json({ msg: err.message });
         }
     },
+
+
     facebookLogin: async (req, res) => {
         try {
             const { accessToken, userID } = req.body
@@ -346,7 +364,7 @@ const authCtrl = {
         }
     }
 }
- 
+
 const createActivationToken = (payload) => {
     return jwt.sign(payload, process.env.ACTIVATION_TOKEN_SECRET, { expiresIn: '5m' })
 }

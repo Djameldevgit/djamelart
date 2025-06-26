@@ -3,7 +3,7 @@ import { imageUpload } from '../../utils/imageUpload';
 import { getDataAPI, patchDataAPI, deleteDataAPI, postDataAPI } from '../../utils/fetchData';
  
 export const USERS_TYPES_ACTION = {
-    LOADING_USER_ACTION: 'LOADING_USER_ACTION',
+    LOADING_USERS_ACTION: 'LOADING_USERS_ACTION',
     GET_USERS_ACTION: 'GET_USERS_ACTION',
     UPDATE_USER_ACTION: 'UPDATE_USER_ACTION',
     GET_USER_ACTION: 'GET_USER_ACTION',
@@ -22,8 +22,8 @@ export const USERS_TYPES_ACTION = {
 // Acción para obtener la cuenta total de usuarios
 export const fetchTotalUsersCount = (token) => async (dispatch) => {
     try {
-        const res = await getDataAPI('users/counttotal', token); // Llama al endpoint que cuenta los usuarios
-        dispatch({ type: USER_TYPES_ACTION.GET_TOTAL_USERS_COUNT, payload: res.data.counttotal });
+        const res = await getDataAUSERS_TYPES_ACTIONPI('users/counttotal', token); // Llama al endpoint que cuenta los usuarios
+        dispatch({ type: USERS_TYPES_ACTION.GET_TOTAL_USERS_COUNT, payload: res.data.counttotal });
     } catch (error) {
         console.error('Error al obtener el total de usuarios:', error);
     }
@@ -34,7 +34,7 @@ export const getActiveUsersLast24h = (token) => async (dispatch) => {
     try {
         const res = await getDataAPI('users/active-last-24h', token);
         dispatch({
-            type: USER_TYPES_ACTION.GET_ACTIVE_USERS_LAST_24H,
+            type: USERS_TYPES_ACTION.GET_ACTIVE_USERS_LAST_24H,
             payload: res.data.users
         });
     } catch (error) {
@@ -47,7 +47,7 @@ export const getActiveUsersLast3h = (token) => async (dispatch) => {
     try {
         const res = await getDataAPI('users/active-last-3h', token);
         dispatch({
-            type: USER_TYPES_ACTION.GET_ACTIVE_USERS_LAST_3H,
+            type: USERS_TYPES_ACTION.GET_ACTIVE_USERS_LAST_3H,
             payload: res.data.users
         });
     } catch (error) {
@@ -56,17 +56,17 @@ export const getActiveUsersLast3h = (token) => async (dispatch) => {
 };
 
 // Acción para obtener todos los usuarios
-export const getUsersAction = (token, page = 1, limit = 9) => async (dispatch) => {
+export const getUsersAction = (token) => async (dispatch) => {
     try {
-        dispatch({ type: USER_TYPES_ACTION.LOADING_USER_ACTION, payload: true });
-        const res = await getDataAPI(`users?page=${page}&limit=${limit}`, token);
+        dispatch({ type: USERS_TYPES_ACTION.LOADING_USERS_ACTION, payload: true });
+        const res = await getDataAPI(`users/usersaction`, token);
         
         dispatch({
-            type: USER_TYPES_ACTION.GET_USER_ACTION,
+            type: USERS_TYPES_ACTION.GET_USER_ACTION,
             payload: { users: res.data.users, result: res.data.result, page: page + 1 }
         });
         
-        dispatch({ type: USER_TYPES_ACTION.LOADING_USER_ACTION, payload: false });
+        dispatch({ type: USERS_TYPES_ACTION.LOADING_USERS_ACTION, payload: false });
     } catch (err) {
         dispatch({
             type: GLOBALTYPES.ALERT,
@@ -95,7 +95,7 @@ export const updateUser = ({ content, images, auth, status }) => async (dispatch
             content, images: [...imgOldUrl, ...media]
         }, auth.token);
 
-        dispatch({ type: USER_TYPES_ACTION.UPDATE_USER, payload: res.data.newUser });
+        dispatch({ type: USERS_TYPES_ACTION.UPDATE_USER, payload: res.data.newUser });
         dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });
     } catch (err) {
         dispatch({
@@ -110,7 +110,7 @@ export const getUser = ({ detailUser, id, auth }) => async (dispatch) => {
     if (detailUser.every(user => user._id !== id)) {
         try {
             const res = await getDataAPI(`user/${id}`, auth.token);
-            dispatch({ type: USER_TYPES_ACTION.GET_USER, payload: res.data.user });
+            dispatch({ type: USERS_TYPES_ACTION.GET_USER, payload: res.data.user });
         } catch (err) {
             dispatch({
                 type: GLOBALTYPES.ALERT,
@@ -129,7 +129,7 @@ export const deleteUser = ({ user, auth }) => async (dispatch) => {
        
         if (res) {
             dispatch({
-                type: USER_TYPES_ACTION.DELETE_USER,
+                type: USERS_TYPES_ACTION.DELETE_USER,
                 payload: user._id,
             });
 
@@ -163,7 +163,7 @@ export const updateUserStatus = (userId, newStatus, token) => async (dispatch) =
     try {
         await patchDataAPI(`admin/user/${userId}/status`, { status: newStatus }, token);
         dispatch({
-            type: USER_TYPES_ACTION.UPDATE_USER_STATUS,
+            type: USERS_TYPES_ACTION.UPDATE_USER_STATUS,
             payload: { userId, newStatus },
         });
     } catch (err) {
@@ -195,7 +195,7 @@ export const createDenuncia = ({ razones, auth, post }) => async (dispatch) => {
 
         // Despacha la acción para actualizar el estado global con la denuncia creada
         dispatch({
-            type: USER_TYPES_ACTION.CREAR_DENUNCIA,
+            type: USERS_TYPES_ACTION.CREAR_DENUNCIA,
             payload: res.data,
         });
 
@@ -214,7 +214,7 @@ export const getDenuncias = (user, token) => async (dispatch) => {
         const res = await getDataAPI(`denunciar/${user.id}`, token); // Asegúrate de que la ruta esté correcta
         console.log(res)
         dispatch({
-            type: USER_TYPES_ACTION.GET_DENUNCIAS,
+            type: USERS_TYPES_ACTION.GET_DENUNCIAS,
             payload: res.data,
         });
     } catch (err) {

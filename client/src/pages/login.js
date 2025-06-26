@@ -60,7 +60,7 @@ const Login = () => {
                     </div>
                     <div className="form-group">
                         <small>
-                            <Link to="/forgot_password" >forgot password ?
+                            <Link to="/forgot_password" >{t('forgot_password', { lng: lang })}  
                             </Link>
                         </small>
 

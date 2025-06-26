@@ -1,12 +1,46 @@
 import { GLOBALTYPES } from './globalTypes'
 import { postDataAPI } from '../../utils/fetchData'
 import valid from '../../utils/valid'
-
-
-
-
  
-   
+ // 🔽 login con Google y Facebook (social)
+ export const socialLogin = (data, platform) => async (dispatch) => {
+  try {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
+
+    // ✅ QUITA "user/"
+    const endpoint = platform === 'google' ? 'google_login' : 'facebook_login';
+    const res = await postDataAPI(endpoint, data); // 🔗 POST /api/google_login
+
+    // Ahora obtenemos el token desde la cookie usando refresh_token
+    const refresh = await postDataAPI('refresh_token');
+
+    dispatch({
+      type: GLOBALTYPES.AUTH,
+      payload: {
+        token: refresh.data.access_token,
+        user: refresh.data.user,
+      },
+    });
+
+    localStorage.setItem('firstLogin', true);
+
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { success: res.data.msg },
+    });
+
+    if (typeof window !== 'undefined') window.location.href = '/';
+  } catch (err) {
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: {
+        error: err.response?.data?.msg || 'Error al iniciar sesión',
+      },
+    });
+  }
+};
+
+  
     export const sendAdminEmail = ({ recipients, subject, message, token, onSuccess }) => async (dispatch) => {
       try {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
@@ -110,40 +144,9 @@ export const sendActivationEmail = (token) => async (dispatch) => {
         });
     }
 };
-/*
-export const deactivateAccount = (token) => async (dispatch) => {
-    try {
-      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
-  
-      const res = await patchDataAPI('deactivate', null, token);
-  
-      dispatch({
-        type: GLOBALTYPES.AUTH,
-        payload: {
-          user: { isActive: false },
-          token: '',
-        },
-      });
-  
-      dispatch({
-        type: GLOBALTYPES.ALERT,
-        payload: { success: res.data.msg }
-      });
-  
-    } catch (err) {
-      dispatch({
-        type: GLOBALTYPES.ALERT,
-        payload: {
-          error: err.response?.data?.msg || 'Error al desactivar cuenta'
-        }
-      });
-    }
-  };
-  */
-
  
-  
 
+  
 export const login = (data) => async (dispatch) => {
     try {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } })

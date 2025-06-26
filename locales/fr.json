@@ -12,12 +12,10 @@
 		"user_not_found": "Utilisateur non trouvé.",
 		"server_error": "Erreur du serveur.",
 		"already_verified": "Le compte est déjà vérifié.",
-
 		"activation_email_sent": "L'e-mail d'activation a été envoyé.",
 		"account_activated": "✅ Compte activé avec succès.",
 		"reset_email_sent": "Un lien de réinitialisation a été envoyé à votre e-mail.",
 		"password_changed": "Mot de passe modifié avec succès."
-		
 	},
 	"post": {
 		"POST": "PUBLICATION",
@@ -55,7 +53,8 @@
 	"comment": {
 		"error_post_not_exist": "Cette publication n'existe pas.",
 		"error_comment_not_exist": "Ce commentaire n'existe pas.",
-		"success": "Commentaire créé !"
+		"success": "Commentaire créé !",
+		"comment_liked": "comment.comment_liked"
 	},
 	"message": {
 		"createMessage.empty": "Le message ne peut pas être vide.",

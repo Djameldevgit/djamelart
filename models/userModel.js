@@ -71,7 +71,8 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-
+  post: [{ type: mongoose.Types.ObjectId, ref: 'post' }],
+  loginType: { type: String, enum: ['local', 'google', 'facebook'], default: 'local' },
 
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date, default: null },

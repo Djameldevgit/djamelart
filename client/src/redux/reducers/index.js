@@ -23,7 +23,7 @@ import orders from './orderReducer'
 import userBlockReducer from './userBlcokReducer'
 import usersActionReducer from './usersActionReducer'
 
-
+ 
  
 export default combineReducers({
     auth,
@@ -41,6 +41,6 @@ export default combineReducers({
     message,
     online,
     call,
-   homePostsAprove ,cart,languageReducer,roleReducer,homeUsers,orders,userBlockReducer,usersActionReducer
+   homePostsAprove ,cart,languageReducer,roleReducer,homeUsers,orders,userBlockReducer,usersActionReducer 
 
 })

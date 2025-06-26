@@ -11,7 +11,7 @@ import Alert from './components/alert/Alert'
 import StatusModal from './components/StatusModal'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { refreshToken } from './redux/actions/authAction'
+import { dispatchLogin, refreshToken } from './redux/actions/authAction'
 import { getPosts } from './redux/actions/postAction'
 import { getSuggestions } from './redux/actions/suggestionsAction'
 
@@ -35,7 +35,7 @@ import Roles from './pages/roles';
 
 
 import { getCart } from './redux/actions/cartAction';
-
+import axios from 'axios'
 import Cart from './pages/carte/cart';
 import Chekoutt from './pages/carte/Chekoutt';
 import Profile from './pages/profile.';
@@ -60,12 +60,22 @@ import Userss from './pages/users/userss';
 import UsersActionn from './pages/users/UsersActionn';
 import ListaUseariosbloqueadoss from './pages/listaUseariosbloqueadoss';
 import AdminSendEmails from './pages/users/adminSendEmails';
-
+ 
 function App() {
   const { auth, status, modal, call, languageReducer } = useSelector(state => state)
-  const { isLogged, isAdmin } = auth
-  const dispatch = useDispatch()
+ 
+ 
   const language = languageReducer?.language || localStorage.getItem("lang") || "en";
+
+  const dispatch = useDispatch()
+ 
+  useEffect(() => {
+    dispatch(refreshToken());
+  }, [dispatch]);
+  
+
+
+
 
   useEffect(() => {
     if (language) {
@@ -119,8 +129,15 @@ function App() {
     }
   }, [])
 
-
-
+  if (auth.token && auth.user?.esBloqueado) {
+    return (
+      <Router>
+        <Route exact path="/bloqueos" component={Bloqueoss} />
+        <Route path="*" component={Bloqueoss} />
+      </Router>
+    )
+  }
+   
 
   return (
 
@@ -148,6 +165,8 @@ function App() {
           <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
           <Route exact path="/users/adminsendemail" component={auth.token ? AdminSendEmails : Login} />
           <Route exact path="/chekout" component={auth.token ? Chekoutt : Login} />
+          <Route exact path="/cart/cartcarrito" component={auth.token ? Cart : Login} />
+         
           <Route exact path="/rolesuser" component={auth.token ? Roles : Login} />
           <Route exact path="/users/userss" component={auth.token ? Userss : Login} />
           <Route exact path="/users/usersaction" component={auth.token ? UsersActionn : Login} />
@@ -165,9 +184,9 @@ function App() {
           <Route path="/user/reset/:token" component={ResetPassword} exact />
 
 
-          <Route exact path="/activatepage" component={auth.token ? ActivatePage : Login} />
-
-          <Route exact path="/activatepage" component={auth.token ? ActivatePage : Login} />
+          
+          <Route path="/user/activate/:activation_token" component={ auth.token ?ActivatePage :Login     } exact />
+    
         </div>
       </div>
     </Router>
@@ -177,3 +196,4 @@ function App() {
 }
 
 export default App;
+//<Route exact path="/activatepage" component={auth.token ? ActivatePage : Login} />

@@ -1,51 +1,30 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import axios from 'axios';
-import { GoogleLogin } from 'react-google-login';
-import FacebookLogin from 'react-facebook-login';
-
+import { GoogleLogin } from '@react-oauth/google';
+import { socialLogin } from '../redux/actions/authAction';
 import { showErrMsg, showSuccessMsg } from '../utils/notification/Notification';
 
 const Loginfacegoogle = () => {
-  const history = useHistory();
   const [msg, setMsg] = useState({ err: '', success: '' });
+  const dispatch = useDispatch();
+  const history = useHistory();
 
-  const responseGoogle = async (response) => {
-    try {
-      const res = await axios.post('/user/google_login', {
-        tokenId: response.tokenId,
-      });
-
-      setMsg({ err: '', success: res.data.msg });
-      localStorage.setItem('firstLogin', true);
-
-      history.push('/');
-    } catch (err) {
-      setMsg({
-        err: err.response?.data?.msg || 'Error al iniciar sesión con Google',
-        success: '',
-      });
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const tokenId = credentialResponse.credential;
+    if (tokenId) {
+      try {
+        await dispatch(socialLogin({ tokenId }, 'google'));
+        setMsg({ err: '', success: 'Inicio de sesión exitoso' });
+        history.push('/');
+      } catch (err) {
+        setMsg({ err: 'Error al procesar el login', success: '' });
+      }
     }
   };
 
-  const responseFacebook = async (response) => {
-    try {
-      const { accessToken, userID } = response;
-      const res = await axios.post('/user/facebook_login', {
-        accessToken,
-        userID,
-      });
-
-      setMsg({ err: '', success: res.data.msg });
-      localStorage.setItem('firstLogin', true);
-
-      history.push('/');
-    } catch (err) {
-      setMsg({
-        err: err.response?.data?.msg || 'Error al iniciar sesión con Facebook',
-        success: '',
-      });
-    }
+  const handleGoogleError = () => {
+    setMsg({ err: 'Inicio de sesión cancelado o fallido con Google', success: '' });
   };
 
   return (
@@ -59,18 +38,9 @@ const Loginfacegoogle = () => {
 
       <div className="social">
         <GoogleLogin
-          clientId="TU_GOOGLE_CLIENT_ID"
-          buttonText="Google"
-          onSuccess={responseGoogle}
-          cookiePolicy={'single_host_origin'}
-        />
-
-        <FacebookLogin
-          appId="TU_FACEBOOK_APP_ID"
-          autoLoad={false}
-          fields="name,email,picture"
-          callback={responseFacebook}
-          icon="fa-facebook"
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
+          useOneTap
         />
       </div>
     </div>

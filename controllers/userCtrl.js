@@ -86,123 +86,43 @@ const userCtrl = {
       return res.status(500).json({ msg: err.message })
     }
   },
-
-
-  getUsers: async (req, res) => {
+  getUsersAction: async (req, res) => {
     try {
-      const features = new APIfeatures(Users.find({
-
-      }), req.query).paginating()
-
-      const users = await features.query.sort('-createdAt')
-        .populate("user", "avatar username email")
-
-
-      res.json({
-        msg: 'Success!',
-        result: users.length,
-        users
-      })
-
+      const features = new APIfeatures(Users.find(), req.query).paginating();
+      const users = await features.query;
+  
+      const usersWithDetails = await Promise.all(users.map(async (user) => {
+        const userPosts = await Posts.find({ user: user._id });
+        const totalLikesReceived = userPosts.reduce((acc, post) => acc + post.likes.length, 0);
+        const totalCommentsReceived = userPosts.reduce((acc, post) => acc + post.comments.length, 0);
+  
+        const likesGiven = await Posts.countDocuments({ likes: user._id });
+        const commentsMade = await Comments.countDocuments({ user: user._id });
+  
+        return {
+          ...user.toObject(),
+          postCount: userPosts.length, // ✅ Cantidad de posts
+          totalLikesReceived,
+          totalCommentsReceived,
+          likesGiven,
+          commentsMade,
+          totalFollowers: user.followers.length,
+          totalFollowing: user.following.length,
+          totalReportGiven: user.report.length,
+        };
+      }));
+  
+      return res.json({
+        msg: "Success",
+        result: usersWithDetails.length,
+        users: usersWithDetails
+      });
+  
     } catch (err) {
-      return res.status(500).json({ msg: err.message })
+      return res.status(500).json({ msg: err.message });
     }
   },
-
-  getUsersAction : async (req, res) => {
-    try {
-        const { filter } = req.query; // Recibimos el filtro desde el frontend
-
-        // Base query sin filtros
-        let query = Users.find();
-
-        // Aplicar paginación
-        const features = new APIfeatures(query, req.query).paginating();
-
-        // Obtener la lista de usuarios
-        let users = await features.query
-        .populate({
-            path: "user", // Rellena el campo "user"
-            select: "avatar username followers following esBloqueado" // Selecciona los campos que necesitas
-          })
-          .populate("report", "userId reportedBy")
-          .populate("likes", "avatar username followers following esBloqueado") // Rellena los "likes"
-          .populate({
-            path: "comments",
-            populate: {
-              path: "user likes",
-              select: "-password"
-            }
-          });
-        // Procesar detalles de cada usuario
-        const usersWithDetails = await Promise.all(users.map(async (user) => {
-            const posts = await Posts.find({ user: user._id }).sort('-createdAt');
-            const totalLikesReceived = posts.reduce((total, post) => total + post.likes.length, 0);
-          
-            const totalLikesDados = posts.reduce((total, post) => total + post.likes.length, 0);
-            const totalCommentsReceived = posts.reduce((total, post) => total + post.comments.length, 0);
-            const totalFollowers = user.followers.length;
-          const  totalReportGiven = user.report.length;
-            const totalFollowing = user.following.length;
-            const likesGiven = await Posts.countDocuments({ likes: user._id });
-            const commentsMade = await Comments.countDocuments({ user: user._id });
-
-            return {
-                ...user.toObject(),
-                posts,
-                totalReportGiven,
-                totalLikesReceived,
-                totalLikesDados,
-                totalCommentsReceived,
-                totalFollowers,
-                totalFollowing,
-                likesGiven,
-                commentsMade
-            };
-        }));
-
-        // Aplicar filtros de ordenación
-        switch (filter) {
-
-            case "totalFollowers":
-                usersWithDetails.sort((a, b) => b.users.length - a.users.length);
-                case "totalFollowing":
-                    usersWithDetails.sort((a, b) => b.users.length - a.users.length);
-    
-            case "mostPosts":
-                usersWithDetails.sort((a, b) => b.posts.length - a.posts.length);
-                break;
-            case "mostLikesDados":
-                usersWithDetails.sort((a, b) => b.totalLikesDados - a.totalLikesDados);
-                break;
-                case "mostLikes":
-                    usersWithDetails.sort((a, b) => b.totalLikesReceived - a.totalLikesReceived);
-                    break;
-
-            case "mostReports":
-                usersWithDetails.sort((a, b) => b.totalReportGiven - a.totalReportGiven);
-                break;
-            case "recentLogins":
-                usersWithDetails.sort((a, b) => new Date(b.lastLogin) - new Date(a.lastLogin));
-                break;
-            default:
-                usersWithDetails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Default: usuarios recientes
-        }
-
-        // Enviar la respuesta
-        res.json({
-            msg: 'Success!',
-            result: usersWithDetails.length,
-            users: usersWithDetails
-        });
-
-    } catch (err) {
-        return res.status(500).json({ msg: err.message });
-    }
-},
-
-
-
+  
 
 
   updateUser: async (req, res) => {
@@ -278,160 +198,7 @@ const userCtrl = {
       return res.status(500).json({ msg: err.message })
     }
   },
-
-
-  /*
-       deleteUser: async (req, res) => {
-         try {
-           // Verificar si el usuario que hace la solicitud es admin
-           const requestingUser = await Users.findById(req.user._id)
-           if (!requestingUser.role === 'admin') {
-             return res.status(403).json({ msg: 'Solo los administradores pueden eliminar usuarios' })
-           }
-     
-           // Verificar si el usuario a eliminar existe
-           const userToDelete = await Users.findById(req.params.id)
-           if (!userToDelete) {
-             return res.status(404).json({ msg: 'Usuario no encontrado' })
-           }
-     
-           // Evitar que un admin se elimine a sí mismo
-           if (userToDelete._id.toString() === req.user._id.toString()) {
-             return res.status(400).json({ msg: 'No puedes eliminarte a ti mismo' })
-           }
-     
-           // Eliminar el usuario permanentemente
-           await Users.findByIdAndDelete(req.params.id)
-     
-           res.json({ 
-             msg: 'Usuario eliminado permanentemente',
-             deletedUserId: req.params.id
-           })
-     
-         } catch (err) {
-           console.error('Error al eliminar usuario:', err)
-           return res.status(500).json({ msg: err.message })
-         }
-       }
-     
-     
  
- 
-       deleteUser: async (req, res) => {
-         const session = await mongoose.startSession();
-         session.startTransaction();
-         
-         try {
-           // 1. Verificar permisos de administrador
-           if (req.user.role !== 'admin') {
-             return res.status(403).json({ 
-               success: false,
-               msg: 'Acceso denegado. Se requieren privilegios de administrador' 
-             });
-           }
-     
-           // 2. Validar ID y existencia del usuario
-           if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-             return res.status(400).json({ 
-               success: false,
-               msg: 'ID de usuario no válido' 
-             });
-           }
-     
-           const userToDelete = await Users.findById(req.params.id).session(session);
-           if (!userToDelete) {
-             return res.status(404).json({ 
-               success: false,
-               msg: 'Usuario no encontrado' 
-             });
-           }
-     
-           // 3. Prevenir auto-eliminación
-           if (userToDelete._id.toString() === req.user._id.toString()) {
-             return res.status(400).json({ 
-               success: false,
-               msg: 'No puedes eliminarte a ti mismo' 
-             });
-           }
-     
-           // 4. Eliminación en cascada de todo el contenido relacionado
-           await Promise.all([
-             // Eliminar todos los posts del usuario y sus comentarios/likes
-             Posts.deleteMany({ user: req.params.id }).session(session)
-               .then(() => {
-                 // Eliminar comentarios y likes de esos posts
-                 return Promise.all([
-                   Comments.deleteMany({ post: { $in: userToDelete.posts } }).session(session),
-                   Likes.deleteMany({ post: { $in: userToDelete.posts } }).session(session)
-                 ]);
-               }),
-             
-             // Eliminar comentarios hechos por el usuario en otros posts
-             Comments.deleteMany({ user: req.params.id }).session(session),
-             
-             // Eliminar likes dados por el usuario
-             Likes.deleteMany({ user: req.params.id }).session(session),
-             
-             // Eliminar carritos del usuario
-             Cart.deleteMany({ user: req.params.id }).session(session),
-             
-             // Eliminar relaciones de seguimiento
-             Follows.deleteMany({ 
-               $or: [{ follower: req.params.id }, { following: req.params.id }] 
-             }).session(session),
-             
-             // Eliminar notificaciones relacionadas
-             Notifications.deleteMany({ 
-               $or: [
-                 { sender: req.params.id },
-                 { recipient: req.params.id }
-               ] 
-             }).session(session),
-             
-             // Eliminar de listas de seguidores/seguidos en otros usuarios
-             Users.updateMany(
-               { $or: [{ followers: req.params.id }, { following: req.params.id }] },
-               { 
-                 $pull: { 
-                   followers: req.params.id, 
-                   following: req.params.id 
-                 } 
-               }
-             ).session(session)
-           ]);
-     
-           // 5. Registrar acción antes de eliminar (opcional)
-           console.log(`[ADMIN ACTION] User ${req.user._id} deleted user ${req.params.id} at ${new Date()}`);
-     
-           // 6. Finalmente eliminar al usuario
-           await Users.findByIdAndDelete(req.params.id).session(session);
-     
-           // 7. Confirmar la transacción
-           await session.commitTransaction();
-           
-           res.json({ 
-             success: true,
-             msg: 'Usuario y todo su contenido relacionado (posts, comentarios, likes, carritos) eliminados permanentemente',
-             deletedUserId: req.params.id,
-             deletedAt: new Date()
-           });
-     
-         } catch (err) {
-           // Revertir la transacción en caso de error
-           await session.abortTransaction();
-           
-           console.error('Error en transacción de eliminación completa:', err);
-           res.status(500).json({ 
-             success: false,
-             msg: 'Error al eliminar usuario y su contenido',
-             error: err.message
-           });
-         } finally {
-           // Finalizar la sesión
-           session.endSession();
-         }
-       }
-  */
 
   deleteUser: async (req, res) => {
     const session = await mongoose.startSession();

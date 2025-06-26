@@ -5,7 +5,7 @@ const UserBlockSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
-    unique: true // Un usuario solo puede tener un bloqueo activo
+    unique: true
   },
   motivo: {
     type: String,
@@ -15,13 +15,24 @@ const UserBlockSchema = new mongoose.Schema({
     type: String,
     default: "Sin especificar"
   },
+  fechaLimite: {
+    type: Date,
+    default: null
+  },
+ 
+   
+
+  esBloqueado: {
+    type: Boolean,
+    default: true
+  },
   userquibloquea: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
     required: true
   }
 }, {
-  timestamps: true // `createdAt` sirve como fecha de bloqueo
+  timestamps: true // createdAt = fecha del bloqueo
 });
 
 module.exports = mongoose.model('blockuser', UserBlockSchema);

@@ -19,7 +19,7 @@ const blockCtrl = {
 
     blockUser: async (req, res) => {
         try {
-            const { motivo, content } = req.body;//
+            const { motivo, content,fechaLimite ,fechaBloqueo } = req.body;//
             const adminId = req.user._id; // ID del admin que bloquea
 
             const user = await Users.findById(req.params.id);
@@ -34,8 +34,13 @@ const blockCtrl = {
                 user: req.params.id,
                 motivo: motivo || "Sin especificar",
                 content: content || "Sin especificar",
+                fechaBloqueo: new Date(), // ← Aquí se asigna la fecha actual
+
+                fechaLimite : fechaLimite  || "Sin especificar",
+                fechaBloqueo : fechaBloqueo  || "Sin especificar",
                    esBloqueado: true,
                 userquibloquea: adminId, // Guardamos quién lo bloqueó
+
             });
 
             await blockedUser.save();

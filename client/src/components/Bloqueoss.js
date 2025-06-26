@@ -8,7 +8,7 @@ const Bloqueoss = () => {
     // Verificamos si el usuario está bloqueado
     const isBlocked = userBlockReducer.blockedUsers.some(blockedUser => blockedUser.user._id === user._id && blockedUser.esBloqueado);
 
-    
+
 
     // Si el usuario está bloqueado, mostramos los detalles
     return (
@@ -26,15 +26,24 @@ const Bloqueoss = () => {
                             <span className="value">{userBlockReducer.blockedUsers.find(blockedUser => blockedUser.user._id === user._id)?.motivo || 'No disponible'}</span>
                         </div>
                         <div className="bloqueo-item">
+                            <span className="label">Description: </span>
+                            <span className="value">{userBlockReducer.blockedUsers.find(blockedUser => blockedUser.user._id === user._id)?.content || 'No disponible'}</span>
+                        </div>
+
+                        <div className="bloqueo-item">
                             <span className="label">Date du blocage: </span>
                             <span className="value">
-                                {new Date(userBlockReducer.blockedUsers.find(blockedUser => blockedUser.user._id === user._id)?.fechaBloqueo).toLocaleDateString() || 'No disponible'}
+                                {userBlockReducer.blockedUsers.find(blockedUser => blockedUser.user._id === user._id)?.fechaBloqueo
+                                    ? new Date(userBlockReducer.blockedUsers.find(blockedUser => blockedUser.user._id === user._id)?.fechaBloqueo).toLocaleDateString()
+                                    : 'No disponible'}
                             </span>
                         </div>
+
+
                         <div className="bloqueo-item">
                             <span className="label">Fin du blocage: </span>
                             <span className="value">
-                                {userBlockReducer.blockedUsers.find(blockedUser => blockedUser.user._id === user._id)?.fechaLimite 
+                                {userBlockReducer.blockedUsers.find(blockedUser => blockedUser.user._id === user._id)?.fechaLimite
                                     ? new Date(userBlockReducer.blockedUsers.find(blockedUser => blockedUser.user._id === user._id)?.fechaLimite).toLocaleDateString()
                                     : 'No disponible'}
                             </span>

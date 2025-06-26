@@ -9,8 +9,8 @@ const BloqueModalUser = ({ handleClose, user }) => {
   const [datosBloqueo, setDatosBloqueo] = useState({
     motivo: "",
     content: "",
-    fechaBloqueo: "",
-    fechaLimite: ""
+ 
+    fechaLimite : ""
   });
 
   const handleChangeInput = (e) => {
@@ -21,27 +21,13 @@ const BloqueModalUser = ({ handleClose, user }) => {
   const handleBloqueo = (e) => {
     e.preventDefault();
 
-    const { motivo, fechaBloqueo, fechaLimite } = datosBloqueo;
-
-    if (!motivo || !fechaBloqueo || !fechaLimite) {
+    const { motivo, fechaLimite,content  } = datosBloqueo;
+ 
+    if (!motivo ||   !fechaLimite || !content   ) {
       alert("❌ Completa todos los campos, incluyendo la fecha y hora.");
       return;
     }
-
-    const inicio = new Date(fechaBloqueo);
-    const limite = new Date(fechaLimite);
-    const ahora = new Date();
-
-    if (inicio < ahora) {
-      alert("⚠️ La fecha de inicio debe ser actual o futura.");
-      return;
-    }
-
-    if (limite <= inicio) {
-      alert("⚠️ La fecha límite debe ser posterior a la fecha de inicio.");
-      return;
-    }
-
+  
     dispatch(bloquearUsuario({ auth, datosBloqueo, user }));
     handleClose(); // Cierra el modal después del dispatch
     
@@ -78,10 +64,7 @@ const BloqueModalUser = ({ handleClose, user }) => {
                 <label>Detalles adicionales</label>
                 <textarea name="content" value={datosBloqueo.content} onChange={handleChangeInput} placeholder="Proporciona más detalles sobre el motivo del bloqueo" className="form-control" />
               </div>
-              <div className="form-group">
-                <label>Fecha de inicio del bloqueo</label>
-                <input type="datetime-local" className="form-control" name="fechaBloqueo" value={datosBloqueo.fechaBloqueo} onChange={handleChangeInput} />
-              </div>
+           
               <div className="form-group">
                 <label>Fecha límite del bloqueo</label>
                 <input type="datetime-local" className="form-control" name="fechaLimite" value={datosBloqueo.fechaLimite} onChange={handleChangeInput} />
