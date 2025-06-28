@@ -1,0 +1,71 @@
+{
+    "accountStatus": "Estado de la cuenta",
+    "activeAccount": "Cuenta Activa",
+    "noRestrictions": "Su cuenta no tiene restricciones actualmente.",
+    "backToHome": "Volver al inicio",
+    "blockedAccount": "Cuenta Bloqueada",
+    "blockSystem": "Sistema de Bloqueo",
+    "accountSuspended": "Su cuenta ha sido suspendida temporalmente. Por favor revise la información a continuación.",
+    "username": "Nombre de usuario",
+    "blockReason": "Motivo del Bloqueo",
+    "notSpecified": "No especificado",
+    "details": "Detalles",
+    "noAdditionalDetails": "No se proporcionaron detalles adicionales",
+    "blockDate": "Fecha de Bloqueo",
+    "expectedUnblock": "Fecha Prevista de Desbloqueo",
+    "indeterminate": "Indeterminada",
+    "requestUnblock": "Solicitar Desbloqueo",
+    "contactSupport": "Contactar al Soporte",
+    "blockSystemReghaia": "Sistema de Bloqueo Reghaia",
+
+ 
+ 
+      "contactSupportMessage": "Por favor contáctenos si cree que su bloqueo fue un error. Revisaremos su caso rápidamente.",
+      "ourEmail": "Nuestro correo",
+      "ourPhone": "Nuestro teléfono",
+      "yourMessage": "Tu mensaje",
+      "messagePlaceholder": "Explica por qué crees que tu cuenta debería ser desbloqueada...",
+      "cancel": "Cancelar",
+      "sendMessage": "Enviar mensaje",
+  
+  
+
+      "subject": "Solicitud de soporte por bloqueo de cuenta - Usuario: %s",
+      "title": "Solicitud de Revisión de Bloqueo",
+      "userInfo": "Información del Usuario",
+     
+      "userMessage": "Mensaje del Usuario",
+      "reviewAccount": "Revisar esta Cuenta",
+      "footer": "Este es un correo automático. Por favor no responda directamente a este Mensaje",
+
+
+    
+        "blockSupport": {
+          "subject": "Solicitud de soporte por bloqueo de cuenta - Usuario: %s",
+          "title": "Solicitud de Revisión de Bloqueo",
+          "userInfo": "Información del Usuario",
+          "blockDate": "Fecha de Bloqueo",
+          "userMessage": "Mensaje del Usuario",
+          "reviewAccount": "Revisar esta Cuenta",
+          "footer": "Este es un correo automático. Por favor no responda directamente a este mensaje."
+        },
+     
+      
+          "ourContactInfo": "Puedes contactarnos a través de:",
+          "messageRequired": "Por favor escribe tu mensaje antes de enviar",
+          "messageSentSuccess": "Tu mensaje ha sido enviado con éxito",
+          "messageSentError": "Error al enviar el mensaje. Por favor inténtalo nuevamente",
+         
+          "support": {
+            "subject": "Nuevo mensaje de contacto de un usuario bloqueado",
+            "title": "Mensaje de contacto recibido",
+            "from": "Correo del usuario",
+            "message": "Mensaje"
+          }
+}
+
+
+
+
+
+ 

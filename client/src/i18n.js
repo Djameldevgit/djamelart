@@ -2,6 +2,13 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 
+import arBloqueos from './locales/ar/bloqueos.json';
+import chBloqueos from './locales/ch/bloqueos.json';
+import enBloqueos from './locales/en/bloqueos.json';
+import esBloqueos from './locales/es/bloqueos.json';
+import frBloqueos from './locales/fr/bloqueos.json';
+import kaBloqueos from './locales/ka/bloqueos.json';
+import ruBloqueos from './locales/ru/bloqueos.json';
 
 import arCardbodycarousel from './locales/ar/cardbodycarousel.json';
 import chCardbodycarousel from './locales/ch/cardbodycarousel.json';
@@ -158,10 +165,11 @@ import esNavbar from './locales/es/navbar.json';
 import ruNavbar from './locales/ru/navbar.json';             // Nuevo
 import kaNavbar from './locales/ka/navbar.json';             // Nuevo
 import chNavbar from './locales/ch/navbar.json';             // Nuevo
+import Bloqueos from './pages/users/bloqueos';
 
 const resources = {
   ar: {
-
+    bloqueos: arBloqueos,
     cardbodycarousel: arCardbodycarousel,
  info: arInfo,
     cart: arCart,
@@ -182,6 +190,7 @@ const resources = {
 
   },
   ch: {
+    bloqueos: chBloqueos,
     cardbodycarousel: chCardbodycarousel,
     info: chInfo,
     cart: chCart,
@@ -201,7 +210,7 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
-
+    bloqueos: enBloqueos,
     cardbodycarousel: enCardbodycarousel,
     info: enInfo,
     cart: enCart,
@@ -221,7 +230,7 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
-
+    bloqueos: esBloqueos,
     cardbodycarousel: esCardbodycarousel,
     info: esInfo,
     cart: esCart,
@@ -241,7 +250,7 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
-
+    bloqueos: frBloqueos,
     cardbodycarousel: frCardbodycarousel,
     info: frInfo,
     cart: frCart,
@@ -261,7 +270,7 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   ka: {
-
+    bloqueos: kaBloqueos,
     cardbodycarousel: kaCardbodycarousel,
     info: kaInfo,
     cart: kaCart,
@@ -281,7 +290,7 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
-
+    bloqueos:ruBloqueos,
     cardbodycarousel: ruCardbodycarousel,
     info: ruInfo,
     cart: ruCart,

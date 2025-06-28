@@ -4,7 +4,7 @@ const Posts = require('./postModel'); // Asegúrate que la ruta es correcta
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
     maxlength: 25,
     unique: true

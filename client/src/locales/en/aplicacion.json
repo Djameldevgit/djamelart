@@ -1,7 +1,13 @@
 {
-    "title": {
-      "label": "Titre de l'œuvre",
-      "placeholder": "Nom qui identifie l'œuvre"
-    }
-  }
-  
+  "contactFormTitle": "Contact Form",
+  "adminEmailLabel": "Admin Email",
+  "yourEmailLabel": "Your Email",
+  "messageSubjectLabel": "Message Subject",
+  "enterMessageSubject": "Enter your message subject",
+  "yourMessageLabel": "Your Message",
+  "writeYourMessageHere": "Write your message here...",
+  "exitButton": "Exit",
+  "backToHomeButton": "Back to Home",
+  "sendButton": "Send",
+  "messageSentSuccessfully": "Message sent successfully"
+}

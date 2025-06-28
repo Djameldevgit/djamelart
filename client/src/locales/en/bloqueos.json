@@ -1,0 +1,42 @@
+ 
+{
+    "accountStatus": "Account Status",
+    "activeAccount": "Active Account",
+    "noRestrictions": "Your account currently has no restrictions.",
+    "backToHome": "Back to home",
+    "blockedAccount": "Blocked Account",
+    "blockSystem": "Block System",
+    "accountSuspended": "Your account has been temporarily suspended. Please review the information below.",
+    "username": "Username",
+    "blockReason": "Block Reason",
+    "notSpecified": "Not specified",
+    "details": "Details",
+    "noAdditionalDetails": "No additional details provided",
+    "blockDate": "Block Date",
+    "expectedUnblock": "Expected Unblock Date",
+    "indeterminate": "Indeterminate",
+    "requestUnblock": "Request Unblock",
+    "contactSupport": "Contact Support",
+    "blockSystemReghaia": "Reghaia Block System",
+
+
+
+
+
+   
+      "blockSupport": {
+        "subject": "Account Block Support Request - User: %s",
+        "title": "Block Review Request",
+        "userInfo": "User Information",
+        "blockDate": "Block Date",
+        "userMessage": "User Message",
+        "reviewAccount": "Review this Account",
+        "footer": "This is an automated email. Please do not reply directly to this message."
+      }
+    
+
+
+
+
+  }
+   

@@ -1,0 +1,32 @@
+{
+    "accountStatus": "账户状态",
+    "activeAccount": "活跃账户",
+    "noRestrictions": "您的账户目前没有限制。",
+    "backToHome": "返回首页",
+    "blockedAccount": "账户已锁定",
+    "blockSystem": "锁定系统",
+    "accountSuspended": "您的账户已被暂时冻结。请查看以下信息。",
+    "username": "用户名",
+    "blockReason": "锁定原因",
+    "notSpecified": "未指定",
+    "details": "详情",
+    "noAdditionalDetails": "未提供额外详情",
+    "blockDate": "锁定日期",
+    "expectedUnblock": "预计解锁日期",
+    "indeterminate": "未确定",
+    "requestUnblock": "申请解锁",
+    "contactSupport": "联系支持",
+    "blockSystemReghaia": "Reghaia锁定系统",
+
+  
+      "contactSupportMessage": "如果您认为您的封锁是错误的，请联系我们。我们将及时审核您的案件。",
+      "ourEmail": "我们的邮箱",
+      "ourPhone": "我们的电话",
+      "yourMessage": "您的留言",
+      "messagePlaceholder": "请说明您认为账户应该被解封的原因...",
+      "cancel": "取消",
+      "sendMessage": "发送消息"
+   
+
+
+  }

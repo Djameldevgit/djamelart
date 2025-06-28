@@ -1,5 +1,5 @@
 require('dotenv').config() 
-require('./cronJobs/DeleteUsersNoVerified');
+//require('./cronJobs/DeleteUsersNoVerified');
 
 const express = require('express')
 const mongoose = require('mongoose')
@@ -20,7 +20,7 @@ app.use(express.json())
 const corsOptions = {
   origin: [
     "http://localhost:3000",
-    "https://djamelart.onrender.com/"
+    "https://djamelart.onrender.com"
   ],
   credentials: true
 };

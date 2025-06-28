@@ -1,0 +1,34 @@
+{
+    "accountStatus": "Addad n umiḍan",
+    "activeAccount": "Amiḍan urmiden",
+    "noRestrictions": "Amiḍan-ik ur yesɛi ara ḥǧayeg akka tura.",
+    "backToHome": "Uɣal ɣer asebter agejdan",
+    "blockedAccount": "Amiḍan yettwaseɣlen",
+    "blockSystem": "Anagraw n tseɣlit",
+    "accountSuspended": "Amiḍan-ik yettwaseɣlen s lweqt. Ttxil-k wali talɣut-agi ddaw.",
+    "username": "Isem n useqdac",
+    "blockReason": "Aɣawas n tseɣlit",
+    "notSpecified": "Ur d-yettwabeddi ara",
+    "details": "Talqayt",
+    "noAdditionalDetails": "Ulac talqayt timaynutin ittawḍen",
+    "blockDate": "Azemz n tseɣlit",
+    "expectedUnblock": "Azemz yettunan n tuffɣa n tseɣlit",
+    "indeterminate": "Ur d-yettwassan ara",
+    "requestUnblock": "Ssuter tuffɣa n tseɣlit",
+    "contactSupport": "Nermes tallalt",
+    "blockSystemReghaia": "Anagraw n tseɣlit n Reghaia",
+
+
+ 
+      "contactSupportMessage": "Ma ttxil-k ttemlileɣ-d ma tebɣiḍ ad tḥeqqeḍ dakken tseɣlit-ik d tuccḍa. Ad nḥeqqen lḥala-ik s lɛejal.",
+      "ourEmail": "Imayl-nneɣ",
+      "ourPhone": "Tiliɣri-nneɣ",
+      "yourMessage": "Izen-ik/im",
+      "messagePlaceholder": "Ssefhem ayɣer tebɣiḍ ad yettwakkes uḥbas n umiḍan-ik...",
+      "cancel": "Sefsex",
+      "sendMessage": "Azen izen"
+    
+
+     
+
+  }

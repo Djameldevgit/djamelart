@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
+// Elimina fechaBloqueo ya que tienes timestamps
 const UserBlockSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -19,9 +20,6 @@ const UserBlockSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
- 
-   
-
   esBloqueado: {
     type: Boolean,
     default: true
@@ -32,9 +30,8 @@ const UserBlockSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  timestamps: true // createdAt = fecha del bloqueo
+  timestamps: true // Esto creará createdAt (fecha de bloqueo) y updatedAt automáticamente
 });
 
-module.exports = mongoose.model('blockuser', UserBlockSchema);
-
  
+module.exports = mongoose.model('BlockUser', UserBlockSchema);

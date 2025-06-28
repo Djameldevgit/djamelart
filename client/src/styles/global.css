@@ -84,6 +84,9 @@ url("./header.css"); */
 @import url("./banco.css");
 @import url("./chekout.css");
 @import url("./login.css");
+@import url("./bloqueos.css");
+@import url("./contact.css");
+
 
 @import url("./usersadministration/userstable.css");
 @import url("./usersadministration/modalbloquear.css");

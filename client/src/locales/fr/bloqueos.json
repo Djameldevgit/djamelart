@@ -1,0 +1,34 @@
+
+  
+  {
+    "accountStatus": "État du compte",
+    "activeAccount": "Compte Actif",
+    "noRestrictions": "Votre compte n'a actuellement aucune restriction.",
+    "backToHome": "Retour à l'accueil",
+    "blockedAccount": "Compte Bloqué",
+    "blockSystem": "Système de Blocage",
+    "accountSuspended": "Votre compte a été temporairement suspendu. Veuillez lire les informations ci-dessous.",
+    "username": "Nom d'utilisateur",
+    "blockReason": "Raison du Blocage",
+    "notSpecified": "Non spécifiée",
+    "details": "Détails",
+    "noAdditionalDetails": "Aucun détail supplémentaire fourni",
+    "blockDate": "Date du Blocage",
+    "expectedUnblock": "Date de Déblocage Prévue",
+    "indeterminate": "Indéterminée",
+    "requestUnblock": "Demande de Déblocage",
+    "contactSupport": "Contacter le Support",
+    "blockSystemReghaia": "Système de Blocage Reghaia",
+
+
+    "contactSupportMessage": "Veuillez nous contacter si vous pensez que votre blocage est une erreur. Nous examinerons votre cas rapidement.",
+    "ourEmail": "Notre email",
+    "ourPhone": "Notre téléphone",
+    "yourMessage": "Votre message",
+    "messagePlaceholder": "Expliquez pourquoi vous pensez que votre compte devrait être débloqué...",
+    "cancel": "Annuler",
+    "sendMessage": "Envoyer le message"
+
+
+
+  }

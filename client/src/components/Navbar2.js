@@ -107,14 +107,17 @@ const Navbar2 = () => {
             >
               {auth.user ? (
                 <>
+                  <NavDropdown.Item as={Link} to="/contact">contact</NavDropdown.Item>
+
                   <NavDropdown.Item onClick={openStatusModal}>{t('addPost', { lng: lang })}</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/informacionaplicacion">{t('appInfo', { lng: lang })}</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/message">{t('adminChat', { lng: lang })}</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/rolesuser">{t('roles', { lng: lang })}</NavDropdown.Item>
                   {auth.user.role === 'admin' && (
                     <>
-                      <NavDropdown.Item as={Link} to="/users/adminsendemail">send email admin</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/contact">contact</NavDropdown.Item>
 
+                      <NavDropdown.Item as={Link} to="/users/adminsendemail">send email admin</NavDropdown.Item>
 
                       <NavDropdown.Item as={Link} to="/users/userss">{t('users', { lng: lang })}</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/postspendientes">{t('pendingPosts', { lng: lang })}</NavDropdown.Item>

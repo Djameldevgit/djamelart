@@ -1,7 +1,13 @@
 {
-    "title": {
-      "label": "Titre de l'œuvre",
-      "placeholder": "Nom qui identifie l'œuvre"
-    }
-  }
-  
+  "contactFormTitle": "联系表单",
+  "adminEmailLabel": "管理员邮箱",
+  "yourEmailLabel": "您的邮箱",
+  "messageSubjectLabel": "邮件主题",
+  "enterMessageSubject": "输入您的邮件主题",
+  "yourMessageLabel": "您的消息",
+  "writeYourMessageHere": "在此输入您的消息...",
+  "exitButton": "退出",
+  "backToHomeButton": "返回首页",
+  "sendButton": "发送",
+  "messageSentSuccessfully": "消息发送成功"
+}

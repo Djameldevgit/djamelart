@@ -1,7 +1,13 @@
 {
-    "title": {
-      "label": "Titre de l'œuvre",
-      "placeholder": "Nom qui identifie l'œuvre"
-    }
-  }
-  
+  "contactFormTitle": "Контактная форма",
+  "adminEmailLabel": "Email администратора",
+  "yourEmailLabel": "Ваш Email",
+  "messageSubjectLabel": "Тема сообщения",
+  "enterMessageSubject": "Введите тему сообщения",
+  "yourMessageLabel": "Ваше сообщение",
+  "writeYourMessageHere": "Напишите ваше сообщение здесь...",
+  "exitButton": "Выход",
+  "backToHomeButton": "Вернуться на главную",
+  "sendButton": "Отправить",
+  "messageSentSuccessfully": "Сообщение успешно отправлено"
+}

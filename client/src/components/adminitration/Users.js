@@ -175,8 +175,9 @@ const Users = () => {
                 <tr key={user._id}>
                   <td>{index + 1}</td>
                   <td><UserCard user={user} /></td>
-                  <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                  <td>
+
+                  
+                   <td>
                     {user.isVerified ? (
                       <span className="badge bg-success">✔ Verificado</span>
                     ) : (
@@ -190,7 +191,7 @@ const Users = () => {
                       <span className="text-warning">🟠 Inactivo</span>
                     )}
                   </td>
- 
+                 
                   <td>
                     {user.esBloqueado ? (
                       <span className="text-danger">🚫 Bloqueado</span>

@@ -1,6 +1,13 @@
 {
-    
-       "art_painting": "vente d'art"
-    
-  }
- 
+     "contactFormTitle": "Formulaire de Contact",
+     "adminEmailLabel": "Email de l'Administrateur",
+     "yourEmailLabel": "Votre Email",
+     "messageSubjectLabel": "Sujet du Message",
+     "enterMessageSubject": "Entrez le sujet de votre message",
+     "yourMessageLabel": "Votre Message",
+     "writeYourMessageHere": "Écrivez votre message ici...",
+     "exitButton": "Quitter",
+     "backToHomeButton": "Retour à l'Accueil",
+     "sendButton": "Envoyer",
+     "messageSentSuccessfully": "Message envoyé avec succès"
+   }

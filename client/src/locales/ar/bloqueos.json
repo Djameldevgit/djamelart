@@ -1,0 +1,39 @@
+{
+    "accountStatus": "حالة الحساب",
+    "activeAccount": "حساب نشط",
+    "noRestrictions": "حسابك ليس لديه أي قيود حاليا.",
+    "backToHome": "العودة إلى الصفحة الرئيسية",
+    "blockedAccount": "حساب محظور",
+    "blockSystem": "نظام الحظر",
+    "accountSuspended": "تم تعليق حسابك مؤقتا. يرجى مراجعة المعلومات أدناه.",
+    "username": "اسم المستخدم",
+    "blockReason": "سبب الحظر",
+    "notSpecified": "غير محدد",
+    "details": "تفاصيل",
+    "noAdditionalDetails": "لم يتم تقديم تفاصيل إضافية",
+    "blockDate": "تاريخ الحظر",
+    "expectedUnblock": "تاريخ فك الحظر المتوقع",
+    "indeterminate": "غير محدد",
+    "requestUnblock": "طلب فك الحظر",
+    "contactSupport": "اتصل بالدعم",
+    "blockSystemReghaia": "نظام حظر الرغاية",
+
+
+
+   
+      "blockSupport": {
+        "subject": "طلب دعم لحساب محظور - مستخدم: %s",
+        "title": "طلب مراجعة الحظر",
+        "userInfo": "معلومات المستخدم",
+       
+        "userMessage": "رسالة المستخدم",
+        "reviewAccount": "مراجعة هذا الحساب",
+        "footer": "هذا بريد إلكتروني آلي. يرجى عدم الرد مباشرة على هذه الرسالة."
+      },
+
+     
+        "messageSentSuccess": "Tu mensaje ha sido enviado. Nos pondremos en contacto contigo pronto.",
+        "messageSentError": "Error al enviar el mensaje. Por favor inténtalo nuevamente más tarde."
+    
+
+  }

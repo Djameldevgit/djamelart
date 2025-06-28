@@ -1,15 +1,20 @@
  
+const mongoose = require('mongoose');
+ 
+ 
 const Users = require('../models/userModel');
 const Posts = require('../models/postModel');
 const Comments = require('../models/commentModel');
 
 const Notifications = require('../models/notifyModel')
+ 
+ 
+ const sendContactMessage = require('./sendMailContact');
 
-const mongoose = require('mongoose');
 
 
-
-
+ 
+ 
 
 class APIfeatures {
   constructor(query, queryString) {
@@ -27,6 +32,58 @@ class APIfeatures {
 }
 const userCtrl = {
 
+ 
+  contactMailSupport : async (req, res) => {
+    
+    try {
+      const { title, message, lang } = req.body;
+      const userEmail = req.user.email; // debe estar autenticado
+  
+      console.log('📩 Enviando contacto desde:', userEmail);
+  
+      await sendContactMessage({
+        from: userEmail,
+        subject: title,
+        message,
+        lang: lang || 'es'
+      });
+  
+      return res.json({ msg: 'Mensaje de contacto enviado correctamente.' });
+    } catch (err) {
+      console.error('❌ Error al enviar contacto:', err); // 🛠 log completo
+      return res.status(500).json({ msg: 'Error al enviar el mensaje de contacto.' });
+    }
+  },
+  
+    
+      contactBlockedSupport: async (req, res) => {
+        try {
+          const { email, username, _id, blockDate, blockReason, message, lang } = req.body;
+    
+          if (!email || !message || !_id) {
+            return res.status(400).json({ msg: 'Faltan campos requeridos.' });
+          }
+    
+          const userData = {
+            email,
+            username,
+            _id,
+            blockDate: blockDate || new Date(),
+            blockReason: blockReason || 'No especificado'
+          };
+    
+          await sendSupportMessage(userData, message, lang || 'es');
+    
+          return res.json({ msg: 'Solicitud enviada correctamente.' });
+        } catch (err) {
+          console.error(err);
+          return res.status(500).json({ msg: 'Error al enviar la solicitud.' });
+        }
+      
+    },
+    
+  
+  
 
   validateUserActivity: async (req, res, next) => {
     const user = await Users.findById(req.user._id);

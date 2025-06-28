@@ -23,7 +23,7 @@ export const bloquearUsuario = ({ auth, datosBloqueo, user }) => async (dispatch
       motivo: datosBloqueo.motivo,
       content: datosBloqueo.content,
       fechaLimite: datosBloqueo.fechaLimite,
-      fechaBloqueo: datosBloqueo.fechaBloqueo
+     
     }, auth.token);
 
     // 🟢 ACTUALIZA el estado de Redux

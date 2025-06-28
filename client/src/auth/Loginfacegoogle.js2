@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import FacebookLogin from 'react-facebook-login';
 import { socialLogin } from '../redux/actions/authAction';
 import { showErrMsg, showSuccessMsg } from '../utils/notification/Notification';
 
@@ -11,40 +10,21 @@ const Loginfacegoogle = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  // GOOGLE
   const handleGoogleSuccess = async (credentialResponse) => {
     const tokenId = credentialResponse.credential;
     if (tokenId) {
       try {
         await dispatch(socialLogin({ tokenId }, 'google'));
-        setMsg({ err: '', success: 'Inicio de sesión exitoso con Google' });
+        setMsg({ err: '', success: 'Inicio de sesión exitoso' });
         history.push('/');
       } catch (err) {
-        setMsg({ err: 'Error al procesar el login con Google', success: '' });
+        setMsg({ err: 'Error al procesar el login', success: '' });
       }
     }
   };
 
   const handleGoogleError = () => {
     setMsg({ err: 'Inicio de sesión cancelado o fallido con Google', success: '' });
-  };
-
-  // FACEBOOK
-  const handleFacebookResponse = async (response) => {
-    try {
-      const { accessToken, userID } = response;
-
-      if (!accessToken || !userID) {
-        setMsg({ err: 'Error al autenticar con Facebook', success: '' });
-        return;
-      }
-
-      await dispatch(socialLogin({ accessToken, userID }, 'facebook'));
-      setMsg({ err: '', success: 'Inicio de sesión exitoso con Facebook' });
-      history.push('/');
-    } catch (err) {
-      setMsg({ err: 'Error al procesar el login con Facebook', success: '' });
-    }
   };
 
   return (
@@ -56,23 +36,11 @@ const Loginfacegoogle = () => {
 
       <div className="hr">Iniciar sesión con</div>
 
-      <div className="social mb-2">
+      <div className="social">
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
           onError={handleGoogleError}
           useOneTap
-        />
-      </div>
-
-      <div className="social">
-        <FacebookLogin
-          appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-          autoLoad={false}
-          fields="name,email,picture"
-          callback={handleFacebookResponse}
-          icon="fa-facebook"
-          textButton=" Iniciar sesión con Facebook"
-          cssClass="btn btn-primary w-100"
         />
       </div>
     </div>
@@ -80,4 +48,3 @@ const Loginfacegoogle = () => {
 };
 
 export default Loginfacegoogle;
-

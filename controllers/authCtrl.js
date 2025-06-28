@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 const Users = require('../models/userModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -6,7 +8,7 @@ const sendCustomEmail = require('./sendCustomEmail')
 const { google } = require('googleapis')
 const { OAuth2 } = google.auth
 const { CLIENT_URL } = process.env
-
+ 
 const client = new OAuth2(process.env.GOOGLE_CLIENT_ID)
 
 const authCtrl = {
@@ -267,59 +269,78 @@ const authCtrl = {
         }
     },
 
-
     facebookLogin: async (req, res) => {
         try {
-            const { accessToken, userID } = req.body
-
-            const URL = `https://graph.facebook.com/v2.9/${userID}/?fields=id,name,email,picture&access_token=${accessToken}`
-
-            const data = await fetch(URL).then(res => res.json()).then(res => { return res })
-
-            const { email, name, picture } = data
-
-            const password = email + process.env.FACEBOOK_SECRET
-
-            const passwordHash = await bcrypt.hash(password, 12)
-
-            const user = await Users.findOne({ email })
-
-            if (user) {
-                const isMatch = await bcrypt.compare(password, user.password)
-                if (!isMatch) return res.status(400).json({ msg: "Password is incorrect." })
-
-                const refresh_token = createRefreshToken({ id: user._id })
-                res.cookie('refreshtoken', refresh_token, {
-                    httpOnly: true,
-                    path: '/user/refresh_token',
-                    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-                })
-
-                res.json({ msg: "Login success!" })
-            } else {
-                const newUser = new Users({
-                    name, email, password: passwordHash, avatar: picture.data.url
-                })
-
-                await newUser.save()
-
-                const refresh_token = createRefreshToken({ id: newUser._id })
-                res.cookie('refreshtoken', refresh_token, {
-                    httpOnly: true,
-                    path: '/user/refresh_token',
-                    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-                })
-
-                res.json({ msg: "Login success!" })
+          const { accessToken, userID } = req.body;
+      
+          // 1. Llamada a la API de Facebook para obtener datos del usuario
+          const URL = `https://graph.facebook.com/v2.9/${userID}?fields=id,name,email,picture&access_token=${accessToken}`;
+          const response = await axios.get(URL);
+      
+          const { email, name, picture } = response.data;
+      
+          if (!email)
+            return res.status(400).json({ msg: "Tu cuenta de Facebook no tiene un correo confirmado." });
+      
+          // 2. Creamos una contraseña segura basada en el email y una secret
+          const password = email + process.env.FACEBOOK_SECRET;
+          const passwordHash = await bcrypt.hash(password, 12);
+      
+          // 3. Buscamos el usuario por email
+          let user = await Users.findOne({ email });
+      
+          if (user) {
+            // Si existe, validamos la contraseña generada
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) return res.status(400).json({ msg: "Autenticación fallida." });
+      
+            // Si existe y no está verificado, lo marcamos como verificado
+            if (!user.isVerified) {
+              user.isVerified = true;
+              await user.save();
             }
-
-
+          } else {
+            // 4. Si no existe, generamos un username a partir del correo
+            const username = email.split("@")[0].toLowerCase().replace(/\s/g, '');
+      
+            // 5. Creamos el nuevo usuario
+            user = new Users({
+              name,
+              username,
+              email,
+              password: passwordHash,
+              avatar: picture.data.url,
+              isVerified: true  // 👈 Se considera confiable porque viene de Facebook
+            });
+      
+            await user.save();
+          }
+      
+          // 6. Creamos y devolvemos tokens
+          const access_token = createAccessToken({ id: user._id });
+          const refresh_token = createRefreshToken({ id: user._id });
+      
+          res.cookie('refreshtoken', refresh_token, {
+            httpOnly: true,
+            path: '/api/refresh_token',
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días
+          });
+      
+          res.json({
+            msg: "Inicio de sesión exitoso",
+            access_token,
+            user: {
+              ...user._doc,
+              password: ''
+            }
+          });
+      
         } catch (err) {
-            return res.status(500).json({ msg: err.message })
+          console.error(err);
+          return res.status(500).json({ msg: "Error del servidor en login con Facebook." });
         }
-    },
-
-
+      },
+      
     logout: async (req, res) => {
         try {
             res.clearCookie('refreshtoken', { path: '/api/refresh_token' })

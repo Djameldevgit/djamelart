@@ -11,7 +11,7 @@ import Alert from './components/alert/Alert'
 import StatusModal from './components/StatusModal'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { dispatchLogin, refreshToken } from './redux/actions/authAction'
+import {   refreshToken } from './redux/actions/authAction'
 import { getPosts } from './redux/actions/postAction'
 import { getSuggestions } from './redux/actions/suggestionsAction'
 
@@ -26,8 +26,7 @@ import { getPostsPendientes } from './redux/actions/postAproveAction'
 import Postspendientes from './pages/postspendientes'
 
 import Post from './pages/post'
-import Bloqueoss from './components/Bloqueoss';
-
+ 
 import Navbar2 from './components/Navbar2'
 
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
@@ -35,7 +34,7 @@ import Roles from './pages/roles';
 
 
 import { getCart } from './redux/actions/cartAction';
-import axios from 'axios'
+ 
 import Cart from './pages/carte/cart';
 import Chekoutt from './pages/carte/Chekoutt';
 import Profile from './pages/profile.';
@@ -45,8 +44,7 @@ import Orderss from './pages/carte/orderss';
 import { getOrders } from './redux/actions/orderAction';
 import ForgotPassword from './auth/ForgotPassword';
 import ResetPassword from './auth/ResetPassword';
-
-import NotFound from './components/NotFound';
+ 
 
 import ActivatePage from './auth/ActivatePage';
  
@@ -55,11 +53,13 @@ import { getBlockedUsers } from './redux/actions/userBlockAction';
 import Usersblock from './pages/usersblock';
 import UsersActionAction from './pages/users/UsersActionAction';
  
-import Paginabloqueos from './pages/users/paginabloqueos';
 import Userss from './pages/users/userss';
 import UsersActionn from './pages/users/UsersActionn';
 import ListaUseariosbloqueadoss from './pages/listaUseariosbloqueadoss';
 import AdminSendEmails from './pages/users/adminSendEmails';
+import Bloqueos from './pages/users/bloqueos';
+import Contactt from './pages/contactt';
+ 
  
 function App() {
   const { auth, status, modal, call, languageReducer } = useSelector(state => state)
@@ -132,8 +132,8 @@ function App() {
   if (auth.token && auth.user?.esBloqueado) {
     return (
       <Router>
-        <Route exact path="/bloqueos" component={Bloqueoss} />
-        <Route path="*" component={Bloqueoss} />
+        <Route exact path="/bloqueos" component={Bloqueos} />
+        <Route path="*" component={Bloqueos} />
       </Router>
     )
   }
@@ -158,13 +158,15 @@ function App() {
 
           <Route exact path="/" component={Home} />
           <Route exact path="/register" component={Register} />
-          <Route exact path="/bloqueos" component={Bloqueoss} />
+          <Route exact path="/bloqueos" component={Bloqueos} />
           <Route exact path="/post/:id" component={Post} />
           <Route exact path="/message/:id" component={Message} />
           <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
-          <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
+          <Route exact path="/contact" component={auth.token ? Contactt : Login} />
+
+
           <Route exact path="/users/adminsendemail" component={auth.token ? AdminSendEmails : Login} />
-          <Route exact path="/chekout" component={auth.token ? Chekoutt : Login} />
+          <Route exact path="/cart/chekout" component={auth.token ? Chekoutt : Login} />
           <Route exact path="/cart/cartcarrito" component={auth.token ? Cart : Login} />
          
           <Route exact path="/rolesuser" component={auth.token ? Roles : Login} />
