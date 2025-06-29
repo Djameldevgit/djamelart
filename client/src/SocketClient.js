@@ -31,7 +31,23 @@ const SocketClient = () => {
         socket.emit('joinUser', auth.user)
     },[socket, auth.user])
 
-    // Likes
+    useEffect(() => {
+        socket.on('UserDisconnectedWithTime', data => {
+          dispatch({ type: MESS_TYPES.UPDATE_USER_STATUS, payload: data }) // { id, lastDisconnectedAt }
+        })
+      
+        return () => socket.off('UserDisconnectedWithTime')
+      }, [socket, dispatch])
+    
+      
+      useEffect(() => {
+        socket.on('CheckUserOffline', id =>{
+            dispatch({type: GLOBALTYPES.OFFLINE, payload: id})
+        })
+
+        return () => socket.off('CheckUserOffline')
+    },[socket, dispatch])
+
     useEffect(() => {
         socket.on('likeToClient', newPost =>{
             dispatch({type: POST_TYPES.UPDATE_POST, payload: newPost})
@@ -157,14 +173,7 @@ const SocketClient = () => {
     },[socket, dispatch, online])
 
     // Check User Offline
-    useEffect(() => {
-        socket.on('CheckUserOffline', id =>{
-            dispatch({type: GLOBALTYPES.OFFLINE, payload: id})
-        })
-
-        return () => socket.off('CheckUserOffline')
-    },[socket, dispatch])
-
+    
 
     // Call User
     useEffect(() => {

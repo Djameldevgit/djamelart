@@ -15,9 +15,10 @@ const CardHeader = ({ post }) => {
     const history = useHistory();
 
     const handleChatWithOwner = () => {
-        history.push('/message');
-    };
-
+        if (post.user && post.user._id) {
+          history.push(`/message/${post.user._id}`)
+        }
+      }
     const handleAprove = () => {
         if (window.confirm("¿Vous voulez aprouve ce post?")) {
             dispatch(aprovarPostPendiente(post, 'aprovado', auth));
@@ -95,7 +96,7 @@ const CardHeader = ({ post }) => {
 
                         <Dropdown.Item onClick={handleChatWithOwner}>
                             <span className="material-icons mr-2">chat</span>
-                            Chat Administation
+                            Contactar vendedor
                         </Dropdown.Item>
                         <Dropdown.Item>
                             <span className="material-icons mr-2">person_add</span>

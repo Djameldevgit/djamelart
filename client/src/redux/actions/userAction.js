@@ -9,7 +9,7 @@ export const USER_TYPES = {
    
     DELETE_USER: 'DELETE_USER',
     UPDATE_USER_BLOCK_STATUS: "UPDATE_USER_BLOCK_STATUS", // nuevo
-    
+     
 
 };
  

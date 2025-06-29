@@ -50,15 +50,16 @@ const userReducer = (state = initialState, action) => {
                   result: state.result - 1
                 };
       
-                case   USER_TYPES.UPDATE_USER_STATUS :
+                case USER_TYPES.UPDATE_USER_BLOCK_STATUS:
                     return {
                       ...state,
                       users: state.users.map(user =>
-                        user._id === action.payload.id
-                          ? { ...user, lastDisconnectedAt: action.payload.lastDisconnectedAt }
+                        user._id === action.payload.userId
+                          ? { ...user, esBloqueado: action.payload.esBloqueado }
                           : user
-                      )
+                      ),
                     };
+                  
                   
                 
         default:

@@ -1,5 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import {
+  Container,
+  Table,
+  Dropdown,
+  Badge,
+  Spinner,
+  Button,
+  Modal,
+} from "react-bootstrap";
+import {
+  PencilFill,
+  TrashFill,
+  LockFill,
+  UnlockFill,
+  CheckCircleFill,
+  XCircleFill,
+  ThreeDotsVertical,
+} from "react-bootstrap-icons";
+import moment from "moment";
+import "moment/locale/es";
+
 import { getDataAPI } from "../../utils/fetchData";
 import {
   deleteUser,
@@ -11,42 +32,74 @@ import {
   unBlockUser,
   getBlockedUsers,
 } from "../../redux/actions/userBlockAction";
+import { MESS_TYPES } from "../../redux/actions/messageAction";
+import { GLOBALTYPES } from "../../redux/actions/globalTypes";
+
 import LoadMoreBtn from "../LoadMoreBtn";
-import LoadIcon from "../../images/loading.gif";
 import UserCard from "../UserCard";
-import { Dropdown } from "react-bootstrap";
 import BloqueModalUser from "./BloqueModalUser";
- 
+
+moment.locale("es");
+
 const Users = () => {
-  const { homeUsers, auth,userBlockReducer} = useSelector((state) => state);
+  const { homeUsers, auth, socket, online } = useSelector((state) => state);
   const dispatch = useDispatch();
 
   const [load, setLoad] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showBlockModal, setShowBlockModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [, forceRender] = useState(0); // para forzar render cada minuto
 
-  // Cargar usuarios bloqueados al inicio
+  // Refrescar moment().fromNow() cada minuto
+  useEffect(() => {
+    const interval = setInterval(() => {
+      forceRender((n) => n + 1);
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Obtener usuarios bloqueados
   useEffect(() => {
     if (auth.token) {
       dispatch(getBlockedUsers(auth.token));
     }
   }, [auth.token, dispatch]);
 
-  // Cargar usuarios al inicio
+  // Socket: estado en línea y última desconexión
+  useEffect(() => {
+    if (!socket || !auth.user) return;
+
+    socket.emit("checkUserOnline", auth.user);
+
+    socket.on("checkUserOnlineToClient", (data) => {
+      dispatch({ type: GLOBALTYPES.ONLINE, payload: data });
+    });
+
+    socket.on("CheckUserOffline", (data) => {
+      dispatch({ type: MESS_TYPES.UPDATE_USER_STATUS, payload: data });
+    });
+
+    return () => {
+      socket.off("checkUserOnlineToClient");
+      socket.off("CheckUserOffline");
+    };
+  }, [socket, auth.user, dispatch]);
+
+  // Obtener usuarios desde el backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoad(true);
         const res = await getDataAPI(`users?limit=9`, auth.token);
-        if (res.data && res.data.users) {
-          dispatch({
-            type: USER_TYPES.GET_USERS,
-            payload: { ...res.data, page: 1 },
-          });
-        }
+        dispatch({
+          type: USER_TYPES.GET_USERS,
+          payload: { ...res.data, page: 1 },
+        });
       } catch (err) {
-        console.error("Error fetching users:", err);
+        console.error("Error al obtener usuarios:", err);
       } finally {
         setLoad(false);
         setInitialLoad(false);
@@ -70,27 +123,23 @@ const Users = () => {
         payload: { ...res.data, page: homeUsers.page + 1 },
       });
     } catch (err) {
-      console.error("Error loading more users:", err);
+      console.error("Error al cargar más usuarios:", err);
     } finally {
       setLoad(false);
     }
   };
 
-  const handleDeleteUser = async (userId) => {
-    if (window.confirm("¿Estás seguro de eliminar este usuario permanentemente?")) {
-      try {
-        await dispatch(deleteUser({ id: userId, auth }));
-        const res = await getDataAPI(
-          `users?limit=${homeUsers.page * 9}`,
-          auth.token
-        );
-        dispatch({
-          type: USER_TYPES.GET_USERS,
-          payload: { ...res.data, page: homeUsers.page },
-        });
-      } catch (err) {
-        console.error("Error al eliminar usuario:", err);
-      }
+  const confirmDelete = (userId) => {
+    setUserToDelete(userId);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      await dispatch(deleteUser({ id: userToDelete, auth }));
+      setShowDeleteModal(false);
+    } catch (err) {
+      console.error("Error al eliminar usuario:", err);
     }
   };
 
@@ -103,18 +152,19 @@ const Users = () => {
     setShowBlockModal(false);
     setSelectedUser(null);
   };
+
   const handleBlockUser = async (datosBloqueo) => {
     try {
-      await dispatch(bloquearUsuario({ auth, datosBloqueo, user: selectedUser }));
-
+      await dispatch(
+        bloquearUsuario({ auth, datosBloqueo, user: selectedUser })
+      );
       dispatch({
         type: USER_TYPES.UPDATE_USER_BLOCK_STATUS,
         payload: {
           userId: selectedUser._id,
-          esBloqueado: true, // ✅ Esto es lo que actualiza el estado en tiempo real
+          esBloqueado: true,
         },
       });
-
       dispatch(getBlockedUsers(auth.token));
       handleCloseModal();
     } catch (err) {
@@ -122,13 +172,9 @@ const Users = () => {
     }
   };
 
-
-
-
   const handleUnblockUser = async (user) => {
     try {
       await dispatch(unBlockUser({ user, auth }));
-
       dispatch({
         type: USER_TYPES.UPDATE_USER_BLOCK_STATUS,
         payload: {
@@ -136,7 +182,6 @@ const Users = () => {
           esBloqueado: false,
         },
       });
-
       dispatch(getBlockedUsers(auth.token));
     } catch (err) {
       console.error("Error al desbloquear usuario:", err);
@@ -145,115 +190,138 @@ const Users = () => {
 
   if (initialLoad) {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "50vh" }}
-      >
-        <img src={LoadIcon} alt="loading" />
+      <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
+        <Spinner animation="border" variant="primary" />
       </div>
     );
   }
 
   return (
-    <div className="container-fluid">
+    <Container fluid className="py-4">
+      {/* Modal Confirmación Eliminar */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de eliminar este usuario permanentemente?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleDeleteUser}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Tabla de Usuarios */}
       <div className="table-responsive">
-        <table className="table table-striped table-hover">
+        <Table striped bordered hover className="align-middle">
           <thead className="table-dark">
             <tr>
               <th>#</th>
               <th>Usuario</th>
+              <th>Estado</th>
+              <th>Última desconexión</th>
               <th>Registro</th>
               <th>Verificación</th>
               <th>Estado</th>
-              <th>Activación</th> {/* ✅ Nueva columna */}
+              <th>Bloqueo</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {homeUsers.users.length > 0 ? (
-              homeUsers.users.map((user, index) => (
-                <tr key={user._id}>
-                  <td>{index + 1}</td>
-                  <td><UserCard user={user} /></td>
-
-                  
-                   <td>
-                    {user.isVerified ? (
-                      <span className="badge bg-success">✔ Verificado</span>
-                    ) : (
-                      <span className="badge bg-danger">✘ No verificado</span>
-                    )}
-                  </td>
-                  <td>
-                    {user.isActive ? (
-                      <span className="text-success">🟢 Activo</span>
-                    ) : (
-                      <span className="text-warning">🟠 Inactivo</span>
-                    )}
-                  </td>
-                 
-                  <td>
-                    {user.esBloqueado ? (
-                      <span className="text-danger">🚫 Bloqueado</span>
-                    ) : (
-                      <span className="text-success">✅ No bloqueado</span>
-                    )}
-                  </td>
-                  <td>
-                    <Dropdown>
-                      <Dropdown.Toggle variant="outline-secondary" size="sm">
-                        Acciones
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Item as="button">✏️ Editar</Dropdown.Item>
-                        <Dropdown.Item
-                          className="text-danger"
-                          as="button"
-                          onClick={() => handleDeleteUser(user._id)}
-                        >
-                          🗑️ Eliminar
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                          as="button"
-                          className={user.isActive ? "text-warning" : "text-success"}
-                          onClick={() =>
-                            dispatch(toggleActiveStatus(user._id, auth.token))
-                          }
-                        >
-                          {user.isActive
-                            ? "🔒 Desactivar cuenta"
-                            : "🔓 Activar cuenta"}
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                          as="button"
-                          className={user.esBloqueado ? "text-success" : "text-danger"}
-                          onClick={() =>
-                            user.esBloqueado
-                              ? handleUnblockUser(user)
-                              : handleOpenModal(user)
-                          }
-                        >
-                          {user.esBloqueado
-                            ? "🔓 Desbloquear usuario"
-                            : "🚫 Bloquear usuario"}
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="8" className="text-center py-4">
-                  No se encontraron usuarios
+            {homeUsers.users.map((user, index) => (
+              <tr key={user._id}>
+                <td>{index + 1}</td>
+                <td><UserCard user={user} /></td>
+                <td>
+                  {online.some((u) => u._id === user._id) ? (
+                    <Badge bg="success">🟢 En línea</Badge>
+                  ) : user.lastDisconnectedAt ? (
+                    <Badge bg="secondary">
+                      🔴 Desconectado {moment(user.lastDisconnectedAt).fromNow()}
+                    </Badge>
+                  ) : (
+                    <Badge bg="secondary">🔴 Desconectado</Badge>
+                  )}
+                </td>
+                <td>
+                  {user.lastDisconnectedAt ? (
+                    <small className="text-muted" title={new Date(user.lastDisconnectedAt).toLocaleString()}>
+                      {moment(user.lastDisconnectedAt).fromNow()}
+                    </small>
+                  ) : (
+                    <span className="text-muted">--</span>
+                  )}
+                </td>
+                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                <td>
+                  {user.isVerified ? (
+                    <Badge bg="success"><CheckCircleFill className="me-1" /> Verificado</Badge>
+                  ) : (
+                    <Badge bg="danger"><XCircleFill className="me-1" /> No verificado</Badge>
+                  )}
+                </td>
+                <td>
+                  {user.isActive ? (
+                    <Badge bg="success">🟢 Activo</Badge>
+                  ) : (
+                    <Badge bg="warning" text="dark">🟠 Inactivo</Badge>
+                  )}
+                </td>
+                <td>
+                  {user.esBloqueado ? (
+                    <Badge bg="danger">🚫 Bloqueado</Badge>
+                  ) : (
+                    <Badge bg="success">✅ No bloqueado</Badge>
+                  )}
+                </td>
+                <td>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="outline-secondary" size="sm" id="dropdown-actions">
+                      <ThreeDotsVertical />
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item disabled>
+                        <PencilFill className="me-2" /> Editar
+                      </Dropdown.Item>
+                      <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
+                        <TrashFill className="me-2" /> Eliminar
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        className={user.isActive ? "text-warning" : "text-success"}
+                        onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
+                      >
+                        {user.isActive ? <LockFill className="me-2" /> : <UnlockFill className="me-2" />}
+                        {user.isActive ? "Desactivar cuenta" : "Activar cuenta"}
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        className={user.esBloqueado ? "text-success" : "text-danger"}
+                        onClick={() =>
+                          user.esBloqueado ? handleUnblockUser(user) : handleOpenModal(user)
+                        }
+                      >
+                        {user.esBloqueado ? <UnlockFill className="me-2" /> : <LockFill className="me-2" />}
+                        {user.esBloqueado ? "Desbloquear usuario" : "Bloquear usuario"}
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
-        </table>
+        </Table>
       </div>
 
-      {load && <img src={LoadIcon} alt="loading" className="d-block mx-auto my-3" />}
+      {/* Botón Cargar más */}
+      {load && (
+        <div className="text-center my-3">
+          <Spinner animation="border" variant="primary" />
+        </div>
+      )}
 
       {homeUsers.users.length > 0 && (
         <div className="d-flex justify-content-center my-3">
@@ -266,6 +334,7 @@ const Users = () => {
         </div>
       )}
 
+      {/* Modal Bloqueo */}
       {showBlockModal && selectedUser && (
         <BloqueModalUser
           show={showBlockModal}
@@ -274,7 +343,7 @@ const Users = () => {
           user={selectedUser}
         />
       )}
-    </div>
+    </Container>
   );
 };
 

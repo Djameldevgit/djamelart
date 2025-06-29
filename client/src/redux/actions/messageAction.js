@@ -9,7 +9,9 @@ export const MESS_TYPES = {
     UPDATE_MESSAGES: 'UPDATE_MESSAGES',
     DELETE_MESSAGES: 'DELETE_MESSAGES',
     DELETE_CONVERSATION: 'DELETE_CONVERSATION',
-    CHECK_ONLINE_OFFLINE: 'CHECK_ONLINE_OFFLINE'
+    CHECK_ONLINE_OFFLINE: 'CHECK_ONLINE_OFFLINE',
+    UPDATE_USER_STATUS: 'UPDATE_USER_STATUS'
+    
 }
 
 
@@ -35,7 +37,14 @@ export const getConversations = ({auth, page = 1}) => async (dispatch) => {
         res.data.conversations.forEach(item => {
             item.recipients.forEach(cv => {
                 if(cv._id !== auth.user._id){
-                    newArr.push({...cv, text: item.text, media: item.media, call: item.call})
+                    newArr.push({
+                        ...cv,
+                        text: item.text,
+                        media: item.media,
+                        call: item.call,
+                        lastConnectedAt: cv.lastConnectedAt,
+                        lastDisconnectedAt: cv.lastDisconnectedAt
+                      })
                 }
             })
         })

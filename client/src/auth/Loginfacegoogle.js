@@ -49,12 +49,12 @@ const Loginfacegoogle = () => {
 
   return (
     <div className="login_page">
-      <h2>Iniciar Sesión</h2>
+  
 
       {msg.err && showErrMsg(msg.err)}
       {msg.success && showSuccessMsg(msg.success)}
 
-      <div className="hr">Iniciar sesión con</div>
+    
 
       <div className="social mb-2">
         <GoogleLogin

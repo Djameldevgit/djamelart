@@ -10,5 +10,12 @@
   "exitButton": "Salir",
   "backToHomeButton": "Volver al Inicio",
   "sendButton": "Enviar",
-  "messageSentSuccessfully": "Mensaje enviado correctamente"
+  "messageSentSuccessfully": "Mensaje enviado correctamente",
+
+
+
+  "connected_now": "Conectado ahora",
+  "last_connection": "Última conexión",
+  "never_connected": "Nunca conectado",
+  "loadmore": "Cargar más"
 }

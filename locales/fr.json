@@ -60,7 +60,8 @@
 		"createMessage.empty": "Le message ne peut pas être vide.",
 		"createMessage.success": "Message créé avec succès !",
 		"deleteMessage.success": "Message supprimé !",
-		"deleteConversation.success": "Conversation supprimée !"
+		"deleteConversation.success": "Conversation supprimée !",
+		"create_success": "message.create_success"
 	},
 	"lang": {
 		"langUpdatedToSpanish": "Langue mise à jour en espagnol.",

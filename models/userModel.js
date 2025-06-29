@@ -86,7 +86,14 @@ const userSchema = new mongoose.Schema({
 
   esBloqueado: { type: Boolean, default: false },
 
-
+  lastConnectedAt: {
+    type: Date,
+    default: null
+  },
+  lastDisconnectedAt: {
+    type: Date,
+    default: null
+  },
 
 
   cart: {

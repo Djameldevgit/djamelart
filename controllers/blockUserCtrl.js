@@ -45,7 +45,7 @@ const blockCtrl = {
                 user: req.params.id,
                 motivo: motivo || "Sin especificar",
                 content: content || "Sin especificar",
-                fechaLimite: fechaLimite || null, // Solo fechaLimite
+                fechaLimite: fechaLimite || "Sin especificar", // Solo fechaLimite
                 esBloqueado: true,
                 userquibloquea: adminId
             });

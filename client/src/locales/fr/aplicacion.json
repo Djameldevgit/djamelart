@@ -9,5 +9,11 @@
      "exitButton": "Quitter",
      "backToHomeButton": "Retour à l'Accueil",
      "sendButton": "Envoyer",
-     "messageSentSuccessfully": "Message envoyé avec succès"
+     "messageSentSuccessfully": "Message envoyé avec succès",
+
+
+     "connected_now": "Conectado ahora",
+  "last_connection": "Última conexión",
+  "never_connected": "Nunca conectado",
+  "loadmore": "Cargar más"
    }

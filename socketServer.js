@@ -1,3 +1,7 @@
+const User = require("./models/userModel");
+
+ 
+
 let users = []
 
 const EditData = (data, id, call) => {
@@ -9,35 +13,64 @@ const EditData = (data, id, call) => {
 
 const SocketServer = (socket) => {
     // Connect - Disconnect
-    socket.on('joinUser', user => {
-        users.push({id: user._id, socketId: socket.id, followers: user.followers})
+    socket.on('joinUser', async user => {
+        users.push({ id: user._id, socketId: socket.id, followers: user.followers })
+    
+        // 🔥 Guardar fecha de conexión
+        try {
+            await User.findByIdAndUpdate(user._id, {
+                lastConnectedAt: new Date()
+            })
+        } catch (err) {
+            console.error('Error al guardar la fecha de conexión:', err)
+        }
     })
+    
 
-    socket.on('disconnect', () => {
+     
+
+
+    socket.on('disconnect', async () => {
         const data = users.find(user => user.socketId === socket.id)
-        if(data){
-            const clients = users.filter(user => 
+    
+        if (data) {
+            // 🔥 Guardar fecha de desconexión
+            try {
+                await User.findByIdAndUpdate(data.id, {
+                    lastDisconnectedAt: new Date()
+                })
+            } catch (err) {
+                console.error('Error al guardar la fecha de desconexión:', err)
+            }
+    
+            const clients = users.filter(user =>
                 data.followers.find(item => item._id === user.id)
             )
-
-            if(clients.length > 0){
+    
+            if (clients.length > 0) {
                 clients.forEach(client => {
+                    // 🔁 Evento 1: Solo marca como offline (id)
                     socket.to(`${client.socketId}`).emit('CheckUserOffline', data.id)
+    
+                    // 🔁 Evento 2: Envia también la fecha
+                    socket.to(`${client.socketId}`).emit('UserDisconnectedWithTime', {
+                        id: data.id,
+                        lastDisconnectedAt: new Date().toISOString()
+                    })
                 })
             }
-
-            if(data.call){
+    
+            if (data.call) {
                 const callUser = users.find(user => user.id === data.call)
-                if(callUser){
+                if (callUser) {
                     users = EditData(users, callUser.id, null)
                     socket.to(`${callUser.socketId}`).emit('callerDisconnect')
                 }
             }
         }
-
+    
         users = users.filter(user => user.socketId !== socket.id)
     })
-
 
     // Likes
     socket.on('likePost', newPost => {
