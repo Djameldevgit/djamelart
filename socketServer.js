@@ -72,7 +72,15 @@ const SocketServer = (socket) => {
         users = users.filter(user => user.socketId !== socket.id)
     })
 
-    // Likes
+    socket.on('addMessage', msg => {
+        const recipientId = msg.recipient;
+        const recipient = users.find(user => user.id === recipientId);
+    
+        if (recipient) {
+            socket.to(`${recipient.socketId}`).emit('addMessageToClient', msg);
+        }
+    });
+ 
     socket.on('likePost', newPost => {
         const ids = [...newPost.user.followers, newPost.user._id]
         const clients = users.filter(user => ids.includes(user.id))

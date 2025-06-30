@@ -7,13 +7,13 @@ import {
   Alert,
   CloseButton
 } from "react-bootstrap";
-import { 
+import {
   ExclamationTriangleFill,
   XCircleFill,
   Calendar2EventFill,
   InfoCircleFill
 } from "react-bootstrap-icons";
-import { bloquearUsuario } from "../../redux/actions/userBlockAction";
+import { bloquearUsuario } from "../../redux/actions/userAction";
 
 const BloqueModalUser = ({ show, handleClose, user }) => {
   const { auth } = useSelector(state => state);
@@ -23,7 +23,8 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
   const [datosBloqueo, setDatosBloqueo] = useState({
     motivo: "",
     content: "",
-    fechaLimite: ""
+    fecha: "",
+    hora: "",
   });
 
   const handleChangeInput = (e) => {
@@ -35,14 +36,20 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
     e.preventDefault();
     setError(null);
 
-    const { motivo, fechaLimite, content } = datosBloqueo;
- 
-    if (!motivo || !fechaLimite || !content) {
-      setError("❌ Completa todos los campos, incluyendo la fecha y hora.");
+    const { motivo, fecha, hora, content } = datosBloqueo;
+
+    if (!motivo || !fecha || !hora || !content) {
+      setError("❌ Completa todos los campos, incluyendo la fecha y la hora.");
       return;
     }
-  
-    dispatch(bloquearUsuario({ auth, datosBloqueo, user }));
+
+    const fechaLimite = `${fecha}T${hora}`;
+
+    dispatch(bloquearUsuario({
+      auth,
+      datosBloqueo: { motivo, content, fechaLimite },
+      user
+    }));
     handleClose();
   };
 
@@ -53,7 +60,7 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
           <ExclamationTriangleFill className="me-2" />
           Confirmar bloqueo de usuario
         </Modal.Title>
-        <CloseButton 
+        <CloseButton
           variant="white"
           onClick={handleClose}
           aria-label="Cerrar modal"
@@ -61,7 +68,7 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
           style={{ top: '1rem' }}
         />
       </Modal.Header>
-      
+
       <Form onSubmit={handleBloqueo}>
         <Modal.Body>
           {error && (
@@ -70,16 +77,16 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
               {error}
             </Alert>
           )}
-          
+
           <Form.Group className="mb-3">
             <Form.Label>
               <InfoCircleFill className="me-2 text-warning" />
               Raison du blocage
             </Form.Label>
-            <Form.Select 
-              name="motivo" 
-              value={datosBloqueo.motivo} 
-              onChange={handleChangeInput} 
+            <Form.Select
+              name="motivo"
+              value={datosBloqueo.motivo}
+              onChange={handleChangeInput}
               required
             >
               <option value="">Sélectionner le motif</option>
@@ -115,16 +122,30 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
               <Calendar2EventFill className="me-2 text-primary" />
               Fecha límite del bloqueo
             </Form.Label>
-            <Form.Control
-              type="datetime-local"
-              name="fechaLimite"
-              value={datosBloqueo.fechaLimite}
-              onChange={handleChangeInput}
-              required
-            />
+            <Form.Group className="mb-2">
+              <Form.Label>Fecha</Form.Label>
+              <Form.Control
+                type="date"
+                name="fecha"
+                value={datosBloqueo.fecha}
+                onChange={handleChangeInput}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-2">
+              <Form.Label>Hora</Form.Label>
+              <Form.Control
+                type="time"
+                name="hora"
+                value={datosBloqueo.hora}
+                onChange={handleChangeInput}
+                required
+              />
+            </Form.Group>
           </Form.Group>
         </Modal.Body>
-        
+
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Cancelar

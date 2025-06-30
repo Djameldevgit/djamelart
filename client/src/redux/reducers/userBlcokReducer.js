@@ -15,19 +15,7 @@ const userBlockReducer = (state = initialState, action) => {
         loading: action.payload,
       };
 
-    case USER_TYPES_BLOCK.BLOCK_USER:
-      return {
-        ...state,
-        blockedUsers: [...state.blockedUsers, action.payload],
-      };
-
-    case USER_TYPES_BLOCK.UNBLOCK_USER:
-      return {
-        ...state,
-        blockedUsers: state.blockedUsers.filter(
-          (user) => user._id !== action.payload._id
-        ),
-      };
+   
 
     case USER_TYPES_BLOCK.GET_USERS_BLOCK:
       return {

@@ -8,8 +8,8 @@ export const USER_TYPES = {
     UPDATE_USER: 'UPDATE_USER',
    
     DELETE_USER: 'DELETE_USER',
-    UPDATE_USER_BLOCK_STATUS: "UPDATE_USER_BLOCK_STATUS", // nuevo
-     
+    BLOCK_USER_SUCCESS: 'BLOCK_USER_SUCCESS',
+    UNBLOCK_USER_SUCCESS: 'UNBLOCK_USER_SUCCESS',
 
 };
  
@@ -137,7 +137,64 @@ export const deleteUser = ({id, auth}) => async (dispatch) => {
 
 
 
- 
+  export const bloquearUsuario = ({ auth, datosBloqueo, user }) => async (dispatch) => {
+    try {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
+  
+      const res = await patchDataAPI(`user/${user._id}/block`, {
+        motivo: datosBloqueo.motivo,
+        content: datosBloqueo.content,
+        fechaLimite: datosBloqueo.fechaLimite,
+      }, auth.token);
+  
+      dispatch({
+        type: USER_TYPES.BLOCK_USER_SUCCESS,
+        payload: {
+          userId: user._id,
+          esBloqueado: true,
+        }
+      });
+  
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });
+  
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: err.response?.data?.msg || "Error al bloquear usuario" }
+      });
+    } finally {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
+    }
+  };
+
+
+
+  export const unBlockUser = ({ user, auth }) => async (dispatch) => {
+    try {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
+  
+      const res = await patchDataAPI(`user/${user._id}/unblock`, {}, auth.token);
+  
+      dispatch({
+        type: USER_TYPES.UNBLOCK_USER_SUCCESS,
+        payload: {
+          userId: user._id,
+          esBloqueado: false,
+        }
+      });
+  
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });
+  
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: err.response?.data?.msg || "Error al desbloquear usuario" }
+      });
+    } finally {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
+    }
+  };
+
  
 
  

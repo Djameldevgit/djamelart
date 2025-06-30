@@ -11,7 +11,7 @@ ReactDOM.render(
   <I18nextProvider i18n={i18n}>
     <React.StrictMode>
       <DataProvider>
-        <GoogleOAuthProvider clientId="64178724638-m6sv2orc068qna74ah155kdrmd61gj91.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
           <App />
         </GoogleOAuthProvider>
       </DataProvider>

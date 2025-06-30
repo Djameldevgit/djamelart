@@ -36,6 +36,7 @@ const ModalEmail = ({ show, handleClose, recipients }) => {
       recipients,
       subject,
       message,
+      url: '#', // ✅ o puedes incluir un enlace útil si es necesario
       token: auth.token,
       onSuccess: () => {
         setSending(false);
@@ -44,6 +45,7 @@ const ModalEmail = ({ show, handleClose, recipients }) => {
         handleClose();
       }
     }));
+    
   };
 
   return (

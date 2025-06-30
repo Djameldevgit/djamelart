@@ -97,22 +97,28 @@
 		"updated_arabic": "language.updated_arabic"
 	},
 	"email": {
-		"subject": "Djamel Art",
-		"title": "Bienvenido a Tassili Art",
-		"body": "¡Felicidades! Estás a un paso de comenzar a usar la aplicación. Haz clic en el botón o en el enlace de abajo para validar tu correo electrónico.",
-		"button": "Verificar correo",
-		"alt": "Si el botón no funciona, también puedes hacer clic en el siguiente enlace:",
+		"subject": "Activa tu cuenta",
+		"title": "Bienvenido a nuestra aplicación",
+		"body": "Haz clic en el enlace para activar tu cuenta.",
+		"button": "Activar cuenta",
+		"alt": "Si no puedes hacer clic, copia y pega este enlace:"
+	},
+	"emailReset": {
+		"subject": "Restablece tu contraseña",
+		"body": "Hemos recibido una solicitud para restablecer tu contraseña. Si no fuiste tú, puedes ignorar este mensaje. De lo contrario, haz clic en el botón para continuar.",
+		"button": "Restablecer contraseña",
+		"alt": "Si el botón no funciona, copia y pega este enlace en tu navegador:"
+	},
+	"emailActivation": {
+		"subject": "Activa tu cuenta",
+		"body": "Haz clic en el botón para verificar tu cuenta.",
+		"button": "Activar cuenta",
+		"alt": "Si no puedes hacer clic, copia y pega este enlace en tu navegador:"
+	},
+	"emailInformativo": {
+		"subject": "Información general",
+		"body": "Este es un mensaje informativo enviado desde nuestra plataforma."
 		 
-		"from": "Correo del usuario",
-
-		"supportTitle": "Mensaje desde el formulario de contacto",
-		"supportBody": "Un usuario ha enviado un mensaje a través del formulario de contacto.",
-		"supportSubject": "📩 Nuevo mensaje de contacto: {{subject}}",
-		"email": "Correo del usuario",
-		"subjectLabel": "Asunto",
-		"message": "Mensaje"
-
-
 	},
 	"support": {
 		"subject": "Nuevo mensaje de contacto desde el formulario",
@@ -121,8 +127,4 @@
 		"message": "Mensaje del usuario",
 		"email": "support.email"
 	}
-
-	 
-
-
 }

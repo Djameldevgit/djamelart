@@ -36,7 +36,9 @@ i18n.configure({
   defaultLocale: 'en',
   cookie: 'lang',
   queryParameter: 'lang',
-  objectNotation: true
+  objectNotation: true,
+  updateFiles: false 
+
 })
 
 app.use(cookieParser()); // primero las cookies

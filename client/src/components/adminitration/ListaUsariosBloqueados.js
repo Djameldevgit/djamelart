@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import UserCard from "../UserCard";
 import moment from "moment";
-import { unBlockUser } from "../../redux/actions/userBlockAction";
+import { unBlockUser } from "../../redux/actions/userAction";
 
 const ListaUsuariosBloqueados = () => {
   const dispatch = useDispatch();

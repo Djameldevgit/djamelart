@@ -19,7 +19,7 @@ const oauth2Client = new OAuth2(
   OAUTH_PLAYGROUND
 );
 
-const sendContactMessage = async ({ from, subject, message, lang = 'es' }) => {
+const sendSupportMessage = async ({ from, subject, message, lang = 'es' }) => {
   try {
     oauth2Client.setCredentials({
       refresh_token: MAILING_SERVICE_REFRESH_TOKEN
@@ -71,4 +71,4 @@ const sendContactMessage = async ({ from, subject, message, lang = 'es' }) => {
   }
 };
 
-module.exports = sendContactMessage;
+module.exports = sendSupportMessage;

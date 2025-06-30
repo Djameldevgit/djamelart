@@ -2,8 +2,7 @@ const router = require('express').Router()
 const authCtrl = require('../controllers/authCtrl')
 const auth = require('../middleware/auth')
  
-router.post('/send-email-admin', auth, authCtrl.sendEmailAdmin);
-
+router.post('/send-user-emails', auth, authCtrl.sendEmailsParaUsers);
 router.post('/register', authCtrl.register)
 
 router.post('/login', authCtrl.login)

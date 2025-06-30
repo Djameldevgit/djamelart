@@ -104,6 +104,47 @@
 		"title": "Bienvenue chez Tassili Art",
 		"body": "Félicitations ! Vous êtes sur le point d'accéder à l'application. Cliquez sur le bouton ou le lien ci-dessous pour valider votre adresse e-mail.",
 		"button": "Vérifier l'adresse e-mail",
-		"alt": "Si le bouton ne fonctionne pas, vous pouvez également cliquer sur le lien ci-dessous :"
-	}
+		"alt": "Si le bouton ne fonctionne pas, vous pouvez également cliquer sur le lien ci-dessous :",
+		"activation": {
+			"subject": "Activez votre compte",
+			"body": "Cliquez sur le bouton ci-dessous pour vérifier votre compte.",
+			"button": "Activer le compte",
+			"alt": "Si vous ne pouvez pas cliquer, copiez-collez ce lien dans votre navigateur :"
+		}
+	},
+	"email_subjects": {
+		"activation": "Activez votre compte"
+	},
+	"email_bodies": {
+		"activation": "Cliquez sur le bouton ci-dessous pour vérifier votre compte."
+	},
+	"email_buttons": {
+		"activation": "Activer le compte"
+	},
+	"email_alts": {
+		"activation": "Si vous ne pouvez pas cliquer, copiez-collez ce lien dans votre navigateur :"
+	},
+
+ 
+		 
+	 
+	  
+
+
+
+
+	"reset": {
+		"subject": "...",
+		"activation": "Si vous ne pouvez pas cliquer, copiez-collez ce lien dans votre navigateur :"
+
+	  },
+	  "unblock": {
+		"activation": "Si vous ne pouvez pas cliquer, copiez-collez ce lien dans votre navigateur :"
+
+	  }
+
+
+
+
+
 }

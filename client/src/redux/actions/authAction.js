@@ -41,26 +41,23 @@ import valid from '../../utils/valid'
 };
 
   
-    export const sendAdminEmail = ({ recipients, subject, message, token, onSuccess }) => async (dispatch) => {
-      try {
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
-    
-        const res = await postDataAPI('send-email-admin', {
-          recipients, subject, message
-        }, token);
-    
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });
-    
-        // Puedes actualizar estado si necesitas
-        if (onSuccess) onSuccess();
-        
-      } catch (err) {
-        dispatch({
-          type: GLOBALTYPES.ALERT,
-          payload: { error: err.response?.data?.msg || 'Error al enviar correos.' }
-        });
-      }
-    };
+export const sendAdminEmail = ({ recipients, subject, message, url = '#', token, onSuccess }) => async (dispatch) => {
+  try {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
+
+    const res = await postDataAPI('send-user-emails', { recipients, subject, message, url }, token);
+
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });
+
+    if (onSuccess) onSuccess();
+  } catch (err) {
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { error: err.response?.data?.msg || 'Error al enviar correos' },
+    });
+  }
+};
+
     
 
  

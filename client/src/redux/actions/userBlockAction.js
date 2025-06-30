@@ -3,11 +3,10 @@ import { patchDataAPI, getDataAPI } from '../../utils/fetchData';
 
 export const USER_TYPES_BLOCK = {
   LOADING_USER: 'LOADING_USER',
-  BLOCK_USER: 'BLOCK_USER',
-  UNBLOCK_USER: 'UNBLOCK_USER',
+ 
   GET_USERS_BLOCK: 'GET_USERS_BLOCK',
 };
-
+/*
 export const bloquearUsuario = ({ auth, datosBloqueo, user }) => async (dispatch) => {
   if (!user || !user._id) {
     return dispatch({
@@ -50,7 +49,7 @@ export const bloquearUsuario = ({ auth, datosBloqueo, user }) => async (dispatch
   }
 };
 
-
+ 
 export const unBlockUser = ({ user, auth }) => async (dispatch) => {
   try {
     dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
@@ -70,7 +69,7 @@ export const unBlockUser = ({ user, auth }) => async (dispatch) => {
   } finally {
     dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
   }
-};
+};*/
 
 export const getBlockedUsers = (token) => async (dispatch) => {
   try {

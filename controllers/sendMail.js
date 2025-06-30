@@ -1,41 +1,57 @@
-const nodemailer = require('nodemailer')
-const { google } = require('googleapis')
-const { OAuth2 } = google.auth
-const i18n = require('i18n') // Usamos el mismo i18n del servidor
+const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
+const i18n = require('i18n'); // Traductor
 
-const OAUTH_PLAYGROUND = 'https://developers.google.com/oauthplayground'
+const OAuth2 = google.auth.OAuth2;
 
 const {
   MAILING_SERVICE_CLIENT_ID,
   MAILING_SERVICE_CLIENT_SECRET,
   MAILING_SERVICE_REFRESH_TOKEN,
   SENDER_EMAIL_ADDRESS
-} = process.env
+} = process.env;
 
+// Inicializar cliente OAuth2
 const oauth2Client = new OAuth2(
   MAILING_SERVICE_CLIENT_ID,
-  MAILING_SERVICE_CLIENT_SECRET,
-  MAILING_SERVICE_REFRESH_TOKEN,
-  OAUTH_PLAYGROUND
-)
+  MAILING_SERVICE_CLIENT_SECRET
+);
 
-const sendMail = async (to, url, lang = 'es') => {
+oauth2Client.setCredentials({
+  refresh_token: MAILING_SERVICE_REFRESH_TOKEN
+});
+
+const sendMail = async (to, url = '#', lang = 'es', template = 'informativo', customSubject = null, customMessage = null) => {
   try {
-    oauth2Client.setCredentials({
-      refresh_token: MAILING_SERVICE_REFRESH_TOKEN
-    })
+    // Obtener token de acceso desde refresh_token
+    const { token: accessToken } = await oauth2Client.getAccessToken();
 
-    const accessToken = await oauth2Client.getAccessToken()
-
-    // Aseguramos que sea un idioma válido
+    // Establecer idioma
     if (!i18n.getLocales().includes(lang)) {
-      console.warn(`Idioma no válido recibido (${lang}), usando 'es' por defecto.`)
-      lang = 'es'
+      lang = 'es';
     }
+    i18n.setLocale(lang);
 
-    i18n.setLocale(lang)
-    console.log(`📨 Enviando correo a ${to} en idioma: ${lang}`)
+    // 🧠 Usamos plantillas como: emailReset, emailActivation, etc.
+    const key = `email${template.charAt(0).toUpperCase()}${template.slice(1)}`;
 
+    const subject = customSubject || i18n.__(`${key}.subject`);
+    const body = customMessage || i18n.__(`${key}.body`);
+    const button = i18n.__(`${key}.button`);
+    const alt = i18n.__(`${key}.alt`);
+
+    // HTML del correo
+    const html = `
+      <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;">
+        <h2 style="text-align: center; text-transform: uppercase; color: teal;">${subject}</h2>
+        <p>${body}</p>
+        ${url !== '#' ? `<a href="${url}" style="background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;">${button}</a>` : ''}
+        <p>${alt}</p>
+        <div>${url}</div>
+      </div>
+    `;
+
+    // Configurar transporte SMTP
     const smtpTransport = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -46,36 +62,21 @@ const sendMail = async (to, url, lang = 'es') => {
         refreshToken: MAILING_SERVICE_REFRESH_TOKEN,
         accessToken
       }
-    })
+    });
 
-    const mailOptions = {
+    // Enviar el correo
+    await smtpTransport.sendMail({
       from: SENDER_EMAIL_ADDRESS,
       to,
-      subject: i18n.__('email.subject'),
-      html: `
-        <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;">
-          <h2 style="text-align: center; text-transform: uppercase; color: teal;">
-            ${i18n.__('email.title')}
-          </h2>
-          <p>${i18n.__('email.body')}</p>
+      subject,
+      html
+    });
 
-          <a href="${url}" style="background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;">
-            ${i18n.__('email.button')}
-          </a>
-
-          <p>${i18n.__('email.alt')}</p>
-          <div>${url}</div>
-        </div>
-      `
-    }
-
-    await smtpTransport.sendMail(mailOptions)
-    console.log('✅ Correo enviado correctamente.')
+    console.log(`📨 Correo enviado correctamente a ${to}`);
   } catch (err) {
-    console.error('❌ Error al enviar el correo:', err.message)
-    throw err
+    console.error('❌ Error al enviar el correo:', err.message);
+    throw err;
   }
-}
+};
 
-module.exports = sendMail
-
+module.exports = sendMail;

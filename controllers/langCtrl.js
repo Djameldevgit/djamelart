@@ -50,8 +50,8 @@ const langCtrl = {
     try {
       res.cookie('lang', language, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
-        httpOnly: true,
-        sameSite: 'strict'
+        httpOnly: true
+       
       });
 
       res.status(200).json({ msg: req.__('language.visitor_saved') });
@@ -67,8 +67,8 @@ const handleLanguageUpdate = async (req, res, language, successMsg) => {
   try {
     res.cookie('lang', language, {
       maxAge: 1000 * 60 * 60 * 24 * 30,
-      httpOnly: true,
-      sameSite: 'strict'
+      httpOnly: true
+      
     });
 
     if (req.user && req.user._id) {

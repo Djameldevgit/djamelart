@@ -10,8 +10,9 @@ const Notifications = require('../models/notifyModel')
  
  
  const sendContactMessage = require('./sendMailContact');
-
-
+const sendSupportMessage = require('./sendSupporMessage');
+ 
+ 
 
  
  

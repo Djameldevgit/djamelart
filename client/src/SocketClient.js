@@ -49,6 +49,15 @@ const SocketClient = () => {
     },[socket, dispatch])
 
     useEffect(() => {
+        socket.on('addMessageToClient', msg => {
+            dispatch({ type: MESS_TYPES.ADD_MESSAGE, payload: msg });
+        });
+
+        return () => socket.off('addMessageToClient')
+    }, [socket, dispatch])
+
+
+    useEffect(() => {
         socket.on('likeToClient', newPost =>{
             dispatch({type: POST_TYPES.UPDATE_POST, payload: newPost})
         })

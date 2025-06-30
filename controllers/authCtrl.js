@@ -63,24 +63,24 @@ const authCtrl = {
 
     sendActivationEmail: async (req, res) => {
         try {
-            const user = await Users.findById(req.user._id);
-            if (!user)
-                return res.status(400).json({ msg: req.__('auth.user_not_found') });
-
-            if (user.isVerified)
-                return res.status(400).json({ msg: req.__('auth.already_verified') });
-
-            const activation_token = createActivationToken({ id: user._id });
-            const url = `${CLIENT_URL}/user/activate/${activation_token}`;
-
-            // ✅ Pasamos el idioma correctamente desde req:
-            await sendMail(user.email, url, req.getLocale());
-
-            res.json({ msg: req.__('auth.activation_email_sent') });
+          const user = await Users.findById(req.user._id);
+          if (!user)
+            return res.status(400).json({ msg: req.__('auth.user_not_found') });
+      
+          if (user.isVerified)
+            return res.status(400).json({ msg: req.__('auth.already_verified') });
+           
+          const activation_token = createActivationToken({ id: user._id });
+          const url = `${CLIENT_URL}/user/activate/${activation_token}`;
+      
+          await sendMail(user.email, url, req.getLocale(), 'activation'); 
+      
+          res.json({ msg: req.__('auth.activation_email_sent') });
         } catch (err) {
-            return res.status(500).json({ msg: req.__('auth.server_error') });
+          return res.status(500).json({ msg: req.__('auth.server_error') });
         }
-    },
+      },
+      
 
 
 
@@ -108,21 +108,22 @@ const authCtrl = {
 
     forgotPassword: async (req, res) => {
         try {
-            const { email } = req.body;
-            const user = await Users.findOne({ email });
-            if (!user)
-                return res.status(400).json({ msg: req.__('auth.email_not_exist') });
-
-            const access_token = createAccessToken({ id: user._id });
-            const url = `${CLIENT_URL}/user/reset/${access_token}`;
-
-            sendMail(email, url, req.getLocale());
-
-            res.json({ msg: req.__('auth.reset_email_sent') });
+          const { email } = req.body;
+          const user = await Users.findOne({ email });
+          if (!user)
+            return res.status(400).json({ msg: req.__('auth.email_not_exist') });
+      
+          const access_token = createAccessToken({ id: user._id });
+          const url = `${CLIENT_URL}/user/reset/${access_token}`;
+      
+          await sendMail(user.email, url, req.getLocale(), 'reset');
+      
+          res.json({ msg: req.__('auth.reset_email_sent') });
         } catch (err) {
-            return res.status(500).json({ msg: req.__('auth.server_error') });
+          return res.status(500).json({ msg: req.__('auth.server_error') });
         }
-    },
+      },
+      
 
     resetPassword: async (req, res) => {
         try {
@@ -143,26 +144,32 @@ const authCtrl = {
 
 
 
-    sendEmailAdmin: async (req, res) => {
+    sendEmailsParaUsers: async (req, res) => {
         try {
-            const { recipients, subject, message } = req.body
-
-            if (!recipients || !Array.isArray(recipients) || recipients.length === 0)
-                return res.status(400).json({ msg: 'No se seleccionaron destinatarios.' })
-
-            const users = await Users.find({ _id: { $in: recipients } })
-            const emails = users.map(user => user.email)
-
-            for (const email of emails) {
-                await sendCustomEmail(email, subject, message)
-            }
-
-            return res.json({ msg: `✅ Correos enviados a ${emails.length} usuarios.` })
-
+          const { recipients, subject, message, url } = req.body;
+          const lang = req.getLocale() || 'es';
+      
+          if (!recipients || !Array.isArray(recipients) || recipients.length === 0)
+            return res.status(400).json({ msg: 'No se seleccionaron destinatarios.' });
+      
+          if (!subject || !message)
+            return res.status(400).json({ msg: 'Faltan el asunto o el mensaje.' });
+      
+          const users = await Users.find({ _id: { $in: recipients } });
+          const emails = users.map(user => user.email);
+      
+          for (const email of emails) {
+            await sendMail(email, url || '#', lang, 'informativo', subject, message);
+          }
+          
+      
+          return res.json({ msg: `✅ Correos enviados a ${emails.length} usuarios.` });
+      
         } catch (err) {
-            return res.status(500).json({ msg: err.message })
+          return res.status(500).json({ msg: err.message });
         }
-    },
+      },
+      
 
 
     login: async (req, res) => {
