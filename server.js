@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const i18n = require('i18n');
 const SocketServer = require('./socketServer'); // ✅ Aquí el archivo Socket corregido
-const { autoUnblockUsers } = require('./controllers/autoUnBlockUser');
+ 
 const morgan = require('morgan');
 
 
