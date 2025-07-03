@@ -6,7 +6,24 @@ const authReducer = (state = initialState, action) => {
     switch (action.type){
         case GLOBALTYPES.AUTH:
             return action.payload;
-        default:
+      
+            case GLOBALTYPES.SOCKET:
+                return {
+                  ...state,
+                  socket: action.payload
+                };
+      
+      
+      
+      
+      
+      
+      
+            default:
+
+
+
+        
             return state;
     }
 }

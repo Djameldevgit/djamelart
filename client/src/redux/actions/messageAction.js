@@ -9,46 +9,23 @@ export const MESS_TYPES = {
     UPDATE_MESSAGES: 'UPDATE_MESSAGES',
     DELETE_MESSAGES: 'DELETE_MESSAGES',
     DELETE_CONVERSATION: 'DELETE_CONVERSATION',
-    CHECK_ONLINE_OFFLINE: 'CHECK_ONLINE_OFFLINE',
-    UPDATE_USER_STATUS: 'UPDATE_USER_STATUS'
-    
+    CHECK_ONLINE_OFFLINE: 'CHECK_ONLINE_OFFLINE'
 }
 
 
 
-export const addMessage = ({ msg, auth, socket }) => async (dispatch) => {
-    // Despacha la acción para agregar el mensaje al estado
-    dispatch({ type: MESS_TYPES.ADD_MESSAGE, payload: msg });
+export const addMessage = ({msg, auth, socket}) => async (dispatch) =>{
+    dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
 
-    // Emitir el mensaje a través de socket.io
-    const { _id, avatar, username } = auth.user;
-    socket.emit('addMessage', { ...msg, user: { _id, avatar, username } });
-
+    const { _id, avatar,  username } = auth.user
+    socket.emit('addMessage', {...msg, user: { _id, avatar,   username } })
+    
     try {
-        // Enviar el mensaje al servidor
-        await postDataAPI('message', msg, auth.token);
-
-        // Crear la notificación para el usuario que recibe el mensaje
-        const notificationMsg = {
-            id: auth.user._id, // ID del usuario que envía el mensaje
-            text: 'te envió un mensaje.', // Texto de la notificación
-            recipients: [msg.recipient], // ID del usuario que recibe el mensaje
-            url: `/message/${msg.recipient}`, // URL para redirigir al hacer clic
-            content: msg.text, // Contenido del mensaje (opcional)
-            image: auth.user.avatar, // Imagen del usuario que envía el mensaje (opcional)
-        };
-
-        // Despachar la acción para crear la notificación
-        dispatch(createNotify({ msg: notificationMsg, auth, socket }));
-
+        await postDataAPI('message', msg, auth.token)
     } catch (err) {
-        // Manejar errores
-        dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: { error: err.response.data.msg },
-        });
+        dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
     }
-};
+}
 
 export const getConversations = ({auth, page = 1}) => async (dispatch) => {
     try {
@@ -58,14 +35,7 @@ export const getConversations = ({auth, page = 1}) => async (dispatch) => {
         res.data.conversations.forEach(item => {
             item.recipients.forEach(cv => {
                 if(cv._id !== auth.user._id){
-                    newArr.push({
-                        ...cv,
-                        text: item.text,
-                        media: item.media,
-                        call: item.call,
-                        lastConnectedAt: cv.lastConnectedAt,
-                        lastDisconnectedAt: cv.lastDisconnectedAt
-                      })
+                    newArr.push({...cv, text: item.text, media: item.media, call: item.call})
                 }
             })
         })

@@ -7,6 +7,7 @@ import Avatar from '../../Avatar';
 import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
 import { deletePost } from '../../../redux/actions/postAction';
 import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
+import { setActiveChat } from '../../../redux/actions/chatAction';
 
 const CardHeader = ({ post }) => {
     const { auth, socket } = useSelector(state => state);
@@ -14,11 +15,7 @@ const CardHeader = ({ post }) => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const handleChatWithOwner = () => {
-        if (post.user && post.user._id) {
-          history.push(`/message/${post.user._id}`)
-        }
-      }
+   
     const handleAprove = () => {
         if (window.confirm("¿Vous voulez aprouve ce post?")) {
             dispatch(aprovarPostPendiente(post, 'aprovado', auth));
@@ -94,10 +91,10 @@ const CardHeader = ({ post }) => {
                             </>
                         )}
 
-                        <Dropdown.Item onClick={handleChatWithOwner}>
-                            <span className="material-icons mr-2">chat</span>
-                            Contactar vendedor
-                        </Dropdown.Item>
+<Dropdown.Item onClick={() => dispatch(setActiveChat(post.user))}>
+  <span className="material-icons mr-2">chat</span>
+  Contactar vendedor
+</Dropdown.Item>
                         <Dropdown.Item>
                             <span className="material-icons mr-2">person_add</span>
                             Suivre l'auteur
@@ -135,3 +132,4 @@ const CardHeader = ({ post }) => {
 };
 
 export default CardHeader;
+

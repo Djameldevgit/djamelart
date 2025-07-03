@@ -11,11 +11,11 @@ import Alert from './components/alert/Alert'
 import StatusModal from './components/StatusModal'
 
 import { useSelector, useDispatch } from 'react-redux'
-import {   refreshToken } from './redux/actions/authAction'
+import { refreshToken } from './redux/actions/authAction'
 import { getPosts } from './redux/actions/postAction'
 import { getSuggestions } from './redux/actions/suggestionsAction'
 
-import io from 'socket.io-client'
+ 
 import { GLOBALTYPES } from './redux/actions/globalTypes'
 import SocketClient from './SocketClient'
 
@@ -26,7 +26,7 @@ import { getPostsPendientes } from './redux/actions/postAproveAction'
 import Postspendientes from './pages/postspendientes'
 
 import Post from './pages/post'
- 
+
 import Navbar2 from './components/Navbar2'
 
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
@@ -34,7 +34,7 @@ import Roles from './pages/roles';
 
 
 import { getCart } from './redux/actions/cartAction';
- 
+
 import Cart from './pages/carte/cart';
 import Chekoutt from './pages/carte/Chekoutt';
 import Profile from './pages/profile.';
@@ -44,35 +44,42 @@ import Orderss from './pages/carte/orderss';
 import { getOrders } from './redux/actions/orderAction';
 import ForgotPassword from './auth/ForgotPassword';
 import ResetPassword from './auth/ResetPassword';
- 
+
 
 import ActivatePage from './auth/ActivatePage';
- 
+
 import { getUsers } from './redux/actions/userAction';
 import { getBlockedUsers } from './redux/actions/userBlockAction';
 import Usersblock from './pages/usersblock';
 import UsersActionAction from './pages/users/UsersActionAction';
- 
+
 import Userss from './pages/users/userss';
 import UsersActionn from './pages/users/UsersActionn';
 import ListaUseariosbloqueadoss from './pages/listaUseariosbloqueadoss';
 import AdminSendEmails from './pages/users/adminSendEmails';
 import Bloqueos from './pages/users/bloqueos';
 import Contactt from './pages/contactt';
+import ChatDrawer from './components/home/post_card/chat/chatDrawer';
+import socket from './SocKetClientt';
+import Conversacioness from './pages/chat/conversacioness';
+
  
+
  
 function App() {
   const { auth, status, modal, call, languageReducer } = useSelector(state => state)
  
- 
   const language = languageReducer?.language || localStorage.getItem("lang") || "en";
 
   const dispatch = useDispatch()
+
  
+
   useEffect(() => {
-    dispatch(refreshToken());
-  }, [dispatch]);
-  
+    if (auth.user?._id) {
+      socket.emit('userConnected', auth.user._id);
+    }
+  }, [auth.user]);
 
 
 
@@ -96,7 +103,7 @@ function App() {
   useEffect(() => {
     dispatch(refreshToken())
 
-    const socket = io('http://localhost:5000');
+    //const socket = io('http://localhost:5000');
     dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
     return () => socket.close()
   }, [dispatch])
@@ -108,7 +115,7 @@ function App() {
       dispatch(getCart((auth.token)))
       dispatch(getOrders((auth.token)))
       dispatch(getUsers(auth.token))
- 
+
       dispatch(getPostsPendientes(auth.token))
       dispatch(getBlockedUsers(auth.token))
       dispatch(getSuggestions(auth.token))
@@ -129,16 +136,12 @@ function App() {
     }
   }, [])
 
-  if (auth.token && auth.user?.esBloqueado) {
-    return (
-      <Router>
-        <Route exact path="/bloqueos" component={Bloqueos} />
-        <Route path="*" component={Bloqueos} />
-      </Router>
-    )
-  }
-   
 
+  useEffect(() => {
+    if (auth.token && !auth.socket) {
+      dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
+    }
+  }, [auth.token, auth.socket, dispatch]);;
   return (
 
 
@@ -153,7 +156,7 @@ function App() {
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
           {call && <CallModal />}
-
+          {auth.token && <ChatDrawer />}
           <Route exact path="/login" component={Login} />
 
           <Route exact path="/" component={Home} />
@@ -163,18 +166,21 @@ function App() {
           <Route exact path="/message/:id" component={Message} />
           <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
           <Route exact path="/contact" component={auth.token ? Contactt : Login} />
+          <Route exact path="/conversaciones" component={auth.token ? Conversacioness : Login} />
+
+
 
 
           <Route exact path="/users/adminsendemail" component={auth.token ? AdminSendEmails : Login} />
           <Route exact path="/cart/chekout" component={auth.token ? Chekoutt : Login} />
           <Route exact path="/cart/cartcarrito" component={auth.token ? Cart : Login} />
-         
+
           <Route exact path="/rolesuser" component={auth.token ? Roles : Login} />
           <Route exact path="/users/userss" component={auth.token ? Userss : Login} />
           <Route exact path="/users/usersaction" component={auth.token ? UsersActionn : Login} />
 
           <Route exact path="/users/usersedicion" component={auth.token ? UsersActionAction : Login} />
-           <Route exact path="/postspendientes" component={auth.token ? Postspendientes : Login} />
+          <Route exact path="/postspendientes" component={auth.token ? Postspendientes : Login} />
 
           <Route exact path="/users/bloqueos" component={auth.token ? ListaUseariosbloqueadoss : Login} />
 
@@ -182,13 +188,13 @@ function App() {
           <Route exact path="/orderss" component={auth.token ? Orderss : Login} />
           <Route exact path="/usersblock" component={auth.token ? Usersblock : Login} />
 
-          <Route exact path="/forgot_password" component={ForgotPassword } />
+          <Route exact path="/forgot_password" component={ForgotPassword} />
           <Route path="/user/reset/:token" component={ResetPassword} exact />
 
 
-          
-          <Route path="/user/activate/:activation_token" component={ auth.token ?ActivatePage :Login     } exact />
-    
+
+          <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />
+
         </div>
       </div>
     </Router>

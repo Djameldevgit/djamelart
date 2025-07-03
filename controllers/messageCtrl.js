@@ -17,6 +17,44 @@ class APIfeatures {
 }
 
 const messageCtrl = {
+    /*Función createMessage(petición, respuesta):
+
+    Intentar lo siguiente:
+
+        1. Extraer los datos del cuerpo de la petición:
+           - remitente (sender)
+           - destinatario (recipient)
+           - texto (text)
+           - archivos o imágenes (media)
+           - llamada (call)
+
+        2. Verificar si el destinatario existe Y si hay algún contenido:
+           - Si NO hay destinatario, o NO hay texto, media o llamada:
+               - Salir de la función (no hacer nada).
+
+        3. Buscar si ya existe una conversación entre estos dos usuarios:
+           - Buscar en la base de datos una conversación donde:
+               - los participantes sean [sender, recipient] o [recipient, sender]
+           - Si existe, usarla.
+           - Si no existe, crear una nueva conversación con:
+               - esos dos participantes
+               - el texto, media y llamada actuales como resumen
+
+        4. Crear un nuevo mensaje con los siguientes datos:
+           - ID de la conversación encontrada o creada
+           - remitente
+           - destinatario
+           - texto
+           - media
+           - llamada (si aplica)
+
+        5. Guardar el mensaje en la base de datos.
+
+        6. Enviar respuesta al cliente con mensaje de éxito.
+
+    Si ocurre un error:
+        - Enviar respuesta al cliente con el mensaje del error.
+*/
     createMessage: async (req, res) => {
         try {
             const { sender, recipient, text, media, call } = req.body

@@ -94,7 +94,8 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
-
+  lastOnline: { type: Date },
+  isOnline: { type: Boolean, default: false },
 
   cart: {
     items: [{

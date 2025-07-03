@@ -2,7 +2,7 @@ const router = require('express').Router();
 const langCtrl = require('../controllers/langCtrl');
 
 // Ruta pública (sin autenticación) para visitantes
-router.put('/language/public', langCtrl.setLanguagePublic);
+router.post('/language/public', langCtrl.setLanguagePublic);
 
 // Rutas para usuarios autenticados o no (guardan cookie + DB si autenticado)
 router.put('/language', langCtrl.updateUserLanguage);
