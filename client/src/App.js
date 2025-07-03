@@ -141,10 +141,20 @@ function App() {
     if (auth.token && !auth.socket) {
       dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
     }
-  }, [auth.token, auth.socket, dispatch]);;
+  }, [auth.token, auth.socket, dispatch]);
+
+  if (auth.token && auth.user?.esBloqueado) {
+    return (
+      <Router>
+        <Route exact path="/bloqueos" component={Bloqueos} />
+        <Route path="*" component={Bloqueos} />
+      </Router>
+    )
+  }
+
   return (
 
-
+   
     <Router>
       <Alert />
 

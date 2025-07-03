@@ -1,5 +1,6 @@
 require('dotenv').config();
-
+require('./cronJobs/DeleteUsersNoVerified');
+const { autoUnblockUsers } = require('./controllers/autoUnBlockUser')
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -9,6 +10,7 @@ const i18n = require('i18n');
 const SocketServer = require('./socketServer'); // ✅ Aquí el archivo Socket corregido
 const { autoUnblockUsers } = require('./controllers/autoUnBlockUser');
 const morgan = require('morgan');
+
 
 const app = express();
 

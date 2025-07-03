@@ -34,7 +34,7 @@ const Bloqueos404 = () => {
         return () => { document.body.dir = 'ltr'; };
     }, [isRTL]);
 
-    const isBlocked = userBlockReducer.blockedUsers.some(
+    const esBloqueado = userBlockReducer.blockedUsers.some(
         blockedUser => blockedUser.user._id === user._id && blockedUser.esBloqueado
     );
     
@@ -97,7 +97,7 @@ const Bloqueos404 = () => {
         }
     };
 
-    if (!isBlocked) {
+    if (!esBloqueado) {
         return (
             <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
                 <Card className="text-center shadow" style={{ width: '100%', maxWidth: '600px' }}>
@@ -198,9 +198,7 @@ const Bloqueos404 = () => {
                                 </ListGroup>
                                 
                                 <div className="d-grid gap-2">
-                                    <Button variant="outline-danger" disabled>
-                                        {t('requestUnblock', { lng: lang })}
-                                    </Button>
+                                     
                                     <Button 
                                         variant="outline-secondary" 
                                         onClick={handleContactSupport}

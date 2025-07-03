@@ -7,10 +7,8 @@ const Posts = require('../models/postModel');
 const Comments = require('../models/commentModel');
 
 const Notifications = require('../models/notifyModel')
- 
- 
- const sendContactMessage = require('./sendMailContact');
-const sendSupportMessage = require('./sendSupporMessage');
+  
+const sendMail = require('./sendMail');
  
  
 
@@ -42,13 +40,8 @@ const userCtrl = {
   
       console.log('📩 Enviando contacto desde:', userEmail);
   
-      await sendContactMessage({
-        from: userEmail,
-        subject: title,
-        message,
-        lang: lang || 'es'
-      });
-  
+     
+      await sendMail(email, url || '#', lang, 'informativo', subject, message);
       return res.json({ msg: 'Mensaje de contacto enviado correctamente.' });
     } catch (err) {
       console.error('❌ Error al enviar contacto:', err); // 🛠 log completo
@@ -72,8 +65,8 @@ const userCtrl = {
             blockDate: blockDate || new Date(),
             blockReason: blockReason || 'No especificado'
           };
-    
-          await sendSupportMessage(userData, message, lang || 'es');
+          await sendMail(email, url || '#', lang, 'informativo', subject, message);
+       
     
           return res.json({ msg: 'Solicitud enviada correctamente.' });
         } catch (err) {
