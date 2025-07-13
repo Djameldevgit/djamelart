@@ -1,228 +1,99 @@
 import React, { useState } from 'react';
-import { 
-  Form, 
-  Button, 
-  Card, 
-  Container, 
-  Alert, 
-  Spinner,
-  OverlayTrigger,
-  Tooltip,
-  FloatingLabel
-} from 'react-bootstrap';
-import { 
-  EnvelopeFill, 
-  PersonFill, 
-  PencilFill, 
-  TextParagraph,
-  SendFill, 
-  DoorOpenFill, 
-  HouseDoorFill,
-  InfoCircleFill
-} from 'react-bootstrap-icons';
+import axios from 'axios';
+import { Form, Button, Alert, Spinner, Container } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 
 const Contact = () => {
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [error, setError] = useState(null);
-  const { languageReducer, auth } = useSelector(state => state);
-  const { t } = useTranslation('aplicacion');
-  const lang = languageReducer.language || 'en';
+  const [feedback, setFeedback] = useState(null);
 
-  const adminEmail = 'artealger2020argelia@gmail.com';
-  const userEmail = auth?.user?.email || '';
+  const { auth, languageReducer } = useSelector(state => state);
+  const lang = languageReducer.language || 'es';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    setFeedback(null);
     setIsSubmitting(true);
 
     try {
-      const res = await fetch('/api/contact-support', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: auth.token
-        },
-        body: JSON.stringify({
+      const res = await axios.post(
+        '/api/contact-support',
+        {
           title,
           message,
           lang,
-          userEmail // Incluir el email del usuario en el cuerpo
-        })
-      });
+          userEmail: auth.user.email
+        },
+        {
+          headers: {
+            Authorization: auth.token
+          }
+        }
+      );
 
-      const data = await res.json();
-      if (res.ok) {
-        setShowSuccess(true);
-        setTitle('');
-        setMessage('');
-        setTimeout(() => setShowSuccess(false), 5000);
-      } else {
-        setError(data.msg || t('sendErrorMessage', { lng: lang }));
-      }
+      console.log('✅ Respuesta:', res.data);
+
+      setFeedback({ type: 'success', msg: 'Mensaje enviado correctamente.' });
+      setTitle('');
+      setMessage('');
     } catch (err) {
-      console.error('Error al enviar:', err);
-      setError(t('networkErrorMessage', { lng: lang }));
+      console.error('❌ Error:', err.response?.data || err.message);
+      setFeedback({
+        type: 'danger',
+        msg: err.response?.data?.msg || 'Error al enviar el mensaje.'
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const renderTooltip = (text) => (
-    <Tooltip id="button-tooltip">
-      {text}
-    </Tooltip>
-  );
-
   return (
-    <Container className="d-flex justify-content-center align-items-center py-5">
-      <Card className="w-100 shadow-lg" style={{ maxWidth: '657px' }}>
-        <Card.Header className="text-center bg-primary text-white py-3">
-          <h2 className="mb-0">
-            <EnvelopeFill className="me-2" />
-            {t('contactFormTitle', { lng: lang })}
-          </h2>
-        </Card.Header>
-        
-        <Card.Body className="p-4">
-          {showSuccess && (
-            <Alert variant="success" dismissible onClose={() => setShowSuccess(false)}>
-              {t('messageSentSuccessfully', { lng: lang })}
-            </Alert>
+    <Container className="py-5" style={{ maxWidth: '600px' }}>
+      <h3 className="mb-4 text-center">Formulario de Contacto</h3>
+
+      {feedback && (
+        <Alert variant={feedback.type} dismissible onClose={() => setFeedback(null)}>
+          {feedback.msg}
+        </Alert>
+      )}
+
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3">
+          <Form.Label>Asunto</Form.Label>
+          <Form.Control
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Escribe el asunto"
+            required
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Mensaje</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={5}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Escribe tu mensaje aquí"
+            required
+          />
+        </Form.Group>
+
+        <Button type="submit" disabled={isSubmitting} variant="primary" className="w-100">
+          {isSubmitting ? (
+            <>
+              <Spinner as="span" animation="border" size="sm" className="me-2" />
+              Enviando...
+            </>
+          ) : (
+            'Enviar Mensaje'
           )}
-          
-          {error && (
-            <Alert variant="danger" dismissible onClose={() => setError(null)}>
-              {error}
-            </Alert>
-          )}
-
-          <Form onSubmit={handleSubmit}>
-            <FloatingLabel controlId="adminEmail" label={t('adminEmailLabel', { lng: lang })} className="mb-3">
-              <Form.Control 
-                type="email" 
-                value={adminEmail} 
-                readOnly 
-                className="bg-light"
-                style={{ height: 'calc(3.5rem + 2px)' }}
-              />
-              <div className="position-absolute end-0 top-0 h-100 d-flex align-items-center pe-3">
-                <OverlayTrigger
-                  placement="top"
-                  overlay={renderTooltip(t('adminEmailTooltip', { lng: lang }))}
-                >
-                  <InfoCircleFill className="text-muted" />
-                </OverlayTrigger>
-              </div>
-            </FloatingLabel>
-
-            <FloatingLabel controlId="userEmail" label={t('yourEmailLabel', { lng: lang })} className="mb-3">
-              <Form.Control 
-                type="email" 
-                value={userEmail} 
-                readOnly 
-                className="bg-light"
-                style={{ height: 'calc(3.5rem + 2px)' }}
-              />
-            </FloatingLabel>
-
-            <FloatingLabel controlId="messageTitle" label={t('messageSubjectLabel', { lng: lang })} className="mb-3">
-              <Form.Control 
-                type="text" 
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
-                required 
-                maxLength={100}
-                style={{ height: 'calc(3.5rem + 2px)' }}
-              />
-              <Form.Text className="text-muted">
-                {title.length}/100 {t('characters', { lng: lang })}
-              </Form.Text>
-            </FloatingLabel>
-
-            <Form.Group className="mb-4">
-              <Form.Label className="d-flex align-items-center">
-                <TextParagraph className="me-2" />
-                {t('yourMessageLabel', { lng: lang })}
-                <OverlayTrigger
-                  placement="top"
-                  overlay={renderTooltip(t('messageContentTooltip', { lng: lang }))}
-                >
-                  <InfoCircleFill className="ms-2 text-muted" size={14} />
-                </OverlayTrigger>
-              </Form.Label>
-              <Form.Control 
-                as="textarea" 
-                rows={5} 
-                value={message} 
-                onChange={(e) => setMessage(e.target.value)} 
-                required 
-                minLength={20}
-                maxLength={1000}
-                className="mb-2"
-              />
-              <div className="d-flex justify-content-between">
-                <Form.Text className="text-muted">
-                  {message.length}/1000 {t('characters', { lng: lang })}
-                </Form.Text>
-                {message.length > 0 && message.length < 20 && (
-                  <Form.Text className="text-danger">
-                    {t('minCharactersWarning', { lng: lang, count: 20 })}
-                  </Form.Text>
-                )}
-              </div>
-            </Form.Group>
-
-            <div className="d-flex flex-column flex-md-row justify-content-between gap-3">
-              <Button 
-                variant="outline-danger" 
-                onClick={() => window.history.back()}
-                className="flex-grow-1"
-              >
-                <DoorOpenFill className="me-2" />
-                {t('exitButton', { lng: lang })}
-              </Button>
-              
-              <Button 
-                variant="outline-secondary" 
-                href="/"
-                className="flex-grow-1"
-              >
-                <HouseDoorFill className="me-2" />
-                {t('backToHomeButton', { lng: lang })}
-              </Button>
-              
-              <Button 
-                variant="primary" 
-                type="submit"
-                disabled={isSubmitting || message.length < 20 || title.length < 5}
-                className="flex-grow-1"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Spinner as="span" animation="border" size="sm" className="me-2" />
-                    {t('sendingButton', { lng: lang })}
-                  </>
-                ) : (
-                  <>
-                    <SendFill className="me-2" />
-                    {t('sendButton', { lng: lang })}
-                  </>
-                )}
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-        
-        <Card.Footer className="text-center text-muted small py-2">
-          {t('contactFooterMessage', { lng: lang })}
-        </Card.Footer>
-      </Card>
+        </Button>
+      </Form>
     </Container>
   );
 };

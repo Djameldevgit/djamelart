@@ -1,19 +1,20 @@
 {
-    "authRequiredTitle": "Action non autorisée",
-    "authRequiredMessage": "Veuillez vous inscrire ou vous connecter pour continuer.",
-    "login": "Se connecter",
-    "register": "S'inscrire",
-    "close": "Fermer",
-    "productAddedToCart": "Produit ajouté au panier",
-    "thanksForPurchase": "Merci pour votre achat !",
-    "addToCart": "Ajouter au panier",
-    "removeFromCart": "Retirer du panier",
-
-    "noVerificada": "Votre compte est inactif. Veuillez l'activer pour utiliser l'application.",
+  "authRequiredTitle": "Action non autorisée",
+  "authRequiredMessage": "Veuillez vous inscrire ou vous connecter pour continuer.",
+  "login": "Se connecter",
+  "register": "S'inscrire",
+  "close": "Fermer",
+  "productAddedToCart": "Produit ajouté au panier",
+  "thanksForPurchase": "Merci pour votre achat !",
+  "addToCart": "Ajouter au panier",
+  "removeFromCart": "Retirer du panier",
+  "noVerificada": "Votre compte est inactif. Veuillez l'activer pour utiliser l'application.",
   "activar": "Activer mon compte",
-
   "title": "Compte désactivé",
-  "message": "Votre compte a été désactivé par les administrateurs. Si vous pensez qu’il s’agit d’une erreur, veuillez nous contacter."
-  
-  }
-  
+  "message": "Votre compte a été désactivé par les administrateurs. Si vous pensez qu’il s’agit d’une erreur, veuillez nous contacter.",
+  "title2": "Attention !",
+  "message2": "Veuillez vous connecter ou vous inscrire pour continuer.",
+  "login2": "Se connecter",
+  "register2": "S'inscrire",
+  "close2": "Fermer"
+}

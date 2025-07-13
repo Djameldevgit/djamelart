@@ -1,0 +1,16 @@
+{
+  "defaultUser": "用户",
+  "noMessages": "暂无消息",
+  "messagePlaceholder": "输入消息...",
+  "sendButton": "发送",
+  "avatarAlt": "用户头像",
+  "chatTitle": "与{username}的聊天",
+  "onlineStatus": "在线",
+  "offlineStatus": "离线",
+  "messageTime": "HH:mm",
+  "closeButton": "关闭聊天",
+  "header": "对话",
+  "noConversations": "您还没有对话",
+  "loading": "正在加载对话...",
+  "newConversation": "新对话"
+}

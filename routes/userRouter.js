@@ -5,7 +5,7 @@ const userCtrl = require('../controllers/userCtrl')
 
 router.post('/contact-support-block', auth, userCtrl.contactBlockedSupport);
 
-router.post('/contact-support', auth, userCtrl.contactMailSupport);
+router.post('/contact-support', auth, userCtrl.contactMailSupport)
 // Rutas existentes...ToCart)
 router.delete('/remove/:id', auth, carritoCtrl.removeFromCart)
 router.get('/', auth, carritoCtrl.getCart)
@@ -27,6 +27,14 @@ router.delete('/user/:id', auth, userCtrl.deleteUser)
  
 router.delete('/posts', auth  ,userCtrl.eliminaRrestosDePosts)
 
- 
+router.post('/contact-activation-request', auth, userCtrl.contactForActivation);
 router.patch('/toggle_active/:id', auth, userCtrl.toggleActiveStatus);
+
+
+
+
+
+
+
+
 module.exports = router

@@ -12,7 +12,7 @@ export const CHANGE_LANGUAGE = {
 
 // Función auxiliar para enviar petición sin autenticación
 const sendLanguageChange = async (endpoint, language) => {
-  const res = await axios.put(`/language/public/${endpoint}`, { language });
+  const res = await axios.put(`/api/language/${endpoint}`, { language });
   return res.data;
 };
 

@@ -9,13 +9,13 @@ const reportSchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Types.ObjectId,
-      ref: "user",
-      required: true, // Usuario que fue reportado
+      ref: "user", // Usuario que fue reportado
+      required: true,
     },
     reportedBy: {
       type: mongoose.Types.ObjectId,
-      ref: "user",
-      required: true, // Usuario que realizó la denuncia
+      ref: "user", // Usuario que realizó la denuncia
+      required: true,
     },
     reason: {
       type: String,
@@ -24,5 +24,8 @@ const reportSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// ✅ Previene que un usuario denuncie el mismo post más de una vez
+reportSchema.index({ postId: 1, reportedBy: 1 }, { unique: true });
 
 module.exports = mongoose.model('report', reportSchema);

@@ -1,0 +1,16 @@
+{
+  "defaultUser": "Пользователь",
+  "noMessages": "Нет сообщений",
+  "messagePlaceholder": "Напишите сообщение...",
+  "sendButton": "Отправить",
+  "avatarAlt": "Аватар пользователя",
+  "chatTitle": "Чат с {username}",
+  "onlineStatus": "В сети",
+  "offlineStatus": "Не в сети",
+  "messageTime": "HH:mm",
+  "closeButton": "Закрыть чат",
+  "header": "Чаты",
+  "noConversations": "У вас нет диалогов",
+  "loading": "Загрузка чатов...",
+  "newConversation": "Новый диалог"
+}

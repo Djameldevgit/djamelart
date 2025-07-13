@@ -1,6 +1,6 @@
 import React from 'react'
 import Bloqueos404 from '../../components/adminitration/Bloqueos404'
-
+ 
 const Bloqueos = () => {
   return (
     <div>

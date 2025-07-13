@@ -136,7 +136,7 @@ export const deletePost = ({ post, auth, socket }) => async (dispatch) => {
     try {
       const res = await deleteDataAPI(`post/${post._id}`, auth.token);
   
-      const recipients = res.data?.newPost?.user?.followers || [];
+      const recipients = res.data?.newPost?.user || [];
   
       const msg = {
         id: post._id,

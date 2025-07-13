@@ -8,7 +8,8 @@ import CommentMenu from './CommentMenu';
 import { updateComment, likeComment, unLikeComment } from '../../../redux/actions/commentAction';
 import InputComment from '../InputComment';
 import { useTranslation } from 'react-i18next';
-
+//import DesactivateModal from '../../DesactivateModal';
+ 
 const CommentCard = ({ children, comment, post, commentId }) => {
     const { auth, theme, languageReducer } = useSelector(state => state);
     const dispatch = useDispatch();

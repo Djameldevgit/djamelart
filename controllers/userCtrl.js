@@ -1,19 +1,19 @@
- 
+
 const mongoose = require('mongoose');
- 
- 
+
+
 const Users = require('../models/userModel');
 const Posts = require('../models/postModel');
 const Comments = require('../models/commentModel');
 
 const Notifications = require('../models/notifyModel')
-  
-const sendMail = require('./sendMail');
- 
- 
 
- 
- 
+const sendMail = require('./sendMail');
+
+
+
+
+
 
 class APIfeatures {
   constructor(query, queryString) {
@@ -30,54 +30,109 @@ class APIfeatures {
   }
 }
 const userCtrl = {
+  contactForActivation: async (req, res) => {
+    try {
+      const { message, lang } = req.body;
+      const user = req.user; // gracias al middleware auth
 
- 
-  contactMailSupport : async (req, res) => {
-    
+      if (!message || !message.trim()) {
+        return res.status(400).json({ msg: 'El mensaje es obligatorio.' });
+      }
+
+      // Asunto personalizado y mensaje para admin
+      const subject = `Solicitud de activación de cuenta - ${user.username}`;
+      const customMessage = `
+        El usuario ${user.username} ha solicitado la activación de su cuenta.
+
+        ID: ${user._id}
+        Correo: ${user.email}
+
+        Mensaje del usuario:
+        ${message}
+      `;
+
+      const adminEmail = "artealger2020argelia@gmail.com";
+
+      // Enviamos el correo con plantilla genérica "informativo"
+      await sendMail(adminEmail, '#', lang || 'es', 'informativo', subject, customMessage);
+
+      return res.json({ msg: '✅ Mensaje enviado correctamente al administrador.' });
+
+    } catch (err) {
+      console.error('❌ Error al procesar solicitud de activación:', err);
+      return res.status(500).json({ msg: 'Error interno del servidor.' });
+    }
+  },
+
+  // ...otros controladores
+
+
+  contactMailSupport: async (req, res) => {
     try {
       const { title, message, lang } = req.body;
-      const userEmail = req.user.email; // debe estar autenticado
   
-      console.log('📩 Enviando contacto desde:', userEmail);
+      // Asegúrate de que el usuario esté autenticado
+      const user = req.user;
+      if (!user) {
+        return res.status(401).json({ msg: 'Usuario no autenticado.' });
+      }
   
-     
-      await sendMail(email, url || '#', lang, 'informativo', subject, message);
-      return res.json({ msg: 'Mensaje de contacto enviado correctamente.' });
+      if (!title || !message) {
+        return res.status(400).json({ msg: 'Faltan el título o el mensaje.' });
+      }
+  
+      const subject = `[Contacto] ${title} - ${user.username}`;
+      const fullMessage = `
+  Mensaje del usuario:
+  --------------------
+  Nombre: ${user.username}
+  Email: ${user.email}
+  ID: ${user._id}
+  
+  Mensaje:
+  --------
+  ${message}
+      `;
+  
+      // Enviar el email al administrador
+      await sendMail('artealger2020argelia@gmail.com', '#', lang || 'es', 'informativo', subject, fullMessage);
+  
+      return res.json({ success: true, msg: 'Mensaje enviado correctamente.' });
     } catch (err) {
-      console.error('❌ Error al enviar contacto:', err); // 🛠 log completo
-      return res.status(500).json({ msg: 'Error al enviar el mensaje de contacto.' });
+      console.error('❌ Error al enviar el mensaje de contacto:', err);
+      return res.status(500).json({ msg: 'Error interno al enviar el mensaje.' });
     }
   },
   
-    
-      contactBlockedSupport: async (req, res) => {
-        try {
-          const { email, username, _id, blockDate, blockReason, message, lang } = req.body;
-    
-          if (!email || !message || !_id) {
-            return res.status(400).json({ msg: 'Faltan campos requeridos.' });
-          }
-    
-          const userData = {
-            email,
-            username,
-            _id,
-            blockDate: blockDate || new Date(),
-            blockReason: blockReason || 'No especificado'
-          };
-          await sendMail(email, url || '#', lang, 'informativo', subject, message);
-       
-    
-          return res.json({ msg: 'Solicitud enviada correctamente.' });
-        } catch (err) {
-          console.error(err);
-          return res.status(500).json({ msg: 'Error al enviar la solicitud.' });
-        }
-      
-    },
-    
-  
-  
+  contactBlockedSupport: async (req, res) => {
+    try {
+      const { message, lang } = req.body;
+      const user = req.user;
+
+      if (!message) {
+        return res.status(400).json({ msg: 'El mensaje es obligatorio.' });
+      }
+
+      const subject = `🛑 Solicitud de revisión de bloqueo - ${user.username}`;
+      const fullMessage = `
+  Usuario: ${user.username}
+  ID: ${user._id}
+  Email: ${user.email}
+  Mensaje: ${message}
+  Fecha de solicitud: ${new Date().toLocaleString(lang || 'es')}
+      `;
+
+      await sendMail('artealger2020argelia@gmail.com', '#', lang || 'es', 'informativo', subject, fullMessage);
+
+      return res.json({ msg: '✅ Solicitud de desbloqueo enviada correctamente.' });
+    } catch (err) {
+      console.error('❌ Error en contactBlockedSupport:', err);
+      return res.status(500).json({ msg: 'Error al enviar la solicitud.' });
+    }
+  },
+
+
+
 
   validateUserActivity: async (req, res, next) => {
     const user = await Users.findById(req.user._id);
@@ -141,15 +196,15 @@ const userCtrl = {
     try {
       const features = new APIfeatures(Users.find(), req.query).paginating();
       const users = await features.query;
-  
+
       const usersWithDetails = await Promise.all(users.map(async (user) => {
         const userPosts = await Posts.find({ user: user._id });
         const totalLikesReceived = userPosts.reduce((acc, post) => acc + post.likes.length, 0);
         const totalCommentsReceived = userPosts.reduce((acc, post) => acc + post.comments.length, 0);
-  
+
         const likesGiven = await Posts.countDocuments({ likes: user._id });
         const commentsMade = await Comments.countDocuments({ user: user._id });
-  
+
         return {
           ...user.toObject(),
           postCount: userPosts.length, // ✅ Cantidad de posts
@@ -162,18 +217,18 @@ const userCtrl = {
           totalReportGiven: user.report.length,
         };
       }));
-  
+
       return res.json({
         msg: "Success",
         result: usersWithDetails.length,
         users: usersWithDetails
       });
-  
+
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
   },
-  
+
 
 
   updateUser: async (req, res) => {
@@ -249,7 +304,7 @@ const userCtrl = {
       return res.status(500).json({ msg: err.message })
     }
   },
- 
+
 
   deleteUser: async (req, res) => {
     const session = await mongoose.startSession();

@@ -82,20 +82,6 @@ const messageReducer = (state = initialState, action) => {
                     : {...user, online: false}
                 )
             };
-            
-              
-                case MESS_TYPES.UPDATE_USER_STATUS:
-                    return {
-                      ...state,
-                      users: state.users.map(user =>
-                        user._id === action.payload.id
-                          ? { ...user, online: false, lastDisconnectedAt: action.payload.lastDisconnectedAt }
-                          : user
-                      ),
-                      online: state.online?.filter(id => id !== action.payload.id)
-                    };
-
-
         default:
             return state;
     }

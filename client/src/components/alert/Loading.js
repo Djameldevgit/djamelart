@@ -16,3 +16,16 @@ const Loading = () => {
 }
 
 export default Loading
+/*import React from 'react'
+import Spinner from 'react-bootstrap/Spinner';
+const Loading = () => {
+    return (
+     <dib>
+    <Spinner animation="border" role="status">
+      <span className="visually-hidden">Loading...</span>
+    </Spinner>
+     </dib>
+    )
+}
+
+export default Loading*/

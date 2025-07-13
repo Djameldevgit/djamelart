@@ -196,6 +196,4 @@ export const deleteUser = ({id, auth}) => async (dispatch) => {
   };
 
  
-
  
-  

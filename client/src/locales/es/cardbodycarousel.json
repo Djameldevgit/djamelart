@@ -1,26 +1,20 @@
 {
-    "authRequiredTitle": "Acción no permitida",
-    "authRequiredMessage": "Por favor regístrate o inicia sesión para hacer esta acción.",
+    "authRequiredTitle": "Acción no autorizada",
+    "authRequiredMessage": "Por favor regístrate o inicia sesión para continuar.",
     "login": "Iniciar sesión",
     "register": "Registrarse",
     "close": "Cerrar",
     "productAddedToCart": "Producto añadido al carrito",
     "thanksForPurchase": "¡Gracias por tu compra!",
     "addToCart": "Añadir al carrito",
-    "removeFromCart": "Quitar del carrito",
- 
-        "title": "Cuenta desactivada",
-        "message": "Tu cuenta ha sido desactivada por los administradores. Si crees que es un error, contáctanos.",
- 
-    
-            "title2": "¡Atención!",
-            "message2": "Por favor inicia sesión o regístrate para continuar.",
-            "login2": "Iniciar sesión",
-            "register2": "Registrarse",
-            "close2": "Cerrar"
-       
-          
-      
-
-
-}
+    "removeFromCart": "Eliminar del carrito",
+    "noVerificada": "Tu cuenta está inactiva. Actívala para usar la aplicación.",
+    "activar": "Activar mi cuenta",
+    "title": "Cuenta desactivada",
+    "message": "Tu cuenta ha sido desactivada por los administradores. Si crees que es un error, contáctanos.",
+    "title2": "¡Atención!",
+    "message2": "Por favor inicia sesión o regístrate para continuar.",
+    "login2": "Iniciar sesión",
+    "register2": "Registrarse",
+    "close2": "Cerrar"
+  }

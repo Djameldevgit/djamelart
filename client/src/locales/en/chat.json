@@ -1,0 +1,47 @@
+{
+  "defaultUser": "User",
+  "noMessages": "No messages yet",
+  "messagePlaceholder": "Write a message...",
+  "sendButton": "Send Message",
+  "avatarAlt": "User avatar",
+  "chatTitle": "Chat with {username}",
+  "onlineStatus": "Online",
+  "offlineStatus": "Offline",
+  "messageTime": "HH:mm",
+  "closeButton": "Close chat",
+  "header": "Conversations",
+  "noConversations": "You don't have any conversations yet.",
+  "loading": "Loading conversations...",
+  "newConversation": "New conversation",
+
+ 
+    "user": "User",
+    "status": "Status",
+    "lastDisconnect": "Last Disconnect",
+    "registration": "Registration",
+    "verification": "Verification",
+    "accountStatus": "Account Status",
+    "blockStatus": "Block Status",
+    "actions": "Actions",
+    "online": "🟢 Online",
+    "offline": "🔴 Offline",
+    "offlineSince": "🔴 Offline since",
+    "verified": "Verified",
+    "notVerified": "Not Verified",
+    "active": "🟢 Active",
+    "inactive": "🟠 Inactive",
+    "blocked": "🚫 Blocked",
+    "notBlocked": "✅ Not Blocked",
+    "deleteConfirmation": "Confirm Deletion",
+    "deleteConfirmationMessage": "Are you sure you want to permanently delete this user?",
+    "deactivateAccount": "Deactivate Account",
+    "activateAccount": "Activate Account",
+    "blockUser": "Block User",
+    "unblockUser": "Unblock User"
+ 
+
+
+
+
+
+}

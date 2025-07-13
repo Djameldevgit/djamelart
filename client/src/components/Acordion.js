@@ -8,6 +8,7 @@ import {
   FaAppleAlt,
   FaSeedling
 } from 'react-icons/fa'
+import Modalsearchhome from './Modalsearchhome'
 
 const Acordion = () => {
   return (
@@ -43,6 +44,8 @@ const Acordion = () => {
           <FaSeedling color="#32CD32" size={18} /> Bodegones - Flores
         </Link>
       </div>
+
+      <Modalsearchhome/>
     </div>
   )
 }

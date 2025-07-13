@@ -42,24 +42,23 @@ i18n.configure({
 app.use(i18n.init);
 
 // --- SOCKET.IO ---
+ 
 const http = require('http').createServer(app);
-const { Server } = require('socket.io');
 
-const io = new Server(http, {
+const io = require('socket.io')(http, {
   cors: {
-    origin: [
-      'http://localhost:3000',
-      'https://djamelart.onrender.com'
-    ],
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
     credentials: true
   }
 });
 
-// ✅ Corrección crítica: pasar socket + io
+// ✅ Esto es clave: conectar con tu manejador personalizado
 io.on('connection', socket => {
-  console.log('🔌 Nueva conexión Socket.IO:', socket.id);
-  SocketServer(socket, io);
+  SocketServer(socket, io); // <-- Pasa también "io" si tu servidor lo necesita
 });
+// ✅ Corrección crítica: pasar socket + io
+ 
 
 // --- Ruta para cambiar idioma ---
 app.get('/api/set-language', (req, res) => {
@@ -85,8 +84,9 @@ app.use('/api', require('./routes/rolesRouter'));
 app.use('/api', require('./routes/orderRouter'));
 app.use('/api', require('./routes/userActionRouter'));
 app.use('/api', require('./routes/blockUserRouter'));
-app.use('/api', require('./routes/chatRouter'));
+app.use('/api', require('./routes/reportRouter'));
 
+ 
 // --- Auto desbloqueo de usuarios cada 5 min ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 

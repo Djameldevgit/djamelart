@@ -1,6 +1,15 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import arChat from './locales/ar/chat.json';
+import chChat from './locales/ch/chat.json';
+import enChat from './locales/en/chat.json';
+import esChat from './locales/es/chat.json';
+import frChat from './locales/fr/chat.json';
+import kaChat from './locales/ka/chat.json';
+import ruChat from './locales/ru/chat.json';
+
+
 
 import arBloqueos from './locales/ar/bloqueos.json';
 import chBloqueos from './locales/ch/bloqueos.json';
@@ -169,6 +178,9 @@ import Bloqueos from './pages/users/bloqueos';
 
 const resources = {
   ar: {
+
+
+    chat: arChat,
     bloqueos: arBloqueos,
     cardbodycarousel: arCardbodycarousel,
  info: arInfo,
@@ -190,6 +202,8 @@ const resources = {
 
   },
   ch: {
+
+    chat: chChat,
     bloqueos: chBloqueos,
     cardbodycarousel: chCardbodycarousel,
     info: chInfo,
@@ -210,6 +224,8 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
+
+    chat: enChat,
     bloqueos: enBloqueos,
     cardbodycarousel: enCardbodycarousel,
     info: enInfo,
@@ -230,6 +246,8 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
+
+    chat: esChat,
     bloqueos: esBloqueos,
     cardbodycarousel: esCardbodycarousel,
     info: esInfo,
@@ -250,6 +268,8 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
+
+    chat: frChat,
     bloqueos: frBloqueos,
     cardbodycarousel: frCardbodycarousel,
     info: frInfo,
@@ -270,6 +290,8 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   ka: {
+
+    chat: kaChat,
     bloqueos: kaBloqueos,
     cardbodycarousel: kaCardbodycarousel,
     info: kaInfo,
@@ -290,6 +312,8 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
+
+    chat: ruChat,
     bloqueos:ruBloqueos,
     cardbodycarousel: ruCardbodycarousel,
     info: ruInfo,

@@ -2,24 +2,29 @@
   "art_painting": "الفن والرسم",
  
   "appName": "مبيعات اللوحات الفنية",
-  "addPost": "إضافة إعلان",
-  "appInfo": "معلومات التطبيق",
-  "adminChat": "دردشة الإدارة",
-  "rolesuser": "الأدوار",
-  "reportedUsers": "المستخدمون المبلغ عنهم",
-  "pendingPosts": "المنشورات المعلقة",
  
-  "userActions": "إجراءات المستخدم",
-  "userEditing": "تحرير المستخدمين",
-  "blockedUsers": "المستخدمون المحظورون",
-  "profile": "الملف الشخصي",
-  "lightMode": "الوضع الفاتح",
-  "darkMode": "الوضع الداكن",
-  "logout": "تسجيل الخروج",
-  "account": "الحساب",
-  "login": "تسجيل الدخول",
-  "register": "التسجيل"
+    
+    "login": "تسجيل الدخول",
+    "register": "تسجيل",
+    "logout": "تسجيل الخروج",
+    "profile": "الملف الشخصي",
+    "darkMode": "الوضع المظلم",
+    "lightMode": "الوضع الفاتح",
+    "addPost": "إنشاء منشور",
+    "appInfo": "معلومات التطبيق",
+    "adminChat": "محادثة مع المدير",
+    "roles": "أدوار المستخدمين",
+    "conversations": "المحادثات",
+    "contact": "اتصال",
+    "userReports": "تقارير المستخدمين",
+    "adminSendEmail": "إرسال بريد (مدير)",
+    "users": "المستخدمين",
+    "pendingPosts": "منشورات معلقة",
+    "userActions": "إجراءات المستخدم",
+    "blockedUsers": "المستخدمون المحظورون",
+    "orders": "الطلبات",
+    "testPage": "صفحة اختبار",
+    "menu": "القائمة"
  
-
   
 }

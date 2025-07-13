@@ -1,15 +1,20 @@
-{  "authRequiredTitle": "ⵉⵏⴰⵔⵣⵓ ⵓⵎⵏⴰⵢ ⵜⵉⵜⵎⵎⵓⵔⵜ",
-"authRequiredMessage": "ⴰⵣⵓⵍ ⴳⴻⵔ ⵉⵎⵎⴰⵔⵓⴷ ⴷ ⴷⵓⵔ ⴳⵓⴷⵓⵏ ⴷ ⵙⵉⵜⵉⵍⴻⵏ ⵓⵙⵏⵓⵎⵏ ⵉⵎⵎⵓⵔⴰⵍ.",
-
-"login": "ⵉⵎⵎⴰⵔⵓⴷ",
-"register": "ⵙⵉⵜⵉⵍⴻⵏ",
-"close": "ⵔⵉⵙⵉ",
-
-"productAddedToCart": "ⵜⴰⴳⵙⴻⵏⵜ ⵜⴰⵏⴰⵢⵏ ⵏ ⵜⴰⴳⵍⴰⵍⵉⵜ",
-"thanksForPurchase": "ⵢⵓⵎⴰⵏ ⵉⵡⵉⵏⵓ ⵓⵜⵓⵍⴻⴷ!",
-
-"addToCart": "ⵜⴰⵏⴰⵢ ⵏ ⵏⵜⴰⴳⵍⴰⵍⵉⵜ",
-"removeFromCart": "ⵜⴰⵙⴽⴳⴰⵔⵜ ⵏ ⵜⴰⴳⵍⴰⵍⵉⵜ"
-
-
-}
+{
+    "authRequiredTitle": "Armes ur yettusireg ara",
+    "authRequiredMessage": "Ttxil-k, aru neɣ kcem akken ad tkemleḍ.",
+    "login": "Kcem",
+    "register": "Aru",
+    "close": "Ferm",
+    "productAddedToCart": "Afaris yettwarnaḍ ɣer ukarṭa",
+    "thanksForPurchase": "Tanemmirt ɣef tsɣirt!",
+    "addToCart": "Rnu ɣer ukarṭa",
+    "removeFromCart": "Kkes seg ukarṭa",
+    "noVerificada": "Amniḍ-ik ur iteddu ara. Ttxil-k, sired-t akken ad tesqedceḍ app-nni.",
+    "activar": "Sireḍ amniḍ-inu",
+    "title": "Amniḍ yensay",
+    "message": "Amniḍ-ik yensay s yimserriḥen. Ma tebɣiḍ d aɣilif, aɣ-d nermes.",
+    "title2": "Ɣur-k!",
+    "message2": "Ttxil-k, kcem neɣ aru akken ad tkemleḍ.",
+    "login2": "Kcem",
+    "register2": "Aru",
+    "close2": "Ferm"
+  }

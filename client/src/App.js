@@ -20,8 +20,7 @@ import { GLOBALTYPES } from './redux/actions/globalTypes'
 import SocketClient from './SocketClient'
 
 import { getNotifies } from './redux/actions/notifyAction'
-import CallModal from './components/message/CallModal'
-
+ 
 import { getPostsPendientes } from './redux/actions/postAproveAction'
 import Postspendientes from './pages/postspendientes'
 
@@ -38,14 +37,14 @@ import { getCart } from './redux/actions/cartAction';
 import Cart from './pages/carte/cart';
 import Chekoutt from './pages/carte/Chekoutt';
 import Profile from './pages/profile.';
-import Message from './pages/message';
+ 
 import Informacionaplicacion from './pages/informacionaplicacion';
 import Orderss from './pages/carte/orderss';
 import { getOrders } from './redux/actions/orderAction';
 import ForgotPassword from './auth/ForgotPassword';
 import ResetPassword from './auth/ResetPassword';
 
-
+import { io } from 'socket.io-client';
 import ActivatePage from './auth/ActivatePage';
 
 import { getUsers } from './redux/actions/userAction';
@@ -59,15 +58,18 @@ import ListaUseariosbloqueadoss from './pages/listaUseariosbloqueadoss';
 import AdminSendEmails from './pages/users/adminSendEmails';
 import Bloqueos from './pages/users/bloqueos';
 import Contactt from './pages/contactt';
-import ChatDrawer from './components/home/post_card/chat/chatDrawer';
-import socket from './SocKetClientt';
-import Conversacioness from './pages/chat/conversacioness';
-
+ 
+import Provaa from './pages/provaa';
+import Reportess from './pages/users/reportess';
+ 
+import Conversacioness from './pages/conversacioness';
+import Message from './pages/message';
+ 
  
 
  
 function App() {
-  const { auth, status, modal, call, languageReducer } = useSelector(state => state)
+  const { auth, status, modal,  languageReducer } = useSelector(state => state)
  
   const language = languageReducer?.language || localStorage.getItem("lang") || "en";
 
@@ -75,11 +77,6 @@ function App() {
 
  
 
-  useEffect(() => {
-    if (auth.user?._id) {
-      socket.emit('userConnected', auth.user._id);
-    }
-  }, [auth.user]);
 
 
 
@@ -101,12 +98,11 @@ function App() {
   }, [language]);
 
   useEffect(() => {
-    dispatch(refreshToken())
-
-    //const socket = io('http://localhost:5000');
-    dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
-    return () => socket.close()
-  }, [dispatch])
+    dispatch(refreshToken());
+    const socket = io();
+    dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
+    return () => socket.close();
+  }, [dispatch]);
 
   useEffect(() => {
 
@@ -137,11 +133,7 @@ function App() {
   }, [])
 
 
-  useEffect(() => {
-    if (auth.token && !auth.socket) {
-      dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
-    }
-  }, [auth.token, auth.socket, dispatch]);
+  
 
   if (auth.token && auth.user?.esBloqueado) {
     return (
@@ -165,20 +157,23 @@ function App() {
           <Navbar2 />
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
-          {call && <CallModal />}
-          {auth.token && <ChatDrawer />}
-          <Route exact path="/login" component={Login} />
+         
+      <Route exact path="/login" component={Login} />
 
           <Route exact path="/" component={Home} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/bloqueos" component={Bloqueos} />
           <Route exact path="/post/:id" component={Post} />
-          <Route exact path="/message/:id" component={Message} />
+          
           <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
           <Route exact path="/contact" component={auth.token ? Contactt : Login} />
-          <Route exact path="/conversaciones" component={auth.token ? Conversacioness : Login} />
+          <Route exact path="/message/:id" component={auth.token ? Message : Login} />
+          <Route exact path="/conversations" component={auth.token ? Conversacioness : Login} />
+         
 
+          <Route exact path="/provaa" component={auth.token ? Provaa : Login}s/>
 
+          <Route exact path="/reportesusers" component={auth.token ? Reportess: Login} />
 
 
           <Route exact path="/users/adminsendemail" component={auth.token ? AdminSendEmails : Login} />

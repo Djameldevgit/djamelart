@@ -1,0 +1,36 @@
+// components/UserProfile.jsx
+import React, { useState, useEffect } from "react";
+import { getUserStatus } from "../utils/userValidations"; // Importa la función
+
+const UserProfile = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const response = await fetch("/api/user");
+      const data = await response.json();
+      setUser(data);
+    };
+    fetchUser();
+  }, []);
+
+  if (!user) return <div>Cargando...</div>;
+
+  // Obtiene el estado del usuario desde la utilidad
+  const userStatus = getUserStatus(user);
+
+  return (
+    <div>
+      <h1>Perfil de Usuario</h1>
+      
+      {/* Muestra el mensaje condicional */}
+      {userStatus && (
+        <div className={`alert ${userStatus.className}`}>
+          {userStatus.message}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default UserProfile;

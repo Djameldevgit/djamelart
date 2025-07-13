@@ -1,0 +1,22 @@
+{
+  "defaultUser": "Utilisateur",
+  "noMessages": "Aucun message pour l'instant",
+  "messagePlaceholder": "Écrire un message...",
+  "sendButton": "Envoyer le message",
+  "avatarAlt": "Avatar de l'utilisateur",
+  "chatTitle": "Chat avec {username}",
+  "onlineStatus": "En ligne",
+  "offlineStatus": "Hors ligne",
+  "messageTime": "HH:mm",
+  "closeButton": "Fermer le chat",
+
+
+  "header": "Conversations",
+  "noConversations": "Vous n'avez pas encore de conversations.",
+  "loading": "Chargement des conversations...",
+  "newConversation": "Nouvelle conversation"
+ 
+
+
+
+}

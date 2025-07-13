@@ -6,8 +6,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import VerifyModal from './VerifyModal';
- 
-import DesactivateModal from './DesactivateModal';
+import DesactivateModal from '../../DesactivateModal';
+
 
 const CardBodyCarousel = ({ post }) => {
   const [isLike, setIsLike] = useState(false);
@@ -31,21 +31,21 @@ const CardBodyCarousel = ({ post }) => {
       setShowModal(true); // ✅ Mostrar “Conéctate o regístrate”
       return false;
     }
-  
+
     if (!auth.user.isVerified) {
       setShowVerifyModal(true);
       return false;
     }
-  
+
     if (auth.user.isActive === false) {
       setShowDeactivatedModal(true);
       return false;
     }
-  
+
     return true;
   };
-  
-  
+
+
 
   useEffect(() => {
     if (auth.token) dispatch(loadCart(auth.token));
@@ -119,6 +119,7 @@ const CardBodyCarousel = ({ post }) => {
   return (
     <div>
       <div className="card_body">
+        <div>{post.user.username}</div>
         {post.images.length > 0 && (
           <div className="carousel-container" style={{ position: "relative" }}>
             {/* Guardar */}
@@ -196,47 +197,46 @@ const CardBodyCarousel = ({ post }) => {
         )}
       </div>
 
-      {/* Modal Login/Register */}
       {showModal && (
-  <div className="modal">
-    <div className="modal-content" style={{ position: 'relative' }}>
+        <div className="modal">
+          <div className="modal-content" style={{ position: 'relative' }}>
 
-      {/* Botón de cierre arriba derecha */}
-      <button
-        onClick={() => setShowModal(false)}
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          background: 'none',
-          border: 'none',
-          fontSize: '1.8rem',
-          color: '#333',
-          cursor: 'pointer',
-          fontWeight: 'bold',
-          lineHeight: '1',
-        }}
-        aria-label="Cerrar"
-      >
-        ×
-      </button>
+            {/* Botón de cierre arriba derecha */}
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                background: 'none',
+                border: 'none',
+                fontSize: '1.8rem',
+                color: '#333',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                lineHeight: '1',
+              }}
+              aria-label="Cerrar"
+            >
+              ×
+            </button>
 
-      <h4>{t("title2", { lng: languageReducer.language })}</h4>
-      <p>{t("message2", { lng: languageReducer.language })}</p>
-      <div className="modal-buttons">
-        <button onClick={() => history.push("/login")}>
-          {t("login2", { lng: languageReducer.language })}
-        </button>
-        <button onClick={() => history.push("/register")}>
-          {t("register2", { lng: languageReducer.language })}
-        </button>
-        <button onClick={() => setShowModal(false)}>
-          {t("close2", { lng: languageReducer.language })}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+            <h4>{t("title2", { lng: languageReducer.language })}</h4>
+            <p>{t("message2", { lng: languageReducer.language })}</p>
+            <div className="modal-buttons">
+              <button onClick={() => history.push("/login")}>
+                {t("login2", { lng: languageReducer.language })}
+              </button>
+              <button onClick={() => history.push("/register")}>
+                {t("register2", { lng: languageReducer.language })}
+              </button>
+              <button onClick={() => setShowModal(false)}>
+                {t("close2", { lng: languageReducer.language })}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
       {/* Mensaje de compra */}
@@ -265,7 +265,7 @@ const CardBodyCarousel = ({ post }) => {
     </div>
 
 
-// En el return:
+    // En el return:
 
   );
 };

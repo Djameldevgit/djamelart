@@ -1,0 +1,17 @@
+{
+  "defaultUser": "مستخدم",
+  "noMessages": "لا توجد رسائل حتى الآن",
+  "messagePlaceholder": "اكتب رسالة...",
+  "sendButton": "إرسال الرسالة",
+  "avatarAlt": "صورة المستخدم",
+  "chatTitle": "محادثة مع {username}",
+  "onlineStatus": "متصل",
+  "offlineStatus": "غير متصل",
+  "messageTime": "HH:mm",
+  "closeButton": "إغلاق المحادثة",
+  "header": "المحادثات",
+  "noConversations": "ليس لديك محادثات حتى الآن.",
+  "loading": "جاري تحميل المحادثات...",
+  "newConversation": "محادثة جديدة"
+  
+}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../redux/actions/authAction'
@@ -8,44 +7,29 @@ import { Link } from 'react-router-dom'
 import Avatar from './Avatar'
 import Card from 'react-bootstrap/Card'
 import { FaBars, FaSignOutAlt, FaUserCircle, FaSignInAlt, FaUserPlus } from 'react-icons/fa'
-import {
-  Navbar,
-  Container,
-  NavDropdown,
-  Offcanvas,
-  Button,
-
-  Badge
-} from 'react-bootstrap'
+import { Navbar, Container, NavDropdown, Offcanvas, Button, Badge } from 'react-bootstrap'
 import { BsCartFill } from 'react-icons/bs'
 import NotifyModal from './NotifyModal'
 import LanguageSelectorpc from './LanguageSelectorpc'
 import Acordion from './Acordion'
-//import ActivateButton from '../auth/ActivateButton'
 
 const Navbar2 = () => {
   const { auth, theme, cart } = useSelector((state) => state)
   const dispatch = useDispatch()
   const { languageReducer } = useSelector(state => state)
-  const { t } = useTranslation('navbar')
+  const { t } = useTranslation(['navbar', 'common'])
   const lang = languageReducer.language || 'en'
   const [showDrawer, setShowDrawer] = useState(false)
 
   const totalItems = cart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
-  const openStatusModal = () => {
-    dispatch({ type: GLOBALTYPES.STATUS, payload: true })
-  }
-
+  // Funciones existentes (sin cambios)
+  const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true })
   const handleLogout = () => {
     dispatch(logout())
     handleCloseDrawer()
   }
-
-  const toggleTheme = () => {
-    dispatch({ type: GLOBALTYPES.THEME, payload: !theme })
-  }
-
+  const toggleTheme = () => dispatch({ type: GLOBALTYPES.THEME, payload: !theme })
   const handleCloseDrawer = () => setShowDrawer(false)
   const handleShowDrawer = () => setShowDrawer(true)
 
@@ -58,9 +42,8 @@ const Navbar2 = () => {
               {showDrawer ? '✖' : <FaBars size={20} />}
             </Button>
             <Navbar.Brand href="/" className="py-2 d-none d-lg-block">
-              <Card.Title>{t('appName', { lng: lang })}</Card.Title>
+              <Card.Title>{t('navbar:appName')}</Card.Title>
             </Navbar.Brand>
-
           </div>
 
           <div className="d-flex align-items-center gap-3">
@@ -107,39 +90,37 @@ const Navbar2 = () => {
             >
               {auth.user ? (
                 <>
-                  <NavDropdown.Item as={Link} to="/contact">contact</NavDropdown.Item>
-
-                  <NavDropdown.Item onClick={openStatusModal}>{t('addPost', { lng: lang })}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/informacionaplicacion">{t('appInfo', { lng: lang })}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/message">{t('adminChat', { lng: lang })}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/rolesuser">{t('roles', { lng: lang })}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/conversaciones">{t('conversaciones', { lng: lang })}</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/contact">{t('navbar:contact')}</NavDropdown.Item>
+                  <NavDropdown.Item onClick={openStatusModal}>{t('navbar:addPost')}</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/informacionaplicacion">{t('navbar:appInfo')}</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/message">{t('navbar:adminChat')}</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/rolesuser">{t('navbar:roles')}</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/conversations">{t('navbar:conversations')}</NavDropdown.Item>
               
                   {auth.user.role === 'admin' && (
                     <>
-                      <NavDropdown.Item as={Link} to="/contact">contact</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/conversaciones">{t('conversaciones', { lng: lang })}</NavDropdown.Item>
-              
-                      <NavDropdown.Item as={Link} to="/users/adminsendemail">send email admin</NavDropdown.Item>
-
-                      <NavDropdown.Item as={Link} to="/users/userss">{t('users', { lng: lang })}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/postspendientes">{t('pendingPosts', { lng: lang })}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/users/usersaction">users action</NavDropdown.Item>
-
-                      <NavDropdown.Item as={Link} to="/users/bloqueos">obtener users bloqueados</NavDropdown.Item>
-
-                      <NavDropdown.Item as={Link} to="/cart/orderss">{t('orders', { lng: lang })}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/provaa">{t('navbar:testPage')}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/reportesusers">{t('navbar:userReports')}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/users/adminsendemail">{t('navbar:adminSendEmail')}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/users/userss">{t('navbar:users')}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/postspendientes">{t('navbar:pendingPosts')}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/users/usersaction">{t('navbar:userActions')}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/users/bloqueos">{t('navbar:blockedUsers')}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/cart/orderss">{t('navbar:orders')}</NavDropdown.Item>
                     </>
                   )}
-                  <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>{t('profile', { lng: lang })}</NavDropdown.Item>
-                  <NavDropdown.Item onClick={toggleTheme}>{theme ? t('lightMode', { lng: lang }) : t('darkMode', { lng: lang })}</NavDropdown.Item>
+                  
+                  <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>{t('navbar:profile')}</NavDropdown.Item>
+                  <NavDropdown.Item onClick={toggleTheme}>
+                    {theme ? t('navbar:lightMode') : t('navbar:darkMode')}
+                  </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={handleLogout}>{t('logout', { lng: lang })}</NavDropdown.Item>
+                  <NavDropdown.Item onClick={handleLogout}>{t('navbar:logout')}</NavDropdown.Item>
                 </>
               ) : (
                 <>
-                  <NavDropdown.Item as={Link} to="/login">{t('login', { lng: lang })}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/register">{t('register', { lng: lang })}</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/login">{t('navbar:login')}</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/register">{t('navbar:register')}</NavDropdown.Item>
                 </>
               )}
             </NavDropdown>
@@ -147,7 +128,7 @@ const Navbar2 = () => {
         </Container>
       </Navbar>
 
-      {/* Drawer (Offcanvas) que aparece en cualquier tamaño de pantalla */}
+      {/* Drawer (Offcanvas) */}
       <Offcanvas
         show={showDrawer}
         onHide={handleCloseDrawer}
@@ -155,29 +136,28 @@ const Navbar2 = () => {
         style={{ top: '56px', height: 'calc(100vh - 56px)', width: '270px' }}
       >
         <Offcanvas.Header closeButton>
-
+          <Offcanvas.Title>{t('navbar:menu')}</Offcanvas.Title>
         </Offcanvas.Header>
 
         <Offcanvas.Body style={{ overflowY: 'auto', padding: '0.5rem' }}>
-          {/* Mostrar login/register o cuenta según autenticación (solo móviles) */}
           <div className="d-lg-none mb-3">
             {!auth.user ? (
               <div className="text-center">
                 <Link to="/login" onClick={handleCloseDrawer} className="btn btn-outline-primary w-100 mb-2">
-                  <FaSignInAlt className="me-2" /> {t('login', { lng: lang })}
+                  <FaSignInAlt className="me-2" /> {t('navbar:login')}
                 </Link>
                 <Link to="/register" onClick={handleCloseDrawer} className="btn btn-outline-secondary w-100">
-                  <FaUserPlus className="me-2" /> {t('register', { lng: lang })}
+                  <FaUserPlus className="me-2" /> {t('navbar:register')}
                 </Link>
               </div>
             ) : (
               <div className="">
-                <h6 className=""> </h6>
+                <h6 className="text-center mb-3">{auth.user.username}</h6>
                 <Link to={`/profile/${auth.user._id}`} onClick={handleCloseDrawer} className="btn btn-outline-success w-100 my-2">
-                  <FaUserCircle className="me-2" /> {t('profile', { lng: lang })}
+                  <FaUserCircle className="me-2" /> {t('navbar:profile')}
                 </Link>
                 <Button variant="outline-danger" onClick={handleLogout} className="w-100">
-                  <FaSignOutAlt className="me-2" /> {t('logout', { lng: lang })}
+                  <FaSignOutAlt className="me-2" /> {t('navbar:logout')}
                 </Button>
               </div>
             )}
@@ -190,4 +170,4 @@ const Navbar2 = () => {
   )
 }
 
-export default Navbar2;
+export default Navbar2

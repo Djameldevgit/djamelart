@@ -46,8 +46,10 @@ const reportCtrl = {
   getReports: async (req, res) => {
     try {
       const reports = await Report.find()
-        .populate("report", "userId postId reportedBy")
-        .exec();
+      .populate("userId", "username avatar") // usuario reportado
+      .populate("reportedBy", "username avatar") // usuario que reportó
+      .populate("postId", "title") // título del post
+      .exec();
 
       res.json({ reports, result: reports.length });
     } catch (err) {

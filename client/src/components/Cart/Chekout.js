@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import CountrySelect from './CountrySelect';
 import { useTranslation } from 'react-i18next';
- 
+import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 const Chekout = () => {
-  const { cart, languageReducer } = useSelector(state => state);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { cart, languageReducer, auth } = useSelector(state => state);
+
   const [countryCode, setCountryCode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('CCP');
   const [orderConfirmed, setOrderConfirmed] = useState(false);
+
   const { t } = useTranslation('cart');
   const lang = languageReducer.language || 'es';
-
   const isAlgeria = countryCode === 'DZ';
   const currency = isAlgeria ? 'DA' : '€';
+  const token = auth.token;
 
   const total = cart.items?.reduce((sum, item) => {
     return sum + (item.price || 0) * (item.quantity || 1);
@@ -23,11 +28,31 @@ const Chekout = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const handleOrderConfirm = async () => {
+    const orderData = {
+      orderItems: cart.items,
+      country: countryCode,
+      paymentMethod,
+      total,
+    };
+
+    try {
+      const res = await axios.post('/api/orders', orderData, {
+        headers: { Authorization: token }
+      });
+
+      setOrderConfirmed(true);
+      dispatch({ type: 'CLEAR_CART' }); // si tienes esta acción en Redux
+      history.push('/orders'); // o redirigir a una página de confirmación
+
+    } catch (err) {
+      console.error(err.response?.data?.msg || 'Error al crear la orden');
+    }
+  };
+
   return (
     <div className="checkout-container">
       <h2 className="checkout-title">{t('paymentForm', { lng: lang })}</h2>
-
-      {/* Resumen del Pedido (igual que antes) */}
 
       {/* Selector de País */}
       <div className="form-group">
@@ -94,7 +119,7 @@ const Chekout = () => {
       {/* Botón de Confirmación */}
       <button 
         className="confirm-button"
-        onClick={() => setOrderConfirmed(true)}
+        onClick={handleOrderConfirm}
       >
         {t('confirmOrder', { lng: lang })}
       </button>

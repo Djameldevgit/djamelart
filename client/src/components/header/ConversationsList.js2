@@ -1,0 +1,145 @@
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getDataAPI } from '../../../../utils/fetchData';
+import { Card, ListGroup, Spinner, Badge, Image } from 'react-bootstrap';
+import { setActiveChat } from '../../../../redux/actions/chatAction';
+import { useTranslation } from 'react-i18next';
+import { MESS_TYPES } from '../../../../redux/actions/messageAction';
+ 
+const ConversationsList = () => {
+  const {auth,socket , online} = useSelector(state => state);
+  const dispatch = useDispatch();
+
+  const [conversations, setConversations] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+ 
+  const { t } = useTranslation('chat');
+ 
+  // ✅ Escuchar eventos de conexión/desconexión de usuarios
+  useEffect(() => {
+    const handleStatus = ({ userId, online }) => {
+     // dispatch({ type: 'UPDATE_USER_ONLINE_STATUS', payload: { userId, isOnline } });
+   
+      dispatch({type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: { userId, online }})
+    };
+
+    socket.on('updateUserStatus', handleStatus);
+
+    return () => {
+      socket.off('updateUserStatus', handleStatus);
+    };
+  }, [dispatch]);
+
+  // ✅ Obtener conversaciones desde el servidor
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        setLoading(true);
+        const res = await getDataAPI(`conversations/${auth.user._id}`, auth.token);
+        setConversations(res.data);
+      } catch (err) {
+        console.error('❌ Error al obtener conversaciones:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (auth.user?._id) fetchConversations();
+  }, [auth.user, auth.token]);
+
+  // ✅ Obtener la otra persona en la conversación
+  const getPartner = (members = []) => {
+    if (!Array.isArray(members)) return null;
+    return members.find(member => member._id !== auth.user._id) || members[0];
+  };
+
+  // ✅ Mientras carga
+  if (loading) return (
+    <div className="text-center mt-4">
+      <Spinner animation="border" variant="primary" />
+      <p className="mt-2">{t('loading')}</p>
+    </div>
+  );
+
+  // ✅ Renderizado
+  return (
+    <Card className="mt-4 shadow-sm">
+      <Card.Header className="d-flex justify-content-between align-items-center bg-primary text-white">
+        <span>{t('header')} {conversations.length > 0 && '💬'}</span>
+        <Badge pill bg="light" text="dark">
+          {conversations.length}
+        </Badge>
+      </Card.Header>
+      <ListGroup variant="flush">
+        {conversations.length === 0 ? (
+          <ListGroup.Item className="text-center py-4 text-muted">
+            {t('noConversations')}
+          </ListGroup.Item>
+        ) : conversations.map(conv => {
+          const partner = getPartner(conv.members);
+          const lastMessage = conv.lastMessage?.text || t('newConversation');
+          const unreadCount = conv.unreadCount || 0;
+          const online =   partner._id;
+
+          return (
+            <ListGroup.Item
+              key={conv._id}
+              action
+              onClick={() => dispatch(setActiveChat(partner))}
+              className="py-3 d-flex align-items-start"
+              style={{ cursor: 'pointer', borderLeft: 'none', borderRight: 'none' }}
+            >
+              <div className="position-relative me-3">
+                <Image
+                  src={partner.avatar || '/default-avatar.png'}
+                  alt={t('avatarAlt')}
+                  width={50}
+                  height={50}
+                  roundedCircle
+                  className="border border-light"
+                  style={{ objectFit: 'cover' }}
+                />
+                {online && (
+                  <span 
+                    className="position-absolute bottom-0 end-0 bg-success rounded-circle"
+                    style={{ width: '12px', height: '12px', border: '2px solid white' }}
+                    title={t('onlineStatus')}
+                  />
+                )}
+              </div>
+
+              <div className="flex-grow-1">
+                <div className="d-flex justify-content-between align-items-center">
+                  <strong className="text-truncate" style={{ maxWidth: '150px' }}>
+                    {partner.username || t('defaultUser')}
+                  </strong>
+                  {conv.updatedAt && (
+                    <small className="text-muted">
+                      {new Date(conv.updatedAt).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </small>
+                  )}
+                </div>
+                <div className="d-flex justify-content-between align-items-center">
+                  <p className="mb-0 text-muted text-truncate" style={{ maxWidth: '180px' }}>
+                    {lastMessage}
+                  </p>
+                  {unreadCount > 0 && (
+                    <Badge pill bg="danger" className="ms-2">
+                      {unreadCount}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </ListGroup.Item>
+          );
+        })}
+      </ListGroup>
+    </Card>
+  );
+};
+
+export default ConversationsList;
