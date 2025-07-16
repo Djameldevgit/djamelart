@@ -13,23 +13,14 @@ const morgan = require('morgan');
 
 
 const app = express();
-
-// Middlewares
-app.use(express.json());
-app.use(cookieParser());
+ 
+app.use(express.json())
+app.use(cors())
+app.use(cookieParser())
+ 
 app.use(morgan('dev'));
 
-// --- CORS ---
-const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'https://djamelart.onrender.com'
-  ],
-  credentials: true
-};
-app.use(cors(corsOptions));
-
-// --- i18n ---
+ 
 i18n.configure({
   locales: ['en', 'es', 'fr', 'ar', 'ru', 'kab', 'chino'],
   directory: path.join(__dirname, 'locales'),
@@ -43,15 +34,12 @@ app.use(i18n.init);
 
 // --- SOCKET.IO ---
  
-const http = require('http').createServer(app);
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
 
-const io = require('socket.io')(http, {
-  cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-    credentials: true
-  }
-});
+io.on('connection', socket => {
+    SocketServer(socket)
+})
 
 // ✅ Esto es clave: conectar con tu manejador personalizado
 io.on('connection', socket => {

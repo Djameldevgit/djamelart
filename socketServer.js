@@ -1,8 +1,8 @@
 let users = []
 
 const EditData = (data, id, call) => {
-    const newData = data.map(item =>
-        item.id === id ? { ...item, call } : item
+    const newData = data.map(item => 
+        item.id === id ? {...item, call} : item
     )
     return newData;
 }
@@ -10,25 +10,25 @@ const EditData = (data, id, call) => {
 const SocketServer = (socket) => {
     // Connect - Disconnect
     socket.on('joinUser', user => {
-        users.push({ id: user._id, socketId: socket.id, followers: user.followers })
+        users.push({id: user._id, socketId: socket.id, followers: user.followers})
     })
 
     socket.on('disconnect', () => {
         const data = users.find(user => user.socketId === socket.id)
-        if (data) {
-            const clients = users.filter(user =>
+        if(data){
+            const clients = users.filter(user => 
                 data.followers.find(item => item._id === user.id)
             )
 
-            if (clients.length > 0) {
+            if(clients.length > 0){
                 clients.forEach(client => {
                     socket.to(`${client.socketId}`).emit('CheckUserOffline', data.id)
                 })
             }
 
-            if (data.call) {
+            if(data.call){
                 const callUser = users.find(user => user.id === data.call)
-                if (callUser) {
+                if(callUser){
                     users = EditData(users, callUser.id, null)
                     socket.to(`${callUser.socketId}`).emit('callerDisconnect')
                 }
@@ -39,22 +39,12 @@ const SocketServer = (socket) => {
     })
 
 
-    socket.on('addMessage', msg => {
-        const recipientId = msg.recipient;
-        const recipient = users.find(user => user.id === recipientId);
-
-        if (recipient) {
-            socket.to(`${recipient.socketId}`).emit('addMessageToClient', msg);
-        }
-    });
-
-
     // Likes
     socket.on('likePost', newPost => {
-        const ids = [...newPost.user, newPost.user._id]
+        const ids = [...newPost.user.followers, newPost.user._id]
         const clients = users.filter(user => ids.includes(user.id))
 
-        if (clients.length > 0) {
+        if(clients.length > 0){
             clients.forEach(client => {
                 socket.to(`${client.socketId}`).emit('likeToClient', newPost)
             })
@@ -62,10 +52,10 @@ const SocketServer = (socket) => {
     })
 
     socket.on('unLikePost', newPost => {
-        const ids = [...newPost.user , newPost.user._id]
+        const ids = [...newPost.user.followers, newPost.user._id]
         const clients = users.filter(user => ids.includes(user.id))
 
-        if (clients.length > 0) {
+        if(clients.length > 0){
             clients.forEach(client => {
                 socket.to(`${client.socketId}`).emit('unLikeToClient', newPost)
             })
@@ -78,7 +68,7 @@ const SocketServer = (socket) => {
         const ids = [...newPost.user.followers, newPost.user._id]
         const clients = users.filter(user => ids.includes(user.id))
 
-        if (clients.length > 0) {
+        if(clients.length > 0){
             clients.forEach(client => {
                 socket.to(`${client.socketId}`).emit('createCommentToClient', newPost)
             })
@@ -86,27 +76,15 @@ const SocketServer = (socket) => {
     })
 
     socket.on('deleteComment', newPost => {
-        const ids = [...newPost.user , newPost.user._id]
+        const ids = [...newPost.user.followers, newPost.user._id]
         const clients = users.filter(user => ids.includes(user.id))
 
-        if (clients.length > 0) {
+        if(clients.length > 0){
             clients.forEach(client => {
                 socket.to(`${client.socketId}`).emit('deleteCommentToClient', newPost)
             })
         }
     })
-
-
-    // Aquí registras el socket del usuario y otras operaciones iniciales
-    // Evento para la actualización de la ubicación de un usuario
-    socket.on('userLocationUpdated', ({ userId, location }) => {
-        const user = users.find(u => u.userId === userId);
-        if (user) {
-            // Actualiza la ubicación del usuario en la lista de usuarios
-            // Emitir la actualización de ubicación a todos los clientes
-            io.emit('userLocationUpdated', { _id: userId, location });
-        }
-    });
 
 
     // Follow
@@ -143,35 +121,35 @@ const SocketServer = (socket) => {
 
     // Check User Online / Offline
     socket.on('checkUserOnline', data => {
-        const following = users.filter(user =>
+        const following = users.filter(user => 
             data.following.find(item => item._id === user.id)
         )
         socket.emit('checkUserOnlineToMe', following)
 
-        const clients = users.filter(user =>
+        const clients = users.filter(user => 
             data.followers.find(item => item._id === user.id)
         )
 
-        if (clients.length > 0) {
+        if(clients.length > 0){
             clients.forEach(client => {
                 socket.to(`${client.socketId}`).emit('checkUserOnlineToClient', data._id)
             })
         }
-
+        
     })
 
 
     // Call User
     socket.on('callUser', data => {
         users = EditData(users, data.sender, data.recipient)
-
+        
         const client = users.find(user => user.id === data.recipient)
 
-        if (client) {
-            if (client.call) {
+        if(client){
+            if(client.call){
                 socket.emit('userBusy', data)
                 users = EditData(users, data.sender, null)
-            } else {
+            }else{
                 users = EditData(users, data.recipient, data.sender)
                 socket.to(`${client.socketId}`).emit('callUserToClient', data)
             }
@@ -181,11 +159,11 @@ const SocketServer = (socket) => {
     socket.on('endCall', data => {
         const client = users.find(user => user.id === data.sender)
 
-        if (client) {
+        if(client){
             socket.to(`${client.socketId}`).emit('endCallToClient', data)
             users = EditData(users, client.id, null)
 
-            if (client.call) {
+            if(client.call){
                 const clientCall = users.find(user => user.id === client.call)
                 clientCall && socket.to(`${clientCall.socketId}`).emit('endCallToClient', data)
 

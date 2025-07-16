@@ -1,5 +1,5 @@
 import React from 'react'
-import Roless from '../../../components/adminitration/Roless';
+import Roless from '../../components/adminitration/Roless';
  
 const Roles = () => {
   return (
