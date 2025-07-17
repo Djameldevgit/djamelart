@@ -9,10 +9,9 @@ import { imageShow, videoShow } from '../../utils/mediaShow'
 import { imageUpload } from '../../utils/imageUpload'
 import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '../../redux/actions/messageAction'
 import LoadIcon from '../../images/loading.gif'
-import { useTranslation } from 'react-i18next';
- 
+
 const RightSide = () => {
-    const { auth, message, theme, socket, peer,languageReducer  } = useSelector(state => state)
+    const { auth, message, theme, socket, peer } = useSelector(state => state)
     const dispatch = useDispatch()
 
     const { id } = useParams()
@@ -31,9 +30,6 @@ const RightSide = () => {
 
     const history = useHistory()
 
- 
-    const { t } = useTranslation('home');  
-    const lang = languageReducer.language || 'en'; 
     useEffect(() => {
         const newData = message.data.find(item => item._id === id)
         if(newData){
@@ -149,23 +145,23 @@ const RightSide = () => {
 
     // Call
     const caller = ({video}) => {
-        const { _id, avatar, username  } = user
+        const { _id, avatar, username, fullname } = user
 
         const msg = {
             sender: auth.user._id,
             recipient: _id, 
-            avatar, username,  video
+            avatar, username, fullname, video
         }
         dispatch({ type: GLOBALTYPES.CALL, payload: msg })
     }
 
     const callUser = ({video}) => {
-        const { _id, avatar, username } = auth.user
+        const { _id, avatar, username, fullname } = auth.user
 
         const msg = {
             sender: _id,
             recipient: user._id, 
-            avatar, username,   video
+            avatar, username, fullname, video
         }
 
         if(peer.open) msg.peerId = peer._id
@@ -207,7 +203,7 @@ const RightSide = () => {
             style={{height: media.length > 0 ? 'calc(100% - 180px)' : ''}} >
                 <div className="chat_display" ref={refDisplay}>
                     <button style={{marginTop: '-25px', opacity: 0}} ref={pageEnd}>
-                    {t('loadmore', { lng: lang })}
+                        Load more
                     </button>
 
                     {

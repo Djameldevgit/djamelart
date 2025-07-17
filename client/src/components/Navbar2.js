@@ -111,6 +111,9 @@ const Navbar2 = () => {
                       <NavDropdown.Item as={Link} to="/users/usersaction">{t('navbar:userActions')}</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/users/bloqueos">{t('navbar:blockedUsers')}</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/cart/orderss">{t('navbar:orders')}</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to={'/conversations'}>conversation</NavDropdown.Item>
+              
+                 
                     </>
                   )}
                   

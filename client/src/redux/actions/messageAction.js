@@ -17,11 +17,12 @@ export const MESS_TYPES = {
 export const addMessage = ({msg, auth, socket}) => async (dispatch) =>{
     dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
 
-    const { _id, avatar,  username } = auth.user
-    socket.emit('addMessage', {...msg, user: { _id, avatar,   username } })
+    const { _id, avatar, fullname, username } = auth.user
+    socket.emit('addMessage', {...msg, user: { _id, avatar, fullname, username } })
     
     try {
-        await postDataAPI('message', msg, auth.token)
+      await postDataAPI('message', msg, auth.token)
+       
     } catch (err) {
         dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
     }
