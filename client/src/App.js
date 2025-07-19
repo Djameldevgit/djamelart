@@ -26,7 +26,7 @@ import { getNotifies } from './redux/actions/notifyAction'
 import { getPostsPendientes } from './redux/actions/postAproveAction'
 import Postspendientes from './pages/postspendientes'
 
- 
+
 import Navbar2 from './components/Navbar2'
 
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
@@ -63,8 +63,12 @@ import Provaa from './pages/provaa';
 import Reportess from './pages/users/reportess';
 
 import Post from './pages/post';
- import Profile from './pages/profile';
-
+import Profile from './pages/profile';
+import Message from './pages/message/[id]';
+import Messages from './pages/messages';
+ 
+ 
+ 
 /*
  import Message from './pages/message/[id]';
 
@@ -84,9 +88,9 @@ function App() {
     dispatch(refreshToken())
 
     const socket = io()
-    dispatch({type: GLOBALTYPES.SOCKET, payload: socket})
+    dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
     return () => socket.close()
-  },[dispatch])
+  }, [dispatch])
 
 
   useEffect(() => {
@@ -105,7 +109,7 @@ function App() {
 
   }, [language]);
 
- 
+
 
   useEffect(() => {
 
@@ -161,65 +165,19 @@ function App() {
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
           <Route exact path="/" component={Home} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/forgot_password" component={ForgotPassword} />
-            <Route exact path="/user/reset/:token" component={ResetPassword} />
-            <Route exact path="/user/activate/:activation_token" component={ActivatePage} />
-            <Route exact path="/post/:id" component={Post} />
-           
-            <Route exact path="/reportesusers" component={auth.token ? Reportess : Login} />
- 
-          <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
-          <Route exact path="/contact" component={auth.token ? Contactt : Login} />
-
-<Route exact path="/users/adminsendemail" component={auth.token ? AdminSendEmails : Login} />
-<Route exact path="/cart/chekout" component={auth.token ? Chekoutt : Login} />
-<Route exact path="/cart/cartcarrito" component={auth.token ? Cart : Login} />
-
-<Route exact path="/rolesuser" component={auth.token ? Roles : Login} />
-<Route exact path="/users/userss" component={auth.token ? Userss : Login} />
-<Route exact path="/users/usersaction" component={auth.token ? UsersActionn : Login} />
-
-<Route exact path="/users/usersedicion" component={auth.token ? UsersActionAction : Login} />
-<Route exact path="/postspendientes" component={auth.token ? Postspendientes : Login} />
-
-<Route exact path="/users/bloqueos" component={auth.token ? ListaUseariosbloqueadoss : Login} />
-
-<Route exact path="/informacionaplicacion" component={Informacionaplicacion} />
-<Route exact path="/orderss" component={auth.token ? Orderss : Login} />
-<Route exact path="/usersblock" component={auth.token ? Usersblock : Login} />
-
-<Route exact path="/forgot_password" component={ForgotPassword} />
-<Route path="/user/reset/:token" component={ResetPassword} exact />
-
-
-
-<Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />*/
-<PrivateRouter exact path="/:page" component={PageRender} />
-          <PrivateRouter exact path="/:page/:id" component={PageRender} />
-        </div>
-      </div>
-    </Router>
-
-
-  );
-}
-
-export default App; /*  <Route exact path="/login" component={Login} />
-
-          <Route exact path="/" component={Home} />
+          <Route exact path="/login" component={Login} />
           <Route exact path="/register" component={Register} />
-          <Route exact path="/bloqueos" component={Bloqueos} />
+          <Route exact path="/forgot_password" component={ForgotPassword} />
+          <Route exact path="/user/reset/:token" component={ResetPassword} />
+          <Route exact path="/user/activate/:activation_token" component={ActivatePage} />
           <Route exact path="/post/:id" component={Post} />
+          <Route exact path="/message/:id" component={auth.token ? Message : Login} />
+          <Route exact path="/message" component={auth.token ? Messages : Login} />
+         
+            <Route exact path="/reportesusers" component={auth.token ? Reportess : Login} />
 
           <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
           <Route exact path="/contact" component={auth.token ? Contactt : Login} />
-         
-          <Route exact path="/provaa" component={auth.token ? Provaa : Login} s />
-
-          <Route exact path="/reportesusers" component={auth.token ? Reportess : Login} />
-
 
           <Route exact path="/users/adminsendemail" component={auth.token ? AdminSendEmails : Login} />
           <Route exact path="/cart/chekout" component={auth.token ? Chekoutt : Login} />
@@ -245,4 +203,13 @@ export default App; /*  <Route exact path="/login" component={Login} />
 
           <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />*/
 
-//<Route exact path="/activatepage" component={auth.token ? ActivatePage : Login} />
+        </div>
+      </div>
+    </Router>
+
+
+  );
+}
+
+export default App;  
+        

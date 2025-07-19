@@ -97,7 +97,7 @@ const Navbar2 = () => {
                   <NavDropdown.Item as={Link} to="/informacionaplicacion">{t('navbar:appInfo')}</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/message">{t('navbar:adminChat')}</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/rolesuser">{t('navbar:roles')}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/conversations">{t('navbar:conversations')}</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/message">{t('navbar:conversations')}</NavDropdown.Item>
               
                   {auth.user.role === 'admin' && (
                     <>

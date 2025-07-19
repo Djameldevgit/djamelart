@@ -29,7 +29,7 @@ const SendEmailsAdmin = () => {
     const fetchUsers = async () => {
       try {
         setLoad(true);
-        const res = await getDataAPI(`users?limit=50`, auth.token);
+        const res = await getDataAPI(`users?limit=9`, auth.token);
         dispatch({
           type: USER_TYPES.GET_USERS,
           payload: { ...res.data, page: 1 },
