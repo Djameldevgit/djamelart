@@ -123,7 +123,7 @@ const postCtrl = {
             const features = new APIfeatures(Posts.find(query), req.query).paginating();
 
             const posts = await features.query.sort('-createdAt')
-                .populate("user likes", "avatar username fullname followers") // Populate user y likes
+                .populate("user likes", "avatar username followers") // Populate user y likes
                 .populate({
                     path: "comments",
                     populate: {

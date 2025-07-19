@@ -7,10 +7,15 @@ import { useTranslation } from 'react-i18next'
 
 const EditProfile = ({setOnEdit}) => {
     const initState = {
-        mobile: '', address: '', website: '', story: '' 
-    }
+        username: '', 
+        mobile: '', 
+        address: '', 
+        website: '', 
+        story: '' 
+      }
+      
     const [userData, setUserData] = useState(initState)
-    const { mobile, address, website, story } = userData
+    const {username, mobile, address, website, story } = userData
     const [avatar, setAvatar] = useState('')
 
     const { auth, theme, languageReducer } = useSelector(state => state)
@@ -59,7 +64,11 @@ const EditProfile = ({setOnEdit}) => {
                         accept="image/*" onChange={changeAvatar} />
                     </span>
                 </div>
-
+                <div className="form-group">
+                    <label htmlFor="mobile">{t('username', { lng: lang })}</label>
+                    <input type="text" name="username" value={username || ''}
+                    className="form-control" onChange={handleInput} />
+                </div>
                 <div className="form-group">
                     <label htmlFor="mobile">{t('mobile', { lng: lang })}</label>
                     <input type="text" name="mobile" value={mobile || ''}

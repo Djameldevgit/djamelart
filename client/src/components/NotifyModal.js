@@ -1,105 +1,102 @@
-import React from 'react';
-import { Modal, ListGroup, Image, Button, Badge } from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import Avatar from './Avatar';
-import moment from 'moment';
-import { isReadNotify, NOTIFY_TYPES, deleteAllNotifies } from '../redux/actions/notifyAction';
-import NoNotice from '../images/notice.png';
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import NoNotice from '../images/notice.png'
+import { Link } from 'react-router-dom'
+import Avatar from './Avatar'
+import moment from 'moment'
+import { isReadNotify, NOTIFY_TYPES, deleteAllNotifies } from '../redux/actions/notifyAction'
 
 const NotifyModal = () => {
-    const { auth, notify } = useSelector(state => state);
-    const dispatch = useDispatch();
+    const { auth, notify } = useSelector(state => state)
+    const dispatch = useDispatch()
 
     const handleIsRead = (msg) => {
-        dispatch(isReadNotify({ msg, auth }));
-    };
+        dispatch(isReadNotify({msg, auth}))
+    }
 
     const handleSound = () => {
-        dispatch({ type: NOTIFY_TYPES.UPDATE_SOUND, payload: !notify.sound });
-    };
+        dispatch({type: NOTIFY_TYPES.UPDATE_SOUND, payload: !notify.sound})
+    }
 
     const handleDeleteAll = () => {
-        const newArr = notify.data.filter(item => item.isRead === false);
-        if (newArr.length === 0) return dispatch(deleteAllNotifies(auth.token));
+        const newArr = notify.data.filter(item => item.isRead === false)
+        if(newArr.length === 0) return dispatch(deleteAllNotifies(auth.token))
 
-        if (window.confirm(`You have ${newArr.length} unread notices. Are you sure you want to delete all?`)) {
-            return dispatch(deleteAllNotifies(auth.token));
+        if(window.confirm(`You have ${newArr.length} unread notices. Are you sure you want to delete all?`)){
+            return dispatch(deleteAllNotifies(auth.token))
         }
-    };
+    }
 
     return (
-        <Modal.Dialog style={{ minWidth: '300px', margin: 0 }}>
-            <Modal.Header closeButton>
-                <Modal.Title>Notifications</Modal.Title>
-                <Button variant="link" onClick={handleSound} className="p-0 ml-auto">
-                    {notify.sound ? (
-                        <i className="fas fa-bell text-danger" style={{ fontSize: '1.2rem' }} />
-                    ) : (
-                        <i className="fas fa-bell-slash text-danger" style={{ fontSize: '1.2rem' }} />
-                    )}
-                </Button>
-            </Modal.Header>
+        <div style={{minWidth: '300px'}}>
+            <div className="d-flex justify-content-between align-items-center px-3">
+                <h3>Notification</h3>
+                {
+                    notify.sound 
+                    ? <i className="fas fa-bell text-danger" 
+                    style={{fontSize: '1.2rem', cursor: 'pointer'}}
+                    onClick={handleSound} />
 
-            <Modal.Body style={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
-                {notify.data.length === 0 ? (
-                    <Image src={NoNotice} fluid className="w-100" />
-                ) : (
-                    <ListGroup variant="flush">
-                        {notify.data.map((msg, index) => (
-                            <ListGroup.Item key={index} className="px-0 py-2 border-0">
-                                <Link
-                                    to={`${msg.url}`}
-                                    className="d-flex text-dark align-items-center"
-                                    onClick={() => handleIsRead(msg)}
-                                >
-                                    <Avatar src={msg.user.avatar} size="big-avatar" className="mr-2" />
+                    : <i className="fas fa-bell-slash text-danger"
+                    style={{fontSize: '1.2rem', cursor: 'pointer'}}
+                    onClick={handleSound} />
+                }
+            </div>
+            <hr className="mt-0" />
 
-                                    <div className="flex-fill">
-                                        <div>
-                                            <strong>{msg.user.username}</strong> {msg.text}
-                                        </div>
-                                        {msg.content && (
-                                            <small className="text-muted">{msg.content.slice(0, 20)}...</small>
-                                        )}
+            {
+                notify.data.length === 0 &&
+                <img src={NoNotice} alt="NoNotice" className="w-100" />
+            }
+
+            <div style={{maxHeight: 'calc(100vh - 200px)', overflow: 'auto'}}>
+                {
+                    notify.data.map((msg, index) => (
+                        <div key={index} className="px-2 mb-3" >
+                            <Link to={`${msg.url}`} className="d-flex text-dark align-items-center"
+                            onClick={() => handleIsRead(msg)}>
+                                <Avatar src={msg.user?.avatar} size="big-avatar" />
+
+                                <div className="mx-1 flex-fill">
+                                    <div>
+                                        <strong className="mr-1">{msg.user?.username}</strong>
+                                        <span>{msg.text}</span>
                                     </div>
-
-                                    {msg.image && (
-                                        <div style={{ width: '30px' }}>
-                                            {msg.image.match(/video/i) ? (
-                                                <video src={msg.image} width="100%" />
-                                            ) : (
-                                                <Avatar src={msg.image} size="medium-avatar" />
-                                            )}
-                                        </div>
-                                    )}
-                                </Link>
-                                <div className="d-flex justify-content-between mt-1 px-2">
-                                    <small className="text-muted">
-                                        {moment(msg.createdAt).fromNow()}
-                                    </small>
-                                    {!msg.isRead && <Badge variant="primary">New</Badge>}
+                                    {msg.content && <small>{msg.content.slice(0,20)}...</small>}
                                 </div>
-                            </ListGroup.Item>
-                        ))}
-                    </ListGroup>
-                )}
-            </Modal.Body>
 
-            <Modal.Footer className="justify-content-between">
-                <small className="text-muted">
-                    {notify.data.length} notification(s)
-                </small>
-                <Button
-                    variant="link"
-                    className="text-danger p-0"
-                    onClick={handleDeleteAll}
-                >
-                    Delete All
-                </Button>
-            </Modal.Footer>
-        </Modal.Dialog>
-    );
-};
+                                {
+                                    msg.image &&
+                                    <div style={{width: '30px'}}>
+                                        {
+                                            msg.image.match(/video/i)
+                                            ? <video src={msg.image} width="100%" />
+                                            : <Avatar src={msg.image} size="medium-avatar" />
+                                        }
+                                    </div>
+                                }
+                                
+                            </Link>
+                            <small className="text-muted d-flex justify-content-between px-2">
+                                {moment(msg.createdAt).fromNow()}
+                                {
+                                    !msg.isRead && <i className="fas fa-circle text-primary" />
+                                }
+                            </small>
+                        </div>
+                    ))
+                }
 
-export default NotifyModal;
+            </div>
+
+            <hr className="my-1" />
+            <div className="text-right text-danger mr-2" style={{cursor: 'pointer'}}
+            onClick={handleDeleteAll}>
+                Delete All
+            </div>
+
+        </div>
+    )
+}
+
+export default NotifyModal

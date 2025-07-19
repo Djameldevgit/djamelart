@@ -50,7 +50,7 @@ const Contact = () => {
   };
 
   return (
-    <Container className="py-5" style={{ maxWidth: '600px' }}>
+    <Container className="py-5" style={{ Width: 'auto' }}>
       <h3 className="mb-4 text-center">Formulario de Contacto</h3>
 
       {feedback && (

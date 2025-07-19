@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import i18n from './i18n';
+
 import PageRender from './customRouter/PageRender'
-import PrivateRouter from './customRouter/PageRender'
+import PrivateRouter from './customRouter/PrivateRouter'
 import Home from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
@@ -61,13 +62,17 @@ import Contactt from './pages/contactt';
 import Provaa from './pages/provaa';
 import Reportess from './pages/users/reportess';
 
-
-import Message from './pages/message';
- 
 import Post from './pages/post';
-import Converation from './pages/message/conversation';
-import Profile from './pages/profile';
- 
+ import Profile from './pages/profile';
+
+/*
+ import Message from './pages/message/[id]';
+
+import Conversations from './pages/message/conversatios';
+<Route exact path="/message/:id" component={auth.token ? Message: Login} />
+<Route exact path="/conversations" component={auth.token ? Conversations: Login}   />
+
+*/
 
 function App() {
   const { auth, status, modal, languageReducer } = useSelector(state => state)
@@ -75,8 +80,13 @@ function App() {
   const language = languageReducer?.language || localStorage.getItem("lang") || "en";
 
   const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(refreshToken())
 
-
+    const socket = io()
+    dispatch({type: GLOBALTYPES.SOCKET, payload: socket})
+    return () => socket.close()
+  },[dispatch])
 
 
   useEffect(() => {
@@ -95,12 +105,7 @@ function App() {
 
   }, [language]);
 
-  useEffect(() => {
-    dispatch(refreshToken());
-    const socket = io();
-    dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
-    return () => socket.close();
-  }, [dispatch]);
+ 
 
   useEffect(() => {
 
@@ -162,8 +167,7 @@ function App() {
             <Route exact path="/user/reset/:token" component={ResetPassword} />
             <Route exact path="/user/activate/:activation_token" component={ActivatePage} />
             <Route exact path="/post/:id" component={Post} />
-            <Route exact path="/message/:id" component={Message} />
-            <Route exact path="/conversations"component={auth.token ? Converation: Login}   />
+           
             <Route exact path="/reportesusers" component={auth.token ? Reportess : Login} />
  
           <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
@@ -192,7 +196,8 @@ function App() {
 
 
 <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />*/
-
+<PrivateRouter exact path="/:page" component={PageRender} />
+          <PrivateRouter exact path="/:page/:id" component={PageRender} />
         </div>
       </div>
     </Router>

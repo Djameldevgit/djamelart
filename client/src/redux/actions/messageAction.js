@@ -21,8 +21,7 @@ export const addMessage = ({msg, auth, socket}) => async (dispatch) =>{
     socket.emit('addMessage', {...msg, user: { _id, avatar, fullname, username } })
     
     try {
-      await postDataAPI('message', msg, auth.token)
-       
+        await postDataAPI('message', msg, auth.token)
     } catch (err) {
         dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
     }

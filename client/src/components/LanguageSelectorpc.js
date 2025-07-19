@@ -23,12 +23,19 @@ function LanguageSelectorpc() {
       case 'ar':
         dispatch(languageActions.arabLanguage(language));
         break;
-      case 'es':
-      case 'ru':
-      case 'kab':
-      case 'chino':
-        dispatch(languageActions.synchronizeLanguage(language));
-        break;
+        case 'es':
+          dispatch(languageActions.kabyleLanguage(language));
+          break;
+          case 'ru':
+            dispatch(languageActions.russianLanguage(language));
+            break;
+            case 'kab':
+              dispatch(languageActions.kabyleLanguage(language));
+              break;
+              case 'chino':
+                dispatch(languageActions.chinoLanguage(language));
+                break;
+   
       default:
         dispatch(languageActions.synchronizeLanguage(language));
         break;
