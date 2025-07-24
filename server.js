@@ -1,26 +1,31 @@
 require('dotenv').config();
 require('./cronJobs/DeleteUsersNoVerified');
-const { autoUnblockUsers } = require('./controllers/autoUnBlockUser')
+const { autoUnblockUsers } = require('./controllers/autoUnBlockUser');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const i18n = require('i18n');
-const SocketServer = require('./socketServer'); // ✅ Aquí el archivo Socket corregido
- 
+const SocketServer = require('./socketServer');
 const morgan = require('morgan');
 
-
+// --- Express App ---
 const app = express();
- 
-app.use(express.json())
-app.use(cors())
-app.use(cookieParser())
- 
+
+// --- Middleware Express ---
+app.use(express.json());
+
+// ✅ CORS para Express
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
+
+app.use(cookieParser());
 app.use(morgan('dev'));
 
- 
+// --- Configuración de idiomas ---
 i18n.configure({
   locales: ['en', 'es', 'fr', 'ar', 'ru', 'kab', 'chino'],
   directory: path.join(__dirname, 'locales'),
@@ -32,23 +37,7 @@ i18n.configure({
 });
 app.use(i18n.init);
 
-// --- SOCKET.IO ---
- 
-const http = require('http').createServer(app)
-const io = require('socket.io')(http)
-
-io.on('connection', socket => {
-    SocketServer(socket)
-})
-
-// ✅ Esto es clave: conectar con tu manejador personalizado
-io.on('connection', socket => {
-  SocketServer(socket, io); // <-- Pasa también "io" si tu servidor lo necesita
-});
-// ✅ Corrección crítica: pasar socket + io
- 
-
-// --- Ruta para cambiar idioma ---
+// --- Rutas de API ---
 app.get('/api/set-language', (req, res) => {
   const lang = req.query.lang;
   if (lang && i18n.getLocales().includes(lang)) {
@@ -59,7 +48,6 @@ app.get('/api/set-language', (req, res) => {
   }
 });
 
-// --- Rutas de API ---
 app.use('/api', require('./routes/authRouter'));
 app.use('/api', require('./routes/userRouter'));
 app.use('/api', require('./routes/postRouter'));
@@ -74,7 +62,6 @@ app.use('/api', require('./routes/userActionRouter'));
 app.use('/api', require('./routes/blockUserRouter'));
 app.use('/api', require('./routes/reportRouter'));
 
- 
 // --- Auto desbloqueo de usuarios cada 5 min ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 
@@ -88,7 +75,25 @@ mongoose.connect(URI, {
   console.log('✅ Conectado a MongoDB');
 });
 
-// --- Producción: servir cliente ---
+// --- Servidor HTTP y Socket.IO ---
+const http = require('http').createServer(app);
+
+// ✅ CORS para Socket.IO
+const { Server } = require('socket.io');
+const io = new Server(http, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'DELETE'],
+    credentials: true
+  }
+});
+
+// ✅ Manejo de eventos con tu archivo personalizado
+io.on('connection', socket => {
+  SocketServer(socket, io); // <-- Pasa socket e io si tu lógica lo requiere
+});
+
+// --- Producción: servir frontend ---
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
   app.get('*', (req, res) => {
