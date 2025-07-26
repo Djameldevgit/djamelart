@@ -1,7 +1,10 @@
 import React from 'react'
-import LeftSide from '../components/message/LeftSide'
+import LeftSide from '../components/adminitration/message/LeftSide'
+ 
 
-const Messages = () => {
+
+ 
+const Messagesadmin = () => {
     return (
         <div className="message d-flex">
             <div className="col-md-4 border-right px-0">
@@ -12,9 +15,9 @@ const Messages = () => {
                 <div className="d-flex justify-content-center 
                 align-items-center flex-column h-100">
 
-                    <i className="fas fa-comment-dots text-primary"
+<i className="fas fa-comment-dots text-primary"
                     style={{fontSize: '5rem'}} />
-                    <h4>chat client</h4>
+                    <h4>Chat administrative</h4>
 
                 </div>
             </div>
@@ -22,4 +25,4 @@ const Messages = () => {
     )
 }
 
-export default Messages
+export default  Messagesadmin

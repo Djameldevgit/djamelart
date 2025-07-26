@@ -2,7 +2,7 @@ const router = require('express').Router()
 const auth = require("../middleware/auth")
 const carritoCtrl = require("../controllers/carritoCtrl")
 const userCtrl = require('../controllers/userCtrl')
-
+router.get('/users/admins', auth, userCtrl.getAdmins);
 router.post('/contact-support-block', auth, userCtrl.contactBlockedSupport);
 
 router.post('/contact-support', auth, userCtrl.contactMailSupport)

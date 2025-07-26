@@ -169,7 +169,16 @@ const userCtrl = {
   },
 
 
-
+// En tu controlador de búsqueda (backend)
+getAdmins :async (req, res) => {
+  try {
+      const admins = await Users.find({ role: 'admin' })
+          .select('username avatar online _id');
+      res.json({ users: admins });
+  } catch (err) {
+      res.status(500).json({ msg: err.message });
+  }
+},
 
   searchUser: async (req, res) => {
     try {

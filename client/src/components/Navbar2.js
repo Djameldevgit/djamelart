@@ -101,7 +101,7 @@ const Navbar2 = () => {
               
                   {auth.user.role === 'admin' && (
                     <>
-                         <NavDropdown.Item as={Link} to="/message">essage</NavDropdown.Item>
+                         <NavDropdown.Item as={Link} to="/messageadmin">conversatio admin</NavDropdown.Item>
                  
                       <NavDropdown.Item as={Link} to="/provaa">{t('navbar:testPage')}</NavDropdown.Item>
                       <NavDropdown.Item as={Link} to="/reportesusers">{t('navbar:userReports')}</NavDropdown.Item>

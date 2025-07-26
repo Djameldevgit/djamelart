@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
-import UserCard from '../UserCard'
+import UserCard from '../../UserCard'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import MsgDisplay from './MsgDisplay'
-import Icons from '../Icons'
-import { GLOBALTYPES } from '../../redux/actions/globalTypes'
-import { imageShow, videoShow } from '../../utils/mediaShow'
-import { imageUpload } from '../../utils/imageUpload'
-import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '../../redux/actions/messageAction'
-import LoadIcon from '../../images/loading.gif'
+import Icons from '../../Icons'
+import { GLOBALTYPES } from '../../../redux/actions/globalTypes'
+import { imageShow, videoShow } from '../../../utils/mediaShow'
+import { imageUpload } from '../../../utils/imageUpload'
+import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '../../../redux/actions/messageAction'
+import LoadIcon from '../../../images/loading.gif'
 
 const RightSide = () => {
     const { auth, message, theme, socket } = useSelector(state => state)
@@ -42,7 +42,7 @@ const RightSide = () => {
     useEffect(() => {
         if(id && message.users.length > 0){
             setTimeout(() => {
-                refDisplay?.current.scrollIntoView({behavior: 'smooth', block: 'end'})
+                refDisplay.current.scrollIntoView({behavior: 'smooth', block: 'end'})
             },50)
 
             const newUser = message.users.find(user => user._id === id)
@@ -144,18 +144,20 @@ const RightSide = () => {
     }
 
   
-  
+
+   
+
+    
     const handleAudiopaginainterior = () => {
         history.push('/message')
     }
-
     return (
         <>
             <div className="message_header" style={{cursor: 'pointer'}} >
                 {
                     user.length !== 0 &&
                     <UserCard user={user}>
-                        <div>
+                         <div>
                             <i className="fas fa-arrow-left"
                             onClick={handleAudiopaginainterior} />
 

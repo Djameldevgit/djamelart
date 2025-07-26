@@ -66,6 +66,8 @@ import Post from './pages/post';
 import Profile from './pages/profile';
 import Message from './pages/message/[id]';
 import Messages from './pages/messages';
+import Messagesadmin from './pages/messagesadmin';
+import Conversationadmin from './pages/messageadmin/[id]';
  
  
  
@@ -174,6 +176,11 @@ function App() {
           <Route exact path="/message/:id" component={auth.token ? Message : Login} />
           <Route exact path="/message" component={auth.token ? Messages : Login} />
          
+          <Route exact path="/messageadmin/:id" component={auth.token ? Conversationadmin : Login} />
+          <Route exact path="/messageadmin" component={auth.token ? Messagesadmin : Login} />
+         
+
+
             <Route exact path="/reportesusers" component={auth.token ? Reportess : Login} />
 
           <Route exact path="/profile/:id" component={auth.token ? Profile : Login} />
