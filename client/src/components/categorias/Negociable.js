@@ -1,12 +1,12 @@
 import React from 'react';
 import Select from 'react-select';
-import { Form } from 'react-bootstrap';
+ 
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function Negociarprecio({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('componentstatusmodal');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   const optionsNegociar = [
@@ -16,10 +16,10 @@ export function Negociarprecio({ handleChangeInput, postData }) {
   ];
 
   return (
-    <Form.Group controlId="venteOptions" className="mb-3">
-      <Form.Label className="mt-3">
+    <div className='form-group'>
+    <label  > 
         {t('negociable.negotiationPrice', { lng: lang })}
-      </Form.Label>
+      </label>
       <Select
         options={optionsNegociar}
         onChange={(selectedOption) => handleChangeInput({
@@ -36,7 +36,7 @@ export function Negociarprecio({ handleChangeInput, postData }) {
         className="basic-select"
         classNamePrefix="select"
       />
-    </Form.Group>
+    </div>
   );
 }
 

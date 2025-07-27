@@ -1,12 +1,12 @@
 import React from 'react';
 import Select from 'react-select';
-import { Form } from 'react-bootstrap';
+ 
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function UniteMesure({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('componentstatusmodal');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   const measurementUnits = [
@@ -19,8 +19,8 @@ export function UniteMesure({ handleChangeInput, postData }) {
   ];
 
   return (
-    <div className="unit-selector-container mb-3">
-      <Form.Label>{t('unit.label', { lng: lang })}</Form.Label>
+    <div className='form-group'>
+   <label  > {t('unit.label', { lng: lang })}</label>
       <Select
         options={measurementUnits}
         onChange={(selectedOption) =>

@@ -51,8 +51,8 @@ const StatusModal = () => {
 
     const { auth, theme, socket, status, languageReducer } = useSelector((state) => state);
 
-    const { t } = useTranslation('componentstatusmodal'); 
-  const lang = languageReducer.language || 'en'; 
+    const { t } = useTranslation('categorias');
+    const lang = languageReducer.language || 'en';
 
     const dispatch = useDispatch()
     const initialState = {
@@ -497,247 +497,243 @@ const StatusModal = () => {
         }
     };
     return (
-<div className='status_modal'>
-
-
-         
-<Form.Group className="status_form_scrollable">
-            <Form onSubmit={handleSubmit}>
-                <div className="status_header">
-                    <h3 className="m-0"> {t('titulostatusmoddal', { lng: lang })}</h3>
-                    <span onClick={() => dispatch({
-                        type: GLOBALTYPES.STATUS, payload: false
-                    })}>
-                        &times;
-                    </span>
-                </div>
-
-
-                <div className="form-group">
-                    {ItemsCategoryy()}
-                </div>
+        <div className='status_modal'>
 
 
 
-
-
-
-
-                {postData.category === "Painting" && (
-                    <div className='form-group'>
-                        {ItemsSubCategoryPeinturee()}
-
-                    </div>
-                )}
-
-                {postData.category === "Sculpture" && (
-                    <div className='form-group'>
-                        {ItemsSubCategorySculpturee()}
-
-                    </div>
-                )}
-
-
-
-                {postData.category === "Photography" && (
-                    <div className='form-group'>
-                        {ItemsSubCategoryPhotographiee()}
-
-                    </div>
-                )}
-
-
-
-
-                {postData.category === "drawing" && (
-                    <div className='form-group'>
-                        {ItemsSubCategoryDesignn()}
-
-                    </div>
-                )}
-
-
-
-
-
-
-                {postData.category === "Engraving" && (
-                    <div className='form-group'>
-
-                        {ItemsSubCategoryGravuress()}
-
-
-
-                    </div>
-                )}
-
-                {postData.category === "Digital_art" && (
-                    <div className='form-group'>
-
-                        {ItemsSubCategoryArtsNumeriquess()}
+            <Form.Group className="status_form_scrollable">
+                <Form onSubmit={handleSubmit}>
+                    <div className="status_header">
+                        <h3 className="m-0"> {t('titulostatusmoddal', { lng: lang })}</h3>
+                        <span onClick={() => dispatch({
+                            type: GLOBALTYPES.STATUS, payload: false
+                        })}>
+                            &times;
+                        </span>
                     </div>
 
-
-                )}
-                {postData.category === "Collage" && (
 
                     <div className="form-group">
-                        {ItemsSubCategoryCollagess()}
+                        {ItemsCategoryy()}
                     </div>
 
 
-                )}
-                {postData.category === "Textile_art" && (
-                    <div className="Textile_art">
+ 
+                    {postData.category === "Painting" && (
+                        <div className='form-group'>
+                            {ItemsSubCategoryPeinturee()}
 
-                        {ItemsSubCategoryArtTextilee()}
-
-                    </div>
-                )}
-
-
-                <div className="form-group">
-                    {ItemsThemee()}
-                </div>
-                <div className="form-group">
-                    {TitleInputt()}
-                </div>
-
-
-
-                <div>
-                    {SuporteDeLaObraa()}
-                </div>
-
-                <div>
-                    {ItemsSubCategoryStylee()}
-                </div>
-                <div>
-                    {TalleSelectt()}
-                </div>
-                <div>
-                    {MesureInputt()}
-                </div>
-
-                <div>
-                    {UniteMesuree()}
-                </div>
-
-
-                <div className="form-group">
-                    {DisponibiliteOeuvree()}
-                </div>
-                <div className="form-group">
-                    {PriceInputt()}
-                </div>
-
-                <div className="form-group">
-                    {DeviseVentee()}
-                </div>
-                <div>
-                    {Negociarprecioo()}
-                </div>
-
-                <div>
-                    {Envolverlaobraa()}
-                </div>
-
-
-                <div>
-                    {VenteOptionsSelectt()}
-                </div>
-
-                <div>
-                    {Derechosdelautorr()}
-                </div>
-                <div>
-                    {Descriptionnn()}
-                </div>
-
-                <div>
-                    {wilayascommunes()}
-                </div>
-                <div>
-                    {paisess()}
-                </div>
-                <div>
-                    {ciudadInput()}
-                </div>
-
-
-
-                <div className="status_body">
-
-                    <div className="show_images">
-                        {
-                            images.map((img, index) => (
-                                <div key={index} id="file_img">
-                                    {
-                                        img.camera ? imageShow(img.camera, theme)
-                                            : img.url
-                                                ? <>
-                                                    {
-                                                        img.url.match(/video/i)
-                                                            ? videoShow(img.url, theme)
-                                                            : imageShow(img.url, theme)
-                                                    }
-                                                </>
-                                                : <>
-                                                    {
-                                                        img.type.match(/video/i)
-                                                            ? videoShow(URL.createObjectURL(img), theme)
-                                                            : imageShow(URL.createObjectURL(img), theme)
-                                                    }
-                                                </>
-                                    }
-                                    <span onClick={() => deleteImage(index)}>&times;</span>
-                                </div>
-                            ))
-                        }
-                    </div>
-
-                    {
-                        stream &&
-                        <div className="stream position-relative">
-                            <video autoPlay muted ref={videoRef} width="100%" height="100%"
-                                style={{ filter: theme ? 'invert(1)' : 'invert(0)' }} />
-
-                            <span onClick={handleStopStream}>&times;</span>
-                            <canvas ref={refCanvas} style={{ display: 'none' }} />
                         </div>
-                    }
+                    )}
 
-                    <div className="input_images">
-                        {
-                            stream
-                                ? <i className="fas fa-camera" onClick={handleCapture} />
-                                : <>
-                                    <i className="fas fa-camera" onClick={handleStream} />
+                    {postData.category === "Sculpture" && (
+                        <div className='form-group'>
+                            {ItemsSubCategorySculpturee()}
 
-                                    <div className="file_upload">
-                                        <i className="fas fa-image" />
-                                        <input type="file" name="file" id="file"
-                                            multiple accept="image/*,video/*" onChange={handleChangeImages} />
+                        </div>
+                    )}
+
+
+
+                    {postData.category === "Photography" && (
+                        <div className='form-group'>
+                            {ItemsSubCategoryPhotographiee()}
+
+                        </div>
+                    )}
+
+
+
+
+                    {postData.category === "drawing" && (
+                        <div className='form-group'>
+                            {ItemsSubCategoryDesignn()}
+
+                        </div>
+                    )}
+
+
+
+
+
+
+                    {postData.category === "Engraving" && (
+                        <div className='form-group'>
+
+                            {ItemsSubCategoryGravuress()}
+
+
+
+                        </div>
+                    )}
+
+                    {postData.category === "Digital_art" && (
+                        <div className='form-group'>
+
+                            {ItemsSubCategoryArtsNumeriquess()}
+                        </div>
+
+
+                    )}
+                    {postData.category === "Collage" && (
+
+                        <div className="form-group">
+                            {ItemsSubCategoryCollagess()}
+                        </div>
+
+
+                    )}
+                    {postData.category === "Textile_art" && (
+                        <div className="Textile_art">
+
+                            {ItemsSubCategoryArtTextilee()}
+
+                        </div>
+                    )}
+
+
+                    <div className="form-group">
+                        {ItemsThemee()}
+                    </div>
+                    <div className="form-group">
+                        {TitleInputt()}
+                    </div>
+
+
+
+                    <div>
+                        {SuporteDeLaObraa()}
+                    </div>
+
+                    <div>
+                        {ItemsSubCategoryStylee()}
+                    </div>
+                    <div>
+                        {TalleSelectt()}
+                    </div>
+                    <div>
+                        {MesureInputt()}
+                    </div>
+
+                    <div>
+                        {UniteMesuree()}
+                    </div>
+
+
+                    <div className="form-group">
+                        {DisponibiliteOeuvree()}
+                    </div>
+                    <div className="form-group">
+                        {PriceInputt()}
+                    </div>
+
+                    <div className="form-group">
+                        {DeviseVentee()}
+                    </div>
+                    <div>
+                        {Negociarprecioo()}
+                    </div>
+
+                    <div>
+                        {Envolverlaobraa()}
+                    </div>
+
+
+                    <div>
+                        {VenteOptionsSelectt()}
+                    </div>
+
+                    <div>
+                        {Derechosdelautorr()}
+                    </div>
+                    <div>
+                        {Descriptionnn()}
+                    </div>
+
+                    <div>
+                        {wilayascommunes()}
+                    </div>
+                    <div>
+                        {paisess()}
+                    </div>
+                    <div>
+                        {ciudadInput()}
+                    </div>
+
+
+
+                    <div className="status_body">
+
+                        <div className="show_images">
+                            {
+                                images.map((img, index) => (
+                                    <div key={index} id="file_img">
+                                        {
+                                            img.camera ? imageShow(img.camera, theme)
+                                                : img.url
+                                                    ? <>
+                                                        {
+                                                            img.url.match(/video/i)
+                                                                ? videoShow(img.url, theme)
+                                                                : imageShow(img.url, theme)
+                                                        }
+                                                    </>
+                                                    : <>
+                                                        {
+                                                            img.type.match(/video/i)
+                                                                ? videoShow(URL.createObjectURL(img), theme)
+                                                                : imageShow(URL.createObjectURL(img), theme)
+                                                        }
+                                                    </>
+                                        }
+                                        <span onClick={() => deleteImage(index)}>&times;</span>
                                     </div>
-                                </>
+                                ))
+                            }
+                        </div>
+
+                        {
+                            stream &&
+                            <div className="stream position-relative">
+                                <video autoPlay muted ref={videoRef} width="100%" height="100%"
+                                    style={{ filter: theme ? 'invert(1)' : 'invert(0)' }} />
+
+                                <span onClick={handleStopStream}>&times;</span>
+                                <canvas ref={refCanvas} style={{ display: 'none' }} />
+                            </div>
                         }
 
+                        <div className="input_images">
+                            {
+                                stream
+                                    ? <i className="fas fa-camera" onClick={handleCapture} />
+                                    : <>
+                                        <i className="fas fa-camera" onClick={handleStream} />
 
+                                        <div className="file_upload">
+                                            <i className="fas fa-image" />
+                                            <input type="file" name="file" id="file"
+                                                multiple accept="image/*,video/*" onChange={handleChangeImages} />
+                                        </div>
+                                    </>
+                            }
+
+
+
+                        </div>
+
+                        <div className="status_footer">
+                            <button className="btn btn-secondary w-100" type="submit">
+                                Post
+                            </button>
+                        </div>
 
                     </div>
 
-                    <div className="status_footer">
-                        <button className="btn btn-secondary w-100" type="submit">
-                            Post
-                        </button>
-                    </div>
+                </Form>
 
-                </div>
-
-            </Form>
-
-</Form.Group>
-  </div>
+            </Form.Group>
+        </div>
     )
 }
 

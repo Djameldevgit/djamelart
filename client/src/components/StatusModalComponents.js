@@ -1,19 +1,29 @@
- 
-  
-  // Componente: Wilaya y commune
-  export const WilayaCommune = ({ postData, handleWilayaChange, handleCommuneChange, wilayasOptions, communesOptions }) => (
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+
+export const WilayaCommune = ({ 
+  postData, 
+  handleWilayaChange, 
+  handleCommuneChange, 
+  wilayasOptions, 
+  communesOptions 
+}) => {
+  const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('categorias');
+  const lang = languageReducer.language || 'fr';
+
+  return (
     <div>
-
-
       <div className="form-group">
-           <label>Localisation de l'artiste</label>
+        <label>{t('artistLocation', { lng: lang })}</label>
         <select
           className="form-control"
           name="wilaya"
-          value={postData.wilaya}
+          value={postData.wilaya || ''}
           onChange={handleWilayaChange}
         >
-          <option value="">Sélectionnez une wilaya</option>
+          <option value="">{t('selectWilaya', { lng: lang })}</option>
           {wilayasOptions}
         </select>
       </div>
@@ -22,16 +32,14 @@
         <select
           className="form-control"
           name="commune"
-          value={postData.commune}
+          value={postData.commune || ''}
           onChange={handleCommuneChange}
         >
-          <option value="">Sélectionnez la commune</option>
+          <option value="">{t('selectCommune', { lng: lang })}</option>
           {communesOptions}
         </select>
       </div>
     </div>
   );
-  
- 
-
+};
   

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
  
 export function ItemsSubCategoryArtTextile({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('subcategorias');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
   const optionSubCategoryArtTextile = [
     { value: "broderie", label: t('broderie', { lng: lang }) },
@@ -20,7 +20,7 @@ export function ItemsSubCategoryArtTextile({ handleChangeInput, postData }) {
 
 
   return (
-    <div className="art-category-container mb-3">
+    <Form.Group className="mb-3">
       <Form.Label>{t('categorias:select_textile_technique', { lng: lang })}</Form.Label>
 
       <Select
@@ -51,7 +51,7 @@ export function ItemsSubCategoryArtTextile({ handleChangeInput, postData }) {
           })
         }}
       />
-      <small className='text-danger'>{t('categorias:field_required', { lng: lang })}</small>
-    </div>
+      <small className='text-danger'>{t('field_required', { lng: lang })}</small>
+    </Form.Group>
   );
 }

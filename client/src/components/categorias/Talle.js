@@ -1,12 +1,12 @@
 import React from 'react';
-import { Form } from 'react-bootstrap';
+ 
 import Select from 'react-select';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function TalleSelect({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('componentstatusmodal');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   const sizes = [
@@ -29,8 +29,8 @@ export function TalleSelect({ handleChangeInput, postData }) {
   ];
 
   return (
-    <Form.Group controlId="numberInput" className="mb-3">
-      <Form.Label>{t('size.talle.label', { lng: lang })}</Form.Label>
+    <div className='form-group'>
+   <label  > {t('size.talle.label', { lng: lang })}</label>
       <Select
         options={sizes}
         onChange={(selectedOption) =>
@@ -46,6 +46,6 @@ export function TalleSelect({ handleChangeInput, postData }) {
         value={postData ? sizes.find(opt => opt.value === postData.talle) : null}
         placeholder={t('size.placeholder', { lng: lang })}
       />
-    </Form.Group>
+    </div>
   );
 }

@@ -5,12 +5,13 @@ import { useSelector } from 'react-redux';
 
 export function DescriptionInput({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('subcategorias');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   return (
+    <div className='form-group'>
     <Form.Group controlId="numberInput" className="mb-3">
-      <Form.Label>{t('labelsss.description1', { lng: lang })}</Form.Label>
+  <label>{t('description1', { lng: lang })}</label>
       <Form.Control
         as="textarea"
         name="description"
@@ -20,6 +21,6 @@ export function DescriptionInput({ handleChangeInput, postData }) {
         rows={5}
         style={{ resize: 'vertical' }}
       />
-    </Form.Group>
+    </Form.Group></div>
   );
 }

@@ -5,24 +5,30 @@ import { useSelector } from 'react-redux';
 
 export function ItemsSubCategoryArtsNumeriques({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('subcategorias'); // namespace correcto
+  const { t } = useTranslation('categorias'); // namespace correcto
 
   const lang = languageReducer.language || 'en'; // fallback por si acaso
 
-  const optionSubCategoryArtsNumeriques = [
-    { value: "collage_numerique", label: t('collage_numerique', { lng: lang }) },
-    { value: "image_generee_ia", label: t('image_generee_ia', { lng: lang }) },
-    { value: "modelisation_3d", label: t('modelisation_3d', { lng: lang }) },
-    { value: "peinture_numerique", label: t('peinture_numerique', { lng: lang }) },
-    { value: "photo_montage", label: t('photo_montage', { lng: lang }) },
-    { value: "travail_numerique_2d", label: t('travail_numerique_2d', { lng: lang }) },
-    { value: "video", label: t('video', { lng: lang }) },
-    { value: "style", label: t('style', { lng: lang }) }
-  ];
+ const optionSubCategoryArtsNumeriques = [
+  // Técnicas principales
+  { value: "peinture_numerique", label: t('peinture_numerique') },
+  { value: "modelisation_3d", label: t('modelisation_3d') },
+  
+  // IA y generativo
+  { value: "image_generee_ia", label: t('image_generee_ia') },
+  
+  // Técnicas compositivas
+  { value: "collage_numerique", label: t('collage_numerique') },
+  { value: "photo_montage", label: t('photo_montage') },
+  
+  // Formatos
+  { value: "video", label: t('video') },
+  { value: "style", label: t('style') }
+];
 
   return (
-    <div className="art-subcategory-container mb-3">
-      <Form.Label>{t('categorias:select_digital_art_type', { lng: lang })}</Form.Label>
+    <Form.Group className="mb-3">
+      <Form.Label>{t('select_digital_art_type', { lng: lang })}</Form.Label>
 
       <Select
         options={optionSubCategoryArtsNumeriques}
@@ -36,14 +42,14 @@ export function ItemsSubCategoryArtsNumeriques({ handleChangeInput, postData }) 
         })}
         name="subcategory"
         value={postData ? optionSubCategoryArtsNumeriques.find(opt => opt.value === postData.subcategory) : null}
-        placeholder={t('categorias:placeholder_categories', { lng: lang })}
+        placeholder={t('categories', { lng: lang })}
         isDisabled={!postData?.category}
         className="art-select"
         classNamePrefix="art-select"
         noOptionsMessage={() => t('categorias:no_options', { lng: lang })}
         isSearchable={true}
       />
-      <small className='text-danger'>{t('categorias:field_required', { lng: lang })}</small>
-    </div>
+      <small className='text-danger'>{t('field_required', { lng: lang })}</small>
+    </Form.Group>
   );
 }

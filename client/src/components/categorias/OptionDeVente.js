@@ -1,12 +1,12 @@
 import React from 'react';
 import Select from 'react-select';
-import { Form } from 'react-bootstrap';
+ 
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function VenteOptionsSelect({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('componentstatusmodal');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   const optionsDeVente = [
@@ -19,10 +19,10 @@ export function VenteOptionsSelect({ handleChangeInput, postData }) {
   ];
 
   return (
-    <Form.Group controlId="venteOptions" className="mb-3">
-      <Form.Label>
+    <div className='form-group'>
+   <label  > 
         {t('labels.salesOptions', { lng: lang })}
-      </Form.Label>
+      </label>
 
       <Select
         options={optionsDeVente}
@@ -39,6 +39,6 @@ export function VenteOptionsSelect({ handleChangeInput, postData }) {
         value={postData ? optionsDeVente.find(opt => opt.value === postData.venteOption) : null}
         placeholder={t('placeholders.conditionOfWork', { lng: lang })}
       />
-    </Form.Group>
+    </div>
   );
 }

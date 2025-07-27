@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 export function Derechosdelautor({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('subcategorias');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   const licencias = [
@@ -22,8 +22,8 @@ export function Derechosdelautor({ handleChangeInput, postData }) {
   const opcionSeleccionada = licencias.find(opt => opt.value === postData?.derechoautor) || null;
 
   return (
-    <Form.Group controlId="derechoautor-select" className="mb-3">
-      <Form.Label>{t('labelss.licenseUsage', { lng: lang })}</Form.Label>
+    <div className='form-group'>
+   <label  > {t('labelss.licenseUsage', { lng: lang })}</label>
 
       <Select
         inputId="derechoautor-select"
@@ -58,6 +58,6 @@ export function Derechosdelautor({ handleChangeInput, postData }) {
           {t('validation.requiredField', { lng: lang })}
         </Form.Text>
       )}
-    </Form.Group>
+    </div>
   );
 }

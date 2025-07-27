@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 export function PriceInput({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('componentstatusmodal');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
   return (
     <Form.Group controlId="numberInput" className="mb-3">

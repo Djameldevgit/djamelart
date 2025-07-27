@@ -5,7 +5,7 @@ import Select from 'react-select';
 
 export function DeviseVente({ handleChangeInput, postData }) {
     const { languageReducer } = useSelector(state => state);
-    const { t } = useTranslation('componentstatusmodal');  
+    const { t } = useTranslation('categorias');  
     const lang = languageReducer.language || 'en'; 
 
     const currencyOptions = [

@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 export function MesureInput({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('componentstatusmodal');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   return (
-    <Form.Group controlId="measurementInput" className="mb-3">
-      <Form.Label> {t('mesure.labels.measurement', { lng: lang })}</Form.Label>   
+    <div className='form-group'>
+    <label  >  {t('mesure.labels.measurement', { lng: lang })}</label>   
       <Form.Control
         type="number"
         name="measurementValue"
@@ -20,6 +20,6 @@ export function MesureInput({ handleChangeInput, postData }) {
         step="any"
         className="measurement-input"
       />
-    </Form.Group>
+    </div>
   );
 }

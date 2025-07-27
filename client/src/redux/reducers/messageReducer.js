@@ -10,6 +10,27 @@ const initialState = {
 
 const messageReducer = (state = initialState, action) => {
     switch (action.type){
+      
+        case MESS_TYPES.SET_TYPING:
+            return {
+                ...state,
+                users: state.users.map(user =>
+                    user._id === action.payload.userId
+                        ? { ...user, typing: action.payload.isTyping }
+                        : user
+                )
+            }
+        
+        case MESS_TYPES.SET_LAST_CONNECTION:
+            return {
+                ...state,
+                users: state.users.map(user =>
+                    user._id === action.payload.userId
+                        ? { ...user, lastConnection: action.payload.time }
+                        : user
+                )
+            }
+        
         case MESS_TYPES.ADD_USER:
             if(state.users.every(item => item._id !== action.payload._id)){
                 return {

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 export function DisponibiliteOeuvre({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('componentstatusmodal');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   const disponibilites = [
@@ -18,7 +18,7 @@ export function DisponibiliteOeuvre({ handleChangeInput, postData }) {
   ];
 
   return (
-    <div className="availability-selector-container mb-3">
+    <Form.Group className="mb-3">
       <Form.Label>{t('availability.label', { lng: lang })}</Form.Label>
 
       <Select
@@ -46,6 +46,6 @@ export function DisponibiliteOeuvre({ handleChangeInput, postData }) {
           })
         }}
       />
-    </div>
+    </Form.Group>
   );
 }

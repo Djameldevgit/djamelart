@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 export function ItemsSubCategoryPhotographie({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('subcategorias');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   const optionSubCategoryPhotographie = [
@@ -22,7 +22,7 @@ export function ItemsSubCategoryPhotographie({ handleChangeInput, postData }) {
   ];
 
   return (
-    <div className='mb-3'>
+    <Form.Group className="mb-3">
       <Form.Label>
         {t("select_photography_type", { lng: lang })}
       </Form.Label>
@@ -52,6 +52,6 @@ export function ItemsSubCategoryPhotographie({ handleChangeInput, postData }) {
       <small className='text-danger'>
         {t("field_required", { lng: lang })}
       </small>
-    </div>
+    </Form.Group>
   );
 }

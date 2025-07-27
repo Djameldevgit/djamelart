@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 export function ItemsSubCategorySculpture({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('subcategorias');  
+  const { t } = useTranslation('categorias');  
 
   const lang = languageReducer.language || 'en'; // fallback por si acaso
 
@@ -44,7 +44,7 @@ export function ItemsSubCategorySculpture({ handleChangeInput, postData }) {
   ];
 
   return (
-    <div className='mb-3'>
+    <Form.Group className="mb-3">
       <Form.Label>
         {t("select_material", { lng: languageReducer.language })}
       </Form.Label>
@@ -67,6 +67,6 @@ export function ItemsSubCategorySculpture({ handleChangeInput, postData }) {
       <small className='text-danger'>
         {t("field_required", { lng: lang })}
       </small>
-    </div>
+    </Form.Group>
   );
 }

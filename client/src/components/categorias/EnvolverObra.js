@@ -1,12 +1,12 @@
 import React from 'react';
-import { Form } from 'react-bootstrap';
+ 
 import Select from 'react-select';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export function Envolverlaobra({ handleChangeInput, postData }) {
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('componentstatusmodal');  
+  const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
 
   const Optionsenvolverobra = [
@@ -23,10 +23,10 @@ export function Envolverlaobra({ handleChangeInput, postData }) {
   ];
 
   return (
-    <div className='mb-3'>
-      <Form.Label>
+    <div className='form-group'>
+   <label  > 
         {t('packaging.label', { lng: lang })}
-      </Form.Label>
+      </label>
 
       <Select
         options={Optionsenvolverobra}
