@@ -6,6 +6,13 @@ const LanguageLogo = () => {
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
+    
+    // Actualizar dirección del documento para RTL/LTR
+    if (lng === 'ar' || lng === 'kab') {
+      document.documentElement.dir = 'rtl';
+    } else {
+      document.documentElement.dir = 'ltr';
+    }
   };
 
   return (
@@ -24,6 +31,19 @@ const LanguageLogo = () => {
             </NavDropdown.Item>
             <NavDropdown.Item onClick={() => changeLanguage('fr')}>
               🇫🇷 Français
+            </NavDropdown.Item>
+            {/* Nuevos idiomas */}
+            <NavDropdown.Item onClick={() => changeLanguage('ru')}>
+              🇷🇺 Русский (Russian)
+            </NavDropdown.Item>
+            <NavDropdown.Item onClick={() => changeLanguage('chino')}>
+              🇨🇳 中文 (Chinese)
+            </NavDropdown.Item>
+            <NavDropdown.Item onClick={() => changeLanguage('kab')}>
+              ⵣⴰⵎⵓⵔ Taqbaylit (Kabyle)
+            </NavDropdown.Item>
+            <NavDropdown.Item onClick={() => changeLanguage('ar')}>
+              🇸🇦 العربية (Arabic)
             </NavDropdown.Item>
           </NavDropdown>
         </Nav>

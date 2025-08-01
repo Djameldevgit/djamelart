@@ -201,7 +201,7 @@ const resources = {
     componentstatusmodal: arComponentstatusmodal
 
   },
-  ch: {
+  chino: {
 
     chat: chChat,
     bloqueos: chBloqueos,
@@ -289,7 +289,7 @@ const resources = {
     subcategorias: frSubcategorias,
     componentstatusmodal: frComponentstatusmodal
   },
-  ka: {
+  kab: {
 
     chat: kaChat,
     bloqueos: kaBloqueos,
@@ -341,7 +341,7 @@ i18n
     resources,
     lng: 'fr',
     fallbackLng: 'en',
-    supportedLngs: ['fr', 'en', 'ar', 'es', 'ru', 'ka', 'ch'],
+    supportedLngs: ['fr', 'en', 'ar', 'es', 'ru', 'kab', 'chino'],
     interpolation: {
       escapeValue: false
     },

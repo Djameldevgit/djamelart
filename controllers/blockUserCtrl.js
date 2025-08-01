@@ -1,5 +1,6 @@
 const Users = require('../models/userModel');
-const BlockUser = require('../models/blockModel'); // Importar modelo de bloqueos
+const BlockUser = require('../models/blockModel');
+
 class APIfeatures {
     constructor(query, queryString) {
         this.query = query;
@@ -16,76 +17,57 @@ class APIfeatures {
 }
 
 const blockCtrl = {
-
-
-
-
-
-
-
-
-
-
-
-    
     blockUser: async (req, res) => {
         try {
-            const { motivo, content, fechaLimite } = req.body; // Elimina fechaBloqueo de aquí
+            const { motivo, content, fechaLimite } = req.body;
             const adminId = req.user._id;
     
             const user = await Users.findById(req.params.id);
-            if (!user) return res.status(404).json({ msg: "Usuario no encontrado." });
+            if (!user) return res.status(404).json({ msg: req.__('block.user_not_found') });
     
             if (user.esBloqueado) {
-                return res.status(400).json({ msg: "Este usuario ya está bloqueado." });
+                return res.status(400).json({ msg: req.__('block.already_blocked') });
             }
     
-            // Crear el registro en BlockUser
             const blockedUser = new BlockUser({
                 user: req.params.id,
-                motivo: motivo || "Sin especificar",
-                content: content || "Sin especificar",
-                fechaLimite: fechaLimite || "Sin especificar", // Solo fechaLimite
+                motivo: motivo || req.__('block.default_reason'),
+                content: content || req.__('block.default_content'),
+                fechaLimite: fechaLimite || req.__('block.default_date'),
                 esBloqueado: true,
                 userquibloquea: adminId
             });
     
             await blockedUser.save();
     
-            // Actualizar estado en Users
             user.esBloqueado = true;
             await user.save();
     
-            res.json({ msg: "Utilisateur bloqué avec succès." });
+            res.json({ msg: req.__('block.block_success') });
         } catch (err) {
-            return res.status(500).json({ msg: err.message })
+            return res.status(500).json({ msg: req.__('block.server_error') });
         }
     },
 
-
-    // 🟢 Desbloquear usuario
     unblockUser: async (req, res) => {
         try {
             const user = await Users.findById(req.params.id);
-            if (!user) return res.status(404).json({ msg: "Usuario no encontrado." });
+            if (!user) return res.status(404).json({ msg: req.__('block.user_not_found') });
 
             if (!user.esBloqueado) {
-                return res.status(400).json({ msg: "Este usuario no está bloqueado." });
+                return res.status(400).json({ msg: req.__('block.not_blocked') });
             }
 
-            // Eliminar registro de bloqueo
             await BlockUser.findOneAndDelete({ user: req.params.id });
 
-            // Actualizar el estado en Users
             user.esBloqueado = false;
             await user.save();
 
-            res.json({ msg: "l'utilisateur a été débloqué avec succès." });
+            res.json({ msg: req.__('block.unblock_success') });
         } catch (err) {
-            return res.status(500).json({ msg: err.message })
+            return res.status(500).json({ msg: req.__('block.server_error') });
         }
     },
-
 
     getBlockedUsers: async (req, res) => {
         try {
@@ -105,10 +87,9 @@ const blockCtrl = {
                 blockedUsers
             });
         } catch (err) {
-            return res.status(500).json({ msg: err.message });
+            return res.status(500).json({ msg: req.__('block.server_error') });
         }
     }
 }
 
 module.exports = blockCtrl;
-

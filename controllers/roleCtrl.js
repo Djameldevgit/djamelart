@@ -1,87 +1,65 @@
 const Users = require("../models/userModel");
- 
 
 const roleCtrl = {
-
-  
     UserRoleNoIdentificado: async (req, res) => {
-
         const { role } = req.body;
-
         try {
-            const user = await Users.findByIdAndUpdate(req.params.id, { role }, { new: true });;
-            if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
+            const user = await Users.findByIdAndUpdate(req.params.id, { role }, { new: true });
+            if (!user) return res.status(404).json({ msg: req.__('role.user_not_found') });
 
-            res.json({ msg: 'Rol de usuario asignado exitosamente' });
+            res.json({ msg: req.__('role.role_assigned') });
         } catch (error) {
-            (error);
-            res.status(500).json({ msg: 'Error al actualizar de usuario asignado ' });
+            res.status(500).json({ msg: req.__('role.update_error') });
         }
     },
-
 
     assignUserRole: async (req, res) => {
-
         const { role } = req.body;
-
         try {
-            const user = await Users.findByIdAndUpdate(req.params.id, { role }, { new: true });;
-            if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
+            const user = await Users.findByIdAndUpdate(req.params.id, { role }, { new: true });
+            if (!user) return res.status(404).json({ msg: req.__('role.user_not_found') });
 
-            res.json({ msg: 'Rol de usuario asignado exitosamente' });
+            res.json({ msg: req.__('role.role_assigned') });
         } catch (error) {
-            (error);
-            res.status(500).json({ msg: 'Error al actualizar de usuario asignado ' });
+            res.status(500).json({ msg: req.__('role.update_error') });
         }
     },
 
-    // Asignar un rol de superusuario al usuario
     assignSuperUserRole: async (req, res) => {
-
         const { role } = req.body;
         try {
             const user = await Users.findByIdAndUpdate(req.params.id, { role }, { new: true });
-            if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
+            if (!user) return res.status(404).json({ msg: req.__('role.user_not_found') });
 
-            res.json({ msg: 'Rol de superusuario asignado exitosamente' });
+            res.json({ msg: req.__('role.superuser_assigned') });
         } catch (error) {
-            (error);
-            res.status(500).json({ msg: 'Error al actualizar de usuario asignado s' });
+            res.status(500).json({ msg: req.__('role.update_error') });
         }
     },
 
-    // Asignar un rol de moderador al usuario
     assignModeratorRole: async (req, res) => {
-
         const { role } = req.body;
         try {
             const user = await Users.findByIdAndUpdate(req.params.id, { role }, { new: true });
-            if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
+            if (!user) return res.status(404).json({ msg: req.__('role.user_not_found') });
 
-            res.json({ msg: 'Rol de moderador asignado exitosamente' });
+            res.json({ msg: req.__('role.moderator_assigned') });
         } catch (error) {
-            (error);
-            res.status(500).json({ msg: 'Error al actualizar de usuario asignado ' });
+            res.status(500).json({ msg: req.__('role.update_error') });
         }
     },
 
-    // Asignar un rol de administrador al usuario
     assignAdminRole: async (req, res) => {
-
         const { role } = req.body;
         try {
             const user = await Users.findByIdAndUpdate(req.params.id, { role }, { new: true });
-            if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
+            if (!user) return res.status(404).json({ msg: req.__('role.user_not_found') });
 
-            res.json({ msg: 'Rol de administrador asignado exitosamente' });
+            res.json({ msg: req.__('role.admin_assigned') });
         } catch (error) {
-            (error);
-            res.status(500).json({ msg: 'Error al actualizar de usuario asignado ' });
+            res.status(500).json({ msg: req.__('role.update_error') });
         }
-    },
+    }
+};
 
- 
-}
-
-
-module.exports = roleCtrl
+module.exports = roleCtrl;

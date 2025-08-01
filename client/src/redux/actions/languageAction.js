@@ -6,10 +6,8 @@ export const CHANGE_LANGUAGE = {
   ES: 'ES',
   RU: 'RU',
   KAB: 'KAB',
-  CHINO: 'CHINO', // Estaba mal duplicado como KAB
-  SYNC: 'SYNC'
+  CHINO: 'CHINO'  // Cambiado a código estándar
 };
-
 // Función auxiliar para enviar petición sin autenticación
 const sendLanguageChange = async (endpoint, language) => {
   const res = await axios.put(`/api/language/${endpoint}`, { language });
@@ -77,21 +75,17 @@ export const kabyleLanguage = (language) => async (dispatch) => {
 };
 
 // Acción para chino
-export const chinoLanguage = (language) => async (dispatch) => {
+export const chineseLanguage = (language) => async (dispatch) => {
   try {
     const res = await sendLanguageChange('chino', language);
     dispatch({ type: CHANGE_LANGUAGE.CHINO, payload: { language, res } });
   } catch (error) {
     console.error(error);
   }
-};
-
+}
 export const synchronizeLanguage = (language) => async dispatch => {
   try {
-    await axios.put('/language', { language }, {
-     
-    });
-
+    await axios.put('/language', { language });
     dispatch({ type: 'SET_LANGUAGE', payload: language });
   } catch (err) {
     console.error('Error updating language:', err);

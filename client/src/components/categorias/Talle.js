@@ -30,7 +30,7 @@ export function TalleSelect({ handleChangeInput, postData }) {
 
   return (
     <div className='form-group'>
-   <label  > {t('size.talle.label', { lng: lang })}</label>
+   <label  > {t('size.talle', { lng: lang })}</label>
       <Select
         options={sizes}
         onChange={(selectedOption) =>

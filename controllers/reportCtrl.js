@@ -1,7 +1,7 @@
+const Posts = require('../models/postModel');
+const Report = require('../models/reportModel');
+const Users = require('../models/userModel');
 
-const Posts = require('../models/postModel')
-const Report = require('../models/reportModel')
-const Users = require('../models/userModel')
 class APIfeatures {
   constructor(query, queryString) {
     this.query = query;
@@ -18,52 +18,49 @@ class APIfeatures {
 }
 
 const reportCtrl = {
-
-
   createReport: async (req, res) => {
     try {
       const { postId, userId, reason } = req.body;
-      const reportedBy = req.user._id; // Usuario que hace el reporte
+      const reportedBy = req.user._id;
 
       if (!postId || !userId || !reason) {
-        return res.status(400).json({ msg: "Todos los campos son obligatorios." });
+        return res.status(400).json({ msg: req.__('report.missing_fields') });
       }
 
       const newReport = new Report({
         postId,
-        userId, // Usuario reportado
-        reportedBy, // Usuario que reportó
+        userId,
+        reportedBy,
         reason,
       });
 
       await newReport.save();
-      res.json({ msg: "Reporte creado correctamente." });
+      res.json({ msg: req.__('report.create_success') });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: req.__('report.server_error') });
     }
   },
 
   getReports: async (req, res) => {
     try {
       const reports = await Report.find()
-      .populate("userId", "username avatar") // usuario reportado
-      .populate("reportedBy", "username avatar") // usuario que reportó
-      .populate("postId", "title") // título del post
-      .exec();
+        .populate("userId", "username avatar")
+        .populate("reportedBy", "username avatar")
+        .populate("postId", "title")
+        .exec();
 
       res.json({ reports, result: reports.length });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: req.__('report.server_error') });
     }
   },
 
-  // Obtener los usuarios más reportados
   getMostReportedUsers: async (req, res) => {
     try {
       const mostReportedUsers = await Report.aggregate([
-        { $group: { _id: "$userId", count: { $sum: 1 } } }, // Cuenta reportes por usuario
-        { $sort: { count: -1 } }, // Ordena por mayor número de reportes
-        { $limit: 10 }, // Opcional: obtener los 10 más reportados
+        { $group: { _id: "$userId", count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 10 },
         {
           $lookup: {
             from: "users",
@@ -71,8 +68,8 @@ const reportCtrl = {
             foreignField: "_id",
             as: "user",
           },
-        }, // Trae datos del usuario
-        { $unwind: "$user" }, // Convierte el array en objeto
+        },
+        { $unwind: "$user" },
         {
           $project: {
             _id: 1,
@@ -80,22 +77,21 @@ const reportCtrl = {
             "user.username": 1,
             "user.avatar": 1,
           },
-        }, // Devuelve solo lo necesario
+        },
       ]);
 
       res.json({ mostReportedUsers });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: req.__('report.server_error') });
     }
   },
 
-  // Obtener los usuarios que más reportes han hecho
   getMostActiveReporters: async (req, res) => {
     try {
       const mostActiveReporters = await Report.aggregate([
-        { $group: { _id: "$reportedBy", count: { $sum: 1 } } }, // Cuenta reportes hechos por cada usuario
-        { $sort: { count: -1 } }, // Ordena por cantidad de reportes hechos
-        { $limit: 10 }, // Opcional: obtener los 10 más activos
+        { $group: { _id: "$reportedBy", count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 10 },
         {
           $lookup: {
             from: "users",
@@ -103,8 +99,8 @@ const reportCtrl = {
             foreignField: "_id",
             as: "user",
           },
-        }, // Obtiene datos del usuario
-        { $unwind: "$user" }, // Convierte el array en objeto
+        },
+        { $unwind: "$user" },
         {
           $project: {
             _id: 1,
@@ -112,17 +108,14 @@ const reportCtrl = {
             "user.username": 1,
             "user.avatar": 1,
           },
-        }, // Devuelve solo lo necesario
+        },
       ]);
 
       res.json({ mostActiveReporters });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: req.__('report.server_error') });
     }
   },
 };
 
 module.exports = reportCtrl;
-
-
-

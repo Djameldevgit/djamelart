@@ -1,17 +1,22 @@
  
  {  
-  "contactFormTitle": "Formulario de Contacto",
-  "adminEmailLabel": "Email del Administrador",
-  "yourEmailLabel": "Tu Email",
-  "messageSubjectLabel": "Asunto del Mensaje",
-  "enterMessageSubject": "Ingresa el asunto de tu mensaje",
-  "yourMessageLabel": "Tu Mensaje",
-  "writeYourMessageHere": "Escribe tu mensaje aquí...",
-  "exitButton": "Salir",
-  "backToHomeButton": "Volver al Inicio",
-  "sendButton": "Enviar",
-  "messageSentSuccessfully": "Mensaje enviado correctamente",
-
+ 
+ 
+    "contactForm": "Formulario de Contacto",
+    "contactDescription": "Estamos aquí para ayudarte. Completa el formulario y te responderemos lo antes posible.",
+    "subject": "Asunto",
+    "subjectPlaceholder": "¿Sobre qué quieres contactarnos?",
+    "message": "Mensaje",
+    "messagePlaceholder": "Describe tu consulta o problema en detalle...",
+    "sendButton": "Enviar Mensaje",
+    "sending": "Enviando...",
+    "successMessage": "¡Mensaje enviado con éxito! Te responderemos en breve.",
+    "errorMessage": "Error al enviar el mensaje. Por favor intenta nuevamente.",
+    "alternativeContact": "O contacta directamente:",
+    "supportEmail": "soporte@tassili.com",
+    "supportPhone": "+1 (555) 123-4567",
+ 
+ 
 
 
   "connected_now": "Conectado ahora",

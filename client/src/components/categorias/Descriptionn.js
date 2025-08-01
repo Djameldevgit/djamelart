@@ -18,7 +18,7 @@ export function DescriptionInput({ handleChangeInput, postData }) {
         value={postData.description}
         onChange={handleChangeInput}
         placeholder={t('placeholdersss.description', { lng: lang })}
-        rows={5}
+        rows={3}
         style={{ resize: 'vertical' }}
       />
     </Form.Group></div>

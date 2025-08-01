@@ -8,10 +8,10 @@ export function PriceInput({ handleChangeInput, postData }) {
   const { t } = useTranslation('categorias');  
   const lang = languageReducer.language || 'en'; 
   return (
-    <Form.Group controlId="numberInput" className="mb-3">
-      <Form.Label>
+    <div className='form-group'>
+    <label  > 
         {t('price.labelsprice', { lng: lang })}
-      </Form.Label>
+      </label>
 
       <Form.Control
         type="number"
@@ -24,6 +24,6 @@ export function PriceInput({ handleChangeInput, postData }) {
       />
 
       
-    </Form.Group>
+    </div>
   );
 }

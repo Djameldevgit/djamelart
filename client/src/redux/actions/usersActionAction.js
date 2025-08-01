@@ -16,6 +16,8 @@ export const USERS_TYPES_ACTION = {
     CREAR_DENUNCIA_ACTION: 'CREAR_DENUNCIA_ACTION',
     GET_DENUNCIAS_ACTION: 'GET_DENUNCIAS_ACTION',
 
+ 
+ 
 
 };
 
@@ -221,6 +223,5 @@ export const getDenuncias = (user, token) => async (dispatch) => {
         console.error("Error al obtener las denuncias:", err);
     }
 };
-
-
-
+ 
+ 

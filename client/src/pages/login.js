@@ -53,6 +53,7 @@ const Login = () => {
                     <div className="pass">
                         <input type={typePass ? "text" : "password"}
                             className="form-control" id="exampleInputPassword1"
+                        
                             onChange={handleChangeInput} value={password} name="password" />
                         <small onClick={() => setTypePass(!typePass)}>
                             {typePass ? t('hide', { lng: lang }) : t('show', { lng: lang })}

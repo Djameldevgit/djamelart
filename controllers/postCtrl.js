@@ -50,7 +50,6 @@ const postCtrl = {
             return res.status(500).json({ msg: err.message });
         }
     },
-
     aprobarPostPendiente: async (req, res) => {
         try {
             const post = await Posts.findById(req.params.id);

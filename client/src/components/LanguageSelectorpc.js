@@ -24,7 +24,7 @@ function LanguageSelectorpc() {
         dispatch(languageActions.arabLanguage(language));
         break;
         case 'es':
-          dispatch(languageActions.kabyleLanguage(language));
+          dispatch(languageActions.spanishLanguage(language));
           break;
           case 'ru':
             dispatch(languageActions.russianLanguage(language));
@@ -33,7 +33,7 @@ function LanguageSelectorpc() {
               dispatch(languageActions.kabyleLanguage(language));
               break;
               case 'chino':
-                dispatch(languageActions.chinoLanguage(language));
+                dispatch(languageActions.chineseLanguage(language));
                 break;
    
       default:

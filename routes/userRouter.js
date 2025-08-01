@@ -30,11 +30,9 @@ router.delete('/posts', auth  ,userCtrl.eliminaRrestosDePosts)
 router.post('/contact-activation-request', auth, userCtrl.contactForActivation);
 router.patch('/toggle_active/:id', auth, userCtrl.toggleActiveStatus);
 
+ 
+router.patch('/user/:id/privilegios',auth, userCtrl.updatePrivilegios);
 
-
-
-
-
-
+ 
 
 module.exports = router

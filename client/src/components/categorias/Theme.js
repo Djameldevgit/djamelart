@@ -11,13 +11,15 @@ export function ItemsTheme({ handleChangeInput, postData }) {
   const themeOptions = [
    
       // 🎨 Style
-      { value: "abstrait", label: t('theme.abstrait', { lng: lang }), group: "Style" },
-      { value: "colore", label: t('theme.colore', { lng: lang }), group: "Style" },
-      { value: "graffiti", label: t('theme.graffiti', { lng: lang }), group: "Style" },
-      { value: "geometrique", label: t('theme.geometrique', { lng: lang }), group: "Style" },
-      { value: "surrealisme", label: t('theme.surrealisme', { lng: lang }), group: "Style" },
-      { value: "conceptuel", label: t('theme.conceptuel', { lng: lang }), group: "Style" },
-    
+      { value: 'abstrait', label: t('theme.abstrait', { lng: lang }) },
+      { value: 'colore', label: t('theme.colore', { lng: lang }) },
+      { value: 'graffiti', label: t('theme.graffiti', { lng: lang }) },
+      { value: 'geometrique', label: t('theme.geometrique', { lng: lang }) },
+      { value: 'surrealisme', label: t('theme.surrealisme', { lng: lang }) },
+      { value: 'conceptuel', label: t('theme.conceptuel', { lng: lang }) },
+      { value: 'replica', label: t('theme.replica', { lng: lang }) }, // Nueva
+      { value: 'reproduction', label: t('theme.reproduction', { lng: lang }) }, // Nueva
+  
       // 🐾 Animaux
       { value: "animal", label: t('theme.animal', { lng: lang }), group: "Animaux" },
       { value: "chat", label: t('theme.chat', { lng: lang }), group: "Animaux" },

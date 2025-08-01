@@ -10,7 +10,7 @@ export function ItemsCategory({ handleChangeInput, postData }) {
 
   const artCategories = [
     { value: "painting", label: t('categorias:painting', { lng: lang }) },
-    { value: "sculpture", label: t('categorias:sculpturee', { lng: lang }) },
+    { value: "sculpture", label: t('categorias:sculpture', { lng: lang }) },
     { value: "photography", label: t('categorias:photography', { lng: lang }) },
     { value: "drawing", label: t('categorias:drawingg', { lng: lang }) },
     { value: "engraving", label: t('categorias:engraving', { lng: lang }) },
@@ -20,9 +20,8 @@ export function ItemsCategory({ handleChangeInput, postData }) {
   ];
   
   return (
-    <Form.Group className="mb-3">
-       
-      <Form.Label>{t('selecionarcategoriaartistica', { lng: lang })}</Form.Label>
+    <div className='form-group'>
+    <label  > {t('selecionarcategoriaartistica', { lng: lang })}</label>
       <Select
         options={artCategories}
         onChange={(selectedOption) =>
@@ -45,6 +44,6 @@ export function ItemsCategory({ handleChangeInput, postData }) {
         classNamePrefix="select"
       />
       <small className="text-danger">{t('categorie_required', { lng: lang })}</small>
-    </Form.Group>
+    </div>
   );
 }

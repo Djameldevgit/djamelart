@@ -11,15 +11,11 @@
 		"login_required": "يرجى تسجيل الدخول الآن.",
 		"user_not_found": "هذا المستخدم غير موجود.",
 		"server_error": "حدث خطأ في الخادم.",
-		
 		"activation_email_sent": "auth.activation_email_sent",
 		"forgot_email_sent": "auth.forgot_email_sent",
 		"account_activated": "✅ تم تفعيل الحساب بنجاح.",
 		"reset_email_sent": "تم إرسال رابط إعادة تعيين كلمة المرور.",
 		"password_changed": "تم تغيير كلمة المرور بنجاح."
-
-
-
 	},
 	"post": {
 		"POST": "POST",
@@ -58,12 +54,6 @@
 		"error_post_not_exist": "هذا المنشور غير موجود.",
 		"error_comment_not_exist": "هذا التعليق غير موجود.",
 		"success": "تم إنشاء التعليق!"
-	},
-	"message": {
-		"createMessage.empty": "لا يمكن أن تكون الرسالة فارغة.",
-		"createMessage.success": "تم إنشاء الرسالة بنجاح!",
-		"deleteMessage.success": "تم حذف الرسالة بنجاح!",
-		"deleteConversation.success": "تم حذف المحادثة بنجاح!"
 	},
 	"lang": {
 		"langUpdatedToSpanish": "تم تحديث اللغة إلى الإسبانية",
@@ -109,5 +99,77 @@
 	"user_not_found": "المستخدم غير موجود.",
 	"already_verified": "تم التحقق من الحساب بالفعل.",
 	"activation_email_sent": "تم إرسال رسالة التفعيل إلى بريدك الإلكتروني.",
-	"server_error": "خطأ في الخادم الداخلي."
+	"server_error": "خطأ في الخادم الداخلي.",
+	"order": {
+		"cart_empty": "سلة التسوق فارغة",
+		"created_success": "✅ تم إنشاء الطلب بنجاح",
+		"not_found": "الطلب غير موجود",
+		"status_updated": "تم تحديث حالة الطلب",
+		"deleted_success": "تم حذف الطلب بنجاح"
+	},
+	"role": {
+		"user_not_found": "المستخدم غير موجود",
+		"role_assigned": "تم تعيين دور المستخدم بنجاح",
+		"superuser_assigned": "تم تعيين دور المستخدم المتميز بنجاح",
+		"moderator_assigned": "تم تعيين دور المشرف بنجاح",
+		"admin_assigned": "تم تعيين دور المدير بنجاح",
+		"update_error": "حدث خطأ أثناء تحديث دور المستخدم"
+	},
+	"message": {
+		"create_success": "تم إنشاء الرسالة بنجاح!",
+		"delete_success": "تم الحذف بنجاح!",
+		"invalid_data": "بيانات غير صالحة: يجب توفير مستلم ومحتوى الرسالة",
+		"server_error": "حدث خطأ في خادم الرسائل",
+		"createMessage.empty": "لا يمكن أن تكون الرسالة فارغة.",
+		"createMessage.success": "تم إنشاء الرسالة بنجاح!",
+		"deleteMessage.success": "تم حذف الرسالة بنجاح!",
+		"deleteConversation.success": "تم حذف المحادثة بنجاح!"
+	},
+	"report": {
+		"missing_fields": "جميع الحقول مطلوبة",
+		"create_success": "تم إنشاء التقرير بنجاح",
+		"server_error": "حدث خطأ في خادم التقارير",
+		"report_not_found": "التقرير غير موجود",
+		"update_success": "تم تحديث حالة التقرير بنجاح",
+		"delete_success": "تم حذف التقرير بنجاح"
+	},
+	"block": {
+		"user_not_found": "المستخدم غير موجود",
+		"already_blocked": "هذا المستخدم محظور بالفعل",
+		"default_reason": "لم يتم تحديد السبب",
+		"default_content": "لا يوجد محتوى إضافي",
+		"default_date": "بداية تاريخ غير محدد",
+		"block_success": "تم حظر المستخدم بنجاح",
+		"not_blocked": "هذا المستخدم غير محظور",
+		"unblock_success": "تم إلغاء حظر المستخدم بنجاح",
+		"server_error": "حدث خطأ في خادم الحظر"
+	},
+	"user": {
+		"activation_message_required": "الرسالة مطلوبة لتفعيل الحساب",
+		"activation_request_sent": "✅ تم إرسال طلب التفعيل إلى المسؤول",
+		"server_error": "خطأ في خادم المستخدمين",
+		"unauthenticated": "المستخدم غير مصادق عليه",
+		"contact_title_message_required": "العنوان والرسالة مطلوبان",
+		"contact_message_sent": "تم إرسال رسالة الدعم بنجاح",
+		"contact_send_error": "خطأ في إرسال رسالة الدعم",
+		"blocked_message_required": "الرسالة مطلوبة لطلب إعادة النظر",
+		"blocked_request_sent": "✅ تم إرسال طلب إعادة النظر في الحظر",
+		"blocked_send_error": "خطأ في إرسال طلب إعادة النظر",
+		"not_found": "المستخدم غير موجود",
+		"account_deleted_unverified": "تم حذف حسابك لعدم تفعيله خلال 3 أيام. سجّل مرة أخرى للوصول",
+		"status_updated": "تم تحديث حالة المستخدم",
+		"not_exist": "المستخدم غير موجود",
+		"success": "نجاح",
+		"fullname_required": "اسم المستخدم الكامل مطلوب",
+		"update_success": "تم تحديث المستخدم بنجاح!",
+		"already_followed": "أنت تتابع هذا المستخدم بالفعل",
+		"delete_denied_admin": "تم الرفض: يلزم صلاحيات المسؤول",
+		"invalid_id": "معرف المستخدم غير صالح",
+		"delete_self_denied": "لا يمكنك حذف حسابك الخاص",
+		"delete_success": "تم حذف المستخدم ومحتوياته المرتبطة بنجاح",
+		"delete_error": "خطأ في حذف المستخدم",
+		"cleanup_denied_admin": "تم الرفض: يلزم صلاحيات المسؤول للتنظيف",
+		"cleanup_success": "تم التنظيف: {{posts}} منشورات و{{comments}} تعليقات",
+		"cleanup_error": "خطأ في تنظيف المحتويات المتبقية"
+	}
 }

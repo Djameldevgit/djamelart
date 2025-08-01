@@ -1,17 +1,12 @@
 import { USER_TYPES } from '../actions/userAction';
 
 const initialState = {
-
     loading: false,
     users: [],
-
     result: 0,
     page: 1,
     error: null,
-
-
-
-
+ 
 };
 
 const userReducer = (state = initialState, action) => {
@@ -34,6 +29,7 @@ const userReducer = (state = initialState, action) => {
                     user._id === action.payload._id ? action.payload : user
                 ),
             };
+          
         case USER_TYPES.TOGGLE_ACTIVE_STATUS:
             return {
                 ...state,
@@ -43,6 +39,7 @@ const userReducer = (state = initialState, action) => {
                         : user
                 )
             };
+
         case USER_TYPES.DELETE_USER:
             return {
                 ...state,
@@ -50,18 +47,18 @@ const userReducer = (state = initialState, action) => {
                 result: state.result - 1
             };
 
-       
-            case USER_TYPES.BLOCK_USER_SUCCESS:
-                case USER_TYPES.UNBLOCK_USER_SUCCESS:
-                  return {
-                    ...state,
-                    users: state.users.map(user =>
-                      user._id === action.payload.userId
+        case USER_TYPES.BLOCK_USER_SUCCESS:
+        case USER_TYPES.UNBLOCK_USER_SUCCESS:
+            return {
+                ...state,
+                users: state.users.map(user =>
+                    user._id === action.payload.userId
                         ? { ...user, esBloqueado: action.payload.esBloqueado }
                         : user
-                    )
-                  };
-            
+                )
+            };
+ 
+
         default:
             return state;
     }

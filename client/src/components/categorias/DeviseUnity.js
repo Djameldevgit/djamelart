@@ -20,8 +20,8 @@ export function DeviseVente({ handleChangeInput, postData }) {
     ];
 
     return (
-        <Form.Group controlId="currencyInput" className="mb-3">
-            <Form.Label>{t('devise_vente.label', { lng: lang })}</Form.Label>
+        <div className='form-group'>
+        <label  > {t('devise_vente.label', { lng: lang })}</label>
             <Select
                 options={currencyOptions}
                 onChange={(selectedOption) =>
@@ -49,6 +49,6 @@ export function DeviseVente({ handleChangeInput, postData }) {
                 }}
             />
           
-        </Form.Group>
+        </div>
     );
 }

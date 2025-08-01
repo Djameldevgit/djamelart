@@ -10,7 +10,7 @@ export const USER_TYPES = {
     DELETE_USER: 'DELETE_USER',
     BLOCK_USER_SUCCESS: 'BLOCK_USER_SUCCESS',
     UNBLOCK_USER_SUCCESS: 'UNBLOCK_USER_SUCCESS',
-
+    UPDATE_PRIVILEGIOS: 'UPDATE_PRIVILEGIOS',
 };
  
 
@@ -195,5 +195,26 @@ export const deleteUser = ({id, auth}) => async (dispatch) => {
     }
   };
 
- 
- 
+  export const updatePrivilegios = (id, opcionesUser, token) => async (dispatch) => {
+    try {
+      const res = await patchDataAPI(`user/${id}/privilegios`, { opcionesUser }, token);
+  
+      dispatch({
+        type: USER_TYPES.UPDATE_USER,
+        payload: res.data.user   // << usamos el usuario actualizado completo
+      });
+  
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { success: res.data.msg }
+      });
+  
+    } catch (err) {
+      const errorMsg = err.response?.data?.msg || err.message;
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: errorMsg }
+      });
+    }
+  };
+  

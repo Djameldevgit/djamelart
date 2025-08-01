@@ -1,13 +1,12 @@
 {
-  "contactFormTitle": "نموذج الاتصال",
-  "adminEmailLabel": "بريد المسؤول الإلكتروني",
-  "yourEmailLabel": "بريدك الإلكتروني",
-  "messageSubjectLabel": "موضوع الرسالة",
-  "enterMessageSubject": "أدخل موضوع رسالتك",
-  "yourMessageLabel": "رسالتك",
-  "writeYourMessageHere": "اكتب رسالتك هنا...",
-  "exitButton": "خروج",
-  "backToHomeButton": "العودة إلى الصفحة الرئيسية",
-  "sendButton": "إرسال",
-  "messageSentSuccessfully": "تم إرسال الرسالة بنجاح"
+  "contactForm": "نموذج الاتصال",
+  "subject": "الموضوع",
+  "subjectPlaceholder": "اكتب موضوع الرسالة",
+  "message": "الرسالة",
+  "messagePlaceholder": "اكتب رسالتك هنا",
+  "sendButton": "إرسال الرسالة",
+  "sending": "جارٍ الإرسال...",
+  "successMessage": "تم إرسال الرسالة بنجاح.",
+  "errorMessage": "خطأ في إرسال الرسالة."
 }
+ 

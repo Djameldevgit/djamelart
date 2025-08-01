@@ -9,8 +9,8 @@ export function TitleInput({ handleChangeInput, postData }) {
   const lang = languageReducer.language || 'en'; 
 
   return (
-    <Form.Group controlId="numberInput" className="mb-3">
-      <Form.Label>{t('titleDeLaObra', { lng: lang })}</Form.Label>
+    <div className='form-group'>
+    <label  > {t('titleDeLaObra', { lng: lang })}</label>
 
       <Form.Control
         type="text"
@@ -19,6 +19,6 @@ export function TitleInput({ handleChangeInput, postData }) {
         onChange={handleChangeInput}
         placeholder={t('introduceUnTituloParaLaObra', { lng: lang })}
       />
-    </Form.Group>
+    </div>
   );
 }

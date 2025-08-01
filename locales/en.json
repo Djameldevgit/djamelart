@@ -1,28 +1,29 @@
 {
 	"auth": {
 		"username_exists": "Username already exists.",
-		"email_exists": "Email is already registered.",
+		"email_exists": "Email already exists.",
 		"password_too_short": "Password must be at least 6 characters.",
 		"register_success": "Registration successful!",
 		"email_not_exist": "This email does not exist.",
 		"incorrect_password": "Incorrect password.",
 		"login_success": "Login successful!",
-		"logout_success": "Logged out successfully!",
-		"login_required": "Please log in first.",
+		"logout_success": "Logout successful!",
+		"login_required": "Please log in now.",
 		"user_not_found": "User not found.",
 		"server_error": "Server error.",
-
-		"already_verified": "Account is already verified.",
-		"activation_email_sent": "Activation email has been sent."
-
+		"activation_email_sent": "auth.activation_email_sent",
+		"forgot_email_sent": "auth.forgot_email_sent",
+		"account_activated": "✅ Account activated successfully.",
+		"reset_email_sent": "Password reset link sent.",
+		"password_changed": "Password changed successfully."
 	},
 	"post": {
 		"POST": "POST",
-		"created_post": "Your post has been received and is under review by our team. We will notify you once approved.",
+		"created_post": "We've received your message, our team is reviewing it. We'll notify you when approved.",
 		"updated_post": "Post updated!",
 		"deleted_post": "Post deleted!",
-		"liked_post": "You liked this post!",
-		"unliked_post": "You unliked this post!",
+		"liked_post": "You liked the post!",
+		"unliked_post": "Like removed from post!",
 		"saved_post": "Post saved!",
 		"unsaved_post": "Post removed from saved!",
 		"post_not_exist": "This post does not exist.",
@@ -35,85 +36,140 @@
 		"success": "Success!",
 		"USER": "USER",
 		"user_not_found": "User not found.",
-		"please_add_username": "Please add a username.",
+		"please_add_username": "Please add username.",
 		"update_success": "Update successful!",
 		"already_followed": "You already follow this user.",
-		"follow_success": "You are now following this user!",
-		"unfollow_success": "You unfollowed this user!",
+		"follow_success": "Follow successful!",
+		"unfollow_success": "Unfollow successful!",
 		"search_failed": "User search failed.",
 		"suggestions_loaded": "User suggestions loaded.",
-		"error": "Error.",
+		"error": "An error occurred.",
 		"no_users_found": "No users found.",
 		"invalid_user_id": "Invalid user ID.",
-		"updated_arabic": "Language updated to Arabic.",
-		"updated_french": "Language updated to French.",
-		"updated_spanish": "Language updated to Spanish."
+		"updated_arabic": "language.updated_arabic",
+		"updated_french": "language.updated_french",
+		"updated_spanish": "language.updated_spanish"
 	},
 	"comment": {
 		"error_post_not_exist": "This post does not exist.",
 		"error_comment_not_exist": "This comment does not exist.",
-		"success": "Comment created!"
-	},
-	"message": {
-		"createMessage.empty": "Message cannot be empty.",
-		"createMessage.success": "Message created successfully!",
-		"deleteMessage.success": "Message deleted!",
-		"deleteConversation.success": "Conversation deleted!"
+		"success": "Comment created successfully!"
 	},
 	"lang": {
-		"langUpdatedToSpanish": "Language updated to Spanish.",
-		"langUpdatedToRussian": "Language updated to Russian.",
-		"langUpdatedToKabyle": "Language updated to Kabyle.",
-		"langUpdatedToChinese": "Language updated to Chinese.",
-		"langUpdatedToEnglish": "Language updated to English.",
-		"langUpdatedToFrench": "Language updated to French.",
-		"langUpdatedToArabic": "Language updated to Arabic.",
-		"langUpdated": "Language updated.",
-		"languageNotSpecified": "Language not specified.",
-		"userNotFoundOrAlreadyUpdated": "User not found or language already updated.",
-		"errorUpdatingLanguage": "Error updating language.",
-		"languageSavedForVisitor": "Language saved for visitor.",
-		"errorSavingLanguageForVisitor": "Error saving language for visitor."
+		"langUpdatedToSpanish": "Language updated to Spanish",
+		"langUpdatedToRussian": "Language updated to Russian",
+		"langUpdatedToKabyle": "Language updated to Kabyle",
+		"langUpdatedToChinese": "Language updated to Chinese",
+		"langUpdatedToEnglish": "Language updated to English",
+		"langUpdatedToFrench": "Language updated to French",
+		"langUpdatedToArabic": "Language updated to Arabic",
+		"langUpdated": "Language updated",
+		"languageNotSpecified": "Language not specified",
+		"userNotFoundOrAlreadyUpdated": "User not found or language already updated",
+		"errorUpdatingLanguage": "Error updating language",
+		"languageSavedForVisitor": "Language saved for visitor",
+		"errorSavingLanguageForVisitor": "Error saving language for visitor"
 	},
 	"cart": {
-		"postNotFoundOrNoPrice": "Post not found or has no price.",
-		"postAddedToCart": "Post added to cart!",
-		"priceMustBeNumber": "Price must be a number.",
-		"priceMustBePositive": "Price must be positive.",
-		"quantityAtLeastOne": "Quantity must be at least 1.",
-		"productRemoved": "Product removed.",
-		"serverError": "Server error.",
-		"invalidQuantity": "Invalid quantity.",
-		"productNotFoundInCart": "Product not found in cart.",
-		"quantityUpdated": "Quantity updated.",
-		"product_not_found_in_cart": "cart.product_not_found_in_cart"
+		"postNotFoundOrNoPrice": "Post not found or no price",
+		"postAddedToCart": "Post added to cart",
+		"priceMustBeNumber": "Price must be a number",
+		"priceMustBePositive": "Price must be positive",
+		"quantityAtLeastOne": "Quantity must be at least 1",
+		"productRemoved": "Product removed",
+		"serverError": "Server error",
+		"invalidQuantity": "Invalid quantity",
+		"productNotFoundInCart": "Product not found in cart",
+		"quantityUpdated": "Quantity updated"
 	},
 	"language": {
+		"updated_arabic": "language.updated_arabic",
+		"updated_spanish": "language.updated_spanish",
 		"updated_english": "language.updated_english",
-		"updated_spanish": "language.updated_spanish"
+		"updated_french": "language.updated_french"
 	},
- 
-		"email": {
-	 	  "body": "Congratulations! You're almost ready to use the app. Click the button or link below to validate your email.",
-		  "button": "Verify Email",
-		  "alt": "If the button doesn't work, you can also click on the link below:",
-		 
-		   
-			"subject": "Nuevo mensaje de contacto desde el formulario",
-			"title": "Mensaje de contacto de usuario bloqueado",
-			"from": "Correo del usuario",
-			"message": "Mensaje del usuario"
-	
-		},
-	  
-	  
-		"support": {
-		  "subject": "Nuevo mensaje de contacto desde el formulario",
-		  "title": "Mensaje de contacto de usuario bloqueado",
-		  "from": "Correo del usuario",
-		  "message": "Mensaje del usuario"
-		}
-	 
-	  
-
+	"email": {
+		"subject": "Jamal Art",
+		"title": "Welcome to Tassili Art",
+		"body": "Congratulations! You're about to use the app. Click the button or link below to confirm your email.",
+		"button": "Confirm Email",
+		"alt": "If the button doesn't work, you can also click the following link:",
+		"reset_button": "email.reset_button"
+	},
+	"user_not_found": "User not found.",
+	"already_verified": "Account already verified.",
+	"activation_email_sent": "Activation email sent to your address.",
+	"server_error": "Internal server error.",
+	"order": {
+		"cart_empty": "Cart is empty",
+		"created_success": "✅ Order created successfully",
+		"not_found": "Order not found",
+		"status_updated": "Order status updated",
+		"deleted_success": "Order deleted successfully"
+	},
+	"role": {
+		"user_not_found": "User not found",
+		"role_assigned": "User role assigned successfully",
+		"superuser_assigned": "Superuser role assigned successfully",
+		"moderator_assigned": "Moderator role assigned successfully",
+		"admin_assigned": "Admin role assigned successfully",
+		"update_error": "Error updating user role"
+	},
+	"message": {
+		"create_success": "Message created successfully!",
+		"delete_success": "Successfully deleted!",
+		"invalid_data": "Invalid data: recipient and message content required",
+		"server_error": "Message server error",
+		"createMessage.empty": "Message cannot be empty.",
+		"createMessage.success": "Message created successfully!",
+		"deleteMessage.success": "Message deleted successfully!",
+		"deleteConversation.success": "Conversation deleted successfully!"
+	},
+	"report": {
+		"missing_fields": "All fields are required",
+		"create_success": "Report created successfully",
+		"server_error": "Report server error",
+		"report_not_found": "Report not found",
+		"update_success": "Report status updated successfully",
+		"delete_success": "Report deleted successfully"
+	},
+	"block": {
+		"user_not_found": "User not found",
+		"already_blocked": "This user is already blocked",
+		"default_reason": "Reason not specified",
+		"default_content": "No additional content",
+		"default_date": "Start date not specified",
+		"block_success": "User blocked successfully",
+		"not_blocked": "This user is not blocked",
+		"unblock_success": "User unblocked successfully",
+		"server_error": "Block server error"
+	},
+	"user": {
+		"activation_message_required": "Message required for account activation",
+		"activation_request_sent": "✅ Activation request sent to admin",
+		"server_error": "User server error",
+		"unauthenticated": "User unauthenticated",
+		"contact_title_message_required": "Title and message required",
+		"contact_message_sent": "Support message sent successfully",
+		"contact_send_error": "Error sending support message",
+		"blocked_message_required": "Message required for appeal request",
+		"blocked_request_sent": "✅ Block appeal request sent",
+		"blocked_send_error": "Error sending appeal request",
+		"not_found": "User not found",
+		"account_deleted_unverified": "Your account was deleted for non-verification within 3 days. Sign up again to access",
+		"status_updated": "User status updated",
+		"not_exist": "User does not exist",
+		"success": "Success",
+		"fullname_required": "Full name required",
+		"update_success": "User updated successfully!",
+		"already_followed": "You already follow this user",
+		"delete_denied_admin": "Denied: Admin privileges required",
+		"invalid_id": "Invalid user ID",
+		"delete_self_denied": "You cannot delete your own account",
+		"delete_success": "User and related content deleted successfully",
+		"delete_error": "Error deleting user",
+		"cleanup_denied_admin": "Denied: Admin privileges required for cleanup",
+		"cleanup_success": "Cleaned up: {{posts}} posts and {{comments}} comments",
+		"cleanup_error": "Error cleaning up remaining content"
+	}
 }

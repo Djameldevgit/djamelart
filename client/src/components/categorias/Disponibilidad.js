@@ -18,8 +18,8 @@ export function DisponibiliteOeuvre({ handleChangeInput, postData }) {
   ];
 
   return (
-    <Form.Group className="mb-3">
-      <Form.Label>{t('availability.label', { lng: lang })}</Form.Label>
+    <div className='form-group'>
+    <label  > {t('availability.label', { lng: lang })}</label>
 
       <Select
         options={disponibilites}
@@ -46,6 +46,6 @@ export function DisponibiliteOeuvre({ handleChangeInput, postData }) {
           })
         }}
       />
-    </Form.Group>
+    </div>
   );
 }

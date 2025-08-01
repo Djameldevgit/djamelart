@@ -62,6 +62,12 @@ const userSchema = new mongoose.Schema({
     enum: ['en', 'fr', 'ar', 'es', 'ru', 'chino', 'kab'],
     default: 'ar'
   },
+  opcionesUser: {
+    type: [String],
+    enum: ['archivos', 'lenguaje', 'chat', 'interfaz'],
+    default: []
+  },
+ 
   isVerified: {
     type: Boolean,
     default: false

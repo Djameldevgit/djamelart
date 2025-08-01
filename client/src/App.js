@@ -1,9 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect  } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import i18n from './i18n';
-
-import PageRender from './customRouter/PageRender'
-import PrivateRouter from './customRouter/PrivateRouter'
+ 
 import Home from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
@@ -68,6 +66,7 @@ import Message from './pages/message/[id]';
 import Messages from './pages/messages';
 import Messagesadmin from './pages/messagesadmin';
 import Conversationadmin from './pages/messageadmin/[id]';
+import Optionusers from './pages/users/optionusers';
  
  
  
@@ -152,8 +151,10 @@ function App() {
       </Router>
     )
   }
+//     <Route exact path="/message/:id" component={auth.token ? Conversationadmin : Login} />
+ 
 
-  return (
+return (
 
 
     <Router>
@@ -161,9 +162,10 @@ function App() {
 
       <input type="checkbox" id="theme" />
       <div className={`App ${(status || modal) && 'mode'}`}>
-        <LanguageSelectorandroid />
+      
         <div className="main">
-          <Navbar2 />
+    
+            <Navbar2 />
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
           <Route exact path="/" component={Home} />
@@ -175,9 +177,10 @@ function App() {
           <Route exact path="/post/:id" component={Post} />
           <Route exact path="/message/:id" component={auth.token ? Message : Login} />
           <Route exact path="/message" component={auth.token ? Messages : Login} />
-         
-          <Route exact path="/messageadmin/:id" component={auth.token ? Conversationadmin : Login} />
+     
           <Route exact path="/messageadmin" component={auth.token ? Messagesadmin : Login} />
+         
+          <Route exact path="/optionusers" component={auth.token ? Optionusers : Login} />
          
 
 

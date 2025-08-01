@@ -485,7 +485,7 @@ const StatusModal = () => {
             return wilayascommunes();
         } else {
             return (
-                <Form.Group controlId="cityInput" className="mb-3">
+                <Form.Group controlId="cityInput" >
                     <Form.Label>Ville</Form.Label>
                     <Form.Control
                         type="text"
@@ -513,153 +513,153 @@ const StatusModal = () => {
                     </div>
 
 
-                    <div className="form-group">
-                        {ItemsCategoryy()}
-                    </div>
-
-
- 
                     {postData.category === "Painting" && (
                         <div className='form-group'>
                             {ItemsSubCategoryPeinturee()}
-
                         </div>
                     )}
 
                     {postData.category === "Sculpture" && (
                         <div className='form-group'>
                             {ItemsSubCategorySculpturee()}
-
                         </div>
                     )}
-
-
 
                     {postData.category === "Photography" && (
                         <div className='form-group'>
                             {ItemsSubCategoryPhotographiee()}
-
                         </div>
                     )}
-
-
-
 
                     {postData.category === "drawing" && (
                         <div className='form-group'>
                             {ItemsSubCategoryDesignn()}
-
                         </div>
                     )}
 
-
-
-
-
-
                     {postData.category === "Engraving" && (
                         <div className='form-group'>
-
                             {ItemsSubCategoryGravuress()}
-
-
-
                         </div>
                     )}
 
                     {postData.category === "Digital_art" && (
                         <div className='form-group'>
-
                             {ItemsSubCategoryArtsNumeriquess()}
                         </div>
-
-
                     )}
                     {postData.category === "Collage" && (
-
                         <div className="form-group">
                             {ItemsSubCategoryCollagess()}
                         </div>
-
-
                     )}
                     {postData.category === "Textile_art" && (
                         <div className="Textile_art">
-
                             {ItemsSubCategoryArtTextilee()}
-
                         </div>
                     )}
 
 
-                    <div className="form-group">
-                        {ItemsThemee()}
-                    </div>
-                    <div className="form-group">
-                        {TitleInputt()}
-                    </div>
 
 
 
-                    <div>
-                        {SuporteDeLaObraa()}
+                    <div className='form-group'>
+                        <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.basicInfo')}</h3>
+                        <div >{TitleInputt()}</div>
+                        <div >{Descriptionnn()}</div>
+                        <div >{ItemsCategoryy()}</div>
                     </div>
 
-                    <div>
+
+
+                    <div className='form-group'>
+                        <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.artisticDetails')}</h3>
+                  
+                    <div >
                         {ItemsSubCategoryStylee()}
                     </div>
-                    <div>
+                    <div >
+                        {ItemsThemee()}
+                    </div>
+                    <div >
+                        {Derechosdelautorr()}
+                    </div>
+                    </div>
+
+
+                    <div className='form-group'>
+                        <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.dimensions')}</h3>
+                   <div >
                         {TalleSelectt()}
                     </div>
-                    <div>
+                    <div >
                         {MesureInputt()}
                     </div>
-
-                    <div>
+                    <div >
                         {UniteMesuree()}
                     </div>
+                    <div >
+                        {SuporteDeLaObraa()}
+                    </div> </div>
 
 
-                    <div className="form-group">
+
+
+                    <div className='form-group'>
+                        <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.availabilityPrice')}</h3>
+    
+                    <div >
                         {DisponibiliteOeuvree()}
                     </div>
-                    <div className="form-group">
+                    <div >
                         {PriceInputt()}
                     </div>
 
-                    <div className="form-group">
+                    <div >
                         {DeviseVentee()}
                     </div>
-                    <div>
+                    <div >
                         {Negociarprecioo()}
                     </div>
-
-                    <div>
-                        {Envolverlaobraa()}
                     </div>
 
 
-                    <div>
+
+
+
+                    <div className='form-group'>
+                        <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.saleLogistics')}</h3>
+                      
+                    <div >
                         {VenteOptionsSelectt()}
                     </div>
-
-                    <div>
-                        {Derechosdelautorr()}
+                    <div >
+                        {Envolverlaobraa()}
                     </div>
-                    <div>
-                        {Descriptionnn()}
                     </div>
 
-                    <div>
+
+
+ 
+
+
+
+
+
+                    <div className='form-group'>
+                        <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.artistInfo')}</h3>
+    
+                    <div >
                         {wilayascommunes()}
                     </div>
-                    <div>
+
+                    <div >
                         {paisess()}
                     </div>
-                    <div>
+                    <div >
                         {ciudadInput()}
                     </div>
-
+                    </div>
 
 
                     <div className="status_body">
