@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Modal,
   Button,
@@ -16,8 +17,10 @@ import {
 import { bloquearUsuario } from "../../redux/actions/userAction";
 
 const BloqueModalUser = ({ show, handleClose, user }) => {
-  const { auth } = useSelector(state => state);
+  const { auth, languageReducer } = useSelector(state => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation('modales');
+  const lang = languageReducer.language || 'es';
   const [error, setError] = useState(null);
 
   const [datosBloqueo, setDatosBloqueo] = useState({
@@ -39,7 +42,7 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
     const { motivo, fecha, hora, content } = datosBloqueo;
 
     if (!motivo || !fecha || !hora || !content) {
-      setError("❌ Completa todos los campos, incluyendo la fecha y la hora.");
+      setError(t('errorsss.missingFields'));
       return;
     }
 
@@ -54,18 +57,18 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered backdrop="static">
+    <Modal show={show} onHide={handleClose} centered backdrop="static" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <Modal.Header className="bg-danger text-white position-relative">
         <Modal.Title className="d-flex align-items-center">
-          <ExclamationTriangleFill className="me-2" />
-          Confirmar bloqueo de usuario
+          <ExclamationTriangleFill className={`${lang === 'ar' ? 'ms-2' : 'me-2'}`} />
+          {t('head.title')}
         </Modal.Title>
         <CloseButton
           variant="white"
           onClick={handleClose}
-          aria-label="Cerrar modal"
-          className="position-absolute end-0 me-2"
-          style={{ top: '1rem' }}
+          aria-label={t('actions.close')}
+          className="position-absolute"
+          style={lang === 'ar' ? { left: '1rem', top: '1rem' } : { right: '1rem', top: '1rem' }}
         />
       </Modal.Header>
 
@@ -73,15 +76,15 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
         <Modal.Body>
           {error && (
             <Alert variant="danger" className="d-flex align-items-center">
-              <XCircleFill className="me-2" />
+              <XCircleFill className={`${lang === 'ar' ? 'ms-2' : 'me-2'}`} />
               {error}
             </Alert>
           )}
 
           <Form.Group className="mb-3">
             <Form.Label>
-              <InfoCircleFill className="me-2 text-warning" />
-              Raison du blocage
+              <InfoCircleFill className={`${lang === 'ar' ? 'ms-2' : 'me-2'} text-warning`} />
+              {t('formm.reasonLabel')}
             </Form.Label>
             <Form.Select
               name="motivo"
@@ -89,41 +92,41 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
               onChange={handleChangeInput}
               required
             >
-              <option value="">Sélectionner le motif</option>
-              <option value="Comportement abusif">Comportement abusif</option>
-              <option value="Spam">Spam</option>
-              <option value="Violation des conditions d'utilisation">Violation des conditions d'utilisation</option>
-              <option value="Langage offensant">Langage offensant</option>
-              <option value="Fraude">Fraude</option>
-              <option value="Usurpation d'identité">Usurpation d'identité</option>
-              <option value="Contenu inapproprié">Contenu inapproprié</option>
-              <option value="Violation de la vie privée">Violation de la vie privée</option>
-              <option value="Interruption du service">Interruption du service</option>
-              <option value="Activité suspecte">Activité suspecte</option>
-              <option value="Autre">Autre</option>
+              <option value="">{t('formm.selectReason')}</option>
+              <option value="Comportement abusif">{t('reasons.abusiveBehavior')}</option>
+              <option value="Spam">{t('reasons.spam')}</option>
+              <option value="Violation des conditions d'utilisation">{t('reasons.termsViolation')}</option>
+              <option value="Langage offensant">{t('reasons.offensiveLanguage')}</option>
+              <option value="Fraude">{t('reasons.fraud')}</option>
+              <option value="Usurpation d'identité">{t('reasons.identityTheft')}</option>
+              <option value="Contenu inapproprié">{t('reasons.inappropriateContent')}</option>
+              <option value="Violation de la vie privée">{t('reasons.privacyViolation')}</option>
+              <option value="Interruption du service">{t('reasons.serviceDisruption')}</option>
+              <option value="Activité suspecte">{t('reasons.suspiciousActivity')}</option>
+              <option value="Autre">{t('reasons.other')}</option>
             </Form.Select>
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Detalles adicionales</Form.Label>
+            <Form.Label>{t('formm.detailsLabel')}</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
               name="content"
               value={datosBloqueo.content}
               onChange={handleChangeInput}
-              placeholder="Proporciona más detalles sobre el motivo del bloqueo"
+              placeholder={t('formm.detailsPlaceholder')}
               required
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>
-              <Calendar2EventFill className="me-2 text-primary" />
-              Fecha límite del bloqueo
+              <Calendar2EventFill className={`${lang === 'ar' ? 'ms-2' : 'me-2'} text-primary`} />
+              {t('formm.blockDuration')}
             </Form.Label>
             <Form.Group className="mb-2">
-              <Form.Label>Fecha</Form.Label>
+              <Form.Label>{t('formm.dateLabel')}</Form.Label>
               <Form.Control
                 type="date"
                 name="fecha"
@@ -134,7 +137,7 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
             </Form.Group>
 
             <Form.Group className="mb-2">
-              <Form.Label>Hora</Form.Label>
+              <Form.Label>{t('formm.timeLabel')}</Form.Label>
               <Form.Control
                 type="time"
                 name="hora"
@@ -148,10 +151,10 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
 
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Cancelar
+            {t('actions.cancel')}
           </Button>
           <Button variant="danger" type="submit">
-            Confirmar Bloqueo
+            {t('actionn.confirmBlock')}
           </Button>
         </Modal.Footer>
       </Form>

@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { getDataAPI } from "../../utils/fetchData";
 import { USERS_TYPES_ACTION } from "../../redux/actions/usersActionAction";
-
-
 import LoadMoreBtn from "../LoadMoreBtn";
 import LoadIcon from "../../images/loading.gif";
 import UserCard from "../UserCard";
 
-
 const UsersAction = () => {
-  const { usersActionReducer, auth } = useSelector((state) => state);
+  const { usersActionReducer, auth, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation('modales');
+  const lang = languageReducer.language || 'es';
+  
   const [load, setLoad] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredUsers, setFilteredUsers] = useState(usersActionReducer.users || []);
+
   useEffect(() => {
     const fetchInitialUsers = async () => {
       try {
         const res = await getDataAPI(`users?limit=9`, auth.token);
         dispatch({
           type: USERS_TYPES_ACTION.GET_USERS_ACTION,
-          payload: { ...res.data, page: 2 }, // Comenzamos en página 2 ya que la primera ya se cargó
+          payload: { ...res.data, page: 2 },
         });
       } catch (err) {
         console.error(err);
@@ -32,7 +34,7 @@ const UsersAction = () => {
       fetchInitialUsers();
     }
   }, [auth.token, dispatch]);
-  
+
   const handleLoadMore = async () => {
     setLoad(true);
     const res = await getDataAPI(`users?limit=${usersActionReducer.page * 9}`, auth.token);
@@ -53,11 +55,9 @@ const UsersAction = () => {
       user.email.toLowerCase().includes(search.toLowerCase())
   );
 
-
   const handleDeleteUser = (user) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+    if (window.confirm(t('deleteConfirmation'))) {
       dispatch(deleteUser({ user, auth }));
-      // history.push("/"); // Redirigir si es necesario
     }
   };
 
@@ -91,19 +91,19 @@ const UsersAction = () => {
   };
 
   return (
-    <div>
+    <div dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <div className="dropdown mb-3">
         <button className="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-          Filtrar Usuarios
+          {t('filterUsers')}
         </button>
         <ul className="dropdown-menu">
-          <li><button className="dropdown-item" onClick={() => handleFilter("mostFollowing")}>📌 Más following</button></li>
-          <li><button className="dropdown-item" onClick={() => handleFilter("mostFollowers")}>📌 Más followers</button></li>
-          <li><button className="dropdown-item" onClick={() => handleFilter("mostLikesReceived")}>❤️ Más likes recibidos</button></li>
-          <li><button className="dropdown-item" onClick={() => handleFilter("mostLikesGiven")}>👍 Más likes dados</button></li>
-          <li><button className="dropdown-item" onClick={() => handleFilter("mostCommentsMade")}>💬 Más comentarios hechos</button></li>
-          <li><button className="dropdown-item" onClick={() => handleFilter("lastLogin")}>🔄 Últimos en iniciar sesión</button></li>
-          <li><button className="dropdown-item" onClick={() => handleFilter("reset")}>🔄 Restablecer</button></li>
+          <li><button className="dropdown-item" onClick={() => handleFilter("mostFollowing")}>{t('filters.mostFollowing')}</button></li>
+          <li><button className="dropdown-item" onClick={() => handleFilter("mostFollowers")}>{t('filters.mostFollowers')}</button></li>
+          <li><button className="dropdown-item" onClick={() => handleFilter("mostLikesReceived")}>{t('filters.mostLikesReceived')}</button></li>
+          <li><button className="dropdown-item" onClick={() => handleFilter("mostLikesGiven")}>{t('filters.mostLikesGiven')}</button></li>
+          <li><button className="dropdown-item" onClick={() => handleFilter("mostCommentsMade")}>{t('filters.mostCommentsMade')}</button></li>
+          <li><button className="dropdown-item" onClick={() => handleFilter("lastLogin")}>{t('filters.lastLogin')}</button></li>
+          <li><button className="dropdown-item" onClick={() => handleFilter("reset")}>{t('filters.reset')}</button></li>
         </ul>
       </div>
 
@@ -111,19 +111,18 @@ const UsersAction = () => {
         <thead>
           <tr>
             <th>#</th>
-            <th>Usuario</th>
-            <th>Registro</th>
-            <th>Login</th>
-            <th>Posts</th>
-
-            <th>Reportes</th>
-            <th>LikesDados</th>
-            <th>Likes Recibidos</th>
-            <th>Comentarios Hechos</th>
-            <th>Comentarios Recibidos</th>
-            <th>Siguiendo</th>
-            <th>Seguidores</th>
-            <th>Acciones</th>
+            <th>{t('tableHead.user')}</th>
+            <th>{t('tableHead.registration')}</th>
+            <th>{t('tableHead.login')}</th>
+            <th>{t('tableHead.posts')}</th>
+            <th>{t('tableHead.reports')}</th>
+            <th>{t('tableHead.likesGiven')}</th>
+            <th>{t('tableHead.likesReceived')}</th>
+            <th>{t('tableHead.commentsMade')}</th>
+            <th>{t('tableHead.commentsReceived')}</th>
+            <th>{t('tableHead.following')}</th>
+            <th>{t('tableHead.followers')}</th>
+            <th>{t('tableHead.actions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -131,44 +130,56 @@ const UsersAction = () => {
             <tr key={user._id}>
               <td>{index + 1}</td>
               <th><UserCard user={user} /></th>
-              <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-              <td>{new Date(user.lastLogin).toLocaleDateString()}</td>
+              <td>
+              {new Date(user.createdAt).toLocaleDateString(lang === 'ar' ? 'en-US' : lang, {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                numberingSystem: 'latn'
+              })}
+            </td>
+          <td>
+  {user.lastLogin ? 
+    new Date(user.lastLogin).toLocaleDateString(lang === 'ar' ? 'en-US' : lang, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      numberingSystem: 'latn'
+    }) 
+    : 
+    t('neverLoggedIn') /* "Nunca" o "لم يسجل دخول أبدًا" */
+  }
+</td>
               <td>{user.postCount || 0}</td>
-
               <td>{user.likesGiven || 0}</td>
               <td>{user.totalLikesReceived || 0}</td>
               <td>{user.commentsMade || 0}</td>
               <td>{user.totalCommentsReceived || 0}</td>
               <td>{user.totalFollowing || 0}</td>
               <td>{user.totalFollowers || 0}</td>
-
               <td>
                 <div className="action-dropdown" style={{ position: "relative" }}>
                   <button className="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    Acción
+                    {t('actio.title')}
                   </button>
                   <div className="dropdown-menu" data-bs-autoClose="false">
-                    <button className="dropdown-item">✏️ Editar</button>
-
+                    <button className="dropdown-item">{t('actio.edit')}</button>
                     <button
                       className="dropdown-item text-danger"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleDeleteUser(user); // Pasar el usuario a la función
-
+                        handleDeleteUser(user);
                       }}
                     >
-                      🗑️ Eliminar
+                      {t('actio.delete')}
                     </button>
-
-
-                    <button className="dropdown-item text-warning">🚫 Bloquear</button>
-                    <button className="dropdown-item text-warning">🔇 Silenciar</button>
-                    <button className="dropdown-item">📩 Enviar mensaje</button>
-                    <button className="dropdown-item">👤 Ver perfil</button>
-                    <button className="dropdown-item">🚨 Ver reportes</button>
-                    <button className="dropdown-item text-info">🔑 Iniciar sesión como usuario</button>
+                    <button className="dropdown-item text-warning">{t('actio.block')}</button>
+                    <button className="dropdown-item text-warning">{t('actio.mute')}</button>
+                    <button className="dropdown-item">{t('actio.sendMessage')}</button>
+                    <button className="dropdown-item">{t('actio.viewProfile')}</button>
+                    <button className="dropdown-item">{t('actio.viewReports')}</button>
+                    <button className="dropdown-item text-info">{t('actio.loginAsUser')}</button>
                   </div>
                 </div>
               </td>
@@ -177,7 +188,12 @@ const UsersAction = () => {
         </tbody>
       </table>
       {load && <img src={LoadIcon} alt="loading" className="loading-icon" />}
-      <LoadMoreBtn result={usersActionReducer.result} page={usersActionReducer.page} load={load} handleLoadMore={handleLoadMore} />
+      <LoadMoreBtn 
+        result={usersActionReducer.result} 
+        page={usersActionReducer.page} 
+        load={load} 
+        handleLoadMore={handleLoadMore} 
+      />
     </div>
   );
 };

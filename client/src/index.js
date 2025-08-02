@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './styles/global.css';
+ 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import DataProvider from './redux/store'
 import { I18nextProvider } from 'react-i18next';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+
 import i18n from './i18n';
  
 ReactDOM.render(

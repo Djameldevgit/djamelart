@@ -31,7 +31,7 @@ const messageCtrl = {
             }, {//Si la conversación existe:Sobrescribe los campos recipients, text, media, y call
                 recipients: [sender, recipient],
                 text, media, call
-            }, { new: true, upsert: true })//Si la conversación NO existe (upsert: true)
+            }, { new: true, upsert: true })//new actualiza y upsert crea nueva conversacion,nSi la conversación NO existe (upsert: true)
             //  new: true: Devuelve el documento actualizado (no el original).
 
             //  upsert: true: Crea el documento si no existe.

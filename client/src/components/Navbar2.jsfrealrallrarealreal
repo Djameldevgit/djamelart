@@ -12,6 +12,7 @@ import { BsCartFill } from 'react-icons/bs'
 import NotifyModal from './NotifyModal'
 import LanguageSelectorpc from './LanguageSelectorpc'
 import Acordion from './Acordion'
+import LanguageSelectorandroid from './LanguageSelectorandroid'
 
  
 
@@ -98,9 +99,12 @@ const Navbar2 = () => {
                   <NavDropdown.Item as={Link} to="/message">{t('navbar:adminChat')}</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/rolesuser">{t('navbar:roles')}</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/message">{t('navbar:conversations')}</NavDropdown.Item>
-              
+                  <NavDropdown.Item as={Link} to="/optionusers">option users</NavDropdown.Item>
+                 
                   {auth.user.role === 'admin' && (
-                    <>
+                    <> 
+                      <NavDropdown.Item as={Link} to="/optionusers">option users</NavDropdown.Item>
+                 
                          <NavDropdown.Item as={Link} to="/messageadmin">conversatio admin</NavDropdown.Item>
                  
                       <NavDropdown.Item as={Link} to="/provaa">{t('navbar:testPage')}</NavDropdown.Item>
@@ -128,6 +132,8 @@ const Navbar2 = () => {
                 <>
                   <NavDropdown.Item as={Link} to="/login">{t('navbar:login')}</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/register">{t('navbar:register')}</NavDropdown.Item>
+ 
+ 
                 </>
               )}
             </NavDropdown>
@@ -142,9 +148,10 @@ const Navbar2 = () => {
         placement="start"
         style={{ top: '56px', height: 'calc(100vh - 56px)', width: '270px' }}
       >
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t('navbar:menu')}</Offcanvas.Title>
-        </Offcanvas.Header>
+            <LanguageSelectorandroid/>
+
+
+
 
         <Offcanvas.Body style={{ overflowY: 'auto', padding: '0.5rem' }}>
           <div className="d-lg-none mb-3">
@@ -169,7 +176,8 @@ const Navbar2 = () => {
               </div>
             )}
           </div>
-
+      
+              
           <Acordion />
         </Offcanvas.Body>
       </Offcanvas>

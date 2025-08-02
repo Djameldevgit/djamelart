@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { getDataAPI } from '../../utils/fetchData';
 import { USER_TYPES } from '../../redux/actions/userAction';
 import { 
@@ -17,8 +18,10 @@ import {
 import ModalEmail from './ModalEmail';
 
 const SendEmailsAdmin = () => {
-  const { auth, homeUsers } = useSelector((state) => state);
+  const { auth, homeUsers, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation('modales');
+  const lang = languageReducer.language || 'es';
 
   const [load, setLoad] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
@@ -54,10 +57,10 @@ const SendEmailsAdmin = () => {
   };
 
   return (
-    <Container fluid="md" className="mt-4 px-3"> {/* Añadido px-4 para padding horizontal */}
+    <Container fluid="md" className="mt-4 px-3" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <Row className="mb-4">
         <Col>
-          <h4>Usuarios</h4>
+          <h4>{t('usersTitle')}</h4>
         </Col>
       </Row>
   
@@ -69,7 +72,7 @@ const SendEmailsAdmin = () => {
             disabled={selectedUsers.length === 0}
             onClick={() => setShowEmailModal(true)}
           >
-            Enviar correo a {selectedUsers.length} usuario(s)
+            {t('sendEmailButton', { count: selectedUsers.length })}
           </Button>
         </Col>
       </Row>
@@ -84,21 +87,23 @@ const SendEmailsAdmin = () => {
         <Table striped bordered hover responsive className="mb-4">
           <thead>
             <tr>
-              <th style={{ paddingLeft: '1rem' }}></th> {/* Añadido padding izquierdo */}
-              <th>Avatar</th>
-              <th>Email</th>
-              <th>Registro</th>
-              <th>Estado</th>
+              <th style={{ paddingLeft: '1rem' }}></th>
+              <th>{t('tableHeaderssss.avatar')}</th>
+              <th>{t('tableHeaderssss.email')}</th>
+              <th>{t('tableHeaderssss.registration')}</th>
+              <th>{t('tableHeaderssss.status')}</th>
             </tr>
           </thead>
           <tbody>
             {homeUsers.users.map((user) => (
               <tr key={user._id}>
-                <td style={{ paddingLeft: '1.5rem' }}> {/* Añadido padding izquierdo */}
+                <td style={{ paddingLeft: '1.5rem' }}>
                   <Form.Check 
                     type="checkbox"
                     checked={selectedUsers.includes(user._id)}
                     onChange={() => handleCheckboxChange(user._id)}
+                    label=""
+                    aria-label={t('selectUser')}
                   />
                 </td>
                 <td>
@@ -106,15 +111,16 @@ const SendEmailsAdmin = () => {
                     src={user.avatar} 
                     roundedCircle 
                     style={{ width: '35px', height: '35px' }} 
+                    alt={t('userAvatar')}
                   />
                 </td>
                 <td>{user.email}</td>
-                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                <td>{new Date(user.createdAt).toLocaleDateString(lang)}</td>
                 <td>
                   {user.emailSent ? (
-                    <Badge bg="success">Enviado</Badge>
+                    <Badge bg="success">{t('status.sent')}</Badge>
                   ) : (
-                    <Badge bg="secondary">No enviado</Badge>
+                    <Badge bg="secondary">{t('status.notSent')}</Badge>
                   )}
                 </td>
               </tr>

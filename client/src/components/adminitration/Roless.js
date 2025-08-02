@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import UserCard from '../UserCard';
 import { roleuserautenticado, rolemoderador, rolesuperuser, roleadmin } from '../../redux/actions/roleAction';
 import { useState, useEffect } from 'react';
@@ -13,8 +14,11 @@ import {
 } from 'react-bootstrap';
 
 const Roless = () => {
-  const { homeUsers, auth, alert } = useSelector(state => state);
+  const { homeUsers, auth, alert, languageReducer } = useSelector(state => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation('modales');
+  const lang = languageReducer.language || 'es';
+
   const [selectedRoles, setSelectedRoles] = useState({});
   const [usersList, setUsersList] = useState(homeUsers?.users || []);
   const [loading, setLoading] = useState(false);
@@ -70,24 +74,22 @@ const Roless = () => {
     
     return (
       <Badge bg={variants[role] || 'light'} className="text-capitalize">
-        {role}
+        {t(`roles.${role}`, { lng: lang })}
       </Badge>
     );
   };
 
   return (
-    <Container className="py-4">
+    <Container className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <Card className="shadow-sm">
-     
-
         <Card.Header className="bg-primary text-white">
           <h5 className="mb-0">
             <i className="fas fa-user-shield me-2"></i>
-            Asignar Roles de Usuario
+            {t('headers.title')}
           </h5>
         </Card.Header>
-         <Card.Header className="text-muted small">
-          Total: {usersList.length} usuarios
+        <Card.Header className="text-muted small">
+          {t('headers.totalUsers', { count: usersList.length })}
         </Card.Header>
 
         <Card.Body>
@@ -101,9 +103,9 @@ const Roless = () => {
             <Table striped bordered hover className="mb-0">
               <thead className="bg-light">
                 <tr>
-                  <th style={{ width: '40%' }}>Usuario</th>
-                  <th style={{ width: '20%' }}>Rol Actual</th>
-                  <th style={{ width: '40%' }}>Cambiar Rol</th>
+                  <th style={{ width: '40%' }}>{t('tableHeadersss.user')}</th>
+                  <th style={{ width: '20%' }}>{t('tableHeadersss.currentRole')}</th>
+                  <th style={{ width: '40%' }}>{t('tableHeadersss.changeRole')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -113,7 +115,7 @@ const Roless = () => {
                       {loading ? (
                         <Spinner animation="border" variant="primary" />
                       ) : (
-                        "No hay usuarios disponibles"
+                        t('noUsersAvailable')
                       )}
                     </td>
                   </tr>
@@ -138,10 +140,10 @@ const Roless = () => {
                             disabled={loading}
                             className="w-75"
                           >
-                            <option value="user">Utilisateur</option>
-                            <option value="Super-utilisateur">Super utilisateur</option>
-                            <option value="Moderateur">Moderateur</option>
-                            <option value="admin">Administrateur</option>
+                            <option value="user">{t('roles.user')}</option>
+                            <option value="Super-utilisateur">{t('roles.Super-utilisateur')}</option>
+                            <option value="Moderateur">{t('roles.Moderateur')}</option>
+                            <option value="admin">{t('roles.admin')}</option>
                           </Form.Select>
                         </div>
                       </td>
@@ -152,8 +154,6 @@ const Roless = () => {
             </Table>
           </div>
         </Card.Body>
-        
-         
       </Card>
     </Container>
   );

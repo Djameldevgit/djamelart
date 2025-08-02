@@ -1,0 +1,43 @@
+{
+  "header": {
+    "title": "Configure Privileges",
+    "subtitle": "User: {{email}}"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "saveWithCount": "Save Changes ({{count}})"
+  },
+  "privileges": {
+    "subidaArchivos": {
+      "title": "File Upload",
+      "description": "Allows uploading documents and images to the system",
+      "hint": "Maximum file size: 10MB"
+    },
+    "cambioIdioma": {
+      "title": "Language Settings",
+      "description": "Allows modifying the interface language",
+      "hint": "Applies to all interface elements"
+    },
+    "accesoChat": {
+      "title": "Chat System",
+      "description": "Enables the internal messaging system",
+      "hint": "Includes group and private chats"
+    },
+    "personalizacion": {
+      "title": "UI Customization",
+      "description": "Allows changing interface themes and colors",
+      "hint": "Dark/light mode available"
+    }
+  },
+  "feedback": {
+    "noneSelected": "No privileges selected",
+    "saved": "Privileges updated successfully",
+    "error": "Error saving preferences"
+  }
+}
+
+
+
+
+ 

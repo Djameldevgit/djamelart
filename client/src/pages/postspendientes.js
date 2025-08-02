@@ -5,11 +5,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import PostsPendientes from '../components/home/PostsPendientes';
 import LoadIcon from  '../images/loading.gif'
 import { getPosts } from '../redux/actions/postAction'
- 
+import { useTranslation } from 'react-i18next';
+
 let scroll = 0;
  
 const Postspendientes = () => {
-    const { homePostsAprove ,auth} = useSelector(state => state)
+    const { homePostsAprove,languageReducer ,auth} = useSelector(state => state)
+    const { t } = useTranslation('navbar');
+    const lang = languageReducer.language || 'es';
+
     const dispatch = useDispatch()
        window.addEventListener('scroll', () => {
            if(window.location.pathname === '/'){
@@ -37,7 +41,7 @@ const Postspendientes = () => {
                        homePostsAprove.loading 
                        ? <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
                        : (homePostsAprove.result === 0 && homePostsAprove.posts.length === 0)
-                           ? <h2 className="text-center">No Post</h2>
+                           ? <h2 className="text-center">{t('No_Post', { lng: lang })}</h2>
                            : <PostsPendientes />
                    }
                    

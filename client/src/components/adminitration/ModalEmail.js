@@ -9,12 +9,15 @@ import {
   CloseButton
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { GLOBALTYPES } from '../../redux/actions/globalTypes';
 import { sendAdminEmail } from '../../redux/actions/authAction';
 
 const ModalEmail = ({ show, handleClose, recipients }) => {
-  const { auth, alert } = useSelector((state) => state);
+  const { auth, alert, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation('modales');
+  const lang = languageReducer.language || 'es';
 
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -26,7 +29,7 @@ const ModalEmail = ({ show, handleClose, recipients }) => {
     if (!subject || !message) {
       return dispatch({
         type: GLOBALTYPES.ALERT,
-        payload: { error: 'Título y mensaje son requeridos.' },
+        payload: { error: t('errors.requiredFields', { lng: lang }) },
       });
     }
 
@@ -36,30 +39,46 @@ const ModalEmail = ({ show, handleClose, recipients }) => {
       recipients,
       subject,
       message,
-      url: '#', // ✅ o puedes incluir un enlace útil si es necesario
+      url: '#',
       token: auth.token,
       onSuccess: () => {
         setSending(false);
         setSubject('');
         setMessage('');
-        handleClose();
+        handleClose(); // Cierre del modal al completar el envío
+      },
+      onError: () => {
+        setSending(false); // Asegura que el spinner se detenga en caso de error
       }
     }));
-    
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered size="lg" backdrop="static">
-      <Modal.Header className="bg-light position-relative">
+    <Modal 
+      show={show} 
+      onHide={() => {
+        if (!sending) { // Solo permite cerrar si no está enviando
+          handleClose();
+        }
+      }} 
+      centered 
+      size="lg" 
+      backdrop="static"
+    >
+      <Modal.Header closeButton className="bg-light position-relative">
         <Modal.Title className="w-100">
           <i className="fas fa-envelope me-2"></i>
-          Enviar correo a {recipients.length} usuario(s)
+          {t('header.title', { count: recipients.length, lng: lang })}
           <CloseButton 
-            onClick={handleClose}
+            onClick={() => {
+              if (!sending) { // Solo permite cerrar si no está enviando
+                handleClose();
+              }
+            }}
             disabled={sending}
             className="position-absolute end-0 me-3"
             style={{ top: '1.25rem' }}
-            aria-label="Cerrar modal"
+            aria-label={t('actions.close', { lng: lang })}
           />
         </Modal.Title>
       </Modal.Header>
@@ -76,10 +95,10 @@ const ModalEmail = ({ show, handleClose, recipients }) => {
         
         <Form onSubmit={handleSend}>
           <Form.Group className="mb-3">
-            <Form.Label className="fw-bold">Asunto del correo</Form.Label>
+            <Form.Label className="fw-bold">{t('form.subjectLabel', { lng: lang })}</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Ej: Actualización importante de la plataforma"
+              placeholder={t('form.subjectPlaceholder', { lng: lang })}
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               required
@@ -88,11 +107,11 @@ const ModalEmail = ({ show, handleClose, recipients }) => {
           </Form.Group>
           
           <Form.Group className="mb-4">
-            <Form.Label className="fw-bold">Contenido del mensaje</Form.Label>
+            <Form.Label className="fw-bold">{t('form.messageLabel', { lng: lang })}</Form.Label>
             <Form.Control
               as="textarea"
               rows={6}
-              placeholder="Escribe aquí el contenido detallado del mensaje..."
+              placeholder={t('form.messagePlaceholder', { lng: lang })}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               required
@@ -108,7 +127,7 @@ const ModalEmail = ({ show, handleClose, recipients }) => {
               disabled={sending}
               size="lg"
             >
-              Cancelar
+              {t('actions.cancel', { lng: lang })}
             </Button>
             
             <Button 
@@ -121,12 +140,12 @@ const ModalEmail = ({ show, handleClose, recipients }) => {
               {sending ? (
                 <>
                   <Spinner animation="border" size="sm" />
-                  Enviando...
+                  {t('actions.sending', { lng: lang })}
                 </>
               ) : (
                 <>
                   <i className="fas fa-paper-plane"></i>
-                  Enviar correo
+                  {t('actions.send', { lng: lang })}
                 </>
               )}
             </Button>

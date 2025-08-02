@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { getReports } from "../../redux/actions/reportUserAction";
 import {
   Container,
   Table,
   Dropdown,
- 
   Spinner,
+  Alert
 } from "react-bootstrap";
 import {
   PencilFill,
@@ -18,8 +19,10 @@ import {
 
 const ReportedUsers = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation('modales');
   const { reports, loading } = useSelector((state) => state.reportReducer);
-  const { auth } = useSelector((state) => state);
+  const { auth, languageReducer } = useSelector((state) => state);
+  const lang = languageReducer.language || 'es';
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -27,39 +30,39 @@ const ReportedUsers = () => {
       try {
         await dispatch(getReports(auth.token));
       } catch (err) {
-        setError("Error al obtener los reportes.");
+        setError(t('errors.fetchError'));
       }
     };
     fetchReports();
-  }, [dispatch, auth.token]);
+  }, [dispatch, auth.token, t]);
 
   if (!Array.isArray(reports)) {
-    return <p className="text-danger">Error: los datos de los reportes no son válidos.</p>;
+    return <Alert variant="danger">{t('errors.invalidData')}</Alert>;
   }
          
   return (
-    <Container fluid className="py-4">
-      <h2 className="mb-4">Usuarios Reportados</h2>
+    <Container fluid className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      <h2 className="mb-4">{t('header.title')}</h2>
 
       {loading ? (
         <div className="text-center">
           <Spinner animation="border" variant="primary" />
         </div>
       ) : error ? (
-        <p className="text-danger">{error}</p>
+        <Alert variant="danger">{error}</Alert>
       ) : reports.length === 0 ? (
-        <p>No hay usuarios reportados.</p>
+        <p>{t('noReports')}</p>
       ) : (
         <div className="table-responsive" style={{overflow: 'visible'}}>
           <Table striped bordered hover className="align-middle">
             <thead className="table-dark">
               <tr>
-                <th>Usuario que Reporta</th>
-                <th>Usuario Reportado</th>
-                <th>Título del Post</th>
-                <th>Motivo</th>
-                <th>Fecha</th>
-                <th>Acciones</th>
+                <th>{t('tableHeadersss.reporter')}</th>
+                <th>{t('tableHeadersss.reportedUser')}</th>
+                <th>{t('tableHeadersss.postTitle')}</th>
+                <th>{t('tableHeadersss.reason')}</th>
+                <th>{t('tableHeadersss.date')}</th>
+                <th>{t('tableHeadersss.actionss')}</th>
               </tr>
             </thead>
             <tbody>
@@ -67,11 +70,11 @@ const ReportedUsers = () => {
                 <tr key={report._id}>
                   <td><UserInfo user={report.reportedBy} /></td>
                   <td><UserInfo user={report.userId} /></td>
-                  <td>{report.postId?.title || "N/A"}</td>
-                  <td>{report.reason || "No especificado"}</td>
-                  <td>{new Date(report.createdAt).toLocaleString()}</td>
+                  <td>{report.postId?.title || t('notAvailable')}</td>
+                  <td>{report.reason || t('notSpecified')}</td>
+                  <td>{new Date(report.createdAt).toLocaleString(lang)}</td>
                   <td>
-                    <Dropdown drop="start">
+                    <Dropdown drop={lang === 'ar' ? 'end' : 'start'}>
                       <Dropdown.Toggle 
                         variant="outline-secondary" 
                         size="sm" 
@@ -85,20 +88,22 @@ const ReportedUsers = () => {
                         <ThreeDotsVertical />
                       </Dropdown.Toggle>
                       <Dropdown.Menu style={{position: 'absolute'}}>
-                     
                         <Dropdown.Item disabled>
-                          <PencilFill className="me-2" /> Editar
-                        </Dropdown.Item>
-                  
-                        <Dropdown.Item className="text-warning">
-                          <UnlockFill className="me-2" /> desactivar
+                          <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> 
+                          {t('actions.edit')}
                         </Dropdown.Item>
                         <Dropdown.Item className="text-warning">
-                          <LockFill className="me-2" /> Bloquear
+                          <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> 
+                          {t('actions.deactivate')}
                         </Dropdown.Item>
-                             <Dropdown.Item className="text-danger">
-                          <TrashFill className="me-2" /> Eliminar
-                        </Dropdown.Item> 
+                        <Dropdown.Item className="text-warning">
+                          <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> 
+                          {t('actions.block')}
+                        </Dropdown.Item>
+                        <Dropdown.Item className="text-danger">
+                          <TrashFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> 
+                          {t('actions.delete')}
+                        </Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                   </td>
@@ -112,8 +117,8 @@ const ReportedUsers = () => {
   );
 };
 
-// Componente de información del usuario
 const UserInfo = ({ user }) => {
+  const { t } = useTranslation('reports');
   return user ? (
     <div className="d-flex align-items-center">
       <img
@@ -126,7 +131,7 @@ const UserInfo = ({ user }) => {
       <span>{user.username}</span>
     </div>
   ) : (
-    <span>Usuario desconocido</span>
+    <span>{t('unknownUser')}</span>
   );
 };
 

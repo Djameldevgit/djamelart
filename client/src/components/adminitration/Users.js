@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import ModalPrivilegios from "./ModalPrivilegios"; // ajusta el path si está en otro folder
-
+import ModalPrivilegios from "./ModalPrivilegios";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import {
   Container,
   Table,
@@ -21,6 +21,7 @@ import {
   ThreeDotsVertical,
 } from "react-bootstrap-icons";
 import moment from "moment";
+import "moment/locale/ar";
 import "moment/locale/es";
 
 import { getDataAPI } from "../../utils/fetchData";
@@ -32,13 +33,10 @@ import {
 import {
   bloquearUsuario,
   unBlockUser,
-
 } from "../../redux/actions/userAction";
 import {
-
   getBlockedUsers,
 } from "../../redux/actions/userBlockAction";
-
 import { MESS_TYPES } from "../../redux/actions/messageAction";
 import { GLOBALTYPES } from "../../redux/actions/globalTypes";
 
@@ -46,11 +44,11 @@ import LoadMoreBtn from "../LoadMoreBtn";
 import UserCard from "../UserCard";
 import BloqueModalUser from "./BloqueModalUser";
 
-moment.locale("es");
-
 const Users = () => {
-  const { homeUsers, auth, socket, online } = useSelector((state) => state);
+  const { homeUsers, auth, socket, online, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation('modales');
+  const lang = languageReducer.language || 'es';
 
   const [load, setLoad] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
@@ -58,9 +56,14 @@ const Users = () => {
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
-  const [, forceRender] = useState(0); // para forzar render cada minuto
+  const [, forceRender] = useState(0);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [userForPermission, setUserForPermission] = useState(null);
+
+  // Configurar moment.js según el idioma
+  useEffect(() => {
+    moment.locale(lang === 'ar' ? 'ar' : 'es');
+  }, [lang]);
 
   const handleOpenPermissionModal = (user) => {
     setUserForPermission(user);
@@ -79,14 +82,12 @@ const Users = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Obtener usuarios bloqueados
   useEffect(() => {
     if (auth.token) {
       dispatch(getBlockedUsers(auth.token));
     }
   }, [auth.token, dispatch]);
 
-  // Socket: estado en línea y última desconexión
   useEffect(() => {
     if (!socket || !auth.user) return;
 
@@ -106,7 +107,6 @@ const Users = () => {
     };
   }, [socket, auth.user, dispatch]);
 
-  // Obtener usuarios desde el backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -117,7 +117,7 @@ const Users = () => {
           payload: { ...res.data, page: 1 },
         });
       } catch (err) {
-        console.error("Error al obtener usuarios:", err);
+        console.error(t('errors.fetchUsers'), err);
       } finally {
         setLoad(false);
         setInitialLoad(false);
@@ -127,7 +127,7 @@ const Users = () => {
     if (initialLoad && auth.token) {
       fetchUsers();
     }
-  }, [auth.token, dispatch, initialLoad]);
+  }, [auth.token, dispatch, initialLoad, t]);
 
   const handleLoadMore = async () => {
     setLoad(true);
@@ -141,7 +141,7 @@ const Users = () => {
         payload: { ...res.data, page: homeUsers.page + 1 },
       });
     } catch (err) {
-      console.error("Error al cargar más usuarios:", err);
+      console.error(t('errors.loadMore'), err);
     } finally {
       setLoad(false);
     }
@@ -157,7 +157,7 @@ const Users = () => {
       await dispatch(deleteUser({ id: userToDelete, auth }));
       setShowDeleteModal(false);
     } catch (err) {
-      console.error("Error al eliminar usuario:", err);
+      console.error(t('errors.deleteUser'), err);
     }
   };
 
@@ -186,7 +186,7 @@ const Users = () => {
       dispatch(getBlockedUsers(auth.token));
       handleCloseModal();
     } catch (err) {
-      console.error("Error al bloquear usuario:", err);
+      console.error(t('errors.blockUser'), err);
     }
   };
 
@@ -202,7 +202,7 @@ const Users = () => {
       });
       dispatch(getBlockedUsers(auth.token));
     } catch (err) {
-      console.error("Error al desbloquear usuario:", err);
+      console.error(t('errors.unblockUser'), err);
     }
   };
 
@@ -215,21 +215,21 @@ const Users = () => {
   }
 
   return (
-    <Container fluid className="py-4">
+    <Container fluid className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Modal Confirmación Eliminar */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmar eliminación</Modal.Title>
+          <Modal.Title>{t('deleteModal.title')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          ¿Estás seguro de eliminar este usuario permanentemente?
+          {t('deleteModal.message')}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancelar
+            {t('deleteModal.cancel')}
           </Button>
           <Button variant="danger" onClick={handleDeleteUser}>
-            Eliminar
+            {t('deleteModal.confirm')}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -240,14 +240,14 @@ const Users = () => {
           <thead className="table-dark">
             <tr>
               <th>#</th>
-              <th>Usuario</th>
-              <th>Estado</th>
-              <th>Última desconexión</th>
-              <th>Registro</th>
-              <th>Verificación</th>
-              <th>Estado</th>
-              <th>Bloqueo</th>
-              <th>Acciones</th>
+              <th>{t('tableHeader.user')}</th>
+              <th>{t('tableHeader.status')}</th>
+              <th>{t('tableHeader.lastDisconnect')}</th>
+              <th>{t('tableHeader.registration')}</th>
+              <th>{t('tableHeader.verification')}</th>
+              <th>{t('tableHeader.accountStatus')}</th>
+              <th>{t('tableHeader.blockStatus')}</th>
+              <th>{t('tableHeader.actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -257,13 +257,13 @@ const Users = () => {
                 <td><UserCard user={user} /></td>
                 <td>
                   {online.some((u) => u._id === user._id) ? (
-                    <Badge bg="success">🟢 En línea</Badge>
+                    <Badge bg="success">{t('statu.online')}</Badge>
                   ) : user.lastDisconnectedAt ? (
                     <Badge bg="secondary">
-                      🔴 Desconectado {moment(user.lastDisconnectedAt).fromNow()}
+                      {t('statu.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
                     </Badge>
                   ) : (
-                    <Badge bg="secondary">🔴 Desconectado</Badge>
+                    <Badge bg="secondary">{t('statu.offline')}</Badge>
                   )}
                 </td>
                 <td>
@@ -275,50 +275,54 @@ const Users = () => {
                     <span className="text-muted">--</span>
                   )}
                 </td>
-                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                <td>{new Date(user.createdAt).toLocaleDateString(lang)}</td>
                 <td>
                   {user.isVerified ? (
-                    <Badge bg="success"><CheckCircleFill className="me-1" /> Verificado</Badge>
+                    <Badge bg="success"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('statu.verified')}</Badge>
                   ) : (
-                    <Badge bg="danger"><XCircleFill className="me-1" /> No verificado</Badge>
+                    <Badge bg="danger"><XCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('statu.notVerified')}</Badge>
                   )}
                 </td>
                 <td>
                   {user.isActive ? (
-                    <Badge bg="success">🟢 Activo</Badge>
+                    <Badge bg="success">{t('statu.active')}</Badge>
                   ) : (
-                    <Badge bg="warning" text="dark">🟠 Inactivo</Badge>
+                    <Badge bg="warning" text="dark">{t('statu.inactive')}</Badge>
                   )}
                 </td>
                 <td>
                   {user.esBloqueado ? (
-                    <Badge bg="danger">🚫 Bloqueado</Badge>
+                    <Badge bg="danger">{t('statu.blocked')}</Badge>
                   ) : (
-                    <Badge bg="success">✅ No bloqueado</Badge>
+                    <Badge bg="success">{t('statu.notBlocked')}</Badge>
                   )}
                 </td>
                 <td>
-                  <Dropdown>
+                  <Dropdown drop={lang === 'ar' ? 'start' : 'end'}>
                     <Dropdown.Toggle variant="outline-secondary" size="sm" id="dropdown-actions">
                       <ThreeDotsVertical />
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item disabled>
-                        <PencilFill className="me-2" /> Editar
+                        <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.edit')}
                       </Dropdown.Item>
                       <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
-                        <TrashFill className="me-2" /> Eliminar
+                        <TrashFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.delete')}
                       </Dropdown.Item>
                       <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
-                        🛡️ Gestionar permisos
+                        🛡️ {t('action.managePermissions')}
                       </Dropdown.Item>
 
                       <Dropdown.Item
                         className={user.isActive ? "text-warning" : "text-success"}
                         onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
                       >
-                        {user.isActive ? <LockFill className="me-2" /> : <UnlockFill className="me-2" />}
-                        {user.isActive ? "Desactivar cuenta" : "Activar cuenta"}
+                        {user.isActive ? (
+                          <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                        ) : (
+                          <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                        )}
+                        {user.isActive ? t('action.deactivate') : t('action.activate')}
                       </Dropdown.Item>
                       <Dropdown.Item
                         className={user.esBloqueado ? "text-success" : "text-danger"}
@@ -326,8 +330,12 @@ const Users = () => {
                           user.esBloqueado ? handleUnblockUser(user) : handleOpenModal(user)
                         }
                       >
-                        {user.esBloqueado ? <UnlockFill className="me-2" /> : <LockFill className="me-2" />}
-                        {user.esBloqueado ? "Desbloquear usuario" : "Bloquear usuario"}
+                        {user.esBloqueado ? (
+                          <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                        ) : (
+                          <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                        )}
+                        {user.esBloqueado ? t('action.unblock') : t('action.block')}
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
@@ -356,13 +364,13 @@ const Users = () => {
         </div>
       )}
 
-{showPermissionModal && userForPermission && (
-  <ModalPrivilegios
-    user={userForPermission}
-    setShowModal={setShowPermissionModal}
-    token={auth.token}
-  />
-)}
+      {showPermissionModal && userForPermission && (
+        <ModalPrivilegios
+          user={userForPermission}
+          setShowModal={setShowPermissionModal}
+          token={auth.token}
+        />
+      )}
 
       {showBlockModal && selectedUser && (
         <BloqueModalUser
@@ -372,12 +380,7 @@ const Users = () => {
           user={selectedUser}
         />
       )}
-
-
     </Container>
-
-
-
   );
 };
 

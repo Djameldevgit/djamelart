@@ -5,35 +5,12 @@ import { useTranslation } from 'react-i18next';
 import * as languageActions from '../redux/actions/languageAction';
 import { Dropdown, ButtonGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
 function LanguageSelectorandroid() {
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
   const { t } = useTranslation('language');
   const [cookies, setCookie] = useCookies(['language']);
   const lang = languageReducer?.language || 'fr';
-
-  // Función mejorada para obtener rutas de banderas
-  const flagPath = (langCode) => {
-    // Manejo especial para Kabyle
-    if (langCode === 'kab') {
-      return '/flags/kab.png';
-    }
-    // Código estándar para chino
-    if (langCode === 'chino') {
-      return '/flags/chino.png';
-    }
-    return `/flags/${langCode}.png`;
-  };
-
-  const flagStyle = {
-    width: '20px',
-    height: '14px',
-    objectFit: 'cover',
-    marginRight: '8px',
-    borderRadius: '2px',
-    verticalAlign: 'middle'
-  };
 
   const handleLanguageChange = useCallback((language) => {
     switch (language) {
@@ -49,36 +26,36 @@ function LanguageSelectorandroid() {
       case 'es':
         dispatch(languageActions.spanishLanguage(language));
         break;
+
+
       case 'ru':
-        dispatch(languageActions.russianLanguage(language));
-        break;
       case 'kab':
-        dispatch(languageActions.kabyleLanguage(language));
-        break;
-      case 'chino': // Código estándar para chino
-        dispatch(languageActions.chineseLanguage(language));
+      case 'chino':
+        dispatch(languageActions.synchronizeLanguage(language));
         break;
       default:
         dispatch(languageActions.synchronizeLanguage(language));
+        break;
     }
     setCookie('language', language, { path: '/' });
-    
-    // Actualizar dirección del documento para RTL
-    if (language === 'ar' || language === 'kab') {
-      document.documentElement.dir = 'rtl';
-    } else {
-      document.documentElement.dir = 'ltr';
-    }
   }, [dispatch, setCookie]);
 
   useEffect(() => {
     const defaultLanguage = cookies.language || 'fr';
-    if (defaultLanguage !== lang) {
-      handleLanguageChange(defaultLanguage);
-    }
-  }, [cookies.language, handleLanguageChange, lang]);
+    handleLanguageChange(defaultLanguage);
+  }, [cookies.language, handleLanguageChange]);
 
-  // Nombres de idiomas traducidos con códigos consistentes
+  const flagPath = (lang) => `/flags/${lang}.png`;
+
+  const flagStyle = {
+    width: '20px',
+    height: '14px',
+    objectFit: 'cover',
+    marginRight: '8px',
+    borderRadius: '2px',
+    verticalAlign: 'middle'
+  };
+
   const languageNames = {
     en: t('language.en', { lng: lang }),
     fr: t('language.fr', { lng: lang }),
@@ -86,7 +63,7 @@ function LanguageSelectorandroid() {
     es: t('language.es', { lng: lang }),
     ru: t('language.ru', { lng: lang }),
     kab: t('language.kab', { lng: lang }),
-    chino: t('language.chino', { lng: lang }) // Corregido a 'chino'
+    chino: t('language.chino', { lng: lang })
   };
 
   return (
@@ -94,32 +71,24 @@ function LanguageSelectorandroid() {
       <div style={{ display: 'flex', width: '100%', gap: '3px' }}>
 
         <Link to="/"  >
-          <h3 className='ml-4 mt-2 w-100 ' style={{ flex: '1 1 0' }} >
-         <i className='fas fa-home'></i>   {t('Tassili', { lng: lang })}
+          <h3 className='ml-4 mt-2' style={{ flex: '1 1 0' }} >
+            {t('Tassili', { lng: lang })}
           </h3>
         </Link>
+
 
         {/* Selector de idioma */}
         <div style={{ flex: '1 1 0' }}>
           <Dropdown as={ButtonGroup} className="w-100">
-            <Dropdown.Toggle   id="dropdown-language" >
-              <img 
-                src={flagPath(lang)} 
-                alt={t('flagAlt', { langName: languageNames[lang] })} 
-                style={flagStyle} 
-              />
+            <Dropdown.Toggle variant="secondary" id="dropdown-language" className="w-100">
+              <img src={flagPath(lang)} alt="flag" style={flagStyle} />
               {languageNames[lang]}
             </Dropdown.Toggle>
 
-            <Dropdown.Menu   >
-       
+            <Dropdown.Menu className="w-100">
               {['ar', 'fr', 'en', 'es', 'ru', 'kab', 'chino'].map((langCode) => (
                 <Dropdown.Item key={langCode} onClick={() => handleLanguageChange(langCode)}>
-                  <img 
-                    src={flagPath(langCode)} 
-                    alt={t('flagAlt', { langName: languageNames[langCode] })} 
-                    style={flagStyle} 
-                  />
+                  <img src={flagPath(langCode)} alt={`${langCode} flag`} style={flagStyle} />
                   {languageNames[langCode]}
                 </Dropdown.Item>
               ))}
@@ -130,5 +99,6 @@ function LanguageSelectorandroid() {
     </div>
   );
 }
+
 
 export default LanguageSelectorandroid;

@@ -1,6 +1,18 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+
+import arModales from './locales/ar/modales.json';
+import chModales from './locales/ch/modales.json';
+import enModales from './locales/en/modales.json';
+import esModales from './locales/es/modales.json';
+import frModales from './locales/fr/modales.json';
+import kaModales from './locales/ka/modales.json';
+import ruModales from './locales/ru/modales.json';
+
+
+
+
 import arChat from './locales/ar/chat.json';
 import chChat from './locales/ch/chat.json';
 import enChat from './locales/en/chat.json';
@@ -179,7 +191,7 @@ import Bloqueos from './pages/users/bloqueos';
 const resources = {
   ar: {
 
-
+    modales: arModales,
     chat: arChat,
     bloqueos: arBloqueos,
     cardbodycarousel: arCardbodycarousel,
@@ -202,7 +214,7 @@ const resources = {
 
   },
   chino: {
-
+    modales: chModales,
     chat: chChat,
     bloqueos: chBloqueos,
     cardbodycarousel: chCardbodycarousel,
@@ -224,7 +236,7 @@ const resources = {
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
-
+    modales: enModales,
     chat: enChat,
     bloqueos: enBloqueos,
     cardbodycarousel: enCardbodycarousel,
@@ -246,7 +258,7 @@ const resources = {
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
-
+    modales: esModales,
     chat: esChat,
     bloqueos: esBloqueos,
     cardbodycarousel: esCardbodycarousel,
@@ -268,7 +280,7 @@ const resources = {
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
-
+    modales: frModales,
     chat: frChat,
     bloqueos: frBloqueos,
     cardbodycarousel: frCardbodycarousel,
@@ -290,7 +302,7 @@ const resources = {
     componentstatusmodal: frComponentstatusmodal
   },
   kab: {
-
+    modales: kaModales,
     chat: kaChat,
     bloqueos: kaBloqueos,
     cardbodycarousel: kaCardbodycarousel,
@@ -312,7 +324,7 @@ const resources = {
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
-
+    modales: ruModales,
     chat: ruChat,
     bloqueos:ruBloqueos,
     cardbodycarousel: ruCardbodycarousel,
