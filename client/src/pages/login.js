@@ -3,7 +3,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { login } from '../redux/actions/authAction'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import ForgotPassword from '../auth/ForgotPassword'
+ 
 import Loginfacegoogle from '../auth/Loginfacegoogle'
 //import Loginfacegoogle from '../auth/Loginfacegoogle'
 
@@ -53,7 +53,6 @@ const Login = () => {
                     <div className="pass">
                         <input type={typePass ? "text" : "password"}
                             className="form-control" id="exampleInputPassword1"
-                        
                             onChange={handleChangeInput} value={password} name="password" />
                         <small onClick={() => setTypePass(!typePass)}>
                             {typePass ? t('hide', { lng: lang }) : t('show', { lng: lang })}

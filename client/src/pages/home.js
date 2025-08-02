@@ -57,7 +57,7 @@ const Home = () => {
         <div className="home">
         <button onClick={openModal} style={styles.searchButton} className='mt-2'>
             <span style={styles.searchIcon}>
-                <i className='fas fa-search'></i>
+                <i className='fas fa-search mr-2 ml-2'></i>
                 <span className='ml-3'>{t('advanced_search', { lng: lang })}</span>
             </span>
         </button>

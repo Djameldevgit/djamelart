@@ -170,29 +170,52 @@ const authCtrl = {
         }
       },
       
-
-
-    login: async (req, res) => {
+      login: async (req, res) => {
         try {
-            const { email, password } = req.body
-
-            const user = await Users.findOne({ email })
-            if (!user)
-                return res.status(400).json({ msg: req.__('auth.email_not_exist') })
-
-            const isMatch = await bcrypt.compare(password, user.password)
-            if (!isMatch)
-                return res.status(400).json({ msg: req.__('auth.incorrect_password') })
-
-            const access_token = createAccessToken({ id: user._id })
-            const refresh_token = createRefreshToken({ id: user._id })
-
+            const { email, password } = req.body;
+    
+            // Validación de campos vacíos
+            if (!email || !password) {
+                return res.status(400).json({ 
+                    msg: req.__('auth.empty_fields'),
+                    fields: {
+                        email: !email ? req.__('validation.email.required') : null,
+                        password: !password ? req.__('validation.password.required') : null
+                    }
+                });
+            }
+    
+            // Validación formato email (opcional pero recomendado)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return res.status(400).json({ 
+                    msg: req.__('validation.email.format') 
+                });
+            }
+    
+            const user = await Users.findOne({ email });
+            if (!user) {
+                return res.status(400).json({ 
+                    msg: req.__('auth.email_not_exist') 
+                });
+            }
+    
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ 
+                    msg: req.__('auth.incorrect_password') 
+                });
+            }
+    
+            const access_token = createAccessToken({ id: user._id });
+            const refresh_token = createRefreshToken({ id: user._id });
+    
             res.cookie('refreshtoken', refresh_token, {
                 httpOnly: true,
                 path: '/api/refresh_token',
                 maxAge: 30 * 24 * 60 * 60 * 1000
-            })
-
+            });
+    
             res.json({
                 msg: req.__('auth.login_success'),
                 access_token,
@@ -200,9 +223,11 @@ const authCtrl = {
                     ...user._doc,
                     password: ''
                 }
-            })
+            });
         } catch (err) {
-            return res.status(500).json({ msg: req.__('auth.server_error') })
+            return res.status(500).json({ 
+                msg: req.__('auth.server_error') 
+            });
         }
     },
 

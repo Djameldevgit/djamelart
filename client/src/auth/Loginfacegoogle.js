@@ -1,32 +1,35 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React,{useState} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import FacebookLogin from 'react-facebook-login';
 import { socialLogin } from '../redux/actions/authAction';
 import { showErrMsg, showSuccessMsg } from '../utils/notification/Notification';
+import { useTranslation } from 'react-i18next';
 
 const Loginfacegoogle = () => {
+  const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('auth');
+  const lang = languageReducer.language || 'en';
   const [msg, setMsg] = useState({ err: '', success: '' });
   const dispatch = useDispatch();
   const history = useHistory();
 
-  // GOOGLE
   const handleGoogleSuccess = async (credentialResponse) => {
     const tokenId = credentialResponse.credential;
     if (tokenId) {
       try {
         await dispatch(socialLogin({ tokenId }, 'google'));
-        setMsg({ err: '', success: 'Inicio de sesión exitoso con Google' });
+        setMsg({ err: '', success: t('login_success_google', { lng: lang }) });
         history.push('/');
       } catch (err) {
-        setMsg({ err: 'Error al procesar el login con Google', success: '' });
+        setMsg({ err: t('login_error_google', { lng: lang }), success: '' });
       }
     }
   };
 
   const handleGoogleError = () => {
-    setMsg({ err: 'Inicio de sesión cancelado o fallido con Google', success: '' });
+    setMsg({ err: t('login_cancel_failed_google', { lng: lang }), success: '' });
   };
 
   // FACEBOOK
@@ -35,34 +38,34 @@ const Loginfacegoogle = () => {
       const { accessToken, userID } = response;
 
       if (!accessToken || !userID) {
-        setMsg({ err: 'Error al autenticar con Facebook', success: '' });
+        setMsg({ err: t('auth_error_facebook', { lng: lang }), success: '' });
         return;
       }
 
       await dispatch(socialLogin({ accessToken, userID }, 'facebook'));
-      setMsg({ err: '', success: 'Inicio de sesión exitoso con Facebook' });
+      setMsg({ err: '', success: t('login_success_facebook', { lng: lang }) });
       history.push('/');
     } catch (err) {
-      setMsg({ err: 'Error al procesar el login con Facebook', success: '' });
+      setMsg({ err: t('login_error_facebook', { lng: lang }), success: '' });
     }
   };
 
   return (
     <div className="login_page">
-      <h2>Iniciar Sesión</h2>
-
       {msg.err && showErrMsg(msg.err)}
       {msg.success && showSuccessMsg(msg.success)}
-
-      <div className="hr">Iniciar sesión con</div>
-
       <div className="social mb-2">
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={handleGoogleError}
-          useOneTap
-        />
-      </div>
+  <button className="btn btn-danger w-100" onClick={() => document.querySelector('[aria-label="Sign in with Google"]').click()}>
+    {t('login_with_google', { lng: lang })}
+  </button>
+  <div className="d-none">
+    <GoogleLogin
+      onSuccess={handleGoogleSuccess}
+      onError={handleGoogleError}
+      useOneTap
+    />
+  </div>
+</div>
 
       <div className="social">
         <FacebookLogin
@@ -70,8 +73,9 @@ const Loginfacegoogle = () => {
           autoLoad={false}
           fields="name,email,picture"
           callback={handleFacebookResponse}
-          icon="fa-facebook"
-          textButton=" Iniciar sesión con Facebook"
+         
+          textButton={t('login_with_facebook', { lng: lang })}
+         
           cssClass="btn btn-primary w-100"
         />
       </div>
@@ -80,4 +84,3 @@ const Loginfacegoogle = () => {
 };
 
 export default Loginfacegoogle;
-
