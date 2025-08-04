@@ -9,7 +9,11 @@ const DescriptionPost = ({ post }) => {
   const lang = languageReducer.language || 'en'; // fallback por si acaso
 
   return (
-    <div className="artwork-details-container">
+ 
+    <div className="artwork-details-container"style={{
+      direction: lang === 'ar' ? 'rtl' : 'ltr',
+        textAlign: lang === 'ar' ? 'right' : 'left',
+      }}>
       <div className="artwork-metadata">
         {post.category && (
           <div className="metadata-item">
@@ -134,6 +138,7 @@ const DescriptionPost = ({ post }) => {
         )}
       </div>
     </div>
+      
   );
 };
 

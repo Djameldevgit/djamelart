@@ -177,7 +177,7 @@ const authCtrl = {
             // Validación de campos vacíos
             if (!email || !password) {
                 return res.status(400).json({ 
-                    msg: req.__('auth.empty_fields'),
+                    msg: req.__('empty_fields'),
                     fields: {
                         email: !email ? req.__('validation.email.required') : null,
                         password: !password ? req.__('validation.password.required') : null

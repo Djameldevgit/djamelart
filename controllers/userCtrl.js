@@ -68,37 +68,48 @@ const userCtrl = {
     try {
       const { title, message, lang } = req.body;
 
-      // Asegúrate de que el usuario esté autenticado
+      // Obtener el usuario autenticado desde req.user
+      const user = req.user;
       if (!user) {
         return res.status(401).json({ msg: req.__('user.unauthenticated') });
       }
 
+      // Validación de campos
       if (!title || !message) {
         return res.status(400).json({ msg: req.__('user.contact_title_message_required') });
       }
 
+      // Construcción del asunto y cuerpo del mensaje
       const subject = `[Contacto] ${title} - ${user.username}`;
       const fullMessage = `
-  Mensaje del usuario:
-  --------------------
-  Nombre: ${user.username}
-  Email: ${user.email}
-  ID: ${user._id}
-  
-  Mensaje:
-  --------
-  ${message}
+Mensaje del usuario:
+--------------------
+Nombre: ${user.username}
+Email: ${user.email}
+ID: ${user._id}
+
+Mensaje:
+--------
+${message}
       `;
 
       // Enviar el email al administrador
-      await sendMail('artealger2020argelia@gmail.com', '#', lang || 'es', 'informativo', subject, fullMessage);
+      await sendMail(
+        'artealger2020argelia@gmail.com', // Email destino
+        '#',                             // Placeholder para algún template o clave (ajústalo si es necesario)
+        lang || 'es',
+        'informativo',
+        subject,
+        fullMessage
+      );
+
       return res.json({ success: true, msg: req.__('user.contact_message_sent') });
+
     } catch (err) {
       console.error('❌ Error al enviar el mensaje de contacto:', err);
       return res.status(500).json({ msg: req.__('user.contact_send_error') });
     }
   },
-
 
   contactBlockedSupport: async (req, res) => {
     try {

@@ -1,13 +1,17 @@
 {
-  "contactFormTitle": "联系表单",
-  "adminEmailLabel": "管理员邮箱",
-  "yourEmailLabel": "您的邮箱",
-  "messageSubjectLabel": "邮件主题",
-  "enterMessageSubject": "输入您的邮件主题",
-  "yourMessageLabel": "您的消息",
-  "writeYourMessageHere": "在此输入您的消息...",
-  "exitButton": "退出",
-  "backToHomeButton": "返回首页",
-  "sendButton": "发送",
-  "messageSentSuccessfully": "消息发送成功"
+ 
+    "error": "错误",
+    "success": "成功",
+ 
+
+
+    "contact_form": "联系表单",
+  "subjectt": "主题",
+  "messagee": "消息",
+  "write_subject": "填写主题",
+  "write_message": "在此输入您的消息",
+  "send_message": "发送消息",
+  "sendingg": "发送中",
+  "mensajeenviadoconexito": "消息发送成功。",
+  "erroralenviarmensaje": "发送消息时出错。"
 }

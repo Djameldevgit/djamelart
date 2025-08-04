@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Card } from 'react-bootstrap';
+import { FaCommentDots } from 'react-icons/fa';  
 import Avatar from '../../Avatar';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
@@ -8,8 +10,7 @@ import CommentMenu from './CommentMenu';
 import { updateComment, likeComment, unLikeComment } from '../../../redux/actions/commentAction';
 import InputComment from '../InputComment';
 import { useTranslation } from 'react-i18next';
-//import DesactivateModal from '../../DesactivateModal';
- 
+
 const CommentCard = ({ children, comment, post, commentId }) => {
     const { auth, theme, languageReducer } = useSelector(state => state);
     const dispatch = useDispatch();
@@ -68,92 +69,105 @@ const CommentCard = ({ children, comment, post, commentId }) => {
     };
 
     return (
-        <div className="comment_card mt-2" style={styleCard}>
-            <Link to={`/profile/${comment.user._id}`} className="d-flex text-dark">
-                <Avatar src={comment.user.avatar} size="small-avatar" />
-                <h6 className="mx-1">{comment.user.username}</h6>
-            </Link>
 
-            <div className="comment_content">
-                <div className="flex-fill"
-                    style={{
-                        filter: theme ? 'invert(1)' : 'invert(0)',
-                        color: theme ? 'white' : '#111',
-                    }}>
-                    {
-                        onEdit
-                            ? <textarea rows="5" value={content}
-                                onChange={e => setContent(e.target.value)} />
+        <Card
+            className="mt-3 mx-2"
+            style={{
+                direction: lang === 'ar' ? 'rtl' : 'ltr',
+                textAlign: lang === 'ar' ? 'right' : 'left',
+            }}>
+            <Card.Header className="py-2 px-3 d-flex align-items-center" style={{ backgroundColor: '#BCFBEB' }}>
+            <FaCommentDots className="me-2 text-primary" />
+            <strong>{t('commentsTitle', { lng: lang })}</strong>
+          </Card.Header>
 
-                            : <div>
-                                {
-                                    comment.tag && comment.tag._id !== comment.user._id &&
-                                    <Link to={`/profile/${comment.tag._id}`} className="mr-1">
-                                        @{comment.tag.username}
-                                    </Link>
-                                }
-                                <span>
-                                    {
-                                        content.length < 100 ? content :
-                                            readMore ? content + ' ' : content.slice(0, 100) + '....'
-                                    }
-                                </span>
-                                {
-                                    content.length > 100 &&
-                                    <span className="readMore" onClick={() => setReadMore(!readMore)}>
-                                        {readMore ? t('hideContent', { lng: lang }) : t('readMore', { lng: lang })}
-                                    </span>
-                                }
-                            </div>
-                    }
+            <div className="comment_card mt-2" style={styleCard}   >
+                <Link to={`/profile/${comment.user._id}`} className="d-flex text-dark">
+                    <Avatar src={comment.user.avatar} size="small-avatar" />
+                    <h6 className="mx-1">{comment.user.username}</h6>
+                </Link>
 
-                    <div style={{ cursor: 'pointer' }}>
-                        <small className="text-muted mr-3">
-                            {moment(comment.createdAt).fromNow()}
-                        </small>
-
-                        <small className="font-weight-bold mr-3">
-                            {comment.likes.length} {t('likes', { lng: lang })}
-                        </small>
-
+                <div className="comment_content">
+                    <div className="flex-fill"
+                        style={{
+                            filter: theme ? 'invert(1)' : 'invert(0)',
+                            color: theme ? 'white' : '#111',
+                        }}>
                         {
                             onEdit
-                                ? <>
-                                    <small className="font-weight-bold mr-3"
-                                        onClick={handleUpdate}>
-                                        {t('update', { lng: lang })}
-                                    </small>
-                                    <small className="font-weight-bold mr-3"
-                                        onClick={() => setOnEdit(false)}>
-                                        {t('cancel', { lng: lang })}
-                                    </small>
-                                </>
+                                ? <textarea rows="5" value={content}
+                                    onChange={e => setContent(e.target.value)} />
 
-                                : <small className="font-weight-bold mr-3"
-                                    onClick={handleReply}>
-                                    {onReply ? t('cancel', { lng: lang }) : t('reply', { lng: lang })}
-                                </small>
+                                : <div>
+                                    {
+                                        comment.tag && comment.tag._id !== comment.user._id &&
+                                        <Link to={`/profile/${comment.tag._id}`} className="mr-1">
+                                            @{comment.tag.username}
+                                        </Link>
+                                    }
+                                    <span>
+                                        {
+                                            content.length < 100 ? content :
+                                                readMore ? content + ' ' : content.slice(0, 100) + '....'
+                                        }
+                                    </span>
+                                    {
+                                        content.length > 100 &&
+                                        <span className="readMore" onClick={() => setReadMore(!readMore)}>
+                                            {readMore ? t('hideContent', { lng: lang }) : t('readMore', { lng: lang })}
+                                        </span>
+                                    }
+                                </div>
                         }
+
+                        <div style={{ cursor: 'pointer' }}>
+                            <small className="text-muted mr-3">
+                                {moment(comment.createdAt).fromNow()}
+                            </small>
+
+                            <small className="font-weight-bold mr-3">
+                                {comment.likes.length} {t('likes', { lng: lang })}
+                            </small>
+
+                            {
+                                onEdit
+                                    ? <>
+                                        <small className="font-weight-bold mr-3"
+                                            onClick={handleUpdate}>
+                                            {t('update', { lng: lang })}
+                                        </small>
+                                        <small className="font-weight-bold mr-3"
+                                            onClick={() => setOnEdit(false)}>
+                                            {t('cancel', { lng: lang })}
+                                        </small>
+                                    </>
+
+                                    : <small className="font-weight-bold mr-3"
+                                        onClick={handleReply}>
+                                        {onReply ? t('cancel', { lng: lang }) : t('reply', { lng: lang })}
+                                    </small>
+                            }
+                        </div>
+                    </div>
+
+                    <div className="d-flex align-items-center mx-2" style={{ cursor: 'pointer' }}>
+                        <CommentMenu post={post} comment={comment} setOnEdit={setOnEdit} />
+                        <LikeButton isLike={isLike} handleLike={handleLike} handleUnLike={handleUnLike} />
                     </div>
                 </div>
 
-                <div className="d-flex align-items-center mx-2" style={{ cursor: 'pointer' }}>
-                    <CommentMenu post={post} comment={comment} setOnEdit={setOnEdit} />
-                    <LikeButton isLike={isLike} handleLike={handleLike} handleUnLike={handleUnLike} />
-                </div>
+                {
+                    onReply &&
+                    <InputComment post={post} onReply={onReply} setOnReply={setOnReply}>
+                        <Link to={`/profile/${onReply.user._id}`} className="mr-1">
+                            @{onReply.user.username}:
+                        </Link>
+                    </InputComment>
+                }
+
+                {children}
             </div>
-
-            {
-                onReply &&
-                <InputComment post={post} onReply={onReply} setOnReply={setOnReply}>
-                    <Link to={`/profile/${onReply.user._id}`} className="mr-1">
-                        @{onReply.user.username}:
-                    </Link>
-                </InputComment>
-            }
-
-            {children}
-        </div>
+        </Card>
     );
 };
 

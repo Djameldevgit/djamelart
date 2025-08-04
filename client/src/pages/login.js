@@ -18,7 +18,7 @@ const Login = () => {
     const history = useHistory()
     const { t } = useTranslation('auth')
     const lang = languageReducer?.language || 'en'
-
+   
     useEffect(() => {
         if (auth.token) history.push("/")
     }, [auth.token, history])
@@ -34,7 +34,7 @@ const Login = () => {
     }
 
     return (
-        <div className="auth_page">
+        <div className={`auth_page ${lang === "ar" ? "rtl" : ""}`}>
 
 
             <form onSubmit={handleSubmit}>

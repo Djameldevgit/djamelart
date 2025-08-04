@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route,Switch } from 'react-router-dom'
 import i18n from './i18n';
  
 import Home from './pages/home'
@@ -100,15 +100,7 @@ function App() {
     }
   }, [language]);
   // Efecto para manejar el idioma y dirección del texto
-  useEffect(() => {
-    if (language === "ar") {
-      document.body.classList.add("rtl");
-    } else {
-      document.body.classList.remove("rtl");
-    }
-
-  }, [language]);
-
+ 
 
 
   useEffect(() => {
@@ -164,6 +156,7 @@ function App() {
           <Navbar2 />
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
+          <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/register" component={Register} />
@@ -197,7 +190,7 @@ function App() {
 
           <Route exact path="/users/bloqueos" component={auth.token ? ListaUseariosbloqueadoss : Login} />
 
-          <Route exact path="/informacionaplicacion" component={Informacionaplicacion} />
+          <Route exact path="/informacionaplicacionn" component={Informacionaplicacion} />
           <Route exact path="/orderss" component={auth.token ? Orderss : Login} />
           <Route exact path="/usersblock" component={auth.token ? Usersblock : Login} />
 
@@ -207,7 +200,7 @@ function App() {
 
 
           <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />*/
-
+          </Switch>
         </div>
       </div>
     </Router>

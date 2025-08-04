@@ -140,6 +140,17 @@ url("./header.css"); */
 @import url("./modalverificacionart.css");
 @import url("./modals/modalprevelegios.css");
 @import url("./modals/modalEmail.css");
+@import url("./googlelogin.css");
+
+@import url("./dropdownnavbar.css");
+
+
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+
 @media (max-width: 766px){
   
   

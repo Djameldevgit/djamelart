@@ -79,58 +79,96 @@ const Navbar2 = () => {
               </Link>
             )}
 
-            <NavDropdown
-              align="end"
-              title={auth.user ? (
-                <div className="d-flex dropdown-avatar">
-                  <Avatar src={auth.user.avatar} size="medium-avatar" />
-                </div>
-              ) : (
-                <FaUserCircle size={25} />
-              )}
-              id="nav-user-dropdown"
-            >
-              {auth.user ? (
-                <>
-                  <NavDropdown.Item as={Link} to="/contact">{t('navbar:contact')}</NavDropdown.Item>
-                  <NavDropdown.Item onClick={openStatusModal}>{t('navbar:addPost')}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/informacionaplicacion">{t('navbar:appInfo')}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/message">{t('navbar:adminChat')}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/rolesuser">{t('navbar:roles')}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/message">{t('navbar:conversations')}</NavDropdown.Item>
-              
-                  {auth.user.role === 'admin' && (
-                    <>
-                         <NavDropdown.Item as={Link} to="/messageadmin">conversatio admin</NavDropdown.Item>
-                 
-                      <NavDropdown.Item as={Link} to="/provaa">{t('navbar:testPage')}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/reportesusers">{t('navbar:userReports')}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/users/adminsendemail">{t('navbar:adminSendEmail')}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/users/userss">{t('navbar:users')}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/postspendientes">{t('navbar:pendingPosts')}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/users/usersaction">{t('navbar:userActions')}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/users/bloqueos">{t('navbar:blockedUsers')}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/cart/orderss">{t('navbar:orders')}</NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to={'/conversations'}>conversation</NavDropdown.Item>
-              
-                 
-                    </>
-                  )}
-                  
-                  <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>{t('navbar:profile')}</NavDropdown.Item>
-                  <NavDropdown.Item onClick={toggleTheme}>
-                    {theme ? t('navbar:lightMode') : t('navbar:darkMode')}
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={handleLogout}>{t('navbar:logout')}</NavDropdown.Item>
-                </>
-              ) : (
-                <>
-                  <NavDropdown.Item as={Link} to="/login">{t('navbar:login')}</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/register">{t('navbar:register')}</NavDropdown.Item>
-                </>
-              )}
-            </NavDropdown>
+<NavDropdown
+  align="end"
+  title={
+    auth.user ? (
+      <div className="d-flex dropdown-avatar">
+        <Avatar src={auth.user.avatar} size="medium-avatar" />
+      </div>
+    ) : (
+      <FaUserCircle size={25} />
+    )
+  }
+  id="nav-user-dropdown"
+  className="custom-dropdown"
+>
+  <div className="dropdown-scroll-wrapper">
+    {auth.user ? (
+      <>
+        <NavDropdown.Header>{auth.user.username}</NavDropdown.Header>
+
+        <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
+          <FaUserCircle className="me-2" />
+          {t('navbar:profile')}
+        </NavDropdown.Item>
+
+        <NavDropdown.Item onClick={openStatusModal}>
+          ➕ {t('navbar:addPost')}
+        </NavDropdown.Item>
+
+        <NavDropdown.Item as={Link} to="/contact">
+          📩 {t('navbar:contact')}
+        </NavDropdown.Item>
+
+        <NavDropdown.Item as={Link} to="/informacionaplicacionn">
+          ℹ️ {t('navbar:appInfo')}
+        </NavDropdown.Item>
+
+        <NavDropdown.Item as={Link} to="/message">
+          💬 {t('navbar:conversations')}
+        </NavDropdown.Item>
+
+        <NavDropdown.Item as={Link} to="/rolesuser">
+          🛠️ {t('navbar:roles')}
+        </NavDropdown.Item>
+
+        {/* Admin only */}
+        {auth.user.role === 'admin' && (
+          <>
+            <NavDropdown.Divider />
+            <NavDropdown.Header>🛡️ Admin</NavDropdown.Header>
+
+            <NavDropdown.Item as={Link} to="/messageadmin">💼 Admin Chat</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/reportesusers">{t('navbar:userReports')}</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/users/adminsendemail">{t('navbar:adminSendEmail')}</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/users/userss">{t('navbar:users')}</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/postspendientes">{t('navbar:pendingPosts')}</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/users/usersaction">{t('navbar:userActions')}</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/users/bloqueos">{t('navbar:blockedUsers')}</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/cart/orderss">{t('navbar:orders')}</NavDropdown.Item>
+          </>
+        )}
+
+        <NavDropdown.Divider />
+        <NavDropdown.Item onClick={toggleTheme}>
+          {theme ? '🌞 ' + t('navbar:lightMode') : '🌙 ' + t('navbar:darkMode')}
+        </NavDropdown.Item>
+
+        <NavDropdown.Item onClick={handleLogout}>
+          <FaSignOutAlt className="me-2" />
+          {t('navbar:logout')}
+        </NavDropdown.Item>
+      </>
+    ) : (
+      <>
+        <NavDropdown.Item as={Link} to="/login">
+          <FaSignInAlt className="me-2" />
+          {t('navbar:login')}
+        </NavDropdown.Item>
+        <NavDropdown.Item as={Link} to="/register">
+          <FaUserPlus className="me-2" />
+          {t('navbar:register')}
+        </NavDropdown.Item>
+        <NavDropdown.Item as={Link} to="/informacionaplicacionn">
+          ℹ️ {t('navbar:appInfo')}
+        </NavDropdown.Item>
+      </>
+    )}
+  </div>
+</NavDropdown>
+
+
           </div>
         </Container>
       </Navbar>

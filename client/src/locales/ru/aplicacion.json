@@ -1,13 +1,17 @@
 {
-  "contactFormTitle": "Контактная форма",
-  "adminEmailLabel": "Email администратора",
-  "yourEmailLabel": "Ваш Email",
-  "messageSubjectLabel": "Тема сообщения",
-  "enterMessageSubject": "Введите тему сообщения",
-  "yourMessageLabel": "Ваше сообщение",
-  "writeYourMessageHere": "Напишите ваше сообщение здесь...",
-  "exitButton": "Выход",
-  "backToHomeButton": "Вернуться на главную",
-  "sendButton": "Отправить",
-  "messageSentSuccessfully": "Сообщение успешно отправлено"
+
+ 
+    "error": "Ошибка",
+    "success": "Успех",
+   
+   
+    "contact_form": "Форма обратной связи",
+    "subjectt": "Тема",
+    "messagee": "Сообщение",
+    "write_subject": "Напишите тему",
+    "write_message": "Напишите ваше сообщение здесь",
+    "send_message": "Отправить сообщение",
+    "sendingg": "Отправка...",
+    "mensajeenviadoconexito": "Сообщение успешно отправлено.",
+    "erroralenviarmensaje": "Произошла ошибка при отправке сообщения."
 }

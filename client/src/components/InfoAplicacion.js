@@ -1,14 +1,15 @@
 import React from "react";
-import { 
-  Container, 
-  Card, 
-  ListGroup,
+ 
+import {
+  Container,
+  Card,
+ 
   Badge,
   Row,
   Col,
   Button
 } from "react-bootstrap";
-import { 
+import {
   Palette,
   PersonCircle,
   Facebook,
@@ -23,9 +24,7 @@ import {
   ChatSquareText,
   Cart,
   Brush,
-  Easel,
-  Camera,
-  Scissors,
+ 
   CodeSlash,
   Globe,
   Award,
@@ -34,6 +33,8 @@ import {
   ExclamationTriangleFill
 } from "react-bootstrap-icons";
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const FeatureCard = ({ icon, title, children, color = "primary" }) => (
   <Card className="h-100 border-0 shadow-sm">
@@ -48,10 +49,18 @@ const FeatureCard = ({ icon, title, children, color = "primary" }) => (
 );
 
 const InfoAplicacion = () => {
-  const { t } = useTranslation('aplicacion');
-  
+
+  const { languageReducer } = useSelector(state => state);
+  const { t, i18n } = useTranslation('aplicacion');
+
+  // Cambiar el idioma activamente si es diferente
+  const lang = languageReducer.language || 'en';
+  if (i18n.language !== lang) i18n.changeLanguage(lang);
   return (
-    <Container className="my-5 py-4">
+    <Container className="my-5 py-4" style={{
+      direction: lang === 'ar' ? 'rtl' : 'ltr',
+      textAlign: lang === 'ar' ? 'right' : 'left',
+    }}>
       {/* Hero Section */}
       <section className="text-center mb-5 px-3">
         <Badge pill bg="primary" className="mb-3 fw-normal">
@@ -73,27 +82,27 @@ const InfoAplicacion = () => {
         </h2>
         <Row className="g-4">
           <Col md={4}>
-            <FeatureCard 
-              icon={<Facebook />} 
-              title={t('access.methods.facebook.title')} 
+            <FeatureCard
+              icon={<Facebook />}
+              title={t('access.methods.facebook.title')}
               color="primary"
             >
               {t('access.methods.facebook.description')}
             </FeatureCard>
           </Col>
           <Col md={4}>
-            <FeatureCard 
-              icon={<Google />} 
-              title={t('access.methods.google.title')} 
+            <FeatureCard
+              icon={<Google />}
+              title={t('access.methods.google.title')}
               color="danger"
             >
               {t('access.methods.google.description')}
             </FeatureCard>
           </Col>
           <Col md={4}>
-            <FeatureCard 
-              icon={<EnvelopeFill />} 
-              title={t('access.methods.email.title')} 
+            <FeatureCard
+              icon={<EnvelopeFill />}
+              title={t('access.methods.email.title')}
               color="success"
             >
               {t('access.methods.email.description')}
@@ -142,36 +151,36 @@ const InfoAplicacion = () => {
         </h2>
         <Row className="g-4">
           <Col lg={3} md={6}>
-            <FeatureCard 
-              icon={<HeartFill />} 
-              title={t('features.items.likes.title')} 
+            <FeatureCard
+              icon={<HeartFill />}
+              title={t('features.items.likes.title')}
               color="danger"
             >
               {t('features.items.likes.description')}
             </FeatureCard>
           </Col>
           <Col lg={3} md={6}>
-            <FeatureCard 
-              icon={<Brush />} 
-              title={t('features.items.publishing.title')} 
+            <FeatureCard
+              icon={<Brush />}
+              title={t('features.items.publishing.title')}
               color="success"
             >
               {t('features.items.publishing.description')}
             </FeatureCard>
           </Col>
           <Col lg={3} md={6}>
-            <FeatureCard 
-              icon={<Cart />} 
-              title={t('features.items.cart.title')} 
+            <FeatureCard
+              icon={<Cart />}
+              title={t('features.items.cart.title')}
               color="warning"
             >
               {t('features.items.cart.description')}
             </FeatureCard>
           </Col>
           <Col lg={3} md={6}>
-            <FeatureCard 
-              icon={<ChatSquareText />} 
-              title={t('features.items.chat.title')} 
+            <FeatureCard
+              icon={<ChatSquareText />}
+              title={t('features.items.chat.title')}
               color="info"
             >
               {t('features.items.chat.description')}
@@ -186,7 +195,7 @@ const InfoAplicacion = () => {
           <Brush className="me-2 text-primary" />
           {t('artTypes.title')}
         </h2>
-  
+
       </section>
 
       {/* Technology Section */}
@@ -257,13 +266,15 @@ const InfoAplicacion = () => {
 
       {/* Call to Action */}
       <div className="text-center mt-5 pt-4">
-        <h2 className="mb-4">{t('cta.title')}</h2>
-        <Button variant="primary" size="lg" className="me-3">
-          {t('cta.register')}
-        </Button>
-        <Button variant="outline-primary" size="lg">
-          {t('cta.gallery')}
-        </Button>
+      <h2 className="mb-4">{t('cta.title')}</h2>
+
+<Button as={Link} to="/register" variant="primary" size="lg" className="me-3">
+  {t('cta.register')}
+</Button>
+
+<Button as={Link} to="/" variant="outline-primary" size="lg">
+  {t('cta.gallery')}
+</Button>
       </div>
     </Container>
   );

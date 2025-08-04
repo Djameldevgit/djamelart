@@ -119,10 +119,10 @@ const CardBodyCarousel = ({ post }) => {
   return (
     <div>
       <div className="card_body">
-        <div>{post.user.username}</div>
+     
         {post.images.length > 0 && (
           <div className="carousel-container" style={{ position: "relative" }}>
-            {/* Guardar */}
+         
             <div
               style={{
                 position: "absolute", top: "10px", right: "10px", zIndex: 1,

@@ -9,7 +9,7 @@ import Toast from './Toast'
 const Notify = () => {
     const { alert } = useSelector(state => state)
     const { languageReducer } = useSelector(state => state)
-    const { t } = useTranslation('toastvalid')
+    const { t } = useTranslation('aplicacion')
     const dispatch = useDispatch()
     const lang = languageReducer.language || 'en'
 
@@ -21,7 +21,7 @@ const Notify = () => {
                 alert.error && 
                 <Toast 
                     msg={{
-                        title: t('errorTitle', { lng: lang }), 
+                        title: t('error', { lng: lang }), 
                         body: alert.error
                     }}
                     handleShow={() => dispatch({type: GLOBALTYPES.ALERT, payload: {}})} 
@@ -33,7 +33,7 @@ const Notify = () => {
                 alert.success && 
                 <Toast 
                     msg={{
-                        title: t('successTitle', { lng: lang }), 
+                        title: t('success', { lng: lang }), 
                         body: alert.success
                     }} 
                     handleShow={() => dispatch({type: GLOBALTYPES.ALERT, payload: {}})}

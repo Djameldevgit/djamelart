@@ -1,13 +1,13 @@
 {
-  "contactFormTitle": "Contact Form",
-  "adminEmailLabel": "Admin Email",
-  "yourEmailLabel": "Your Email",
-  "messageSubjectLabel": "Message Subject",
-  "enterMessageSubject": "Enter your message subject",
-  "yourMessageLabel": "Your Message",
-  "writeYourMessageHere": "Write your message here...",
-  "exitButton": "Exit",
-  "backToHomeButton": "Back to Home",
-  "sendButton": "Send",
-  "messageSentSuccessfully": "Message sent successfully"
+  "contact_formm": "Contact Formmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
+
+  "contact_form": "Contact Form",
+  "subjectt": "Subject",
+  "messagee": "Message",
+  "write_subject": "Write the subject",
+  "write_message": "Write your message here",
+  "send_message": "Send Message",
+  "sendingg": "Sending",
+  "mensajeenviadoconexito": "Message sent successfully.",
+  "erroralenviarmensaje": "An error occurred while sending the message."
 }

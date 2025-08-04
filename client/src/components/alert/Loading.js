@@ -1,31 +1,19 @@
-import React from 'react'
-
-const Loading = () => {
-    return (
-        <div className="position-fixed w-100 h-100 text-center loading"
-        style={{background: "#0008", color: "white", top: 0, left: 0, zIndex: 50}}>
-
-            <svg width="205" height="250" viewBox="0 0 40 50">
-                <polygon stroke="#fff" strokeWidth="1" fill="none"
-                points="20,1 40,40 1,40" />
-                <text fill="#fff" x="5" y="47">Loading</text>
-            </svg>
-            
-        </div>
-    )
-}
-
-export default Loading
-/*import React from 'react'
+import React from 'react';
 import Spinner from 'react-bootstrap/Spinner';
-const Loading = () => {
-    return (
-     <dib>
-    <Spinner animation="border" role="status">
-      <span className="visually-hidden">Loading...</span>
-    </Spinner>
-     </dib>
-    )
-}
+import { useTranslation } from 'react-i18next';
 
-export default Loading*/
+const Loading = () => {
+  const { t } = useTranslation("aplicacion");
+
+  return (
+    <div
+      className="d-flex flex-column justify-content-center align-items-center position-fixed top-0 start-0 w-100 h-100"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)', zIndex: 9999 }}
+    >
+      <Spinner animation="border" variant="light" role="status" />
+      <p className="mt-3 text-white fs-5">{t('loading')}</p>
+    </div>
+  );
+};
+
+export default Loading;

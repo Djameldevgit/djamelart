@@ -54,7 +54,7 @@ const Register = () => {
 
 
     return (
-        <div className="auth_page">
+        <div className={`auth_page ${lang === "ar" ? "rtl" : ""}`}>
             <form onSubmit={handleSubmit}>
                 <h3 className="text-uppercase text-center mb-4">{t('nameregister', { lng: lang })}</h3>
 
@@ -115,7 +115,7 @@ const Register = () => {
                 </button>
 
                 <p className="my-2">
-                    {t('alreadyHaveAccount', { lng: lang })} <Link to="/" style={{ color: "crimson" }}>
+                    {t('alreadyHaveAccount', { lng: lang })} <Link to="/login" style={{ color: "crimson" }}>
                         {t('loginNow', { lng: lang })}
                     </Link>
                 </p>

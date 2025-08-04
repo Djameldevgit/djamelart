@@ -497,7 +497,7 @@ const StatusModal = () => {
         }
     };
     return (
-        <div className='status_modal'>
+        <div className={`status_modal ${lang === 'ar' ? 'rtl' : ''}`}>
 
 
 

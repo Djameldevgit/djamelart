@@ -1,13 +1,21 @@
 {
-  "contactFormTitle": "Tawlaft n Uḍris",
-  "adminEmailLabel": "Imayl n uselleḥ",
-  "yourEmailLabel": "Imayl-nnek",
-  "messageSubjectLabel": "Aɣawas n uḍris",
-  "enterMessageSubject": "Aru aɣawas n uḍris-nnek",
-  "yourMessageLabel": "Aḍris-nnek",
-  "writeYourMessageHere": "Aru aḍris-nnek da...",
-  "exitButton": "Ffeɣ",
-  "backToHomeButton": "Uɣal ɣer asebter agejdan",
-  "sendButton": "Azen",
-  "messageSentSuccessfully": "Aḍris yettwazen akken ilaq"
+
+  "error": "Tuccfa",
+  "success": "Errac",
+   
+
+
+
+
+  "contact_form": "Anegzum n uɣmis",
+  "subjectt": "Asentel",
+  "messagee": "Izen",
+  "write_subject": "Aru asentel",
+  "write_message": "Aru izen-inek dagi",
+  "send_message": "Azen izen",
+  "sendingg": "Taznut",
+  "mensajeenviadoconexito": "Izen yettwazen akken iwata.",
+  "erroralenviarmensaje": "Teḍra-d tuccḍa deg uzen n yizen."
+
+
 }
