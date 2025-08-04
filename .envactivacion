@@ -1,25 +1,4 @@
 PORT = 5000
 
 MONGODB_URL="mongodb://nombredjamel:contrasenadjamel@imobiliaria-shard-00-00.ic6yw.mongodb.net:27017,imobiliaria-shard-00-01.ic6yw.mongodb.net:27017,imobiliaria-shard-00-02.ic6yw.mongodb.net:27017/art?ssl=true&replicaSet=atlas-5vh19o-shard-0&authSource=admin&retryWrites=true&w=majority"
-ACCESS_TOKEN_SECRET = dgglkkjhgkhgkjhgkjhgkhgkhgkhgjlkjkjkjklkj
-REFRESH_TOKEN_SECRET = lkjlkkhgffdhgjkjkjfdhfghfdjlskfd
-
-# ELIMINAR ESTA INFORAMCION ANTS DE SUBIRA A GIT
-CLIENT_URL =  https://djamelart.onrender.com
-
  
-MAILING_SERVICE_CLIENT_ID=1095570048777-blnb7vsea7sbug8j1cv93grkicoea093.apps.googleusercontent.com
-MAILING_SERVICE_CLIENT_SECRET=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
-MAILING_SERVICE_REFRESH_TOKEN=1//043hQ71UWJW39CgYIARAAGAQSNwF-L9Irz8e3-0NKg1gyDp5MjRFRwLxwumAhp9jkWPx6mfqxZRR1SMylAJU_dGEgnJPn8QCrD4Y
-ACTIVATION_TOKEN_SECRET = BTUQME^pMXsg9vvatnh@*Bgp2CKP*DsJETyVn5c)JaaXu$BQCk(P89cRIM2sj3zK
- 
- 
- REACT_APP_FACEBOOK_APP_ID=4062215990724034
- FACEBOOK_SECRET =333437a692118c69b93cfc08b71b5ff6
- 
- MAILING_SERVICE_CLIENT_ID=125104491875-uhhv1mga8to6j9mgaasho3tj95i7mfgd.apps.googleusercontent.com
-MAILING_SERVICE_CLIENT_SECRET=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
-MAILING_SERVICE_REFRESH_TOKEN=1//04MeMkwY_ZQjaCgYIARAAGAQSNwF-L9IrNSC9QIHinghgkUpXpLnFu2MAqUWU8TZydT1HfdrCYhp6J4a0A81OQNIPdA3ehr_Cflw
- 
-SENDER_EMAIL_ADDRESS_CONTACT=artealger2020argelia@gmail.com
-SENDER_EMAIL_ADDRESS=artealger2020argelia@gmail.com
