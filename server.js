@@ -18,7 +18,7 @@ app.use(express.json());
 
 // ✅ CORS para Express
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://djamelart.onrender.com',
   credentials: true
 }));
 
@@ -82,7 +82,7 @@ const http = require('http').createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(http, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'https://djamelart.onrender.com',
     methods: ['GET', 'POST', 'DELETE'],
     credentials: true
   }
