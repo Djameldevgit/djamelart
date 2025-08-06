@@ -117,7 +117,7 @@ const Users = () => {
           payload: { ...res.data, page: 1 },
         });
       } catch (err) {
-        console.error(t('errors.fetchUsers'), err);
+        console.error(t('errorr.fetchUsers'), err);
       } finally {
         setLoad(false);
         setInitialLoad(false);
@@ -215,7 +215,7 @@ const Users = () => {
   }
 
   return (
-    <Container fluid className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <Container fluid className="py-4"  >
       {/* Modal Confirmación Eliminar */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
@@ -240,14 +240,14 @@ const Users = () => {
           <thead className="table-dark">
             <tr>
               <th>#</th>
-              <th>{t('tableHeader.user')}</th>
-              <th>{t('tableHeader.status')}</th>
-              <th>{t('tableHeader.lastDisconnect')}</th>
-              <th>{t('tableHeader.registration')}</th>
-              <th>{t('tableHeader.verification')}</th>
-              <th>{t('tableHeader.accountStatus')}</th>
-              <th>{t('tableHeader.blockStatus')}</th>
-              <th>{t('tableHeader.actions')}</th>
+              <th>{t('tableHeaderssss.user')}</th>
+              <th>{t('tableHeaderssss.status')}</th>
+              <th>{t('tableHeaderssss.lastDisconnect')}</th>
+              <th>{t('tableHeaderssss.registration')}</th>
+              <th>{t('tableHeaderssss.verification')}</th>
+              <th>{t('tableHeaderssss.accountStatus')}</th>
+              <th>{t('tableHeaderssss.blockStatus')}</th>
+              <th>{t('tableHeaderssss.actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -275,7 +275,7 @@ const Users = () => {
                     <span className="text-muted">--</span>
                   )}
                 </td>
-                <td>{new Date(user.createdAt).toLocaleDateString(lang)}</td>
+                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                 <td>
                   {user.isVerified ? (
                     <Badge bg="success"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('statu.verified')}</Badge>

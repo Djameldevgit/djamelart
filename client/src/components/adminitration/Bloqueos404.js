@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 
 const Bloqueos404 = () => {
     const { auth, userBlockReducer, languageReducer } = useSelector(state => state);
-    const { t } = useTranslation('bloqueos');
+    const { t } = useTranslation('aplicacion');
     const lang = languageReducer.language || 'en';
     const user = auth.user;
     
@@ -160,7 +160,7 @@ const Bloqueos404 = () => {
                                             {t('blockReason', { lng: lang })}:
                                         </span>
                                         <span className={isRTL ? 'text-start' : 'text-end'} style={{ minWidth: '50%' }}>
-                                            {blockedUserData?.motivo || t('notSpecified', { lng: lang })}
+                                            {blockedUserData?.motivo || t('notSpecifiedd', { lng: lang })}
                                         </span>
                                     </ListGroup.Item>
                                     

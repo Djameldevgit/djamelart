@@ -1,5 +1,5 @@
 import { GLOBALTYPES } from './globalTypes';
-import { patchDataAPI, getDataAPI } from '../../utils/fetchData';
+import {  getDataAPI } from '../../utils/fetchData';
 
 export const USER_TYPES_BLOCK = {
   LOADING_USER: 'LOADING_USER',

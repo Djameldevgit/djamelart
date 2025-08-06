@@ -55,21 +55,21 @@
 		"error_comment_not_exist": "Este comentario no existe.",
 		"success": "¡Comentario creado exitosamente!"
 	},
-	"lang": {
-		"langUpdatedToSpanish": "Idioma actualizado a español",
-		"langUpdatedToRussian": "Idioma actualizado a ruso",
-		"langUpdatedToKabyle": "Idioma actualizado a kabyle",
-		"langUpdatedToChinese": "Idioma actualizado a chino",
-		"langUpdatedToEnglish": "Idioma actualizado a inglés",
-		"langUpdatedToFrench": "Idioma actualizado a francés",
-		"langUpdatedToArabic": "Idioma actualizado a árabe",
-		"langUpdated": "Idioma actualizado",
-		"languageNotSpecified": "Idioma no especificado",
-		"userNotFoundOrAlreadyUpdated": "Usuario no encontrado o idioma ya actualizado",
-		"errorUpdatingLanguage": "Error actualizando el idioma",
-		"languageSavedForVisitor": "Idioma guardado para visitante",
-		"errorSavingLanguageForVisitor": "Error guardando idioma para visitante"
-	},
+	"language": {
+		"not_supported": "Idioma no soportado.",
+		"not_specified": "Idioma no especificado.",
+		"not_updated": "No se pudo actualizar el idioma.",
+		"visitor_saved": "Idioma guardado para visitante.",
+		"updated_to": "Idioma actualizado a {{lang}}.",
+		"updated": "Idioma actualizado correctamente.",
+		"updated_english": "Idioma cambiado a inglés.",
+		"updated_french": "Idioma cambiado a francés.",
+		"updated_arabic": "Idioma cambiado a árabe.",
+		"updated_spanish": "Idioma cambiado a español.",
+		"updated_russian": "Idioma cambiado a ruso.",
+		"updated_kabyle": "Idioma cambiado a cabilio.",
+		"updated_chinese": "Idioma cambiado a chino."
+	  },
 	"cart": {
 		"postNotFoundOrNoPrice": "Publicación no encontrada o sin precio",
 		"postAddedToCart": "Publicación añadida al carrito",
@@ -82,12 +82,7 @@
 		"productNotFoundInCart": "Producto no encontrado en el carrito",
 		"quantityUpdated": "Cantidad actualizada"
 	},
-	"language": {
-		"updated_arabic": "language.updated_arabic",
-		"updated_spanish": "language.updated_spanish",
-		"updated_english": "language.updated_english",
-		"updated_french": "language.updated_french"
-	},
+ 
 	"email": {
 		"subject": "Jamal Art",
 		"title": "Bienvenido al arte de Tassili",

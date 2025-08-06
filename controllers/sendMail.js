@@ -14,10 +14,8 @@ const {
 // Inicializar cliente OAuth2
 const oauth2Client = new OAuth2(
   MAILING_SERVICE_CLIENT_ID,
-  MAILING_SERVICE_CLIENT_SECRET,
-  'https://developers.google.com/oauthplayground' // ✅ IMPORTANTE
+  MAILING_SERVICE_CLIENT_SECRET
 );
-
 
 oauth2Client.setCredentials({
   refresh_token: MAILING_SERVICE_REFRESH_TOKEN

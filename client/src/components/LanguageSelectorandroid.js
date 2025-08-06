@@ -13,37 +13,25 @@ function LanguageSelectorandroid() {
   const lang = languageReducer?.language || 'fr';
 
   const handleLanguageChange = useCallback((language) => {
-    switch (language) {
-      case 'en':
-        dispatch(languageActions.inglishLanguage(language));
-        break;
-      case 'fr':
-        dispatch(languageActions.franchLanguage(language));
-        break;
-      case 'ar':
-        dispatch(languageActions.arabLanguage(language));
-        break;
-      case 'es':
-        dispatch(languageActions.spanishLanguage(language));
-        break;
-
-
-      case 'ru':
-      case 'kab':
-      case 'chino':
-        dispatch(languageActions.synchronizeLanguage(language));
-        break;
-      default:
-        dispatch(languageActions.synchronizeLanguage(language));
-        break;
-    }
+    if (language === lang) return;
+  
+    dispatch(languageActions.changeLanguage(language)); // ✅ única función
+  
     setCookie('language', language, { path: '/' });
-  }, [dispatch, setCookie]);
+  }, [dispatch, setCookie, lang]);
+  
 
   useEffect(() => {
     const defaultLanguage = cookies.language || 'fr';
-    handleLanguageChange(defaultLanguage);
-  }, [cookies.language, handleLanguageChange]);
+  
+    if (defaultLanguage !== languageReducer?.language) {
+      handleLanguageChange(defaultLanguage);
+    }
+  }, [cookies.language, languageReducer?.language, handleLanguageChange]);
+  
+  
+  
+  
 
   const flagPath = (lang) => `/flags/${lang}.png`;
 

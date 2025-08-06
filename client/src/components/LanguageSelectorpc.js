@@ -13,40 +13,20 @@ function LanguageSelectorpc() {
   const lang = languageReducer?.language || 'fr';
 
   const handleLanguageChange = useCallback((language) => {
-    switch (language) {
-      case 'en':
-        dispatch(languageActions.inglishLanguage(language));
-        break;
-      case 'fr':
-        dispatch(languageActions.franchLanguage(language));
-        break;
-      case 'ar':
-        dispatch(languageActions.arabLanguage(language));
-        break;
-        case 'es':
-          dispatch(languageActions.spanishLanguage(language));
-          break;
-          case 'ru':
-            dispatch(languageActions.russianLanguage(language));
-            break;
-            case 'kab':
-              dispatch(languageActions.kabyleLanguage(language));
-              break;
-              case 'chino':
-                dispatch(languageActions.chineseLanguage(language));
-                break;
-   
-      default:
-        dispatch(languageActions.synchronizeLanguage(language));
-        break;
-    }
+    if (language === lang) return;
+
+    dispatch(languageActions.changeLanguage(language));
     setCookie('language', language, { path: '/' });
-  }, [dispatch, setCookie]);
+  }, [dispatch, setCookie, lang]);
 
   useEffect(() => {
     const defaultLanguage = cookies.language || 'fr';
-    handleLanguageChange(defaultLanguage);
-  }, [cookies.language, handleLanguageChange]);
+  
+    if (defaultLanguage !== languageReducer?.language) {
+      handleLanguageChange(defaultLanguage);
+    }
+  }, [cookies.language, languageReducer?.language, handleLanguageChange]);
+  
 
   const flagPath = (lang) => `/flags/${lang}.png`;
 
@@ -79,7 +59,7 @@ function LanguageSelectorpc() {
       <Dropdown.Menu className="w-100">
         {['ar', 'fr', 'en', 'es', 'ru', 'kab', 'chino'].map((langCode) => (
           <Dropdown.Item key={langCode} onClick={() => handleLanguageChange(langCode)}>
-            <img src={flagPath(langCode)} alt={t('flagAlt', { lng: lang, lang: langCode })} style={flagStyle} />
+            <img src={flagPath(langCode)} alt={`${langCode} flag`} style={flagStyle} />
             {languageNames[langCode]}
           </Dropdown.Item>
         ))}

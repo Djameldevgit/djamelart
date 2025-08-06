@@ -3,9 +3,7 @@ const auth = require("../middleware/auth")
 const carritoCtrl = require("../controllers/carritoCtrl")
 const userCtrl = require('../controllers/userCtrl')
 router.get('/users/admins', auth, userCtrl.getAdmins);
-router.post('/contact-support-block', auth, userCtrl.contactBlockedSupport);
-
-router.post('/contact-support', auth, userCtrl.contactMailSupport)
+ 
 // Rutas existentes...ToCart)
 router.delete('/remove/:id', auth, carritoCtrl.removeFromCart)
 router.get('/', auth, carritoCtrl.getCart)
@@ -13,7 +11,8 @@ router.put('/update/:id', auth, carritoCtrl.updateCartItemQuantity)
 
 // Rutas de usuarios
 router.get('/users', auth, userCtrl.getUsersAction)
- 
+router.get('/users/usersaction', auth, userCtrl.getUsersAction)
+
 router.get('/search', auth, userCtrl.searchUser)
 router.get('/user/:id', auth, userCtrl.getUser)
 router.patch('/user', auth, userCtrl.updateUser)
@@ -26,14 +25,12 @@ router.delete('/user/:id', auth, userCtrl.deleteUser)
  
 router.delete('/posts', auth  ,userCtrl.eliminaRrestosDePosts)
 
-router.post('/contact-activation-request', auth, userCtrl.contactForActivation);
+ 
 router.patch('/toggle_active/:id', auth, userCtrl.toggleActiveStatus);
 
+ 
+router.patch('/user/:id/privilegios',auth, userCtrl.updatePrivilegios);
 
-
-
-
-
-
+ 
 
 module.exports = router

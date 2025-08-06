@@ -1,5 +1,5 @@
 const Users = require("../models/userModel");
-const report = require("../models/reportModel");
+const Report = require("../models/reportModel");
  
 const Posts = require('../models/postModel')
 const Comments = require('../models/commentModel')
@@ -80,98 +80,7 @@ const userCtrl = {
         }
     },
     
-  getUsersAction : async (req, res) => {
-    try {
-        const { filter } = req.query; // Recibimos el filtro desde el frontend
-
-        // Base query sin filtros
-        let query = Users.find();
-
-        // Aplicar paginación
-        const features = new APIfeatures(query, req.query).paginating();
-
-        // Obtener la lista de usuarios
-        let users = await features.query
-        .populate({
-            path: "user", // Rellena el campo "user"
-            select: "avatar username followers following esBloqueado" // Selecciona los campos que necesitas
-          })
-          .populate("report", "userId reportedBy")
-          .populate("likes", "avatar username followers following esBloqueado ") // Rellena los "likes"
-          .populate({
-            path: "comments",
-            populate: {
-              path: "user likes",
-              select: "-password"
-            }
-          });
-        // Procesar detalles de cada usuario
-        const usersWithDetails = await Promise.all(users.map(async (user) => {
-            const posts = await Posts.find({ user: user._id }).sort('-createdAt');
-            const totalLikesReceived = posts.reduce((total, post) => total + post.likes.length, 0);
-          
-            const totalLikesDados = posts.reduce((total, post) => total + post.likes.length, 0);
-            const totalCommentsReceived = posts.reduce((total, post) => total + post.comments.length, 0);
-            const totalFollowers = user.followers.length;
-          const  totalReportGiven = user.report.length;
-            const totalFollowing = user.following.length;
-            const likesGiven = await Posts.countDocuments({ likes: user._id });
-            const commentsMade = await Comments.countDocuments({ user: user._id });
-
-            return {
-                ...user.toObject(),
-                posts,
-                totalReportGiven,
-                totalLikesReceived,
-                totalLikesDados,
-                totalCommentsReceived,
-                totalFollowers,
-                totalFollowing,
-                likesGiven,
-                commentsMade
-            };
-        }));
-
-        // Aplicar filtros de ordenación
-        switch (filter) {
-
-            case "totalFollowers":
-                usersWithDetails.sort((a, b) => b.users.length - a.users.length);
-                case "totalFollowing":
-                    usersWithDetails.sort((a, b) => b.users.length - a.users.length);
-    
-            case "mostPosts":
-                usersWithDetails.sort((a, b) => b.posts.length - a.posts.length);
-                break;
-            case "mostLikesDados":
-                usersWithDetails.sort((a, b) => b.totalLikesDados - a.totalLikesDados);
-                break;
-                case "mostLikes":
-                    usersWithDetails.sort((a, b) => b.totalLikesReceived - a.totalLikesReceived);
-                    break;
-
-            case "mostReports":
-                usersWithDetails.sort((a, b) => b.totalReportGiven - a.totalReportGiven);
-                break;
-            case "recentLogins":
-                usersWithDetails.sort((a, b) => new Date(b.lastLogin) - new Date(a.lastLogin));
-                break;
-            default:
-                usersWithDetails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Default: usuarios recientes
-        }
-
-        // Enviar la respuesta
-        res.json({
-            msg: 'Success!',
-            result: usersWithDetails.length,
-            users: usersWithDetails
-        });
-
-    } catch (err) {
-        return res.status(500).json({ msg: err.message });
-    }
-},
-
+  
 searchUser: async (req, res) => {
     try {
         const users = await Users.find({username: {$regex: req.query.username}})

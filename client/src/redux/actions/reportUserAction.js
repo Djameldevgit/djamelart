@@ -10,29 +10,29 @@ export const REPORT_TYPES = {
 };
 
 export const createReport = ({ auth, reportData }) => async (dispatch) => {
+  try {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
 
-    try {
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
+      const res = await postDataAPI('reports', reportData, auth.token);
 
-        // Enviamos los datos del reporte al backend
-        const res= await postDataAPI('reports', reportData, auth.token);
+      dispatch({
+          type: REPORT_TYPES.CREATE_REPORT,
+          payload: res.data.report,
+      });
 
-        // Despachamos la acción para guardar el reporte en el estado global
-        dispatch({
-            type: REPORT_TYPES.CREATE_REPORT,
-            payload: res.data.report, // Suponiendo que el backend devuelve el reporte creado
-        });
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
+      dispatch({
+          type: GLOBALTYPES.ALERT,
+          payload: { success: res.data.msg },
+      });
 
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg
-            }
-        })
-    } catch (err) {
-        dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: { error: err.response?.data?.msg || "Error al crear el reporte" },
-        });
-    }
+  } catch (err) {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
+      dispatch({
+          type: GLOBALTYPES.ALERT,
+          payload: { error: err.response?.data?.msg || "Error al crear el reporte" },
+      });
+  }
 };
 
 

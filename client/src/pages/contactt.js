@@ -1,6 +1,6 @@
 import React from 'react'
-import Contact from '../components/Contact'
-
+import Contact from '../components/adminitration/Contact'
+ 
 const Contactt = () => {
   return (
     <div> 

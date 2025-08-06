@@ -58,7 +58,7 @@ const Roless = () => {
   const handleRoleChange = async (user, selectedRole) => {
     setSelectedRoles(prev => ({ ...prev, [user._id]: selectedRole }));
     await handleChangeRole(user, selectedRole);
-  
+
     setUsersList(prevUsers =>
       prevUsers.map(u => (u._id === user._id ? { ...u, role: selectedRole } : u))
     );
@@ -71,7 +71,7 @@ const Roless = () => {
       'Super-utilisateur': 'info',
       'user': 'secondary'
     };
-    
+
     return (
       <Badge bg={variants[role] || 'light'} className="text-capitalize">
         {t(`roles.${role}`, { lng: lang })}
@@ -82,7 +82,10 @@ const Roless = () => {
   return (
     <Container className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <Card className="shadow-sm">
-        <Card.Header className="bg-primary text-white">
+        <Card.Header className="bg-primary text-white" style={{
+          direction: lang === 'ar' ? 'rtl' : 'ltr',
+          textAlign: lang === 'ar' ? 'right' : 'left',
+        }}>
           <h5 className="mb-0">
             <i className="fas fa-user-shield me-2"></i>
             {t('headers.title')}
@@ -101,7 +104,10 @@ const Roless = () => {
 
           <div className="table-responsive">
             <Table striped bordered hover className="mb-0">
-              <thead className="bg-light">
+              <thead className="bg-light" style={{
+                direction: lang === 'ar' ? 'rtl' : 'ltr',
+                textAlign: lang === 'ar' ? 'right' : 'left',
+              }}>
                 <tr>
                   <th style={{ width: '40%' }}>{t('tableHeadersss.user')}</th>
                   <th style={{ width: '20%' }}>{t('tableHeadersss.currentRole')}</th>

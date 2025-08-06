@@ -22,25 +22,32 @@ const reportCtrl = {
     try {
       const { postId, userId, reason } = req.body;
       const reportedBy = req.user._id;
-
+  
       if (!postId || !userId || !reason) {
         return res.status(400).json({ msg: req.__('report.missing_fields') });
       }
-
+  
+      // ❗ Verificar si ya existe un reporte duplicado
+      const existingReport = await Report.findOne({ postId, reportedBy });
+  
+      if (existingReport) {
+        return res.status(400).json({ msg: req.__('report.already_reported') });
+      }
+  
       const newReport = new Report({
         postId,
         userId,
         reportedBy,
         reason,
       });
-
+  
       await newReport.save();
       res.json({ msg: req.__('report.create_success') });
     } catch (err) {
       return res.status(500).json({ msg: req.__('report.server_error') });
     }
   },
-
+  
   getReports: async (req, res) => {
     try {
       const reports = await Report.find()

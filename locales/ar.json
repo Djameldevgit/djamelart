@@ -57,21 +57,31 @@
 		"error_comment_not_exist": "هذا التعليق غير موجود.",
 		"success": "تم إنشاء التعليق!"
 	},
-	"lang": {
-		"langUpdatedToSpanish": "تم تحديث اللغة إلى الإسبانية",
-		"langUpdatedToRussian": "تم تحديث اللغة إلى الروسية",
-		"langUpdatedToKabyle": "تم تحديث اللغة إلى القبائلية",
-		"langUpdatedToChinese": "تم تحديث اللغة إلى الصينية",
-		"langUpdatedToEnglish": "تم تحديث اللغة إلى الإنجليزية",
-		"langUpdatedToFrench": "تم تحديث اللغة إلى الفرنسية",
-		"langUpdatedToArabic": "تم تحديث اللغة إلى العربية",
-		"langUpdated": "تم تحديث اللغة",
-		"languageNotSpecified": "اللغة غير محددة",
-		"userNotFoundOrAlreadyUpdated": "المستخدم غير موجود أو تم تحديث اللغة بالفعل",
-		"errorUpdatingLanguage": "خطأ في تحديث اللغة",
-		"languageSavedForVisitor": "تم حفظ اللغة للزائر",
-		"errorSavingLanguageForVisitor": "خطأ في حفظ اللغة للزائر"
-	},
+	 
+		"language": {
+		  "en": "الإنجليزية",
+		  "fr": "الفرنسية",
+		  "ar": "العربية",
+		  "es": "الإسبانية",
+		  "ru": "الروسية",
+		  "kab": "القبايلية",
+		  "chino": "الصينية",
+	  
+		  "updated": "تم تحديث اللغة بنجاح",
+		  "updated_english": "تم تغيير اللغة إلى الإنجليزية",
+		  "updated_french": "تم تغيير اللغة إلى الفرنسية",
+		  "updated_arabic": "تم تغيير اللغة إلى العربية",
+		  "updated_spanish": "تم تغيير اللغة إلى الإسبانية",
+		  "updated_russian": "تم تغيير اللغة إلى الروسية",
+		  "updated_kabyle": "تم تغيير اللغة إلى القبايلية",
+		  "updated_chinese": "تم تغيير اللغة إلى الصينية",
+	  
+		  "not_specified": "لم يتم تحديد اللغة",
+		  "not_updated": "لم يتم تحديث اللغة",
+		  "visitor_saved": "تم حفظ تفضيل اللغة للزائر"
+		},
+	 
+	  
 	"cart": {
 		"postNotFoundOrNoPrice": "المشاركة غير موجودة أو بدون سعر",
 		"postAddedToCart": "تمت إضافة المشاركة إلى العربة",
@@ -84,12 +94,7 @@
 		"productNotFoundInCart": "المنتج غير موجود في العربة",
 		"quantityUpdated": "تم تحديث الكمية"
 	},
-	"language": {
-		"updated_arabic": "language.updated_arabic",
-		"updated_spanish": "language.updated_spanish",
-		"updated_english": "language.updated_english",
-		"updated_french": "language.updated_french"
-	},
+ 
 	"email": {
 		"subject": "جمال آرت",
 		"title": "مرحبًا بك في فن الطاسيلي",
@@ -128,12 +133,18 @@
 		"deleteConversation.success": "تم حذف المحادثة بنجاح!"
 	},
 	"report": {
-		"missing_fields": "جميع الحقول مطلوبة",
-		"create_success": "تم إنشاء التقرير بنجاح",
-		"server_error": "حدث خطأ في خادم التقارير",
+	 
 		"report_not_found": "التقرير غير موجود",
 		"update_success": "تم تحديث حالة التقرير بنجاح",
-		"delete_success": "تم حذف التقرير بنجاح"
+		"delete_success": "تم حذف التقرير بنجاح",
+		"missing_fields": "جميع الحقول مطلوبة.",
+		"already_reported": "لقد أبلغت عن هذا المنشور من قبل.",
+		"create_success": "تم الإبلاغ بنجاح.",
+		"server_error": "حدث خطأ في الخادم."
+	 
+
+
+
 	},
 	"block": {
 		"user_not_found": "المستخدم غير موجود",

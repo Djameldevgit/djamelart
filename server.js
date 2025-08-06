@@ -18,7 +18,7 @@ app.use(express.json());
 
 // ✅ CORS para Express
 app.use(cors({
-  origin: 'https://djamelart.onrender.com',
+  origin: 'http://localhost:3000',
   credentials: true
 }));
 
@@ -61,7 +61,7 @@ app.use('/api', require('./routes/orderRouter'));
 app.use('/api', require('./routes/userActionRouter'));
 app.use('/api', require('./routes/blockUserRouter'));
 app.use('/api', require('./routes/reportRouter'));
-
+ 
 // --- Auto desbloqueo de usuarios cada 5 min ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 
@@ -82,7 +82,7 @@ const http = require('http').createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(http, {
   cors: {
-    origin: 'https://djamelart.onrender.com',
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'DELETE'],
     credentials: true
   }

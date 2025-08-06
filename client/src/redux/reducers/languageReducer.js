@@ -6,19 +6,7 @@ const initialState = {
 
 const languageReducer = (state = initialState, action) => {
   switch (action.type) {
-    case CHANGE_LANGUAGE.EN:
-    case CHANGE_LANGUAGE.FR:
-    case CHANGE_LANGUAGE.AR:
-    case CHANGE_LANGUAGE.ES:
-    case CHANGE_LANGUAGE.RU:
-    case CHANGE_LANGUAGE.KAB:
-    case CHANGE_LANGUAGE.CHINO:
-      return {
-        ...state,
-        language: action.payload.language
-      };
-    
-    case CHANGE_LANGUAGE.SYNC:
+    case CHANGE_LANGUAGE.SET:
       return {
         ...state,
         language: action.payload.language
@@ -30,4 +18,3 @@ const languageReducer = (state = initialState, action) => {
 };
 
 export default languageReducer;
-

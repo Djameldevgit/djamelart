@@ -4,16 +4,8 @@ const langCtrl = require('../controllers/langCtrl');
 // Ruta pública (sin autenticación) para visitantes
 router.post('/language/public', langCtrl.setLanguagePublic);
 
-// Rutas para usuarios autenticados o no (guardan cookie + DB si autenticado)
-router.put('/language', langCtrl.updateUserLanguage);
-
-router.put('/language/ingles', langCtrl.updateUserLanguageToEnglish);
-router.put('/language/frances', langCtrl.updateUserLanguageToFrench);
-router.put('/language/arabe', langCtrl.updateUserLanguageToArabic);
-
-router.put('/language/espanol', langCtrl.updateUserLanguageToSpanish);
-router.put('/language/ruso', langCtrl.updateUserLanguageToRussian);
-router.put('/language/kabyle', langCtrl.updateUserLanguageToKabyle);
-router.put('/language/chino', langCtrl.updateUserLanguageChino);
+// Ruta unificada para todos los idiomas
+router.put('/language/:lang', langCtrl.updateUserLanguage);
 
 module.exports = router;
+

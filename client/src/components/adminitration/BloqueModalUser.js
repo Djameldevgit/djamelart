@@ -21,7 +21,7 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation('modales');
   const lang = languageReducer.language || 'es';
-  const [error, setError] = useState(null);
+  const [errorrr, setError] = useState(null);
 
   const [datosBloqueo, setDatosBloqueo] = useState({
     motivo: "",
@@ -61,7 +61,7 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
       <Modal.Header className="bg-danger text-white position-relative">
         <Modal.Title className="d-flex align-items-center">
           <ExclamationTriangleFill className={`${lang === 'ar' ? 'ms-2' : 'me-2'}`} />
-          {t('head.title')}
+          {t('headd.title')}
         </Modal.Title>
         <CloseButton
           variant="white"
@@ -74,17 +74,17 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
 
       <Form onSubmit={handleBloqueo}>
         <Modal.Body>
-          {error && (
+          {errorrr && (
             <Alert variant="danger" className="d-flex align-items-center">
               <XCircleFill className={`${lang === 'ar' ? 'ms-2' : 'me-2'}`} />
-              {error}
+              {errorrr}
             </Alert>
           )}
 
           <Form.Group className="mb-3">
             <Form.Label>
               <InfoCircleFill className={`${lang === 'ar' ? 'ms-2' : 'me-2'} text-warning`} />
-              {t('formm.reasonLabel')}
+              {t('formmm.reasonLabel')}
             </Form.Label>
             <Form.Select
               name="motivo"
@@ -92,30 +92,30 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
               onChange={handleChangeInput}
               required
             >
-              <option value="">{t('formm.selectReason')}</option>
-              <option value="Comportement abusif">{t('reasons.abusiveBehavior')}</option>
-              <option value="Spam">{t('reasons.spam')}</option>
-              <option value="Violation des conditions d'utilisation">{t('reasons.termsViolation')}</option>
-              <option value="Langage offensant">{t('reasons.offensiveLanguage')}</option>
-              <option value="Fraude">{t('reasons.fraud')}</option>
-              <option value="Usurpation d'identité">{t('reasons.identityTheft')}</option>
-              <option value="Contenu inapproprié">{t('reasons.inappropriateContent')}</option>
-              <option value="Violation de la vie privée">{t('reasons.privacyViolation')}</option>
-              <option value="Interruption du service">{t('reasons.serviceDisruption')}</option>
-              <option value="Activité suspecte">{t('reasons.suspiciousActivity')}</option>
-              <option value="Autre">{t('reasons.other')}</option>
+              <option value="">{t('formmm.selectReason')}</option>
+              <option value="Comportement abusif">{t('reason.abusiveBehavior')}</option>
+              <option value="Spam">{t('reason.spam')}</option>
+              <option value="Violation des conditions d'utilisation">{t('reason.termsViolation')}</option>
+              <option value="Langage offensant">{t('reason.offensiveLanguage')}</option>
+              <option value="Fraude">{t('reason.fraud')}</option>
+              <option value="Usurpation d'identité">{t('reason.identityTheft')}</option>
+              <option value="Contenu inapproprié">{t('reason.inappropriateContent')}</option>
+              <option value="Violation de la vie privée">{t('reason.privacyViolation')}</option>
+              <option value="Interruption du service">{t('reason.serviceDisruption')}</option>
+              <option value="Activité suspecte">{t('reason.suspiciousActivity')}</option>
+              <option value="Autre">{t('reason.other')}</option>
             </Form.Select>
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>{t('formm.detailsLabel')}</Form.Label>
+            <Form.Label>{t('formmm.detailsLabel')}</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
               name="content"
               value={datosBloqueo.content}
               onChange={handleChangeInput}
-              placeholder={t('formm.detailsPlaceholder')}
+              placeholder={t('formmm.detailsPlaceholder')}
               required
             />
           </Form.Group>
@@ -151,10 +151,10 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
 
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            {t('actions.cancel')}
+            {t('actionse.cancel')}
           </Button>
           <Button variant="danger" type="submit">
-            {t('actionn.confirmBlock')}
+            {t('actionnn.confirmBlock')}
           </Button>
         </Modal.Footer>
       </Form>

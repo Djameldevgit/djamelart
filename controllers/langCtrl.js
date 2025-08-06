@@ -1,48 +1,18 @@
 const Users = require('../models/userModel');
 
 const langCtrl = {
-  updateUserLanguageToSpanish: async (req, res) => {
-    const language = 'es';
-    await handleLanguageUpdate(req, res, language, req.__('language.updated_spanish'));
-  },
-
-  updateUserLanguageToRussian: async (req, res) => {
-    const language = 'ru';
-    await handleLanguageUpdate(req, res, language, req.__('language.updated_russian'));
-  },
-
-  updateUserLanguageToKabyle: async (req, res) => {
-    const language = 'kab';
-    await handleLanguageUpdate(req, res, language, req.__('language.updated_kabyle'));
-  },
-
-  updateUserLanguageChino: async (req, res) => {
-    const language = 'chino';
-    await handleLanguageUpdate(req, res, language, req.__('language.updated_chinese'));
-  },
-
-  updateUserLanguageToEnglish: async (req, res) => {
-    const language = 'en';
-    await handleLanguageUpdate(req, res, language, req.__('language.updated_english'));
-  },
-
-  updateUserLanguageToFrench: async (req, res) => {
-    const language = 'fr';
-    await handleLanguageUpdate(req, res, language, req.__('language.updated_french'));
-  },
-
-  updateUserLanguageToArabic: async (req, res) => {
-    const language = 'ar';
-    await handleLanguageUpdate(req, res, language, req.__('language.updated_arabic'));
-  },
-
   updateUserLanguage: async (req, res) => {
-    const { language } = req.body;
-    if (!language) return res.status(400).json({ msg: req.__('language.not_specified') });
+    const supportedLanguages = ['en', 'fr', 'ar', 'es', 'ru', 'kab', 'chino'];
+    const lang = req.params.lang;
 
-    await handleLanguageUpdate(req, res, language, req.__('language.updated'));
+    if (!supportedLanguages.includes(lang)) {
+      return res.status(400).json({ msg: req.__('language.not_supported') });
+    }
+
+    await handleLanguageUpdate(req, res, lang, req.__('language.updated_to', { lang }));
   },
 
+  // Para visitantes (no autenticados)
   setLanguagePublic: async (req, res) => {
     const { language } = req.body;
     if (!language) return res.status(400).json({ msg: req.__('language.not_specified') });
@@ -51,7 +21,6 @@ const langCtrl = {
       res.cookie('lang', language, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
         httpOnly: true
-       
       });
 
       res.status(200).json({ msg: req.__('language.visitor_saved') });
@@ -62,13 +31,12 @@ const langCtrl = {
   }
 };
 
-// 👉 Función compartida
+// 👉 Función reutilizada para guardar el idioma y actualizar usuario (si está logueado)
 const handleLanguageUpdate = async (req, res, language, successMsg) => {
   try {
     res.cookie('lang', language, {
       maxAge: 1000 * 60 * 60 * 24 * 30,
       httpOnly: true
-      
     });
 
     if (req.user && req.user._id) {

@@ -1,93 +1,32 @@
-import axios from 'axios'
+import axios from 'axios';
+
 export const CHANGE_LANGUAGE = {
-  EN: 'EN',
-  FR: 'FR',
-  AR: 'AR',
-  ES: 'ES',
-  RU: 'RU',
-  KAB: 'KAB',
-  CHINO: 'CHINO'  // Cambiado a código estándar
-};
-// Función auxiliar para enviar petición sin autenticación
-const sendLanguageChange = async (endpoint, language) => {
-  const res = await axios.put(`/api/language/${endpoint}`, { language });
-  return res.data;
+  SET: 'SET_LANGUAGE'
 };
 
-// Acción para inglés
-export const inglishLanguage = (language) => async (dispatch) => {
-  try {
-    const res = await sendLanguageChange('ingles', language);
-    dispatch({ type: CHANGE_LANGUAGE.EN, payload: { language, res } });
-  } catch (error) {
-    console.error(error);
-  }
-};
+/**
+ * Cambia el idioma si es diferente al actual.
+ * @param {string} langCode - Código del idioma ('en', 'fr', 'ar', etc.)
+ */
+export const changeLanguage = (langCode) => async (dispatch, getState) => {
+  const currentLang = getState().languageReducer.language;
 
-// Acción para francés
-export const franchLanguage = (language) => async (dispatch) => {
-  try {
-    const res = await sendLanguageChange('frances', language);
-    dispatch({ type: CHANGE_LANGUAGE.FR, payload: { language, res } });
-  } catch (error) {
-    console.error(error);
+  if (langCode === currentLang) {
+    // ✅ Idioma ya está establecido, no se hace petición
+    return;
   }
-};
 
-// Acción para árabe
-export const arabLanguage = (language) => async (dispatch) => {
   try {
-    const res = await sendLanguageChange('arabe', language);
-    dispatch({ type: CHANGE_LANGUAGE.AR, payload: { language, res } });
-  } catch (error) {
-    console.error(error);
-  }
-};
+    const res = await axios.put(`/api/language/${langCode}`, { language: langCode });
 
-// Acción para español
-export const spanishLanguage = (language) => async (dispatch) => {
-  try {
-    const res = await sendLanguageChange('espanol', language);
-    dispatch({ type: CHANGE_LANGUAGE.ES, payload: { language, res } });
+    dispatch({
+      type: CHANGE_LANGUAGE.SET,
+      payload: {
+        language: langCode,
+        res
+      }
+    });
   } catch (error) {
-    console.error(error);
-  }
-};
-
-// Acción para ruso
-export const russianLanguage = (language) => async (dispatch) => {
-  try {
-    const res = await sendLanguageChange('ruso', language);
-    dispatch({ type: CHANGE_LANGUAGE.RU, payload: { language, res } });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-// Acción para cabilio (Kabyle)
-export const kabyleLanguage = (language) => async (dispatch) => {
-  try {
-    const res = await sendLanguageChange('kabyle', language);
-    dispatch({ type: CHANGE_LANGUAGE.KAB, payload: { language, res } });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-// Acción para chino
-export const chineseLanguage = (language) => async (dispatch) => {
-  try {
-    const res = await sendLanguageChange('chino', language);
-    dispatch({ type: CHANGE_LANGUAGE.CHINO, payload: { language, res } });
-  } catch (error) {
-    console.error(error);
-  }
-}
-export const synchronizeLanguage = (language) => async dispatch => {
-  try {
-    await axios.put('/language', { language });
-    dispatch({ type: 'SET_LANGUAGE', payload: language });
-  } catch (err) {
-    console.error('Error updating language:', err);
+    console.error('Error al cambiar idioma:', error);
   }
 };

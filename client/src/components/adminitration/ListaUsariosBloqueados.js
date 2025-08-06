@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 const ListaUsuariosBloqueados = () => {
   const dispatch = useDispatch();
   const { userBlockReducer, auth, languageReducer } = useSelector((state) => state);
-  const { t } = useTranslation('modales');
+  const { t } = useTranslation('aplicacion');
   const lang = languageReducer.language || 'en';
   
   const [blockedUsers, setBlockedUsers] = useState([]);
@@ -16,8 +16,8 @@ const ListaUsuariosBloqueados = () => {
   useEffect(() => {
     setBlockedUsers(userBlockReducer.blockedUsers || []);
   }, [userBlockReducer.blockedUsers]);
+  const formatDate = (date) => moment(date).locale('en').format("DD/MM/YYYY HH:mm");
 
-  const formatDate = (date) => (date ? moment(date).format("DD/MM/YYYY HH:mm") : t('noDisponible', { lng: lang }));
 
   const handleDesbloqueo = (user) => {
     const datosDesbloqueo = {

@@ -10,6 +10,7 @@ const Notifications = require('../models/notifyModel')
 
 const sendMail = require('./sendMail');
 
+const Report = require('../models/reportModel'); // o el nombre correcto
 
 
 
@@ -52,12 +53,15 @@ const userCtrl = {
       `;
 
       const adminEmail = "artealger2020argelia@gmail.com";
+
+      // Enviamos el correo con plantilla genérica "informativo"
       await sendMail(adminEmail, '#', lang || 'es', 'informativo', subject, customMessage);
 
-      return res.json({ msg: req.__('user.activation_request_sent') });
+      return res.json({ msg: '✅ Mensaje enviado correctamente al administrador.' });
+
     } catch (err) {
       console.error('❌ Error al procesar solicitud de activación:', err);
-      return res.status(500).json({ msg: req.__('user.server_error') });
+      return res.status(500).json({ msg: 'Error interno del servidor.' });
     }
   },
 
@@ -67,50 +71,40 @@ const userCtrl = {
   contactMailSupport: async (req, res) => {
     try {
       const { title, message, lang } = req.body;
-
-      // Obtener el usuario autenticado desde req.user
+  
+      // Asegúrate de que el usuario esté autenticado
       const user = req.user;
       if (!user) {
-        return res.status(401).json({ msg: req.__('user.unauthenticated') });
+        return res.status(401).json({ msg: 'Usuario no autenticado.' });
       }
-
-      // Validación de campos
+  
       if (!title || !message) {
-        return res.status(400).json({ msg: req.__('user.contact_title_message_required') });
+        return res.status(400).json({ msg: 'Faltan el título o el mensaje.' });
       }
-
-      // Construcción del asunto y cuerpo del mensaje
+  
       const subject = `[Contacto] ${title} - ${user.username}`;
       const fullMessage = `
-Mensaje del usuario:
---------------------
-Nombre: ${user.username}
-Email: ${user.email}
-ID: ${user._id}
-
-Mensaje:
---------
-${message}
+  Mensaje del usuario:
+  --------------------
+  Nombre: ${user.username}
+  Email: ${user.email}
+  ID: ${user._id}
+  
+  Mensaje:
+  --------
+  ${message}
       `;
-
+  
       // Enviar el email al administrador
-      await sendMail(
-        'artealger2020argelia@gmail.com', // Email destino
-        '#',                             // Placeholder para algún template o clave (ajústalo si es necesario)
-        lang || 'es',
-        'informativo',
-        subject,
-        fullMessage
-      );
-
-      return res.json({ success: true, msg: req.__('user.contact_message_sent') });
-
+      await sendMail('artealger2020argelia@gmail.com', '#', lang || 'es', 'informativo', subject, fullMessage);
+  
+      return res.json({ success: true, msg: 'Mensaje enviado correctamente.' });
     } catch (err) {
       console.error('❌ Error al enviar el mensaje de contacto:', err);
-      return res.status(500).json({ msg: req.__('user.contact_send_error') });
+      return res.status(500).json({ msg: 'Error interno al enviar el mensaje.' });
     }
   },
-
+  
   contactBlockedSupport: async (req, res) => {
     try {
       const { message, lang } = req.body;
@@ -130,10 +124,11 @@ ${message}
       `;
 
       await sendMail('artealger2020argelia@gmail.com', '#', lang || 'es', 'informativo', subject, fullMessage);
-      return res.json({ msg: req.__('user.blocked_request_sent') });
+
+      return res.json({ msg: '✅ Solicitud de desbloqueo enviada correctamente.' });
     } catch (err) {
       console.error('❌ Error en contactBlockedSupport:', err);
-      return res.status(500).json({ msg: req.__('user.blocked_send_error') });
+      return res.status(500).json({ msg: 'Error al enviar la solicitud.' });
     }
   },
 
@@ -151,7 +146,7 @@ ${message}
     if (!user.isVerified && accountAge > threeDays) {
       await Users.findByIdAndDelete(user._id);
       return res.status(403).json({
-        msg: req.__('user.account_deleted_unverified')
+        msg: 'Tu cuenta ha sido eliminada por no verificarla a tiempo. Regístrate de nuevo si deseas acceder.',
       });
     }
 
@@ -163,75 +158,72 @@ ${message}
   toggleActiveStatus: async (req, res) => {
     try {
       const user = await Users.findById(req.params.id);
-      if (!user) return res.status(404).json({ msg: req.__('user.not_found') });
+      if (!user) return res.status(404).json({ msg: "Usuario no encontrado." });
 
       user.isActive = !user.isActive;
       await user.save();
-      res.json({ msg: req.__('user.status_updated'), user });
+
+      res.json({ msg: "Estado actualizado", user });
     } catch (err) {
-      return res.status(500).json({ msg: req.__('user.server_error') });
+      return res.status(500).json({ msg: err.message });
     }
   },
 
 
- 
-  getUsersAction: async (req, res) => {
+// En tu controlador de búsqueda (backend)
+getAdmins :async (req, res) => {
+  try {
+      const admins = await Users.find({ role: 'admin' })
+          .select('username avatar online _id');
+      res.json({ users: admins });
+  } catch (err) {
+      res.status(500).json({ msg: err.message });
+  }
+},
+
+  searchUser: async (req, res) => {
     try {
-      const features = new APIfeatures(Users.find(), req.query).paginating();
-      const users = await features.query;
+      const users = await Users.find({ username: { $regex: req.query.username } })
+        .limit(10).select("fullname username avatar")
 
-      const usersWithDetails = await Promise.all(users.map(async (user) => {
-        const userPosts = await Posts.find({ user: user._id });
-        const totalLikesReceived = userPosts.reduce((acc, post) => acc + post.likes.length, 0);
-        const totalCommentsReceived = userPosts.reduce((acc, post) => acc + post.comments.length, 0);
-
-        const likesGiven = await Posts.countDocuments({ likes: user._id });
-        const commentsMade = await Comments.countDocuments({ user: user._id });
-
-        return {
-          ...user.toObject(),
-          postCount: userPosts.length, // ✅ Cantidad de posts
-          totalLikesReceived,
-          totalCommentsReceived,
-          likesGiven,
-          commentsMade,
-          totalFollowers: user.followers.length,
-          totalFollowing: user.following.length,
-          totalReportGiven: user.report.length,
-        };
-      }));
-
-      return res.json({
-        msg: req.__('user.success'),
-        result: usersWithDetails.length,
-        users: usersWithDetails
-      });
+      res.json({ users })
     } catch (err) {
-      return res.status(500).json({ msg: req.__('user.server_error') });
+      return res.status(500).json({ msg: err.message })
     }
-
   },
+  getUser: async (req, res) => {
+    try {
+      const user = await Users.findById(req.params.id).select('-password')
+        .populate("followers following", "-password")
+      if (!user) return res.status(400).json({ msg: "User does not exist." })
 
+      res.json({ user })
+    } catch (err) {
+      return res.status(500).json({ msg: err.message })
+    }
+  },
+  
 
 
   updateUser: async (req, res) => {
     try {
-      const { avatar, username, mobile, address, story, website } = req.body
-      if (!username) return res.status(400).json({ msg: req.__('user.fullname_required') })
+      const { avatar, username, mobile, address, story, website  } = req.body
+      if (!username) return res.status(400).json({ msg: "Please add your full name." })
 
       await Users.findOneAndUpdate({ _id: req.user._id }, {
-        avatar, username, mobile, address, story, website
+        avatar, username, mobile, address, story, website 
       })
-      res.json({ msg: req.__('user.update_success') })
+
+      res.json({ msg: "Update Success!" })
 
     } catch (err) {
-      return res.status(500).json({ msg: req.__('user.server_error') })
+      return res.status(500).json({ msg: err.message })
     }
   },
   follow: async (req, res) => {
     try {
       const user = await Users.find({ _id: req.params.id, followers: req.user._id })
-      if (user.length > 0) return res.status(500).json({ msg: req.__('user.already_followed') })
+      if (user.length > 0) return res.status(500).json({ msg: "You followed this user." })
 
       const newUser = await Users.findOneAndUpdate({ _id: req.params.id }, {
         $push: { followers: req.user._id }
@@ -244,7 +236,7 @@ ${message}
       res.json({ newUser })
 
     } catch (err) {
-      return res.status(500).json({ msg: req.__('user.server_error') })
+      return res.status(500).json({ msg: err.message })
     }
   },
   unfollow: async (req, res) => {
@@ -261,12 +253,33 @@ ${message}
       res.json({ newUser })
 
     } catch (err) {
-      return res.status(500).json({ msg: req.__('user.server_error') })
+      return res.status(500).json({ msg: err.message })
     }
   },
-  
+  suggestionsUser: async (req, res) => {
+    try {
+      const newArr = [...req.user.following, req.user._id]
 
-/*
+      const num = req.query.num || 10
+
+      const users = await Users.aggregate([
+        { $match: { _id: { $nin: newArr } } },
+        { $sample: { size: Number(num) } },
+        { $lookup: { from: 'users', localField: 'followers', foreignField: '_id', as: 'followers' } },
+        { $lookup: { from: 'users', localField: 'following', foreignField: '_id', as: 'following' } },
+      ]).project("-password")
+
+      return res.json({
+        users,
+        result: users.length
+      })
+
+    } catch (err) {
+      return res.status(500).json({ msg: err.message })
+    }
+  },
+
+
   deleteUser: async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -404,9 +417,78 @@ ${message}
   },
 
 
-*/
 
 
+  getUsersAction: async (req, res) => {
+    try {
+      const { filter } = req.query;
+  
+      let query = Users.find();
+  
+      const features = new APIfeatures(query, req.query).paginating();
+  
+      let users = await features.query;
+  
+      const usersWithDetails = await Promise.all(
+        users.map(async (user) => {
+          const posts = await Posts.find({ user: user._id });
+          const totalLikesReceived = posts.reduce((acc, post) => acc + post.likes.length, 0);
+          const totalCommentsReceived = posts.reduce((acc, post) => acc + post.comments.length, 0);
+          const reportsReceived = await Report.countDocuments({ userId: user._id });
+          const likesGiven = await Posts.countDocuments({ likes: user._id });
+          const commentsMade = await Comments.countDocuments({ user: user._id });
+  
+          return {
+            ...user.toObject(),
+            postCount: posts.length,
+            totalLikesReceived,
+            totalCommentsReceived,
+            totalFollowers: user.followers.length,
+            totalFollowing: user.following.length,
+            totalReportsReceived: reportsReceived,
+            likesGiven,
+            commentsMade
+          };
+        })
+      );
+  
+      // APLICAR FILTRO
+      switch (filter) {
+        case "mostLikes":
+          usersWithDetails.sort((a, b) => b.totalLikesReceived - a.totalLikesReceived);
+          break;
+        case "mostComments":
+          usersWithDetails.sort((a, b) => b.totalCommentsReceived - a.totalCommentsReceived);
+          break;
+        case "mostFollowers":
+          usersWithDetails.sort((a, b) => b.totalFollowers - a.totalFollowers);
+          break;
+        case "mostPosts":
+          usersWithDetails.sort((a, b) => b.postCount - a.postCount);
+          break;
+        case "mostReports":
+          usersWithDetails.sort((a, b) => b.totalReportsReceived - a.totalReportsReceived);
+          break;
+        case "lastLogin":
+          usersWithDetails.sort((a, b) => new Date(b.lastLogin) - new Date(a.lastLogin));
+          break;
+        case "latestRegistered":
+          usersWithDetails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          break;
+        default:
+          break; // ningún filtro
+      }
+  
+      res.json({
+        msg: "Success!",
+        result: usersWithDetails.length,
+        users: usersWithDetails,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  
 
 
 
@@ -510,153 +592,10 @@ ${message}
     } finally {
       session.endSession();
     }
-  },
-
-
-
-
-  getAdmins: async (req, res) => {
-    try {
-      const admins = await Users.find({ role: 'admin' })
-        .select('username avatar online _id');
-      res.json({ users: admins });
-    } catch (err) {
-      res.status(500).json({ msg: req.__('user.server_error') });
-    }
-  },
-
-  searchUser: async (req, res) => {
-    try {
-      const users = await Users.find({ username: { $regex: req.query.username } })
-        .limit(10).select("username avatar")
-      res.json({ users })
-    } catch (err) {
-      return res.status(500).json({ msg: req.__('user.server_error') })
-    }
-  },
-
-  getUser: async (req, res) => {
-    try {
-      const user = await Users.findById(req.params.id).select('-password')
-        .populate("followers following", "-password")
-      if (!user) return res.status(400).json({ msg: req.__('user.not_exist') })
-
-      res.json({ user })
-    } catch (err) {
-      return res.status(500).json({ msg: req.__('user.server_error') })
-    }
-  },
-
-
-
- 
-
- 
- 
-
- 
- 
-  deleteUser: async (req, res) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try {
-      if (req.user.role !== 'admin') {
-        await session.abortTransaction();
-        return res.status(403).json({
-          success: false,
-          msg: req.__('user.delete_denied_admin')
-        });
-      }
-
-      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        await session.abortTransaction();
-        return res.status(400).json({
-          success: false,
-          msg: req.__('user.invalid_id')
-        });
-      }
-
-      const userToDelete = await Users.findById(req.params.id).session(session);
-      if (!userToDelete) {
-        await session.abortTransaction();
-        return res.status(404).json({
-          success: false,
-          msg: req.__('user.not_found')
-        });
-      }
-
-      if (userToDelete._id.toString() === req.user._id.toString()) {
-        await session.abortTransaction();
-        return res.status(400).json({
-          success: false,
-          msg: req.__('user.delete_self_denied')
-        });
-      }
-
-      // ... (código sin cambios)
-
-      res.json({
-        success: true,
-        msg: req.__('user.delete_success'),
-        deletedAt: new Date()
-      });
-    } catch (err) {
-      await session.abortTransaction();
-      console.error('Error en eliminación completa:', err);
-      res.status(500).json({
-        success: false,
-        msg: req.__('user.delete_error'),
-        error: err.message
-      });
-    } finally {
-      session.endSession();
-    }
-  },
-
-  suggestionsUser: async (req, res) => {
-    try {
-        const newArr = [...req.user.following, req.user._id]
-
-        const num  = req.query.num || 10
-
-        const users = await Users.aggregate([
-            { $match: { _id: { $nin: newArr } } },
-            { $sample: { size: Number(num) } },
-            { $lookup: { from: 'users', localField: 'followers', foreignField: '_id', as: 'followers' } },
-            { $lookup: { from: 'users', localField: 'following', foreignField: '_id', as: 'following' } },
-        ]).project("-password")
-
-        return res.json({
-            users,
-            result: users.length
-        })
-
-    } catch (err) {
-        return res.status(500).json({msg: err.message})
-    }
-},
-
-
-updatePrivilegios: async (req, res) => {
-  try {
-    const { opcionesUser } = req.body;
- 
-    const user = await Users.findOneAndUpdate(
-      { _id: req.params.id },
-      { opcionesUser },
-      { new: true }
-    ).select('-password');
-
-    res.json({
-      msg: 'Privilegios actualizados correctamente',
-      user
-    });
-
-  } catch (err) {
-    return res.status(500).json({ msg: err.message });
   }
-}
+
+
+
 
 
 }
