@@ -110,7 +110,7 @@ const Navbar2 = ({ onFiltersChange }) => {
             </div>
             <div className="d-lg-none mb-3 text-center">
               <div >
-                <i className='fas fa-search mt-4'  ></i>
+                <i className='fas fa-search mt-4'  onClick={openModal} ></i>
               </div>
 
 
@@ -279,6 +279,16 @@ const Navbar2 = ({ onFiltersChange }) => {
       </Offcanvas>
 
       <Modalsearchhome isOpen={isModalOpen} onClose={closeModal}>
+      <div className="filter-group">
+  <input
+    type="text"
+    name="search"
+    placeholder={t('search_by_keyword', { lng: lang })}
+    onChange={handleFilterChange}
+    value={filters.search}
+  />
+</div>
+
         <div className="modalcontentsearch">
           <div className="titlebusqueda">
             <h5>{t('advanced_search_title', { lng: lang })}</h5>
@@ -295,136 +305,140 @@ const Navbar2 = ({ onFiltersChange }) => {
                 required
               >
                 <option value="">{t('select_category', { lng: lang })}</option>
-                <option value="Painting">{t('category.painting', { lng: lang })}</option>
-                <option value="Sculpture">{t('category.sculpture', { lng: lang })}</option>
-                <option value="Photography">{t('category.photography', { lng: lang })}</option>
+                <option value="painting">{t('category.painting', { lng: lang })}</option>
+                <option value="sculpture">{t('category.sculpture', { lng: lang })}</option>
+                <option value="photography">{t('category.photography', { lng: lang })}</option>
                 <option value="drawing">{t('category.drawing', { lng: lang })}</option>
-                <option value="Engraving">{t('category.engraving', { lng: lang })}</option>
-                <option value="Digital_art">{t('category.digital_art', { lng: lang })}</option>
-                <option value="Collage">{t('category.collage', { lng: lang })}</option>
-                <option value="Textile_art">{t('category.textile_art', { lng: lang })}</option>
+                <option value="engraving">{t('category.engraving', { lng: lang })}</option>
+                <option value="digital_art">{t('category.digital_art', { lng: lang })}</option>
+                <option value="collage">{t('category.collage', { lng: lang })}</option>
+                <option value="textile_art">{t('category.textile_art', { lng: lang })}</option>
               </select>
             </div>
 
             <div className="filter-group">
-              <select
-                name="theme"
-                value={filters.theme}
-                onChange={handleFilterChange}
-                required
-              >
-                <option value="">{t('select_theme', { lng: lang })}</option>
+  <select
+    name="theme"
+    value={filters.theme}
+    onChange={handleFilterChange}
+    required
+  >
+    <option value="">{t('select_theme', { lng: lang })}</option>
 
-                {/* Pintura */}
-                <optgroup label={t('painting', { lng: lang })}>
-                  <option value="landscape">{t('landscape', { lng: lang })}</option>
-                  <option value="portrait">{t('portrait', { lng: lang })}</option>
-                  <option value="animals">{t('animals', { lng: lang })}</option>
-                  <option value="seascape">{t('seascape', { lng: lang })}</option>
-                  <option value="urban">{t('urban', { lng: lang })}</option>
-                  <option value="abstract">{t('abstract', { lng: lang })}</option>
-                  <option value="still_life">{t('still_life', { lng: lang })}</option>
-                  <option value="botanical">{t('botanical', { lng: lang })}</option>
-                </optgroup>
+    {/* 🎨 Style */}
+    <optgroup label={t('theme_groups.styles', { lng: lang })}>
+      <option value="abstrait">{t('theme.abstrait', { lng: lang })}</option>
+      <option value="colore">{t('theme.colore', { lng: lang })}</option>
+      <option value="graffiti">{t('theme.graffiti', { lng: lang })}</option>
+      <option value="geometrique">{t('theme.geometrique', { lng: lang })}</option>
+      <option value="surrealisme">{t('theme.surrealisme', { lng: lang })}</option>
+      <option value="conceptuel">{t('theme.conceptuel', { lng: lang })}</option>
+      <option value="replica">{t('theme.replica', { lng: lang })}</option>
+      <option value="reproduction">{t('theme.reproduction', { lng: lang })}</option>
+    </optgroup>
 
-                {/* Escultura */}
-                <optgroup label={t('sculpture', { lng: lang })}>
-                  <option value="human_figure">{t('human_figure', { lng: lang })}</option>
-                  <option value="animals_sculpture">{t('animals_sculpture', { lng: lang })}</option>
-                  <option value="abstract_sculpture">{t('abstract_sculpture', { lng: lang })}</option>
-                  <option value="mythological">{t('mythological', { lng: lang })}</option>
-                  <option value="kinetic">{t('kinetic', { lng: lang })}</option>
-                  <option value="minimalist">{t('minimalist', { lng: lang })}</option>
-                </optgroup>
+    {/* 🐾 Animaux */}
+    <optgroup label={t('theme_groups.animaux', { lng: lang })}>
+      <option value="animal">{t('theme.animal', { lng: lang })}</option>
+      <option value="chat">{t('theme.chat', { lng: lang })}</option>
+      <option value="chien">{t('theme.chien', { lng: lang })}</option>
+      <option value="cheval">{t('theme.cheval', { lng: lang })}</option>
+      <option value="oiseau">{t('theme.oiseau', { lng: lang })}</option>
+      <option value="poisson">{t('theme.poisson', { lng: lang })}</option>
+    </optgroup>
 
-                {/* Fotografía */}
-                <optgroup label={t('photography', { lng: lang })}>
-                  <option value="portrait_photo">{t('portrait_photo', { lng: lang })}</option>
-                  <option value="wildlife">{t('wildlife', { lng: lang })}</option>
-                  <option value="street">{t('street', { lng: lang })}</option>
-                  <option value="architectural">{t('architectural', { lng: lang })}</option>
-                  <option value="conceptual">{t('conceptual', { lng: lang })}</option>
-                </optgroup>
+    {/* 🌳 Nature */}
+    <optgroup label={t('theme_groups.nature', { lng: lang })}>
+      <option value="paysage">{t('theme.paysage', { lng: lang })}</option>
+      <option value="foret">{t('theme.foret', { lng: lang })}</option>
+      <option value="montagne">{t('theme.montagne', { lng: lang })}</option>
+      <option value="fleurs">{t('theme.fleurs', { lng: lang })}</option>
+      <option value="mer">{t('theme.mer', { lng: lang })}</option>
+      <option value="ciel">{t('theme.ciel', { lng: lang })}</option>
+    </optgroup>
 
-                {/* Arte Textil */}
-                <optgroup label={t('textile', { lng: lang })}>
-                  <option value="tapestry_patterns">{t('tapestry_patterns', { lng: lang })}</option>
-                  <option value="ethnic">{t('ethnic', { lng: lang })}</option>
-                  <option value="abstract_textile">{t('abstract_textile', { lng: lang })}</option>
-                  <option value="nature_inspired">{t('nature_inspired', { lng: lang })}</option>
-                </optgroup>
+    {/* 👤 Humain */}
+    <optgroup label={t('theme_groups.humain', { lng: lang })}>
+      <option value="portrait">{t('theme.portrait', { lng: lang })}</option>
+      <option value="corps_humain">{t('theme.corps_humain', { lng: lang })}</option>
+      <option value="famille">{t('theme.famille', { lng: lang })}</option>
+    </optgroup>
 
-                {/* Arte Digital */}
-                <optgroup label={t('digital', { lng: lang })}>
-                  <option value="fantasy">{t('fantasy', { lng: lang })}</option>
-                  <option value="sci_fi">{t('sci_fi', { lng: lang })}</option>
-                  <option value="concept_art">{t('concept_art', { lng: lang })}</option>
-                  <option value="pop_culture">{t('pop_culture', { lng: lang })}</option>
-                </optgroup>
-              </select>
-            </div>
+    {/* 🌍 Culture */}
+    <optgroup label={t('theme_groups.culture', { lng: lang })}>
+      <option value="culture_populaire">{t('theme.culture_populaire', { lng: lang })}</option>
+      <option value="bandes_dessinees">{t('theme.bandes_dessinees', { lng: lang })}</option>
+      <option value="cinema">{t('theme.cinema', { lng: lang })}</option>
+      <option value="dessin_anime">{t('theme.dessin_anime', { lng: lang })}</option>
+      <option value="jeu_video">{t('theme.jeu_video', { lng: lang })}</option>
+      <option value="mode">{t('theme.mode', { lng: lang })}</option>
+      <option value="mythologie">{t('theme.mythologie', { lng: lang })}</option>
+      <option value="religion">{t('theme.religion', { lng: lang })}</option>
+      <option value="histoire">{t('theme.histoire', { lng: lang })}</option>
+    </optgroup>
+
+    {/* 🧠 Imagination */}
+    <optgroup label={t('theme_groups.imagination', { lng: lang })}>
+      <option value="fantastique">{t('theme.fantastique', { lng: lang })}</option>
+      <option value="science_fiction">{t('theme.science_fiction', { lng: lang })}</option>
+      <option value="onirique">{t('theme.onirique', { lng: lang })}</option>
+    </optgroup>
+
+    {/* 🏙️ Société */}
+    <optgroup label={t('theme_groups.societe', { lng: lang })}>
+      <option value="ville">{t('theme.ville', { lng: lang })}</option>
+      <option value="architecture">{t('theme.architecture', { lng: lang })}</option>
+      <option value="societe">{t('theme.societe', { lng: lang })}</option>
+      <option value="technologie">{t('theme.technologie', { lng: lang })}</option>
+    </optgroup>
+  </select>
+</div>
 
             <div className="filter-group">
-              <select
-                name="style"
-                value={filters.style}
-                onChange={handleFilterChange}
-                required
-              >
-                <option value="">{t('style.select_style', { lng: lang })}</option>
+  <select
+    name="style"
+    value={filters.style}
+    onChange={handleFilterChange}
+    required
+  >
+    <option value="">{t('styles.select_style', { lng: lang })}</option>
 
-                {/* Estilos Universales */}
-                <optgroup label={t('style.group_universal', { lng: lang })}>
-                  <option value="realism">{t('style.realism', { lng: lang })}</option>
-                  <option value="impressionism">{t('style.impressionism', { lng: lang })}</option>
-                  <option value="abstract">{t('style.abstract', { lng: lang })}</option>
-                  <option value="surrealism">{t('style.surrealism', { lng: lang })}</option>
-                  <option value="cubism">{t('style.cubism', { lng: lang })}</option>
-                  <option value="minimalism">{t('style.minimalism', { lng: lang })}</option>
-                </optgroup>
+    {/* Estilos Modernos */}
+    <optgroup label={t('groups.modernes', { lng: lang })}>
+      <option value="abstrait">{t('styles.abstrait', { lng: lang })}</option>
+      <option value="impressionnisme">{t('styles.impressionnisme', { lng: lang })}</option>
+      <option value="expressionnisme">{t('styles.expressionnisme', { lng: lang })}</option>
+      <option value="cubisme">{t('styles.cubisme', { lng: lang })}</option>
+      <option value="pop_art">{t('styles.pop_art', { lng: lang })}</option>
+    </optgroup>
 
-                {/* Estilos para Pintura */}
-                <optgroup label={t('style.group_painting', { lng: lang })}>
-                  <option value="oil_technique">{t('style.oil_technique', { lng: lang })}</option>
-                  <option value="watercolor_style">{t('style.watercolor_style', { lng: lang })}</option>
-                  <option value="fresco">{t('style.fresco', { lng: lang })}</option>
-                  <option value="hyperrealism">{t('style.hyperrealism', { lng: lang })}</option>
-                  <option value="graffiti_style">{t('style.graffiti_style', { lng: lang })}</option>
-                </optgroup>
+    {/* Estilos Contemporáneos */}
+    <optgroup label={t('groups.contemporains', { lng: lang })}>
+      <option value="art_conceptuel">{t('styles.art_conceptuel', { lng: lang })}</option>
+      <option value="street_art">{t('styles.street_art', { lng: lang })}</option>
+      <option value="pixel_art">{t('styles.pixel_art', { lng: lang })}</option>
+      <option value="nft">{t('styles.nft', { lng: lang })}</option>
+      <option value="generatif">{t('styles.generatif', { lng: lang })}</option>
+    </optgroup>
 
-                {/* Estilos para Escultura */}
-                <optgroup label={t('style.group_sculpture', { lng: lang })}>
-                  <option value="figurative">{t('style.figurative', { lng: lang })}</option>
-                  <option value="kinetic_style">{t('style.kinetic_style', { lng: lang })}</option>
-                  <option value="organic_abstraction">{t('style.organic_abstraction', { lng: lang })}</option>
-                  <option value="neoclassical">{t('style.neoclassical', { lng: lang })}</option>
-                  <option value="assemblage">{t('style.assemblage', { lng: lang })}</option>
-                </optgroup>
+    {/* Estilos Clásicos y Tradicionales */}
+    <optgroup label={t('groups.classique_traditionnel', { lng: lang })}>
+      <option value="figuratif">{t('styles.figuratif', { lng: lang })}</option>
+      <option value="classicisme">{t('styles.classicisme', { lng: lang })}</option>
+      <option value="baroque">{t('styles.baroque', { lng: lang })}</option>
+      <option value="croquis">{t('styles.croquis', { lng: lang })}</option>
+    </optgroup>
 
-                {/* Estilos para Fotografía */}
-                <optgroup label={t('style.group_photography', { lng: lang })}>
-                  <option value="vintage">{t('style.vintage', { lng: lang })}</option>
-                  <option value="conceptual_photo">{t('style.conceptual_photo', { lng: lang })}</option>
-                  <option value="documentary">{t('style.documentary', { lng: lang })}</option>
-                  <option value="tilt_shift">{t('style.tilt_shift', { lng: lang })}</option>
-                </optgroup>
+    {/* Otros Estilos */}
+    <optgroup label={t('groups.autres_styles', { lng: lang })}>
+      <option value="documentaire">{t('styles.documentaire', { lng: lang })}</option>
+      <option value="noir_et_blanc">{t('styles.noir_et_blanc', { lng: lang })}</option>
+      <option value="tissagee">{t('textile_arttt.tissagee', { lng: lang })}</option>
+      <option value="mixte">{t('styles.mixte', { lng: lang })}</option>
+    </optgroup>
+  </select>
+</div>
 
-                {/* Estilos para Arte Digital */}
-                <optgroup label={t('style.group_digital', { lng: lang })}>
-                  <option value="vector_art">{t('style.vector_art', { lng: lang })}</option>
-                  <option value="pixel_art">{t('style.pixel_art', { lng: lang })}</option>
-                  <option value="cyberpunk">{t('style.cyberpunk', { lng: lang })}</option>
-                  <option value="vaporwave">{t('style.vaporwave', { lng: lang })}</option>
-                </optgroup>
-
-                {/* Estilos para Arte Textil */}
-                <optgroup label={t('style.group_textile', { lng: lang })}>
-                  <option value="batik">{t('style.batik', { lng: lang })}</option>
-                  <option value="japanese_sashiko">{t('style.japanese_sashiko', { lng: lang })}</option>
-                  <option value="abstract_weaving">{t('style.abstract_weaving', { lng: lang })}</option>
-                </optgroup>
-              </select>
-            </div>
 
             <div className="filter-group">
               <small>{t('min_price', { lng: lang })}</small>

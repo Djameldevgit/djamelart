@@ -137,109 +137,60 @@
   "monotype": "Monotipo",
   "embossage": "Grabado en relieve",
   "themee": "themeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-  "theme": {
-    "select_label": "Tema",
-    "placeholder": "Seleccione un tema",
+ 
     "abstrait": "Abstracto",
     "colore": "Colorido",
-    "graffiti": "Grafiti",
+    "graffiti": "Graffiti",
     "geometrique": "Geométrico",
-    "surrealisme": "Surrealista",
+    "surrealisme": "Surrealismo",
     "conceptuel": "Conceptual",
-    "animal": "Animales",
+    "replica": "Réplica",
+    "reproduction": "Reproducción",
+  
+    "animal": "Animal",
     "chat": "Gato",
     "chien": "Perro",
     "cheval": "Caballo",
     "oiseau": "Pájaro",
     "poisson": "Pez",
+  
     "paysage": "Paisaje",
     "foret": "Bosque",
     "montagne": "Montaña",
     "fleurs": "Flores",
     "mer": "Mar",
     "ciel": "Cielo",
+  
     "portrait": "Retrato",
     "corps_humain": "Cuerpo humano",
     "famille": "Familia",
+  
     "culture_populaire": "Cultura popular",
-    "replica": "Réplica",
-    "reproduction": "Reproducción",
     "bandes_dessinees": "Cómics",
     "cinema": "Cine",
-    "dessin_anime": "Animación",
+    "dessin_anime": "Dibujos animados",
     "jeu_video": "Videojuegos",
     "mode": "Moda",
     "mythologie": "Mitología",
     "religion": "Religión",
     "histoire": "Historia",
-    "fantastique": "Fantasía",
+  
+    "fantastique": "Fantástico",
     "science_fiction": "Ciencia ficción",
     "onirique": "Onírico",
+  
     "ville": "Ciudad",
     "architecture": "Arquitectura",
     "societe": "Sociedad",
-    "technologie": "Tecnología"
-  },
-  "theme_groups": {
-    "styles": "Estilos",
-    "animaux": "Animales",
-    "nature": "Naturaleza",
-    "humain": "Humano",
-    "culture": "Cultura",
-    "imagination": "Imaginación",
-    "societe": "Sociedad"
-  },
-
-
-
-
-
-
-
-
+    "technologie": "Tecnología",
+ 
+  
   
   "styless": "styleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-  "styles": {
-    "select_style": "Estilo",
-    "select_placeholder": "Estilo de la obra",
-    "abstrait": "Abstracto",
-    "impressionnisme": "Impresionismo",
-    "expressionnisme": "Expresionismo",
-    "cubisme": "Cubismo",
-    "surrealisme": "Surrealismo",
-    "hyperrealisme": "Hiperrealismo",
-    "figuratif": "Figurativo",
-    "classicisme": "Clasicismo",
-    "classic_art": "Arte clásico",
-    "modern_art": "Arte moderno",
-    "contemporary_art": "Arte contemporáneo",
-    "pop_art": "Arte pop",
-    "tachisme": "Tachismo",
-    "baroque": "Barroco",
-    "minimalisme": "Minimalismo",
-    "art_conceptuel": "Arte conceptual",
-    "land_art": "Land art",
-    "art_brut": "Art brut",
-    "art_cinetique": "Arte cinético",
-    "documentaire": "Documental",
-    "conceptuel": "Conceptual",
-    "street_art": "Arte urbano",
-    "noir_et_blanc": "Blanco y negro",
-    "futurisme": "Futurismo",
-    "glitch_art": "Glitch art",
-    "pixel_art": "Pixel art",
-    "nft": "NFT",
-    "generatif": "Generativo",
-    "croquis": "Boceto",
-    "manga": "Manga",
-    "caricature": "Caricatura",
-    "tradicional": "Tradicional",
-    "contemporaneo": "Contemporáneo",
-    "abstracto": "Abstracto",
-    "minimalista": "Minimalista",
-    "folclorico": "Folclórico",
-    "mixte": "Mixto"
-  },
+ 
+  
+  
+  
   "groups": {
     "modernes": "Moderno",
     "avantgardes": "Vanguardista",

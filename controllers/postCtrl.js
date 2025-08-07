@@ -105,7 +105,7 @@ const postCtrl = {
                 query.theme = theme;
             }
             if (style) {
-                query.theme = theme;
+                query.style = style;
             }
          
             if (minPrice || maxPrice) {

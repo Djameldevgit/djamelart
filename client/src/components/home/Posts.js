@@ -6,97 +6,50 @@ import LoadMoreBtn from '../LoadMoreBtn';
 import { getDataAPI } from '../../utils/fetchData';
 import { POST_TYPES } from '../../redux/actions/postAction';
 
-const Posts = ({ filters = {} }) => {
-    const { homePosts,   theme } = useSelector(state => state);
-    const dispatch = useDispatch();
-    const [load, setLoad] = useState(false);
+const Posts = ({ posts }) => {
+  const { homePosts, theme } = useSelector(state => state);
+  const dispatch = useDispatch();
+  const [load, setLoad] = useState(false);
 
-    // Filtrar los posts según los filtros
-    const filteredPosts = homePosts.posts.filter(post => {
-        // Filtro por subCategory
-        if (filters.category && post.category !== filters.category) {
-            return false;
-        }
+  // Mostrar los posts recibidos (filtrados o no)
+  const displayPosts = posts?.length ? posts : homePosts.posts;
 
-        // Filtro por título
-        if (filters.title && !post.title.toLowerCase().includes(filters.title.toLowerCase())) {
-            return false;
-        }
-        if (filters.theme && !post.theme.toLowerCase().includes(filters.theme.toLowerCase())) {
-            return false;
-        }
-
-        if (filters.style && !post.style.toLowerCase().includes(filters.style.toLowerCase())) {
-            return false;
-        }
-
-        // Filtro por fecha
-        if (filters.startDate || filters.endDate) {
-            const postDate = new Date(post.createdAt); // Asume que tienes un campo createdAt
-            const startDate = filters.startDate ? new Date(filters.startDate) : null;
-            const endDate = filters.endDate ? new Date(filters.endDate) : null;
-
-            if (startDate && postDate < startDate) {
-                return false;
-            }
-            if (endDate && postDate > endDate) {
-                return false;
-            }
-        }
-
-        // Filtro por precio
-        if (filters.minPrice || filters.maxPrice) {
-            const postPrice = post.price || 0; // Asume que tienes un campo price
-            const minPrice = filters.minPrice ? Number(filters.minPrice) : 0;
-            const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : Infinity;
-
-            if (postPrice < minPrice || postPrice > maxPrice) {
-                return false;
-            }
-        }
-
-        return true;
+  // Cargar más publicaciones
+  const handleLoadMore = async () => {
+    setLoad(true);
+    const res = await getDataAPI(`posts?limit=${homePosts.page * 9}`);
+    dispatch({
+      type: POST_TYPES.GET_POSTS,
+      payload: { ...res.data, page: homePosts.page + 1 },
     });
+    setLoad(false);
+  };
 
-    const handleLoadMore = async () => {
-        setLoad(true);
-        const res = await getDataAPI(`posts?limit=${homePosts.page * 9}` );
+  return (
+    <div>
+      <div className="post_thumb">
+        {displayPosts.length === 0 ? (
+          <h2 className="text-center mt-4">No se encontraron publicaciones.</h2>
+        ) : (
+          displayPosts.map(post => (
+            <PostCard key={post._id} post={post} theme={theme} />
+          ))
+        )}
 
-        dispatch({
-            type: POST_TYPES.GET_POSTS,
-            payload: { ...res.data, page: homePosts.page + 1 },
-        });
+        {load && <img src={LoadIcon} alt="loading" className="d-block mx-auto" />}
+      </div>
 
-        setLoad(false);
-    };
-
-    return (
-
-        <div>
-
-
-            <div className="post_thumb">
-                {/* Mostrar los posts filtrados */}
-                {filteredPosts.map(post => (
-                    <PostCard key={post._id} post={post} theme={theme} />
-                ))}
-
-                {/* Mostrar el ícono de carga */}
-                {load && <img src={LoadIcon} alt="loading" className="d-block mx-auto" />}
-
-                {/* Botón para cargar más posts */}
-
-            </div>
-
-            <LoadMoreBtn
-                result={homePosts.result}
-                page={homePosts.page}
-                load={load}
-                handleLoadMore={handleLoadMore}
-            />
-
-        </div>
-    );
+      {/* Mostrar "Cargar más" solo si no hay filtros activos */}
+      {!posts && (
+        <LoadMoreBtn
+          result={homePosts.result}
+          page={homePosts.page}
+          load={load}
+          handleLoadMore={handleLoadMore}
+        />
+      )}
+    </div>
+  );
 };
 
 export default Posts;

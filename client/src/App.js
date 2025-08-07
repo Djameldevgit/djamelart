@@ -150,10 +150,7 @@ function App() {
       </Router>
     )
   }
-  const renderHomeWithProps = (props) => (
-    <Home {...props} filters={filters} />
-  );
-
+ 
   return (
 
  
@@ -169,8 +166,8 @@ function App() {
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
           <Switch>
-          <Route path="/" render={renderHomeWithProps} />
-          <Route exact path="/" component={Home} />
+         
+          <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/forgot_password" component={ForgotPassword} />

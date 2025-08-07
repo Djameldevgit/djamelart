@@ -143,7 +143,7 @@ url("./header.css"); */
 @import url("./googlelogin.css");
 
 @import url("./dropdownnavbar.css");
-
+@import url("./modals/modalfiltershome.css");
 
 .rtl {
   direction: rtl;
