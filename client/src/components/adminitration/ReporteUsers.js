@@ -51,7 +51,7 @@ const ReportedUsers = () => {
   };
 
   return (
-    <Container fluid className="py-4" dir={isArabic ? "rtl" : "ltr"} lang={isArabic ? "ar" : "es"}>
+    <Container fluid className="py-4"  >
       <h2 className="mb-4">{t("headerrr.title")}</h2>
 
       {loading ? (
@@ -66,7 +66,7 @@ const ReportedUsers = () => {
         <div className="table-responsive" style={{ overflow: "visible" }}>
           <Table striped bordered hover className="align-middle">
             <thead className="table-dark">
-              <tr>
+              <tr >
                 <th>{t("tableHeadersss.reporter")}</th>
                 <th>{t("tableHeadersss.reportedUser")}</th>
                 <th>{t("tableHeadersss.postTitle")}</th>

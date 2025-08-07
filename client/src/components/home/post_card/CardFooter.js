@@ -37,7 +37,10 @@ const CardFooter = ({ post }) => {
   return (
     <div>
       {!isDetailPage && (
-        <Card>
+        <Card style={{
+          direction: lang === 'ar' ? 'rtl' : 'ltr',
+            textAlign: lang === 'ar' ? 'right' : 'left',
+          }}>
           <Card.Body>
             <Card.Title>{t('title', { lng: lang })}: {t(post.title, { lng: lang })}</Card.Title>
           </Card.Body>

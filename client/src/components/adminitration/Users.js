@@ -47,7 +47,7 @@ import BloqueModalUser from "./BloqueModalUser";
 const Users = () => {
   const { homeUsers, auth, socket, online, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
-  const { t } = useTranslation('modales');
+  const { t } = useTranslation('aplicacion');
   const lang = languageReducer.language || 'es';
 
   const [load, setLoad] = useState(false);

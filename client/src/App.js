@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect,useState } from 'react'
 import { BrowserRouter as Router, Route,Switch } from 'react-router-dom'
 import i18n from './i18n';
  
@@ -82,6 +82,14 @@ function App() {
   const { auth, status, modal, languageReducer } = useSelector(state => state)
 
   const language = languageReducer?.language || localStorage.getItem("lang") || "en";
+  const [filters, setFilters] = useState({
+    category: '',
+    title: '',
+    theme: '',
+    style: '',
+    minPrice: '',
+    maxPrice: '',
+  });
 
   const dispatch = useDispatch()
   useEffect(() => {
@@ -142,10 +150,13 @@ function App() {
       </Router>
     )
   }
+  const renderHomeWithProps = (props) => (
+    <Home {...props} filters={filters} />
+  );
 
   return (
 
-
+ 
     <Router>
       <Alert />
 
@@ -153,10 +164,12 @@ function App() {
       <div className={`App ${(status || modal) && 'mode'}`}>
         <LanguageSelectorandroid />
         <div className="main">
-          <Navbar2 />
+        <Navbar2 onFiltersChange={setFilters} />
+     
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
           <Switch>
+          <Route path="/" render={renderHomeWithProps} />
           <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/register" component={Register} />

@@ -6,7 +6,7 @@ import LoadMoreBtn from '../LoadMoreBtn';
 import { getDataAPI } from '../../utils/fetchData';
 import { POST_TYPES } from '../../redux/actions/postAction';
 
-const Posts = ({ filters }) => {
+const Posts = ({ filters = {} }) => {
     const { homePosts,   theme } = useSelector(state => state);
     const dispatch = useDispatch();
     const [load, setLoad] = useState(false);
