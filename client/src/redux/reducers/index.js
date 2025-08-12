@@ -22,7 +22,7 @@ import homeUsers from './userReducer';
 import orders from './orderReducer'
 import userBlockReducer from './userBlcokReducer'
 import usersActionReducer from './usersActionReducer'
-import blog  from './blogReducer'
+ 
 import ProvaReducer from './provaReducer'
 import reportReducer from './reportReducer'
 import publiBlogReducer from './publiBlogReducer'
@@ -47,6 +47,6 @@ export default combineReducers({
    homePostsAprove ,cart,languageReducer,
    roleReducer,homeUsers,orders,userBlockReducer,
    usersActionReducer  ,ProvaReducer,
-   reportReducer ,publiBlogReducer ,blog
+   reportReducer ,publiBlogReducer  
 
 }) 

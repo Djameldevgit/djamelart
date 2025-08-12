@@ -68,8 +68,7 @@ import Conversationadmin from './pages/messageadmin/[id]';
 import InfoAplicacion from './components/blogInfoComment/InfoAplicacion';
  
 import BlogInfo from './pages/BlogInfo';
-import Publoblog from './pages/publoblog';
-import Blog from './pages/Blog';
+ 
 //import { getPostsAdmin } from './redux/actions/publiBlogAction.';
  
  
