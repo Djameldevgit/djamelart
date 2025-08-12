@@ -2,83 +2,54 @@ import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createComment } from '../../redux/actions/commentAction'
 import Icons from '../Icons'
-import { useTranslation } from 'react-i18next'
-import DesactivateModal from '../DesactivateModal'
 
-const InputComment = ({ children, post, onReply, setOnReply }) => {
-  const [content, setContent] = useState('')
-  const [showDeactivatedModal, setShowDeactivatedModal] = useState(false)
-  const { auth, socket, theme, languageReducer } = useSelector(state => state)
-  const dispatch = useDispatch()
-  const { t } = useTranslation('home')
-  const lang = languageReducer?.language || 'en'
+const InputComment = ({children, user, onReply, setOnReply}) => {
+    const [content, setContent] = useState('')
 
-  // ✅ Verificación del estado de cuenta
-  const canProceed = () => {
-    if (!auth.user?.isActive) {
-      setShowDeactivatedModal(true)
-      return false
-    }
-    return true
-  }
+    const { auth, socket, theme } = useSelector(state => state)
+    const dispatch = useDispatch()
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        if(!content.trim()){
+            if(setOnReply) return setOnReply(false);
+            return;
+        }
 
-    if (!canProceed()) return
+        setContent('')
+        
+        const newComment = {
+            content,
+            likes: [],
+            user: auth.user,
+            createdAt: new Date().toISOString(),
+            reply: onReply && onReply.commentId,
+            tag: onReply && onReply.user
+        }
+        
+        dispatch(createComment({user, newComment, auth, socket}))
 
-    if (!content.trim()) {
-      if (setOnReply) return setOnReply(false)
-      return
-    }
-
-    setContent('')
-
-    const newComment = {
-      content,
-      likes: [],
-      user: auth.user,
-      createdAt: new Date().toISOString(),
-      reply: onReply && onReply.commentId,
-      tag: onReply && onReply.user
+        if(setOnReply) return setOnReply(false);
     }
 
-    dispatch(createComment({ post, newComment, auth, socket }))
+    return (
+        <form className="card-footer comment_input" onSubmit={handleSubmit} >
+            {children}
+            <input type="text" placeholder="Add your comments..."
+            value={content} onChange={e => setContent(e.target.value)}
+            style={{
+                filter: theme ? 'invert(1)' : 'invert(0)',
+                color: theme ? 'white' : '#111',
+                background: theme ? 'rgba(0,0,0,.03)' : '',
+            }} />
 
-    if (setOnReply) return setOnReply(false)
-  }
+            <Icons setContent={setContent} content={content} theme={theme} />
 
-  return (
-    <div>
-      <form className="card-footer comment_input" onSubmit={handleSubmit}>
-        {children}
-        <input
-          type="text"
-          placeholder={t('addYourComment', { lng: lang })}
-          value={content}
-          onChange={e => setContent(e.target.value)}
-          style={{
-            filter: theme ? 'invert(1)' : 'invert(0)',
-            color: theme ? 'white' : '#111',
-            background: theme ? 'rgba(0,0,0,.03)' : '',
-          }}
-        />
-
-        <Icons setContent={setContent} content={content} theme={theme} />
-
-        <button type="submit" className="postBtn">
-          {t('post', { lng: lang })}
-        </button>
-      </form>
-
-      {/* ✅ Modal si cuenta está desactivada */}
-      <DesactivateModal
-        show={showDeactivatedModal}
-        onClose={() => setShowDeactivatedModal(false)}
-      />
-    </div>
-  )
+            <button type="submit" className="postBtn">
+                user
+            </button>
+        </form>
+    )
 }
 
 export default InputComment
-

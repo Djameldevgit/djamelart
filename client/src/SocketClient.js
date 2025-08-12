@@ -195,6 +195,72 @@ const SocketClient = () => {
 
         return () => socket.off('userBusy')
     }, [socket, dispatch, call])
+// --- Blog Comments (nuevo sistema) ---
+// Crear comentario
+useEffect(() => {
+    socket.on('createBlogCommentToClient', comment => {
+        dispatch({
+            type: GLOBALTYPES.BLOG_COMMENT_CREATE,
+            payload: comment
+        });
+    });
+
+    return () => socket.off('createBlogCommentToClient');
+}, [socket, dispatch]);
+
+// Responder comentario
+useEffect(() => {
+    socket.on('replyBlogCommentToClient', reply => {
+        dispatch({
+            type: GLOBALTYPES.BLOG_COMMENT_REPLY,
+            payload: reply
+        });
+    });
+
+    return () => socket.off('replyBlogCommentToClient');
+}, [socket, dispatch]);
+
+// Editar comentario
+useEffect(() => {
+    socket.on('editBlogCommentToClient', updatedComment => {
+        dispatch({
+            type: GLOBALTYPES.BLOG_COMMENT_EDIT,
+            payload: updatedComment
+        });
+    });
+
+    return () => socket.off('editBlogCommentToClient');
+}, [socket, dispatch]);
+
+// Eliminar comentario
+useEffect(() => {
+    socket.on('deleteBlogCommentToClient', deletedId => {
+        dispatch({
+            type: GLOBALTYPES.BLOG_COMMENT_DELETE,
+            payload: deletedId
+        });
+    });
+
+    return () => socket.off('deleteBlogCommentToClient');
+}, [socket, dispatch]);
+
+// --- Notificación para nuevos comentarios ---
+useEffect(() => {
+    socket.on('notifyBlogCommentToClient', notifyData => {
+        dispatch({ type: NOTIFY_TYPES.CREATE_NOTIFY, payload: notifyData });
+
+        if (notify.sound) audioRef.current.play();
+
+        spawnNotification(
+            notifyData.user.username + ' comentó en el blog',
+            notifyData.user.avatar,
+            notifyData.url,
+            'Nuevo comentario en el blog'
+        );
+    });
+
+    return () => socket.off('notifyBlogCommentToClient');
+}, [socket, dispatch, notify.sound]);
 
     return (
         <>

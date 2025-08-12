@@ -26,19 +26,24 @@ const postCtrl = {
                 devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit
             } = postData || {};
-
+    
             if (images.length === 0)
                 return res.status(400).json({ msg: req.__('post.add_photo') });
-
+    
             const newPost = new Posts({
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
                 devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit, images,
                 user: req.user._id
             });
-
+    
             await newPost.save();
-
+    
+            // 🟡 Actualizar la actividad del usuario
+            await Users.findByIdAndUpdate(req.user._id, {
+                lastActivity: new Date()
+            });
+    
             res.json({
                 msg: req.__('post.created_post'),
                 newPost: {
@@ -50,6 +55,7 @@ const postCtrl = {
             return res.status(500).json({ msg: err.message });
         }
     },
+    
     aprobarPostPendiente: async (req, res) => {
         try {
             const post = await Posts.findById(req.params.id);

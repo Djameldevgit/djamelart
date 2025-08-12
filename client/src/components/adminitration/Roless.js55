@@ -1,0 +1,77 @@
+import React,{useEffect,useState} from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Table, Dropdown } from "react-bootstrap";
+import { updateUserRole } from "../../redux/actions/roleAction";
+ 
+const rolesEnum = ["user", "Super-utilisateur", "Moderateur", "admin"];
+
+const Roless = () => { 
+   const { homeUsers,auth } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const [usersList, setUsersList] = useState(homeUsers?.users || []);
+  // Solo usamos homeUsers
+
+  useEffect(() => {
+    if (homeUsers?.users) {
+      setUsersList(homeUsers.users);
+    }
+  }, [homeUsers]);
+   const handleRoleChange = (user, newRole) => {
+    dispatch(updateUserRole(user, newRole, auth));
+  };
+
+  return (
+    <div className="mt-4">
+      <h4>Gestionar Roles de Usuarios</h4>
+      <Table striped bordered hover responsive>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Usuario</th>
+            <th>Email</th>
+            <th>Rol Actual</th>
+            <th>Cambiar Rol</th>
+          </tr>
+        </thead>
+        <tbody>
+          {usersList && usersList.length > 0 ? (
+            usersList.map((user, index) => (
+              <tr key={user._id}>
+                <td>{index + 1}</td>
+                <td>{user.username}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="secondary" id={`dropdown-${user._id}`}>
+                      Cambiar Rol
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {rolesEnum.map((role) => (
+                        <Dropdown.Item
+                          key={role}
+                          onClick={() => handleRoleChange(user._id, role)}
+                        >
+                          {role}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" className="text-center">
+                No hay usuarios disponibles
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
+    </div>
+  );
+};
+
+export default Roless;
+

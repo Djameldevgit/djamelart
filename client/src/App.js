@@ -23,8 +23,7 @@ import { getNotifies } from './redux/actions/notifyAction'
 
 import { getPostsPendientes } from './redux/actions/postAproveAction'
 import Postspendientes from './pages/postspendientes'
-
-
+ 
 import Navbar2 from './components/Navbar2'
 
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
@@ -36,7 +35,7 @@ import { getCart } from './redux/actions/cartAction';
 import Cart from './pages/carte/cart';
 import Chekoutt from './pages/carte/Chekoutt';
 
-import Informacionaplicacion from './pages/informacionaplicacion';
+ 
 import Orderss from './pages/carte/orderss';
 import { getOrders } from './redux/actions/orderAction';
 import ForgotPassword from './auth/ForgotPassword';
@@ -66,6 +65,12 @@ import Message from './pages/message/[id]';
 import Messages from './pages/messages';
 import Messagesadmin from './pages/messagesadmin';
 import Conversationadmin from './pages/messageadmin/[id]';
+import InfoAplicacion from './components/blogInfoComment/InfoAplicacion';
+ 
+import BlogInfo from './pages/BlogInfo';
+import Publoblog from './pages/publoblog';
+import Blog from './pages/Blog';
+//import { getPostsAdmin } from './redux/actions/publiBlogAction.';
  
  
  
@@ -73,6 +78,7 @@ import Conversationadmin from './pages/messageadmin/[id]';
  import Message from './pages/message/[id]';
 
 import Conversations from './pages/message/conversatios';
+import blogReducer from './redux/reducers/blogReducer';
 <Route exact path="/message/:id" component={auth.token ? Message: Login} />
 <Route exact path="/conversations" component={auth.token ? Conversations: Login}   />
 
@@ -118,6 +124,7 @@ function App() {
       dispatch(getCart((auth.token)))
       dispatch(getOrders((auth.token)))
       dispatch(getUsers(auth.token))
+      
 
       dispatch(getPostsPendientes(auth.token))
       dispatch(getBlockedUsers(auth.token))
@@ -180,7 +187,7 @@ function App() {
           <Route exact path="/messageadmin/:id" component={auth.token ? Conversationadmin : Login} />
           <Route exact path="/messageadmin" component={auth.token ? Messagesadmin : Login} />
          
-
+          <Route path="/blog" component={auth.token ? Blog : Login} />
 
             <Route exact path="/reportesusers" component={auth.token ? Reportess : Login} />
 
@@ -189,7 +196,7 @@ function App() {
 
           <Route exact path="/users/adminsendemail" component={auth.token ? AdminSendEmails : Login} />
           <Route exact path="/cart/chekout" component={auth.token ? Chekoutt : Login} />
-          <Route exact path="/cart/cartcarrito" component={auth.token ? Cart : Login} />
+          <Route exact path="/cart/cartcarrito" component={auth.towken ? Cart : Login} />
 
           <Route exact path="/rolesuser" component={auth.token ? Roles : Login} />
           <Route exact path="/users/userss" component={auth.token ? Userss : Login} />
@@ -200,13 +207,17 @@ function App() {
 
           <Route exact path="/users/bloqueos" component={auth.token ? ListaUseariosbloqueadoss : Login} />
 
-          <Route exact path="/informacionaplicacionn" component={Informacionaplicacion} />
+          <Route exact path="/bloginfo" component={BlogInfo} />
+          <Route exact  path="/blog" component={auth.token ? Blog : Login}  />
+        <Route exact path="/infoaplicacion" component={InfoAplicacion} />
+
           <Route exact path="/orderss" component={auth.token ? Orderss : Login} />
           <Route exact path="/usersblock" component={auth.token ? Usersblock : Login} />
 
           <Route exact path="/forgot_password" component={ForgotPassword} />
           <Route path="/user/reset/:token" component={ResetPassword} exact />
 
+          <Route exact path="/publiblog" component={auth.token ? Publoblog : Login} />
 
 
           <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />*/

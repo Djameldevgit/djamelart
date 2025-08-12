@@ -6,7 +6,7 @@ const initialState = {
     result: 0,
     page: 1,
     error: null,
- 
+    adminComments: {} // Estructura: { adminUserId: [comentarios] }
 };
 
 const userReducer = (state = initialState, action) => {
@@ -57,7 +57,30 @@ const userReducer = (state = initialState, action) => {
                         : user
                 )
             };
- 
+
+        // CASOS PARA COMENTARIOS (CORREGIDOS)
+        case USER_TYPES.GET_ADMIN_COMMENTS:
+            return {
+                ...state,
+                adminComments: {
+                    ...state.adminComments,
+                    [action.payload.adminUserId]: action.payload.comments
+                }
+            };
+          
+        case USER_TYPES.ADD_ADMIN_COMMENT: {
+            const { blogAuthor } = action.payload;
+            return {
+                ...state,
+                adminComments: {
+                    ...state.adminComments,
+                    [blogAuthor]: [
+                        action.payload,
+                        ...(state.adminComments[blogAuthor] || [])
+                    ]
+                }
+            };
+        }
 
         default:
             return state;

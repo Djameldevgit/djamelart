@@ -49,10 +49,10 @@ export const getProfileUsers = ({id, auth}) => async (dispatch) => {
 
 export const updateProfileUser = ({userData, avatar, auth}) => async (dispatch) => {
     if(!userData.username)
-    return dispatch({type: GLOBALTYPES.ALERT, payload: {error: "Please add your user name."}})
+    return dispatch({type: GLOBALTYPES.ALERT, payload: {error: "Please add your full name."}})
 
     if(userData.username.length > 25)
-    return dispatch({type: GLOBALTYPES.ALERT, payload: {error: "Your user name too long."}})
+    return dispatch({type: GLOBALTYPES.ALERT, payload: {error: "Your full name too long."}})
 
     if(userData.story.length > 200)
     return dispatch({type: GLOBALTYPES.ALERT, payload: {error: "Your story too long."}})

@@ -9,8 +9,58 @@ export const ROLES_TYPES = {
 
 
 }
+ 
 
+// actions/roleAction.js
+export const updateUserRole = (userId, newRole, token) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
 
+    const res = await patchDataAPI(`update_role/${userId}`, { role: newRole }, token);
+    
+    // Actualización simultánea en ambos reducers
+    dispatch({
+      type: ROLES_TYPES.UPDATE_ROLE,
+      payload: {
+        userId,
+        newRole,
+        updatedUser: res.data.user // Usuario completo actualizado
+      }
+    });
+
+    // Si es el usuario actual, actualizar auth
+    const { auth } = getState();
+    if (auth.user?._id === userId) {
+      dispatch({
+        type: GLOBALTYPES.AUTH,
+        payload: {
+          ...auth,
+          user: {
+            ...auth.user,
+            role: newRole,
+            ...res.data.user // Sobrescribir con datos actualizados
+          }
+        }
+      });
+    }
+
+    dispatch({ 
+      type: GLOBALTYPES.ALERT, 
+      payload: { success: res.data.msg } 
+    });
+
+    return res.data;
+
+  } catch (err) {
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { 
+        error: err.response?.data?.msg || 'Error updating role' 
+      }
+    });
+    throw err;
+  }
+};
 export const roleuserautenticado = (user, auth) => async (dispatch) => {
   try {
     dispatch({ type: ROLES_TYPES.LOADING, payload: true })

@@ -136,13 +136,13 @@ import frComponentstatusmodal from './locales/fr/componentstatusmodal.json';
 import kaComponentstatusmodal from './locales/ka/componentstatusmodal.json';
 import ruComponentstatusmodal from './locales/ru/componentstatusmodal.json';
 
-import frSubcategorias from './locales/fr/subcategorias.json';
-import enSubcategorias from './locales/en/subcategorias.json';
-import arSubcategorias from './locales/ar/subcategorias.json';
-import esSubcategorias from './locales/es/subcategorias.json';
-import ruSubcategorias from './locales/ru/subcategorias.json';      // Nuevo
-import kaSubcategorias from './locales/ka/subcategorias.json';      // Nuevo
-import chSubcategorias from './locales/ch/subcategorias.json';
+import frSearchhome from './locales/fr/searchhome.json';
+import enSearchhome from './locales/en/searchhome.json';
+import arSearchhome from './locales/ar/searchhome.json';
+import esSearchhome from './locales/es/searchhome.json';
+import ruSearchhome from './locales/ru/searchhome.json';      // Nuevo
+import kaSearchhome from './locales/ka/searchhome.json';      // Nuevo
+import chSearchhome from './locales/ch/searchhome.json';
 // Categorías
 import frCategorias from './locales/fr/categorias.json';
 import enCategorias from './locales/en/categorias.json';
@@ -186,8 +186,7 @@ import esNavbar from './locales/es/navbar.json';
 import ruNavbar from './locales/ru/navbar.json';             // Nuevo
 import kaNavbar from './locales/ka/navbar.json';             // Nuevo
 import chNavbar from './locales/ch/navbar.json';             // Nuevo
-import Bloqueos from './pages/users/bloqueos';
-
+ 
 const resources = {
   ar: {
 
@@ -195,7 +194,7 @@ const resources = {
     chat: arChat,
     bloqueos: arBloqueos,
     cardbodycarousel: arCardbodycarousel,
- info: arInfo,
+    info: arInfo,
     cart: arCart,
     search: arSearch,
     cardbodytitle: arCardbodytitle,
@@ -209,7 +208,7 @@ const resources = {
     postDetail: arPostDetail,
     comments: arComments,
     navbar: arNavbar,
-    subcategorias: arSubcategorias,
+    searchhome: arSearchhome,
     componentstatusmodal: arComponentstatusmodal
 
   },
@@ -232,7 +231,7 @@ const resources = {
     postDetail: chPostDetail,
     comments: chComments,
     navbar: chNavbar,
-    subcategorias: chSubcategorias,
+   searchhome: chSearchhome,
     componentstatusmodal: chComponentstatusmodal
   },
   en: {
@@ -254,7 +253,7 @@ const resources = {
     postDetail: enPostDetail,
     comments: enComments,
     navbar: enNavbar,
-    subcategorias: enSubcategorias,
+    searchhome: enSearchhome,
     componentstatusmodal: enComponentstatusmodal
   },
   es: {
@@ -276,7 +275,7 @@ const resources = {
     postDetail: esPostDetail,
     comments: esComments,
     navbar: esNavbar,
-    subcategorias: esSubcategorias,
+    searchhome: esSearchhome,
     componentstatusmodal: esComponentstatusmodal
   },
   fr: {
@@ -298,7 +297,7 @@ const resources = {
     postDetail: frPostDetail,
     comments: frComments,
     navbar: frNavbar,
-    subcategorias: frSubcategorias,
+    searchhome: frSearchhome,
     componentstatusmodal: frComponentstatusmodal
   },
   kab: {
@@ -320,13 +319,13 @@ const resources = {
     postDetail: kaPostDetail,
     comments: kaComments,
     navbar: kaNavbar,
-    subcategorias: kaSubcategorias,
+    searchhome: kaSearchhome,
     componentstatusmodal: kaComponentstatusmodal
   },
   ru: {
     modales: ruModales,
     chat: ruChat,
-    bloqueos:ruBloqueos,
+    bloqueos: ruBloqueos,
     cardbodycarousel: ruCardbodycarousel,
     info: ruInfo,
     cart: ruCart,
@@ -342,7 +341,7 @@ const resources = {
     postDetail: ruPostDetail,
     comments: ruComments,
     navbar: ruNavbar,
-    subcategorias: ruSubcategorias,
+    searchhome: ruSearchhome,
     componentstatusmodal: ruComponentstatusmodal
   }
 };

@@ -1,8 +1,5 @@
 const Users = require("../models/userModel");
-const Report = require("../models/reportModel");
  
-const Posts = require('../models/postModel')
-const Comments = require('../models/commentModel')
 class APIfeatures {
     constructor(query, queryString) {
         this.query = query;

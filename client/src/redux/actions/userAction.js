@@ -1,6 +1,6 @@
 import { GLOBALTYPES } from './globalTypes';
 import { imageUpload } from '../../utils/imageUpload';
-import { getDataAPI, patchDataAPI, deleteDataAPI  } from '../../utils/fetchData';
+import {postDataAPI, getDataAPI, patchDataAPI, deleteDataAPI  } from '../../utils/fetchData';
  
 export const USER_TYPES = {
     LOADING_USERS: 'LOADING_USERS',
@@ -11,6 +11,12 @@ export const USER_TYPES = {
     BLOCK_USER_SUCCESS: 'BLOCK_USER_SUCCESS',
     UNBLOCK_USER_SUCCESS: 'UNBLOCK_USER_SUCCESS',
     UPDATE_PRIVILEGIOS: 'UPDATE_PRIVILEGIOS',
+CREATE_COMMENT:'CREATE_COMMENT',
+GET_ADMIN_COMMENTS:'GET_ADMIN_COMMENTS',
+DELETE_ADMIN_COMMENT:'DELETE_ADMIN_COMMENT'
+
+
+    
 };
  
 
@@ -217,4 +223,88 @@ export const deleteUser = ({id, auth}) => async (dispatch) => {
       });
     }
   };
+  export const createComment = ({ newComment, auth, socket }) => async (dispatch) => {
+    try {
+      const res = await postDataAPI('admin/comments', newComment, auth.token);
   
+      // Emitir evento solo si socket está disponible
+      if (socket) {
+        socket.emit('createAdminComment', {
+          ...res.data.newComment,
+          user: auth.user // Info del creador
+        });
+      }
+  
+      dispatch({
+        type: USER_TYPES.CREATE_COMMENT,
+        payload: res.data.newComment
+      });
+  
+      return res.data;
+  
+    } catch (err) {
+      console.error("Error completo:", err.response?.data);
+      throw err;
+    }
+  };
+  
+  export const getAdminComments = ({ adminUserId, auth }) => async (dispatch) => {
+    try {
+      console.log('[FRONTEND] Solicitando comentarios para:', adminUserId);
+      
+      const res = await getDataAPI(`admin/comments/${adminUserId}`, auth.token);
+      
+      if (!res.data?.success) {
+        throw new Error(res.data?.error || 'Error en la respuesta del servidor');
+      }
+  
+      dispatch({
+        type:  USER_TYPES.GET_ADMIN_COMMENTS,
+                payload: {
+          adminUserId,
+          comments: res.data.comments
+        }
+      });
+  
+    } catch (err) {
+      console.error('[FRONTEND] Error completo:', {
+        url: err.config?.url,
+        status: err.response?.status,
+        data: err.response?.data,
+        stack: err.stack
+      });
+      
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: {
+          error: 'Error al cargar comentarios',
+          details: process.env.NODE_ENV === 'development' ? 
+            `${err.message} - ${err.response?.data?.details}` : 
+            undefined
+        }
+      });
+      
+      throw err; // Para manejo adicional en componentes
+    }
+  };
+  
+  export const deleteAdminComment = ({ commentId, auth, socket }) => async (dispatch) => {
+    try {
+      await deleteDataAPI(`admin/comments/${commentId}`, auth.token);
+      
+      if (socket) {
+        socket.emit('deleteAdminComment', { commentId });
+      }
+  
+      dispatch({
+        type: USER_TYPES.DELETE_ADMIN_COMMENT,
+        payload: commentId
+      });
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: err.response?.data?.msg || 'Error al eliminar comentario' }
+      });
+      throw err;
+    }
+  };

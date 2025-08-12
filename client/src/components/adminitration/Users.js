@@ -49,7 +49,7 @@ const Users = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation('aplicacion');
   const lang = languageReducer.language || 'es';
-
+  console.log("Usuario activado:", auth.user.isVerified)
   const [load, setLoad] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);

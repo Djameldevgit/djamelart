@@ -85,32 +85,28 @@ export const resetPassword = (password, token) => async (dispatch) => {
     }
   }
   
-
-
-
-
-
-export const activationAccount = (activation_token) => async (dispatch) => {
+  export const activationAccount = (activation_token) => async (dispatch) => {
     try {
       dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
   
+      // Activar la cuenta
       const res = await postDataAPI('activate', { activation_token });
-  
-      // Actualiza el estado del usuario si tu backend lo devuelve
-      dispatch({
-        type: GLOBALTYPES.AUTH,
-        payload: {
-          user: {
-            ...res.data.user,
-          },
-          token: '', // puedes dejar vacío si el token no cambia
-        },
-      });
   
       dispatch({
         type: GLOBALTYPES.ALERT,
         payload: { success: res.data.msg },
       });
+  
+      // Una vez activado, recargar el usuario y token en auth
+      const refresh = await postDataAPI('refresh_token');
+      dispatch({
+        type: GLOBALTYPES.AUTH,
+        payload: {
+          token: refresh.data.access_token,
+          user: refresh.data.user,
+        },
+      });
+  
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
@@ -120,6 +116,8 @@ export const activationAccount = (activation_token) => async (dispatch) => {
       });
     }
   };
+  
+  
 export const sendActivationEmail = (token) => async (dispatch) => {
     try {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });

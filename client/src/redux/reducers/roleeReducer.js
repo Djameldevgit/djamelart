@@ -1,38 +1,35 @@
 import { ROLES_TYPES } from "../actions/roleAction";
 
+import {   GLOBALTYPES } from '../actions/globalTypes';
+ 
 const initialState = {
-  loading: false,
-  role: "",
-  user: null,
-  users: [] // Lista de usuarios
+  usersRoles: {}, // Almacena roles por userId
+  currentUserRole: null // Rol del usuario logueado
 };
 
-const roleReducer = (state = initialState, action) => {
+export default function roleReducer(state = initialState, action) {
   switch (action.type) {
-    case ROLES_TYPES.LOADING:
+    case ROLES_TYPES.UPDATE_ROLE:
       return {
         ...state,
-        loading: action.payload
+        usersRoles: {
+          ...state.usersRoles,
+          [action.payload.userId]: action.payload.newRole
+        },
+        currentUserRole: action.payload.updatedUser._id === action.payload.userId 
+          ? action.payload.newRole 
+          : state.currentUserRole
       };
 
-    case ROLES_TYPES.USER_ROLE:
-    case ROLES_TYPES.SUPERUSER_ROLE:
-    case ROLES_TYPES.MODERADOR_ROLE:
-    case ROLES_TYPES.ADMIN_ROLE:
+    case GLOBALTYPES.AUTH:
       return {
         ...state,
-        users: state.users.map(user =>
-          user._id === action.payload.user._id
-            ? { ...user, role: action.payload.user.role } // Actualiza el rol correctamente
-            : user
-        ),
-        user: { ...action.payload.user, role: action.payload.user.role }, // Asegura que user también se actualiza
-        role: action.payload.user.role // Actualiza el estado del rol globalmente
+        currentUserRole: action.payload.user?.role || state.currentUserRole
       };
 
     default:
       return state;
   }
-};
+}
 
-export default roleReducer;
+ 

@@ -31,6 +31,9 @@ router.patch('/toggle_active/:id', auth, userCtrl.toggleActiveStatus);
 
 
 
+router.get('/inactive-users', auth,  userCtrl.getInactiveUsers);
+
+
 
 
 

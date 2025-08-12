@@ -59,7 +59,50 @@ const roleCtrl = {
         } catch (error) {
             res.status(500).json({ msg: req.__('role.update_error') });
         }
+   
+},
+
+updateRole: async (req, res) => {
+    const { role } = req.body;
+    try {
+      const user = await Users.findByIdAndUpdate(
+        req.params.id,
+        { role },
+        { 
+          new: true,
+          select: '-password' // Excluir datos sensibles
+        }
+      );
+
+      if (!user) return res.status(404).json({ msg: req.__('role.user_not_found') });
+
+      // Respuesta optimizada para Redux
+      res.json({
+        msg: req.__('role.role_updated'),
+        user: {
+          _id: user._id,
+          username: user.username,
+          avatar: user.avatar,
+          role: user.role,
+          // Incluir otros campos necesarios en el frontend
+          isVerified: user.isVerified,
+          isActive: user.isActive
+        }
+      });
+
+    } catch (err) {
+      console.error('Error updating role:', err);
+      res.status(500).json({ 
+        msg: req.__('role.update_error'),
+        error: err.message 
+      });
     }
-};
+  }
+ 
+  
+ }
+
+
+
 
 module.exports = roleCtrl;

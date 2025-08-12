@@ -4,9 +4,10 @@ import { useSelector } from 'react-redux';
 import Posts from '../components/home/Posts';
 import LoadIcon from '../images/loading.gif';
 import { useTranslation } from 'react-i18next';
-
+//import PostsPubliBlog from '../components/home/PostsPubliBlog';
+  
 const Home = ({ filters }) => {
-  const { homePosts, languageReducer } = useSelector(state => state);
+  const { homePosts, languageReducer  } = useSelector(state => state);
   const { t } = useTranslation('search');
   const lang = languageReducer.language || 'en';
 
@@ -60,7 +61,8 @@ const Home = ({ filters }) => {
   const filteredPosts = applyFilters(homePosts.posts || []);
 
   return (
-    <div className="home">
+    <div >
+  
       {homePosts.loading ? (
         <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
       ) : filteredPosts.length === 0 ? (

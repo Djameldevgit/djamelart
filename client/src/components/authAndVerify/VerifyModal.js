@@ -1,9 +1,9 @@
 import React from 'react';
-import ActivateButton from '../../../auth/ActivateButton';
-
+import ActivateButton from '../../auth/ActivateButton';
+ 
 const VerifyModal = ({ show, onClose }) => {
   if (!show) return null;
-
+ 
   return (
     <div className="modal">
       <div className="modal-content" style={{ position: 'relative' }}>

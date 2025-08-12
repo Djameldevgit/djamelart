@@ -3,12 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { getDataAPI } from '../../utils/fetchData';
 import { USER_TYPES } from '../../redux/actions/userAction';
-import { 
-  Button, 
-  Modal, 
-  Form, 
-  Container, 
-  Table, 
+import {
+  Button,
+  Modal,
+  Form,
+  Container,
+  Table,
   Badge,
   Spinner,
   Image,
@@ -56,6 +56,18 @@ const SendEmailsAdmin = () => {
     );
   };
 
+  const handleSelectInactiveUsers = () => {
+    const inactivos = homeUsers.users
+      .filter(
+        (user) =>
+          !user.lastActivity ||
+          new Date(user.lastActivity) < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      )
+      .map((user) => user._id);
+
+    setSelectedUsers(inactivos);
+  };
+
   return (
     <Container fluid="md" className="mt-4 px-3" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <Row className="mb-4">
@@ -63,8 +75,8 @@ const SendEmailsAdmin = () => {
           <h4>{t('usersTitle')}</h4>
         </Col>
       </Row>
-  
-      {/* Botón global para enviar email */}
+
+      {/* Botones de acciones */}
       <Row className="mb-4">
         <Col>
           <Button
@@ -73,10 +85,14 @@ const SendEmailsAdmin = () => {
             onClick={() => setShowEmailModal(true)}
           >
             {t('sendEmailButton', { count: selectedUsers.length })}
+          </Button>{' '}
+          <Button variant="warning" onClick={handleSelectInactiveUsers}>
+            {t('sendToInactive')}
           </Button>
         </Col>
       </Row>
-  
+
+      {/* Spinner de carga */}
       {load ? (
         <Row className="justify-content-center">
           <Col xs="auto">
@@ -87,18 +103,19 @@ const SendEmailsAdmin = () => {
         <Table striped bordered hover responsive className="mb-4">
           <thead>
             <tr>
-              <th style={{ paddingLeft: '1rem' }}></th>
+              <th></th>
               <th>{t('tableHeaderssss.avatar')}</th>
               <th>{t('tableHeaderssss.email')}</th>
               <th>{t('tableHeaderssss.registration')}</th>
               <th>{t('tableHeaderssss.status')}</th>
+              <th>{t('tableHeaderssss.lastActivity')}</th>
             </tr>
           </thead>
           <tbody>
             {homeUsers.users.map((user) => (
               <tr key={user._id}>
-                <td style={{ paddingLeft: '1.5rem' }}>
-                  <Form.Check 
+                <td>
+                  <Form.Check
                     type="checkbox"
                     checked={selectedUsers.includes(user._id)}
                     onChange={() => handleCheckboxChange(user._id)}
@@ -107,10 +124,10 @@ const SendEmailsAdmin = () => {
                   />
                 </td>
                 <td>
-                  <Image 
-                    src={user.avatar} 
-                    roundedCircle 
-                    style={{ width: '35px', height: '35px' }} 
+                  <Image
+                    src={user.avatar}
+                    roundedCircle
+                    style={{ width: '35px', height: '35px' }}
                     alt={t('userAvatar')}
                   />
                 </td>
@@ -123,12 +140,30 @@ const SendEmailsAdmin = () => {
                     <Badge bg="secondary">{t('status.notSent')}</Badge>
                   )}
                 </td>
+                <td>
+                  {user.lastActivity ? (
+                    <span
+                      style={{
+                        color:
+                          new Date(user.lastActivity) <
+                          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+                            ? 'red'
+                            : 'inherit'
+                      }}
+                    >
+                      {new Date(user.lastActivity).toLocaleDateString(lang)}
+                    </span>
+                  ) : (
+                    <span style={{ color: 'red' }}>{t('status.noActivity')}</span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </Table>
       )}
-  
+
+      {/* Modal para enviar email */}
       {showEmailModal && (
         <ModalEmail
           show={showEmailModal}

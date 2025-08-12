@@ -71,17 +71,17 @@ const userCtrl = {
   contactMailSupport: async (req, res) => {
     try {
       const { title, message, lang } = req.body;
-  
+
       // Asegúrate de que el usuario esté autenticado
       const user = req.user;
       if (!user) {
         return res.status(401).json({ msg: 'Usuario no autenticado.' });
       }
-  
+
       if (!title || !message) {
         return res.status(400).json({ msg: 'Faltan el título o el mensaje.' });
       }
-  
+
       const subject = `[Contacto] ${title} - ${user.username}`;
       const fullMessage = `
   Mensaje del usuario:
@@ -94,17 +94,17 @@ const userCtrl = {
   --------
   ${message}
       `;
-  
+
       // Enviar el email al administrador
       await sendMail('artealger2020argelia@gmail.com', '#', lang || 'es', 'informativo', subject, fullMessage);
-  
+
       return res.json({ success: true, msg: 'Mensaje enviado correctamente.' });
     } catch (err) {
       console.error('❌ Error al enviar el mensaje de contacto:', err);
       return res.status(500).json({ msg: 'Error interno al enviar el mensaje.' });
     }
   },
-  
+
   contactBlockedSupport: async (req, res) => {
     try {
       const { message, lang } = req.body;
@@ -170,16 +170,16 @@ const userCtrl = {
   },
 
 
-// En tu controlador de búsqueda (backend)
-getAdmins :async (req, res) => {
-  try {
+  // En tu controlador de búsqueda (backend)
+  getAdmins: async (req, res) => {
+    try {
       const admins = await Users.find({ role: 'admin' })
-          .select('username avatar online _id');
+        .select('username avatar online _id');
       res.json({ users: admins });
-  } catch (err) {
+    } catch (err) {
       res.status(500).json({ msg: err.message });
-  }
-},
+    }
+  },
 
   searchUser: async (req, res) => {
     try {
@@ -202,16 +202,16 @@ getAdmins :async (req, res) => {
       return res.status(500).json({ msg: err.message })
     }
   },
-  
+
 
 
   updateUser: async (req, res) => {
     try {
-      const { avatar, username, mobile, address, story, website  } = req.body
+      const { avatar, username, mobile, address, story, website } = req.body
       if (!username) return res.status(400).json({ msg: "Please add your full name." })
 
       await Users.findOneAndUpdate({ _id: req.user._id }, {
-        avatar, username, mobile, address, story, website 
+        avatar, username, mobile, address, story, website
       })
 
       res.json({ msg: "Update Success!" })
@@ -335,6 +335,13 @@ getAdmins :async (req, res) => {
               post: { $in: userPosts.map(p => p._id) }
             }).session(session);
           }),
+        // Eliminar denuncias en las que el usuario esté involucrado
+        Report.deleteMany({
+          $or: [
+            { userId: req.params.id },
+            { reportedBy: req.params.id }
+          ]
+        }).session(session),
 
         // Eliminar comentarios hechos por el usuario
         Comments.deleteMany({ user: req.params.id }).session(session),
@@ -422,13 +429,13 @@ getAdmins :async (req, res) => {
   getUsersAction: async (req, res) => {
     try {
       const { filter } = req.query;
-  
+
       let query = Users.find();
-  
+
       const features = new APIfeatures(query, req.query).paginating();
-  
+
       let users = await features.query;
-  
+
       const usersWithDetails = await Promise.all(
         users.map(async (user) => {
           const posts = await Posts.find({ user: user._id });
@@ -437,7 +444,7 @@ getAdmins :async (req, res) => {
           const reportsReceived = await Report.countDocuments({ userId: user._id });
           const likesGiven = await Posts.countDocuments({ likes: user._id });
           const commentsMade = await Comments.countDocuments({ user: user._id });
-  
+
           return {
             ...user.toObject(),
             postCount: posts.length,
@@ -451,7 +458,7 @@ getAdmins :async (req, res) => {
           };
         })
       );
-  
+
       // APLICAR FILTRO
       switch (filter) {
         case "mostLikes":
@@ -478,7 +485,7 @@ getAdmins :async (req, res) => {
         default:
           break; // ningún filtro
       }
-  
+
       res.json({
         msg: "Success!",
         result: usersWithDetails.length,
@@ -488,10 +495,36 @@ getAdmins :async (req, res) => {
       return res.status(500).json({ msg: err.message });
     }
   },
-  
 
 
 
+ 
+
+ getInactiveUsers : async (req, res) => {
+  try {
+    const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const inactiveCandidates = await Users.find({
+      isVerified: true,
+      createdAt: { $lt: oneMonthAgo }
+    }).select('_id username email createdAt');
+
+    const trulyInactive = [];
+
+    for (const user of inactiveCandidates) {
+      const hasPosts = await Posts.exists({ user: user._id });
+      const hasComments = await Comments.exists({ user: user._id });
+
+      if (!hasPosts && !hasComments) {
+        trulyInactive.push(user);
+      }
+    }
+
+    res.json({ inactiveUsers: trulyInactive });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+},
 
 
 

@@ -75,7 +75,7 @@ const authCtrl = {
       
           await sendMail(user.email, url, req.getLocale(), 'activation'); 
       
-          res.json({ msg: req.__('auth.activation_email_sent') });
+          res.json({ msg: req.__('activation_email_sent') });
         } catch (err) {
           return res.status(500).json({ msg: req.__('auth.server_error') });
         }
@@ -83,28 +83,31 @@ const authCtrl = {
       
 
 
-
-    activationAccount: async (req, res) => {
+      activationAccount: async (req, res) => {
         try {
             const { activation_token } = req.body;
             const decoded = jwt.verify(activation_token, process.env.ACTIVATION_TOKEN_SECRET);
             const { id } = decoded;
-
+    
             const user = await Users.findById(id);
             if (!user) return res.status(400).json({ msg: req.__('auth.user_not_found') });
-
+    
             if (user.isVerified)
                 return res.status(400).json({ msg: req.__('auth.already_verified') });
-
+    
             user.isVerified = true;
             await user.save();
-
-            res.json({ msg: req.__('auth.account_activated') });
+    
+            // Devolver usuario actualizado
+            res.json({
+                msg: req.__('auth.account_activated'),
+                user
+            });
         } catch (err) {
             return res.status(500).json({ msg: req.__('auth.server_error') });
         }
     },
-
+    
 
     forgotPassword: async (req, res) => {
         try {

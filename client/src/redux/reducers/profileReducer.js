@@ -1,13 +1,13 @@
 import { PROFILE_TYPES } from '../actions/profileAction'
 import { EditData } from '../actions/globalTypes'
-
+ 
 const initialState = {
     loading: false,
     ids: [],
     users: [],
     posts: []
 }
-
+ 
 const profileReducer = (state = initialState, action) => {
     switch (action.type){
         case PROFILE_TYPES.LOADING:
@@ -45,6 +45,10 @@ const profileReducer = (state = initialState, action) => {
                 ...state,
                 posts: EditData(state.posts, action.payload._id, action.payload)
             };
+
+        // 👇 Nuevo case para actualizar comentarios de un usuario
+       
+
         default:
             return state;
     }

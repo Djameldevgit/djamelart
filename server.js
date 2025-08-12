@@ -7,25 +7,22 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const i18n = require('i18n');
+const { Server } = require('socket.io'); // ✅ IMPORTACIÓN CORRECTA
 const SocketServer = require('./socketServer');
 const morgan = require('morgan');
 
-// --- Express App ---
 const app = express();
 
-// --- Middleware Express ---
+// --- Middleware ---
 app.use(express.json());
-
-// ✅ CORS para Express
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }));
-
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-// --- Configuración de idiomas ---
+// --- Idiomas ---
 i18n.configure({
   locales: ['en', 'es', 'fr', 'ar', 'ru', 'kab', 'chino'],
   directory: path.join(__dirname, 'locales'),
@@ -37,15 +34,14 @@ i18n.configure({
 });
 app.use(i18n.init);
 
-// --- Rutas de API ---
+// --- Rutas ---
 app.get('/api/set-language', (req, res) => {
   const lang = req.query.lang;
   if (lang && i18n.getLocales().includes(lang)) {
     res.cookie('lang', lang, { maxAge: 900000, httpOnly: false });
-    res.send({ message: `Idioma cambiado a ${lang}` });
-  } else {
-    res.status(400).send({ error: 'Idioma no válido' });
+    return res.send({ message: `Idioma cambiado a ${lang}` });
   }
+  res.status(400).send({ error: 'Idioma no válido' });
 });
 
 app.use('/api', require('./routes/authRouter'));
@@ -61,8 +57,9 @@ app.use('/api', require('./routes/orderRouter'));
 app.use('/api', require('./routes/userActionRouter'));
 app.use('/api', require('./routes/blockUserRouter'));
 app.use('/api', require('./routes/reportRouter'));
- 
-// --- Auto desbloqueo de usuarios cada 5 min ---
+app.use('/api/blog/comments', require('./routes/blogCommentRoutes'));
+
+// --- Tareas automáticas ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 
 // --- Conexión a MongoDB ---
@@ -75,25 +72,21 @@ mongoose.connect(URI, {
   console.log('✅ Conectado a MongoDB');
 });
 
-// --- Servidor HTTP y Socket.IO ---
-const http = require('http').createServer(app);
+// --- Servidor HTTP ---
+const server = require('http').createServer(app); // ✅ AHORA SÍ EXISTE "server"
 
-// ✅ CORS para Socket.IO
-const { Server } = require('socket.io');
-const io = new Server(http, {
+// --- Socket.IO ---
+const io = new Server(server, {
   cors: {
     origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'DELETE'],
+    methods: ["GET", "POST", "DELETE"],
     credentials: true
   }
 });
 
-// ✅ Manejo de eventos con tu archivo personalizado
-io.on('connection', socket => {
-  SocketServer(socket, io); // <-- Pasa socket e io si tu lógica lo requiere
-});
+io.on('connection', socket => SocketServer(socket, io));
 
-// --- Producción: servir frontend ---
+// --- Producción ---
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
   app.get('*', (req, res) => {
@@ -103,6 +96,6 @@ if (process.env.NODE_ENV === 'production') {
 
 // --- Iniciar servidor ---
 const PORT = process.env.PORT || 5000;
-http.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });

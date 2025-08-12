@@ -5,8 +5,9 @@ import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import VerifyModal from './VerifyModal';
-import DesactivateModal from '../../DesactivateModal';
+  
+import VerifyModal from '../../authAndVerify/VerifyModal';
+import DesactivateModal from '../../authAndVerify/DesactivateModal';
 
 
 const CardBodyCarousel = ({ post }) => {
