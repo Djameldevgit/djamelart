@@ -160,7 +160,7 @@
 		"status_updated": "Statut utilisateur mis à jour",
 		"not_exist": "Utilisateur inexistant",
 		"success": "Succès",
-		"fullname_required": "Nom complet requis",
+		"username_required": "Nom complet requis",
 		"update_success": "Utilisateur mis à jour avec succès !",
 		"already_followed": "Vous suivez déjà cet utilisateur",
 		"delete_denied_admin": "Refusé : droits administrateur requis",

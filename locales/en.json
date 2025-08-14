@@ -160,7 +160,7 @@
 		"status_updated": "User status updated",
 		"not_exist": "User does not exist",
 		"success": "Success",
-		"fullname_required": "Full name required",
+		"username_required": "Full name required",
 		"update_success": "User updated successfully!",
 		"already_followed": "You already follow this user",
 		"delete_denied_admin": "Denied: Admin privileges required",

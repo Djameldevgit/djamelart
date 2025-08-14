@@ -209,8 +209,7 @@ const Navbar2 = ({ onFiltersChange }) => {
     <NavDropdown.Divider />
     <NavDropdown.Header>🛡️ {t('navbar:panelAministrativo')}</NavDropdown.Header>
        
-    <NavDropdown.Item as={Link} to="/blog"> blog</NavDropdown.Item>
-                   
+           
 
                
     <NavDropdown.Item as={Link} to="/messageadmin">

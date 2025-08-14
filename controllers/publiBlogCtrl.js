@@ -34,7 +34,7 @@ const publiBLOG = {
             }), req.query).paginating()
 
             const posts = await features.query.sort('-createdAt')
-                .populate("user likes", "avatar username fullname followers")
+                .populate("user likes", "avatar username username followers")
                 .populate({
                     path: "comments",
                     populate: {
@@ -59,7 +59,7 @@ const publiBLOG = {
 
             const post = await Posts.findOneAndUpdate({ _id: req.params.id }, {
                 content, images
-            }).populate("user likes", "avatar username fullname")
+            }).populate("user likes", "avatar username username")
                 .populate({
                     path: "comments",
                     populate: {

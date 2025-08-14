@@ -155,7 +155,7 @@
 		"status_updated": "Estado de usuario actualizado",
 		"not_exist": "Usuario no existe",
 		"success": "Éxito",
-		"fullname_required": "Se requiere nombre completo",
+		"username_required": "Se requiere nombre completo",
 		"update_success": "¡Usuario actualizado exitosamente!",
 		"already_followed": "Ya sigues a este usuario",
 		"delete_denied_admin": "Denegado: se requieren permisos de administrador",

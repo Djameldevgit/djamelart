@@ -160,7 +160,7 @@
 		"status_updated": "用户状态已更新",
 		"not_exist": "用户不存在",
 		"success": "成功",
-		"fullname_required": "需要填写全名",
+		"username_required": "需要填写全名",
 		"update_success": "用户更新成功！",
 		"already_followed": "您已关注该用户",
 		"delete_denied_admin": "拒绝：需要管理员权限",

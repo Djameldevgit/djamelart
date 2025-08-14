@@ -68,20 +68,9 @@ import Conversationadmin from './pages/messageadmin/[id]';
 import InfoAplicacion from './components/blogInfoComment/InfoAplicacion';
  
 import BlogInfo from './pages/BlogInfo';
+import Publoblog from './pages/publoblog';
+import Blog from './pages/Blog';
  
-//import { getPostsAdmin } from './redux/actions/publiBlogAction.';
- 
- 
- 
-/*
- import Message from './pages/message/[id]';
-
-import Conversations from './pages/message/conversatios';
-import blogReducer from './redux/reducers/blogReducer';
-<Route exact path="/message/:id" component={auth.token ? Message: Login} />
-<Route exact path="/conversations" component={auth.token ? Conversations: Login}   />
-
-*/
 
 function App() {
   const { auth, status, modal, languageReducer } = useSelector(state => state)

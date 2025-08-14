@@ -9,26 +9,11 @@ export const MESS_TYPES = {
     UPDATE_MESSAGES: 'UPDATE_MESSAGES',
     DELETE_MESSAGES: 'DELETE_MESSAGES',
     DELETE_CONVERSATION: 'DELETE_CONVERSATION',
-    CHECK_ONLINE_OFFLINE: 'CHECK_ONLINE_OFFLINE',
-    
-    // 🆕 Nuevos tipos
-    SET_TYPING: 'SET_TYPING',
-    SET_LAST_CONNECTION: 'SET_LAST_CONNECTION'
+    CHECK_ONLINE_OFFLINE: 'CHECK_ONLINE_OFFLINE'
 }
 
-export const setTyping = ({userId, isTyping}) => dispatch => {
-    dispatch({
-        type: MESS_TYPES.SET_TYPING,
-        payload: { userId, isTyping }
-    })
-}
 
-export const setLastConnection = ({userId, time}) => dispatch => {
-    dispatch({
-        type: MESS_TYPES.SET_LAST_CONNECTION,
-        payload: { userId, time }
-    })
-}
+
 export const addMessage = ({msg, auth, socket}) => async (dispatch) =>{
     dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
 

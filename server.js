@@ -57,7 +57,8 @@ app.use('/api', require('./routes/orderRouter'));
 app.use('/api', require('./routes/userActionRouter'));
 app.use('/api', require('./routes/blockUserRouter'));
 app.use('/api', require('./routes/reportRouter'));
- 
+app.use('/api/blog/comments', require('./routes/blogCommentRoutes'));
+
 // --- Tareas automáticas ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 

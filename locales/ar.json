@@ -174,7 +174,7 @@
 		"status_updated": "تم تحديث حالة المستخدم",
 		"not_exist": "المستخدم غير موجود",
 		"success": "نجاح",
-		"fullname_required": "اسم المستخدم الكامل مطلوب",
+		"username_required": "اسم المستخدم الكامل مطلوب",
 		"update_success": "تم تحديث المستخدم بنجاح!",
 		"already_followed": "أنت تتابع هذا المستخدم بالفعل",
 		"delete_denied_admin": "تم الرفض: يلزم صلاحيات المسؤول",

@@ -144,6 +144,7 @@ url("./header.css"); */
 
 @import url("./dropdownnavbar.css");
 @import url("./modals/modalfiltershome.css");
+@import url("./blogCommentIAdmin.css");
  
 .rtl {
   direction: rtl;
