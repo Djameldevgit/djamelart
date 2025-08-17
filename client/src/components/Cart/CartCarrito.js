@@ -65,8 +65,11 @@ const CartCarrito = () => {
 
   return (
     <div className="cart-container">
-      <h2 className="cart-title">
-        <FaShoppingCart /> {t('yourShoppingCart', { lng: lang })}
+      <h2 className="cart-title"style={{
+    direction: lang === 'ar' ? 'rtl' : 'ltr',
+      textAlign: lang === 'ar' ? 'right' : 'left',
+    }}>
+         
       </h2>
 
       {showMessage.show && (

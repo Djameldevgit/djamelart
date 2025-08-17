@@ -12,13 +12,14 @@ import { BsCartFill } from 'react-icons/bs'
 import NotifyModal from './NotifyModal'
 import VerifyModal from './authAndVerify/VerifyModal'
 import DesactivateModal from './authAndVerify/DesactivateModal'
- 
+
 import LanguageSelectorpc from './LanguageSelectorpc'
 import Acordion from './Acordion'
 import { FaSearch } from 'react-icons/fa'
 import Modalsearchhome from './Modalsearchhome'
 import ActivateButton from '../auth/ActivateButton'
- 
+import { FaPlusCircle } from "react-icons/fa";
+
 
 const Navbar2 = ({ onFiltersChange }) => {
   const { auth, theme, cart } = useSelector((state) => state)
@@ -32,7 +33,7 @@ const Navbar2 = ({ onFiltersChange }) => {
   const [showModal, setShowModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
- 
+
   const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true })
   const handleLogout = () => {
     dispatch(logout())
@@ -91,184 +92,207 @@ const Navbar2 = ({ onFiltersChange }) => {
       setShowModal(true); // Mostrar modal de "Conéctate o regístrate"
       return false;
     }
-  
+
     if (!auth.user.isVerified) {
       closeModal(); // Cierra el modal de búsqueda primero
       setShowVerifyModal(true);
       return false;
     }
-  
+
     if (auth.user.isActive === false) {
       closeModal(); // Cierra el modal de búsqueda primero
       setShowDeactivatedModal(true);
       return false;
     }
-  
+
     return true;
   };
 
 
   return (
     <div>
-        <Navbar expand="lg" className="navbar bg-body-tertiary mb-2 shadow-sm px-3">
-      <Container fluid className="align-items-center justify-content-between">
-        <div className="d-flex align-items-center">
-          <Button onClick={handleShowDrawer} variant="outline-primary" className="me-2">
-            {showDrawer ? '✖' : <FaBars size={20} />}
-          </Button>
-          <Navbar.Brand href="/" className="py-2 d-none d-lg-block">
-            <Card.Title>{t('navbar:appName')}</Card.Title>
-          </Navbar.Brand>
-        </div>
-
-        <div className="d-flex align-items-center gap-3">
-          <div className="d-none d-lg-block">
-            <LanguageSelectorpc />
-          </div>
-          
-          <div className="d-none d-lg-block">
-            <FaSearch
-              size={18}
-              className="text-secondary cursor-pointer"
-              onClick={openModal}
-              title={t('navbar:search')}
-              style={{ cursor: 'pointer' }}
-            />
+      <Navbar expand="lg" className="navbar bg-body-tertiary mb-2 shadow-sm px-3">
+        <Container fluid className="align-items-center justify-content-between">
+          <div className="d-flex align-items-center">
+            <Button onClick={handleShowDrawer} variant="outline-primary" className="me-2">
+              {showDrawer ? '✖' : <FaBars size={20} />}
+            </Button>
+            <Navbar.Brand href="/" className="py-2 d-none d-lg-block">
+              <Card.Title>{t('navbar:appName')}</Card.Title>
+            </Navbar.Brand>
           </div>
 
-          {auth.user && (
+          <div className="d-flex align-items-center gap-3">
+            <div className="d-none d-lg-block">
+              <LanguageSelectorpc />
+            </div>
+
+            <div className="d-none d-lg-block">
+              <FaSearch
+                size={18}
+                className="text-secondary cursor-pointer"
+                onClick={openModal}
+                title={t('navbar:search')}
+                style={{ cursor: 'pointer' }}
+              />
+            </div>
+            <div  className='fas fa-plus' onClick={openStatusModal}>
+              
+            </div>
+            {auth.user && (
+              <NavDropdown
+                title={<i className="fas fa-bell text-danger" style={{ fontSize: '1.2rem' }} />}
+              >
+                
+                  <NotifyModal user={auth.user} />
+              
+              </NavDropdown>
+            )}
+
+            {auth.user && (
+              <Link to="/cart/cartcarrito" className="position-relative text-decoration-none">
+                <BsCartFill size={20} className="text-dark" />
+                {totalItems > 0 && (
+                  <Badge pill bg="danger" className="position-absolute top-0 start-100 translate-middle" style={{ fontSize: '0.6rem' }}>
+                    {cart.items?.length || 0}
+                  </Badge>
+                )}
+              </Link>
+            )}
+
             <NavDropdown
-              title={<i className="fas fa-bell text-danger" style={{ fontSize: '1.2rem' }} />}
+              align="end"
+              title={
+                auth.user ? (
+                  <div className="d-flex dropdown-avatar">
+                    <Avatar src={auth.user.avatar} size="medium-avatar" />
+                  </div>
+                ) : (
+                  <FaUserCircle size={25} />
+                )
+              }
+              id="nav-user-dropdown"
+              className="custom-dropdown"
+              key={`nav-role-${auth.user?.role}`} // Doble clave de seguridad
+
             >
-              <div className="mx-auto">
-                <NotifyModal user={auth.user} />
+              <div className="dropdown-scroll-wrapper">
+                {auth.user ? (
+                  <>
+                    <NavDropdown.Header>{auth.user.username}</NavDropdown.Header>
+
+
+                    {/* --- SECCIÓN 1: ACCIONES PRINCIPALES --- */}
+                    <NavDropdown.Item onClick={openStatusModal}>
+                      ➕ {t('navbar:addPost')}
+                    </NavDropdown.Item>
+
+                    {/* --- SECCIÓN 2: PERFIL Y COMUNICACIÓN --- */}
+                    <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
+                      <FaUserCircle className="me-2" /> {t('navbar:profile')}
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/message">
+                      💬 {t('navbar:conversations')}
+                    </NavDropdown.Item>
+
+                    {/* --- DIVISOR VISUAL (opcional) --- */}
+                    <NavDropdown.Divider />
+
+                    {/* --- SECCIÓN 3: COMPRAS/SOPORTE --- */}
+                    <NavDropdown.Item as={Link} to="/cart/orders">
+                      {t('navbar:orders')}
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/contact">
+                      📩 {t('navbar:contact')}
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/bloginfo">
+                      ℹ️ {t('navbar:infoSupport')}
+                    </NavDropdown.Item>
+
+                    {/* --- SECCIÓN 4: CONFIGURACIÓN/CERRAR SESIÓN --- */}
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item as={Link} to="/settings">
+                      ⚙️ {t('navbar:settings')}
+                    </NavDropdown.Item>
+                    <NavDropdown.Item onClick={handleLogout}>
+                      🚪 {t('navbar:logout')}
+                    </NavDropdown.Item>
+
+
+                    {/* Sección de Admin - Actualiza en tiempo real */}
+                    {auth.user?.role === "admin" && (
+                      <>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Header>🛡️ {t('navbar:panelAdministrativo')}</NavDropdown.Header>
+
+                        {/* --- GESTIÓN DE USUARIOS --- */}
+                        <NavDropdown.Item as={Link} to="/users/userss">
+                          👥 {t('navbar:users')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/users/usersaction">
+                          🔄 {t('navbar:userActions')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/users/bloqueos">
+                          ⚠️ {t('navbar:blockedUsers')}
+                        </NavDropdown.Item>
+
+                        {/* --- CONTENIDO Y MODERACIÓN --- */}
+                        <NavDropdown.Item as={Link} to="/postspendientes">
+                          📭 {t('navbar:pendingPosts')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/reportesusers">
+                          🚨 {t('navbar:userReports')}
+                        </NavDropdown.Item>
+
+                        {/* --- CONFIGURACIÓN DEL SISTEMA --- */}
+                        <NavDropdown.Item as={Link} to="/rolesuser">
+                          🛠️ {t('navbar:roles')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/form">
+                          📝 Formularios
+                        </NavDropdown.Item>
+
+                        {/* --- COMUNICACIÓN --- */}
+                        <NavDropdown.Item as={Link} to="/messageadmin">
+                          💼 {t('navbar:chatWithAdmins')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/users/adminsendemail">
+                          ✉️ {t('navbar:adminSendEmail')}
+                        </NavDropdown.Item>
+
+                      </>
+                    )}
+
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item onClick={toggleTheme}>
+                      {theme ? '🌞 ' + t('navbar:lightMode') : '🌙 ' + t('navbar:darkMode')}
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item onClick={handleLogout}>
+                      <FaSignOutAlt className="me-2" />
+                      {t('navbar:logout')}
+                    </NavDropdown.Item>
+                  </>
+                ) : (
+                  <>
+                    <NavDropdown.Item as={Link} to="/login">
+                      <FaSignInAlt className="me-2" />
+                      {t('navbar:login')}
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/register">
+                      <FaUserPlus className="me-2" />
+                      {t('navbar:register')}
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/bloginfo">
+                      ℹ️ {t('navbar:appInfo')}
+                    </NavDropdown.Item>
+                  </>
+                )}
               </div>
             </NavDropdown>
-          )}
-
-          {auth.user && (
-            <Link to="/cart/cartcarrito" className="position-relative text-decoration-none">
-              <BsCartFill size={20} className="text-dark" />
-              {totalItems > 0 && (
-                <Badge pill bg="danger" className="position-absolute top-0 start-100 translate-middle" style={{ fontSize: '0.6rem' }}>
-                  {cart.items?.length || 0}
-                </Badge>
-              )}
-            </Link>
-          )}
-
-          <NavDropdown
-            align="end"
-            title={
-              auth.user ? (
-                <div className="d-flex dropdown-avatar">
-                  <Avatar src={auth.user.avatar} size="medium-avatar" />
-                </div>
-              ) : (
-                <FaUserCircle size={25} />
-              )
-            }
-            id="nav-user-dropdown"
-            className="custom-dropdown"
-            key={`nav-role-${auth.user?.role}`} // Doble clave de seguridad
-    
-          >
-            <div className="dropdown-scroll-wrapper">
-              {auth.user ? (
-                <>
-                  <NavDropdown.Header>{auth.user.username}</NavDropdown.Header>
-
-                  <NavDropdown.Item onClick={openStatusModal}>
-                    ➕ {t('navbar:addPost')}
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Item as={Link} to="/contact">
-                    📩 {t('navbar:contact')}
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Item as={Link} to="/bloginfo">
-                    ℹ️ {t('navbar:appInfo')}
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
-                    <FaUserCircle className="me-2" />
-                    {t('navbar:profile')}
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Item as={Link} to="/message">
-                    💬 {t('navbar:conversations')}
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Item as={Link} to="/rolesuser">
-                    🛠️ {t('navbar:roles')}
-                  </NavDropdown.Item>
-
-                  {/* Sección de Admin - Actualiza en tiempo real */}
-                  {auth.user?.role === "admin" && (
-  <>
-    <NavDropdown.Divider />
-    <NavDropdown.Header>🛡️ {t('navbar:panelAministrativo')}</NavDropdown.Header>
-       
-           
-
-               
-    <NavDropdown.Item as={Link} to="/messageadmin">
-      💼 {t('navbar:chatear con los administradores')}
-    </NavDropdown.Item>
-    <NavDropdown.Item as={Link} to="/users/adminsendemail">
-      {t('navbar:adminSendEmail')}
-    </NavDropdown.Item>
-    <NavDropdown.Item as={Link} to="/users/userss">
-      {t('navbar:users')}
-    </NavDropdown.Item>
-    <NavDropdown.Item as={Link} to="/postspendientes">
-      {t('navbar:pendingPosts')}
-    </NavDropdown.Item>
-    <NavDropdown.Item as={Link} to="/users/usersaction">
-      {t('navbar:userActions')}
-    </NavDropdown.Item>
-    <NavDropdown.Item as={Link} to="/reportesusers">
-      {t('navbar:userReports')}
-    </NavDropdown.Item>
-    <NavDropdown.Item as={Link} to="/users/bloqueos">
-      {t('navbar:blockedUsers')}
-    </NavDropdown.Item>
-    <NavDropdown.Item as={Link} to="/cart/orderss">
-      {t('navbar:orders')}
-    </NavDropdown.Item>
-  </>
-)}
-
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={toggleTheme}>
-                    {theme ? '🌞 ' + t('navbar:lightMode') : '🌙 ' + t('navbar:darkMode')}
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Item onClick={handleLogout}>
-                    <FaSignOutAlt className="me-2" />
-                    {t('navbar:logout')}
-                  </NavDropdown.Item>
-                </>
-              ) : (
-                <>
-                  <NavDropdown.Item as={Link} to="/login">
-                    <FaSignInAlt className="me-2" />
-                    {t('navbar:login')}
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/register">
-                    <FaUserPlus className="me-2" />
-                    {t('navbar:register')}
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/bloginfo">
-                    ℹ️ {t('navbar:appInfo')}
-                  </NavDropdown.Item>
-                </>
-              )}
-            </div>
-          </NavDropdown>
-        </div>
-      </Container>
-    </Navbar>
+          </div>
+        </Container>
+      </Navbar>
       {/* Drawer (Offcanvas) */}
       <Offcanvas
         show={showDrawer}
@@ -303,7 +327,7 @@ const Navbar2 = ({ onFiltersChange }) => {
               </div>
             )}
           </div>
-<ActivateButton/>
+          <ActivateButton />
           <Acordion />
         </Offcanvas.Body>
       </Offcanvas>
@@ -313,10 +337,8 @@ const Navbar2 = ({ onFiltersChange }) => {
         onClose={() => {
           closeModal();
           setShowAdvancedSearch(false);
-        }}
+        }}>
 
-
-      >
         <div className="filter-group">
           <h5 className='mx-auto'>{t('busqueda_de_obras_arte', { lng: lang })}</h5>
         </div>
@@ -339,27 +361,27 @@ const Navbar2 = ({ onFiltersChange }) => {
           <div className="modalcontentsearch">
             <div className="titlebusqueda">
 
-             <button 
-  className="modalclosesearch" 
-  onClick={() => {
-    closeModal();
-    setShowAdvancedSearch(false);
-  }}
-  style={{
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    background: 'none',
-    border: 'none',
-    fontSize: '1.8rem',
-    color: '#333',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    lineHeight: '1',
-  }}
->
-  &times;
-</button>
+              <button
+                className="modalclosesearch"
+                onClick={() => {
+                  closeModal();
+                  setShowAdvancedSearch(false);
+                }}
+                style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.8rem',
+                  color: '#333',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  lineHeight: '1',
+                }}
+              >
+                &times;
+              </button>
             </div>
             <div className="titlebusqueda">
 
@@ -554,84 +576,84 @@ const Navbar2 = ({ onFiltersChange }) => {
 
         </div>
 
-        
+
       </Modalsearchhome>
 
- 
+
       {showModal && (
-  <div className="modal">
-    <div className="modal-content" style={{ position: 'relative' }}>
-      {/* Botón de cierre arriba derecha */}
-      <button
-        onClick={() => setShowModal(false)}
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          background: 'none',
-          border: 'none',
-          fontSize: '1.8rem',
-          color: '#333',
-          cursor: 'pointer',
-          fontWeight: 'bold',
-          lineHeight: '1',
+        <div className="modal">
+          <div className="modal-content" style={{ position: 'relative' }}>
+            {/* Botón de cierre arriba derecha */}
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                background: 'none',
+                border: 'none',
+                fontSize: '1.8rem',
+                color: '#333',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                lineHeight: '1',
+              }}
+              aria-label="Cerrar"
+            >
+              ×
+            </button>
+
+            <h4>{t("title2", { lng: languageReducer.language })}</h4>
+            <p>{t("message2", { lng: languageReducer.language })}</p>
+
+            <div className="modal-buttons">
+              <button onClick={() => {
+                setShowModal(false); // Cierra el modal primero
+                setTimeout(() => history.push("/login"), 200); // Pequeño delay para mejor UX
+              }}>
+                {t("login2", { lng: languageReducer.language })}
+              </button>
+
+              <button onClick={() => {
+                setShowModal(false); // Cierra el modal primero
+                setTimeout(() => history.push("/register"), 200);
+              }}>
+                {t("register2", { lng: languageReducer.language })}
+              </button>
+
+              <button onClick={() => setShowModal(false)}>
+                {t("close2", { lng: languageReducer.language })}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <VerifyModal
+        show={showVerifyModal}
+        onClose={() => {
+          setShowVerifyModal(false);
+          closeModal(); // Asegura que el modal de búsqueda también se cierre
         }}
-        aria-label="Cerrar"
-      >
-        ×
-      </button>
+        title={t('auth.verify_account', { lng: lang })}
+        message={t('auth.verify_required', { lng: lang })}
+        actionText={t('auth.resend_verification', { lng: lang })}
+        actionLink="/resend-verification"
+        onActionSuccess={() => {
+          setShowVerifyModal(false);
+          closeModal(); // Cierra ambos modales cuando la acción es exitosa
+        }}
+      />
 
-      <h4>{t("title2", { lng: languageReducer.language })}</h4>
-      <p>{t("message2", { lng: languageReducer.language })}</p>
-      
-      <div className="modal-buttons">
-        <button onClick={() => {
-          setShowModal(false); // Cierra el modal primero
-          setTimeout(() => history.push("/login"), 200); // Pequeño delay para mejor UX
-        }}>
-          {t("login2", { lng: languageReducer.language })}
-        </button>
-        
-        <button onClick={() => {
-          setShowModal(false); // Cierra el modal primero
-          setTimeout(() => history.push("/register"), 200);
-        }}>
-          {t("register2", { lng: languageReducer.language })}
-        </button>
-        
-        <button onClick={() => setShowModal(false)}>
-          {t("close2", { lng: languageReducer.language })}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
- 
- <VerifyModal
-  show={showVerifyModal}
-  onClose={() => {
-    setShowVerifyModal(false);
-    closeModal(); // Asegura que el modal de búsqueda también se cierre
-  }}
-  title={t('auth.verify_account', { lng: lang })}
-  message={t('auth.verify_required', { lng: lang })}
-  actionText={t('auth.resend_verification', { lng: lang })}
-  actionLink="/resend-verification"
-  onActionSuccess={() => {
-    setShowVerifyModal(false);
-    closeModal(); // Cierra ambos modales cuando la acción es exitosa
-  }}
-/>
-
-{/* Modal para cuentas desactivadas */}
-<DesactivateModal
-  show={showDeactivatedModal}
-  onClose={() => setShowDeactivatedModal(false)}
-  title={t('auth.account_deactivated', { lng: lang })}
-  message={t('auth.contact_admin', { lng: lang })}
-  actionText={t('auth.contact_us', { lng: lang })}
-  actionLink="/contact"
-/>
+      {/* Modal para cuentas desactivadas */}
+      <DesactivateModal
+        show={showDeactivatedModal}
+        onClose={() => setShowDeactivatedModal(false)}
+        title={t('auth.account_deactivated', { lng: lang })}
+        message={t('auth.contact_admin', { lng: lang })}
+        actionText={t('auth.contact_us', { lng: lang })}
+        actionLink="/contact"
+      />
     </div>
   )
 }

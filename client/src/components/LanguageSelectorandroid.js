@@ -56,8 +56,8 @@ function LanguageSelectorandroid() {
 
   return (
     <div className="d-block d-md-none" style={{ width: '100%', padding: 0, margin: 0 }}>
-      <div style={{ display: 'flex', width: '100%', gap: '3px' }}>
-
+       <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+    
         <Link to="/"  >
           <h3 className='ml-4 mt-2' style={{ flex: '1 1 0' }} >
             {t('Tassili', { lng: lang })}

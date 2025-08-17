@@ -1,0 +1,119 @@
+ 
+import { Card, Container  } from "react-bootstrap";
+import {
+ 
+  FaUserEdit,
+ 
+  FaExternalLinkAlt,
+ 
+} from "react-icons/fa";
+
+// Datos de las imágenes (ajusta los nombres según tus archivos en /public/images/)
+const IMAGENES_POR_METODO = {
+  google: [
+    "/images/a.jpg",
+    "/images/djamel1.jpg"
+  ],
+  facebook: [
+    "/images/djamel0.jpg",
+    "/images/djamel1.jpg"
+  ],
+  manual: [
+    "/images/djamel0.jpg",
+    "/images/djamel1.jpg"
+  ]
+};
+
+const Registro = () => {
+ 
+  const handleVerImagenes = (metodo) => {
+    setImagenesModal(IMAGENES_POR_METODO[metodo]);
+    setTituloModal(`Registro con ${metodo.charAt(0).toUpperCase() + metodo.slice(1)}`);
+    setShowModal(true);
+  };
+
+  return (
+    <Container className="my-3">
+
+      <h3 className="text-left mb-2">
+        <FaUserEdit className="me-2" style={{ color: "#6f42c1" }} />
+        <span style={{ color: "#6f42c1" }}>¿Cómo registrarme?</span>
+      </h3>
+
+
+      <Card className="shadow-sm border-0 bg-light">
+        <Card.Body className="p-1">
+          <p className="fs-5">
+            Para aprovechar todas las funciones de la aplicación el sistema te permite registrarse con <strong className="text-primary">3 formas</strong> difirentes:
+          </p>
+          <div>
+            <dl className="row">
+
+              <dt className="col-sm-3">Crear una cuenta manualmente</dt>
+              <dd className="col-sm-9">  necesitas crear una cuenta gratuita con tu correo nombre de usuario y una contasena.</dd>
+
+              <dt className="col-sm-3"> usando el button Google </dt>
+              <dd className="col-sm-9">
+                <p>si tienes cuenta de google simplemente hacer click sobre le button de google y estaras en un momento dentro de la aplicacion.</p>
+              </dd>
+
+              <dt className="col-sm-3">usando el button de facebook</dt>
+              <dd className="col-sm-9">si tienes una cuenta de facebool simplemente hacer click sobre el button de login con facebook .</dd>
+
+
+              <dd className="col-sm-9">
+                <dl className="row">
+
+                  <p className="mb-0 flex-grow-1">
+                    <span
+                      className="text-info d-inline-flex align-items-center cursor-pointer"
+                      onClick={() => handleVerImagenes("google")}
+                    >
+                      <FaExternalLinkAlt className="me-1" />
+                      <span className="ms-1">ver imágenes</span>
+                    </span>
+                  </p>   </dl>
+              </dd>
+            </dl>
+          </div>
+          <div>
+            <h3 className="text-left mb-2">
+         
+              <span style={{ color: "#6f42c1" }}>¿Olvidaste la contasena?</span>
+            </h3>
+
+            <dl className="row">
+
+              <dt className="col-sm-3">Crear una cuenta manualmente</dt>
+              <dd className="col-sm-9">  necesitas crear una cuenta gratuita con tu correo nombre de usuario y una contasena.</dd>
+
+
+              <dd className="col-sm-9">
+                <dl className="row">
+
+                  <p className="mb-0 flex-grow-1">
+                    <span
+                      className="text-info d-inline-flex align-items-center cursor-pointer"
+                      onClick={() => handleVerImagenes("google")}
+                    >
+                      <FaExternalLinkAlt className="me-1" />
+                      <span className="ms-1">ver imágenes</span>
+                    </span>
+                  </p>   </dl>
+              </dd>
+            </dl>
+
+
+
+
+          </div>
+
+ 
+           
+        </Card.Body>
+      </Card>
+    </Container>
+  );
+};
+
+export default Registro;

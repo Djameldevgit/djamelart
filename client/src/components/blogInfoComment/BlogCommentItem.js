@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useRef,useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Button, Form,  Stack, OverlayTrigger, Tooltip  } from 'react-bootstrap';
  // Iconos de Font Awesome (como los que usé en el ejemplo)
 import {  FaHeart, FaRegHeart, FaReply, FaEdit, FaTrash, FaEllipsisV } from 'react-icons/fa';
-
  
+import {  useLocation } from 'react-router-dom';
 import {
   replyComment,
   updateComment,
@@ -31,13 +31,27 @@ const BlogCommentItem = ({comment}) => {
   const hasLiked = user && Array.isArray(comment.likes)
     ? comment.likes.some(u => (typeof u === 'string' ? u === user._id : u._id === user._id))
     : false;
-
-  const handleLike = () => {
+   
+    const handleLike = () => {
     if (!user) return;
     if (hasLiked) dispatch(dislikeComment(comment._id, socket));
     else dispatch(likeComment(comment._id, socket));
   };
+  const location = useLocation()
+  const commentref = useRef(null);
 
+  useEffect(() => {
+    const target = location.state && location.state.scrollTo;
+    if (!target) return;
+    const map = {
+     
+      comment:commentref
+    };
+    const ref = map[target];
+    if (ref && ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [location]);
   const handleReply = (e) => {
     e.preventDefault();
     if (!replyText.trim()) return;
@@ -61,9 +75,8 @@ const BlogCommentItem = ({comment}) => {
 
   return (
 <div>
-    
-
-    <Card className="mb-3 border-0 comment-card">
+ 
+    <Card className="mb-3 border-0 comment-card"ref={commentref} >
       <Card.Body className="p-3">
         {/* Cabecera del comentario */}
         <div className="d-flex align-items-start">

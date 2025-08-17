@@ -3,8 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import BlogCommentItem from '../components/blogInfoComment/BlogCommentItem';
 import { getComments, createComment } from '../redux/actions/blogAction';
  
-import ArtistProfile from '../components/blogInfoComment/ArtistProfile';
-
+ 
 const Blog = () => {
   const { auth, socket } = useSelector(state => state);
   const { comments = [], loading } = useSelector(state => state.blog || {});
@@ -53,7 +52,7 @@ const Blog = () => {
 
   return (
     <div className='container' >
-  <ArtistProfile/>
+ 
 
         {loading ? (
           <p>Cargando...</p>

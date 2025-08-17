@@ -27,6 +27,8 @@ import ProvaReducer from './provaReducer'
 import reportReducer from './reportReducer'
 import publiBlogReducer from './publiBlogReducer'
  
+import form  from './formReducer';
+ 
  
 export default combineReducers({
     auth,
@@ -47,6 +49,6 @@ export default combineReducers({
    homePostsAprove ,cart,languageReducer,
    roleReducer,homeUsers,orders,userBlockReducer,
    usersActionReducer  ,ProvaReducer,
-   reportReducer ,publiBlogReducer ,blog
+   reportReducer ,publiBlogReducer ,blog,form 
 
 }) 
