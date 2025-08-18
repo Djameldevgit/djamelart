@@ -7,43 +7,41 @@ export const ROLES_TYPES = {
   MODERADOR_ROLE: 'MODERADOR_ROLE',
   ADMIN_ROLE: 'ADMIN_ROLE',
 
-
+  UPDATE_ROLE: 'UPDATE_ROLE' // 🚀 este faltaba
 }
+ // actions/roleAction.js
  
-
 // actions/roleAction.js
 export const updateUserRole = (userId, newRole, token) => async (dispatch, getState) => {
   try {
     dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
 
     const res = await patchDataAPI(`update_role/${userId}`, { role: newRole }, token);
-    
-    // Actualización simultánea en ambos reducers
+
+    // Actualización simultánea en roles
     dispatch({
       type: ROLES_TYPES.UPDATE_ROLE,
       payload: {
         userId,
         newRole,
-        updatedUser: res.data.user // Usuario completo actualizado
+        updatedUser: res.data.user
       }
     });
 
-    // Si es el usuario actual, actualizar auth
+    // 🔥 Solo si el usuario modificado es el mismo logueado
     const { auth } = getState();
     if (auth.user?._id === userId) {
       dispatch({
         type: GLOBALTYPES.AUTH,
         payload: {
           ...auth,
-          user: {
-            ...auth.user,
-            role: newRole,
-            ...res.data.user // Sobrescribir con datos actualizados
-          }
+          user: res.data.user // sustituye todo el objeto user
         }
       });
     }
-
+    if (getState().app.refreshUI) {
+      getState().app.refreshUI();
+    }
     dispatch({ 
       type: GLOBALTYPES.ALERT, 
       payload: { success: res.data.msg } 
@@ -61,6 +59,7 @@ export const updateUserRole = (userId, newRole, token) => async (dispatch, getSt
     throw err;
   }
 };
+
 export const roleuserautenticado = (user, auth) => async (dispatch) => {
   try {
     dispatch({ type: ROLES_TYPES.LOADING, payload: true })

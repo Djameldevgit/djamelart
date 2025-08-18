@@ -58,11 +58,20 @@ const Roless = () => {
   const handleRoleChange = async (user, selectedRole) => {
     setSelectedRoles(prev => ({ ...prev, [user._id]: selectedRole }));
     await handleChangeRole(user, selectedRole);
-
+  
     setUsersList(prevUsers =>
       prevUsers.map(u => (u._id === user._id ? { ...u, role: selectedRole } : u))
     );
+  
+    // 🔹 Si el usuario editado es el autenticado => actualiza Redux auth
+    if (auth.user && auth.user._id === user._id) {
+      dispatch({
+        type: "AUTH_UPDATE_ROLE", // crea este type en tu reducer
+        payload: selectedRole
+      });
+    }
   };
+  
 
   const getRoleBadge = (role) => {
     const variants = {

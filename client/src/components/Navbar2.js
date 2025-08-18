@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../redux/actions/authAction'
 import { GLOBALTYPES } from '../redux/actions/globalTypes'
@@ -20,9 +20,11 @@ import Modalsearchhome from './Modalsearchhome'
 import ActivateButton from '../auth/ActivateButton'
 import { FaPlusCircle } from "react-icons/fa";
 
+import { ROLES_TYPES } from '../redux/actions/roleAction';
+import Navbar2Auth from './Navbar2Auth';
 
 const Navbar2 = ({ onFiltersChange }) => {
-  const { auth, theme, cart } = useSelector((state) => state)
+  const { auth, theme, cart, roleReducer } = useSelector((state) => state)
   const dispatch = useDispatch()
   const { languageReducer } = useSelector(state => state)
   const { t } = useTranslation(['searchhome'])
@@ -43,9 +45,30 @@ const Navbar2 = ({ onFiltersChange }) => {
   const handleCloseDrawer = () => setShowDrawer(false)
   const handleShowDrawer = () => setShowDrawer(true)
 
-
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const wasOpenRef = useRef(false);
+  const [menuVersion, setMenuVersion] = useState(0);
   const history = useHistory();
 
+  const currentRoleState = useSelector(state => state.roleReducer);
+  const role = auth.user?.role ||
+    (currentRoleState.isAdmin ? 'admin' :
+      currentRoleState.isSuperUser ? 'Super-utilisateur' :
+        currentRoleState.isModerator ? 'Moderateur' : 'user');
+
+
+  useEffect(() => {
+    // Incrementa la versión del menú cuando cambia el rol
+    setMenuVersion(v => v + 1);
+
+    // Si el menú estaba abierto, ciérralo y reábrelo en el próximo tick
+    if (wasOpenRef.current) {
+      setShowUserMenu(false);
+      setTimeout(() => setShowUserMenu(true), 0);
+    }
+  }, [role, currentRoleState]); // Añade currentRoleState como dependencia
+
+ 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -136,16 +159,16 @@ const Navbar2 = ({ onFiltersChange }) => {
                 style={{ cursor: 'pointer' }}
               />
             </div>
-            <div  className='fas fa-plus' onClick={openStatusModal}>
-              
+            <div className='fas fa-plus' onClick={openStatusModal}>
+
             </div>
             {auth.user && (
               <NavDropdown
                 title={<i className="fas fa-bell text-danger" style={{ fontSize: '1.2rem' }} />}
               >
-                
-                  <NotifyModal user={auth.user} />
-              
+
+                <NotifyModal user={auth.user} />
+
               </NavDropdown>
             )}
 
@@ -161,135 +184,38 @@ const Navbar2 = ({ onFiltersChange }) => {
             )}
 
             <NavDropdown
-              align="end"
-              title={
-                auth.user ? (
-                  <div className="d-flex dropdown-avatar">
-                    <Avatar src={auth.user.avatar} size="medium-avatar" />
-                  </div>
-                ) : (
-                  <FaUserCircle size={25} />
-                )
-              }
-              id="nav-user-dropdown"
-              className="custom-dropdown"
-              key={`nav-role-${auth.user?.role}`} // Doble clave de seguridad
+          // En el return de Navbar2, modifica la renderización del Navbar2Auth así:
+ 
+align="end"
+show={showUserMenu}
+onToggle={(next) => {
+  wasOpenRef.current = next;
+  setShowUserMenu(next);
+}}
+title={
+  auth.user ? (
+    <div className="d-flex dropdown-avatar">
+      <Avatar src={auth.user.avatar} size="medium-avatar" />
+      {role !== 'user' && (
+        <Badge
+          bg={role === 'admin' ? 'danger' : 
+              role === 'Moderateur' ? 'warning' : 'info'}
+          className="position-absolute top-0 start-100 translate-middle"
+          style={{ fontSize: '0.6rem' }}
+        >
+          {role.charAt(0).toUpperCase()}
+        </Badge>
+      )}
+    </div>
+  ) : (
+    <FaUserCircle size={25} />
+  )
+}
+id="nav-user-dropdown"
+>
+<Navbar2Auth key={`${auth.user?._id || 'guest'}-${role}`} />
+</NavDropdown>
 
-            >
-              <div className="dropdown-scroll-wrapper">
-                {auth.user ? (
-                  <>
-                    <NavDropdown.Header>{auth.user.username}</NavDropdown.Header>
-
-
-                    {/* --- SECCIÓN 1: ACCIONES PRINCIPALES --- */}
-                    <NavDropdown.Item onClick={openStatusModal}>
-                      ➕ {t('navbar:addPost')}
-                    </NavDropdown.Item>
-
-                    {/* --- SECCIÓN 2: PERFIL Y COMUNICACIÓN --- */}
-                    <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
-                      <FaUserCircle className="me-2" /> {t('navbar:profile')}
-                    </NavDropdown.Item>
-                    <NavDropdown.Item as={Link} to="/message">
-                      💬 {t('navbar:conversations')}
-                    </NavDropdown.Item>
-
-                    {/* --- DIVISOR VISUAL (opcional) --- */}
-                    <NavDropdown.Divider />
-
-                    {/* --- SECCIÓN 3: COMPRAS/SOPORTE --- */}
-                    <NavDropdown.Item as={Link} to="/cart/orders">
-                      {t('navbar:orders')}
-                    </NavDropdown.Item>
-                    <NavDropdown.Item as={Link} to="/contact">
-                      📩 {t('navbar:contact')}
-                    </NavDropdown.Item>
-                    <NavDropdown.Item as={Link} to="/bloginfo">
-                      ℹ️ {t('navbar:infoSupport')}
-                    </NavDropdown.Item>
-
-                    {/* --- SECCIÓN 4: CONFIGURACIÓN/CERRAR SESIÓN --- */}
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item as={Link} to="/settings">
-                      ⚙️ {t('navbar:settings')}
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={handleLogout}>
-                      🚪 {t('navbar:logout')}
-                    </NavDropdown.Item>
-
-
-                    {/* Sección de Admin - Actualiza en tiempo real */}
-                    {auth.user?.role === "admin" && (
-                      <>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Header>🛡️ {t('navbar:panelAdministrativo')}</NavDropdown.Header>
-
-                        {/* --- GESTIÓN DE USUARIOS --- */}
-                        <NavDropdown.Item as={Link} to="/users/userss">
-                          👥 {t('navbar:users')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/users/usersaction">
-                          🔄 {t('navbar:userActions')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/users/bloqueos">
-                          ⚠️ {t('navbar:blockedUsers')}
-                        </NavDropdown.Item>
-
-                        {/* --- CONTENIDO Y MODERACIÓN --- */}
-                        <NavDropdown.Item as={Link} to="/postspendientes">
-                          📭 {t('navbar:pendingPosts')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/reportesusers">
-                          🚨 {t('navbar:userReports')}
-                        </NavDropdown.Item>
-
-                        {/* --- CONFIGURACIÓN DEL SISTEMA --- */}
-                        <NavDropdown.Item as={Link} to="/rolesuser">
-                          🛠️ {t('navbar:roles')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/form">
-                          📝 Formularios
-                        </NavDropdown.Item>
-
-                        {/* --- COMUNICACIÓN --- */}
-                        <NavDropdown.Item as={Link} to="/messageadmin">
-                          💼 {t('navbar:chatWithAdmins')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/users/adminsendemail">
-                          ✉️ {t('navbar:adminSendEmail')}
-                        </NavDropdown.Item>
-
-                      </>
-                    )}
-
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={toggleTheme}>
-                      {theme ? '🌞 ' + t('navbar:lightMode') : '🌙 ' + t('navbar:darkMode')}
-                    </NavDropdown.Item>
-
-                    <NavDropdown.Item onClick={handleLogout}>
-                      <FaSignOutAlt className="me-2" />
-                      {t('navbar:logout')}
-                    </NavDropdown.Item>
-                  </>
-                ) : (
-                  <>
-                    <NavDropdown.Item as={Link} to="/login">
-                      <FaSignInAlt className="me-2" />
-                      {t('navbar:login')}
-                    </NavDropdown.Item>
-                    <NavDropdown.Item as={Link} to="/register">
-                      <FaUserPlus className="me-2" />
-                      {t('navbar:register')}
-                    </NavDropdown.Item>
-                    <NavDropdown.Item as={Link} to="/bloginfo">
-                      ℹ️ {t('navbar:appInfo')}
-                    </NavDropdown.Item>
-                  </>
-                )}
-              </div>
-            </NavDropdown>
           </div>
         </Container>
       </Navbar>

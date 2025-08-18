@@ -14,7 +14,7 @@ import notify from './notifyReducer'
 import message from './messageReducer'
 import online from './onlineReducer'
 import call from './callReducer'
-import roleReducer from './roleeReducer'
+ 
 import homePostsAprove from './posAprovetReducer'
 import cart from './cartReducer'
 import languageReducer from './languageReducer';
@@ -28,6 +28,8 @@ import reportReducer from './reportReducer'
 import publiBlogReducer from './publiBlogReducer'
  
 import form  from './formReducer';
+import { roleReducer } from './roleReducer'
+ 
  
  
 export default combineReducers({
