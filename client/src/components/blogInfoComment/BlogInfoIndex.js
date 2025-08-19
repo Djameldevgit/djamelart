@@ -16,7 +16,12 @@ const BlogInfoIndex = () => {
         { label: "Info", path: "info" },
         { label: "Registro", path: "registro" },
         { label: "Iniciar sesión", path: "login" },
-        { label: "Contraseña olvidada", path: "recuperar-contrasena" }
+        { label: "Contraseña olvidada", path: "recuperar-contrasena" },
+        { label: "Publicaciones", path: "publicaciones" },
+        { label: "busqueda y busqueda avanzada", path: "busqueda-buscqueda-avanzada" },
+        { label: "comentarios y hacer likes", path: "comentarios-likes" },
+        { label: "notificaciones", path: "notificaciones" },
+
       ]
     },
     {

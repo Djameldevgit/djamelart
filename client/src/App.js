@@ -24,7 +24,7 @@ import { getNotifies } from './redux/actions/notifyAction'
 import { getPostsPendientes } from './redux/actions/postAproveAction'
 import Postspendientes from './pages/postspendientes'
 
-import Navbar2 from './components/Navbar2'
+ 
 
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
 import Roles from './pages/roles';
@@ -72,6 +72,7 @@ import Publoblog from './pages/publoblog';
 import Blog from './pages/Blog';
 import LanguageModalGeneral from './components/LanguageModalGeneral';
 import FormCheckBox from './components/FormChekBox';
+import Navbar2 from './components/header/Navbar2';
  
 
 function App() {

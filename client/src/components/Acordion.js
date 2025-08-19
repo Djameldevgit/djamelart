@@ -8,8 +8,8 @@ import {
   FaAppleAlt,
   FaSeedling
 } from 'react-icons/fa'
-import Modalsearchhome from './Modalsearchhome'
-
+import Modalsearchhome from './header/Modalsearchhome'
+ 
 const Acordion = () => {
   return (
     <div className="px-2">

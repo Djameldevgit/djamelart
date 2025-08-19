@@ -1,27 +1,31 @@
+// Navbar2Auth.js
 import React, { useEffect, memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { NavDropdown } from 'react-bootstrap';
+import { NavDropdown, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
 import { logout } from '../redux/actions/authAction';
-import { Navbar, Container,   Offcanvas, Button, Badge } from 'react-bootstrap'
+
 const Navbar2Auth = memo(() => {
   const { auth, roleReducer } = useSelector((state) => ({
     auth: state.auth,
     roleReducer: state.roleReducer
   }));
-  
+
   const { t } = useTranslation(['navbar']);
   const dispatch = useDispatch();
 
-  // Calcula el rol actual basado en el estado de Redux
-  const currentRole = roleReducer.isAdmin ? 'admin' : 
-                     roleReducer.isModerator ? 'Moderateur' : 
-                     roleReducer.isSuperUser ? 'Super-utilisateur' : 
-                     auth.user?.role || 'user';
+  // Determinar el rol actual
+  const currentRole = roleReducer.isAdmin
+    ? 'admin'
+    : roleReducer.isModerator
+    ? 'Moderateur'
+    : roleReducer.isSuperUser
+    ? 'Super-utilisateur'
+    : auth.user?.role || 'user';
 
-  // Debug: Verifica cuando cambia el rol
+  // Debug para ver si cambia el rol en tiempo real
   useEffect(() => {
     console.log('Rol actualizado en Navbar2Auth:', currentRole);
   }, [currentRole]);
@@ -30,12 +34,12 @@ const Navbar2Auth = memo(() => {
     dispatch(logout());
   };
 
+  // Menús por rol
   const roleMenus = {
     user: [
       { to: "/cart/orders", label: t('orders'), icon: "🛒" },
       { to: "/contact", label: t('contact'), icon: "📩" },
     ],
-   
     admin: [
       { to: "/users/userss", label: t('users'), icon: "👥" },
       { to: "/users/usersaction", label: t('userActions'), icon: "🔄" },
@@ -50,18 +54,25 @@ const Navbar2Auth = memo(() => {
   };
 
   return (
-    <div className="dropdown-scroll-wrapper">
+    <>
       {auth.user ? (
-        <>
-          <NavDropdown.Header>
-            {auth.user.username} <Badge bg={
-              currentRole === 'admin' ? 'danger' : 
-              currentRole === 'Moderateur' ? 'warning' : 'info'
+        <NavDropdown title={
+          <>
+            {auth.user.username}{" "}
+            <Badge bg={
+              currentRole === 'admin'
+                ? 'danger'
+                : currentRole === 'Moderateur'
+                ? 'warning'
+                : currentRole === 'Super-utilisateur'
+                ? 'primary'
+                : 'info'
             }>
               {currentRole}
             </Badge>
-          </NavDropdown.Header>
-
+          </>
+        } id="nav-dropdown-auth">
+          
           {roleMenus[currentRole]?.map((item, i) => (
             <NavDropdown.Item key={i} as={Link} to={item.to}>
               {item.icon} {item.label}
@@ -76,9 +87,9 @@ const Navbar2Auth = memo(() => {
           <NavDropdown.Item onClick={handleLogout}>
             <FaSignOutAlt className="me-1" /> {t('logout')}
           </NavDropdown.Item>
-        </>
+        </NavDropdown>
       ) : (
-        <>
+        <NavDropdown title={t('account')} id="nav-dropdown-guest">
           <NavDropdown.Item as={Link} to="/login">
             <FaSignInAlt className="me-1" /> {t('login')}
           </NavDropdown.Item>
@@ -88,10 +99,11 @@ const Navbar2Auth = memo(() => {
           <NavDropdown.Item as={Link} to="/bloginfo">
             ℹ️ {t('appInfo')}
           </NavDropdown.Item>
-        </>
+        </NavDropdown>
       )}
-    </div>
+    </>
   );
 });
 
 export default Navbar2Auth;
+

@@ -1,57 +1,56 @@
 import { Card, Container } from "react-bootstrap";
 import { FaShieldAlt, FaExternalLinkAlt } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const SeguridadInfo = () => {
+  const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('info');
+  const lang = languageReducer.language || 'es';
+
   const handleVerImagenes = () => {
-    // Aquí podrías mostrar capturas de ejemplo del flujo de verificación
-    console.log("Ver imágenes de seguridad");
+    // Lógica para mostrar imágenes
   };
 
   return (
     <Container className="my-3">
       <h3 className="text-left mb-2">
         <FaShieldAlt className="me-2" style={{ color: "#6f42c1" }} />
-        <span style={{ color: "#6f42c1" }}>Seguridad en la aplicación</span>
+        <span style={{ color: "#6f42c1" }}>{t('tituloPrincipalk', { lng: lang })}</span>
       </h3>
 
       <Card className="shadow-sm border-0 bg-light">
         <Card.Body className="p-1">
           <p className="fs-5">
-            La seguridad es una prioridad. Nuestro sistema protege tanto a los 
-            usuarios como a la plataforma para garantizar una experiencia confiable.
+            {t('descripcionSeguridad', { lng: lang })}
           </p>
 
           <div>
             <dl className="row">
-              <dt className="col-sm-3">Encriptación de datos</dt>
+              <dt className="col-sm-3">{t('encriptacionDatos', { lng: lang })}</dt>
               <dd className="col-sm-9">
-                Toda la información enviada al registrarse se transmite de forma 
-                <strong> encriptada hacia el backend</strong>, asegurando que 
-                los datos personales permanezcan protegidos.
+                {t('descripcionEncriptacion.parte1', { lng: lang })} <strong>{t('descripcionEncriptacion.parte2', { lng: lang })}</strong>,{" "}
+                {t('descripcionEncriptacion.parte3', { lng: lang })}
               </dd>
 
-              <dt className="col-sm-3">Registro manual con token</dt>
+              <dt className="col-sm-3">{t('registroManual', { lng: lang })}</dt>
               <dd className="col-sm-9">
-                Cuando un usuario se registra manualmente, el sistema genera un 
-                <strong> token de validación</strong>. Una vez comprobados los datos, 
-                se le envía directamente al <em>home</em> sin necesidad de volver a iniciar sesión.
+                {t('descripcionRegistro.parte1', { lng: lang })} <strong>{t('descripcionRegistro.parte2', { lng: lang })}</strong>.{" "}
+                {t('descripcionRegistro.parte3', { lng: lang })} <em>{t('home', { lng: lang })}</em>{" "}
+                {t('descripcionRegistro.parte4', { lng: lang })}
               </dd>
 
-              <dt className="col-sm-3">Verificación por correo</dt>
+              <dt className="col-sm-3">{t('verificacionCorreo', { lng: lang })}</dt>
               <dd className="col-sm-9">
-                Para confirmar la identidad, el usuario debe verificar su cuenta 
-                mediante un <strong>botón de verificación</strong>.  
-                Si intenta realizar cualquier acción sin estar verificado, se abre un 
-                <strong> modal</strong> con un botón que envía automáticamente un 
-                correo de verificación.
+                {t('descripcionVerificacion.parte1', { lng: lang })} <strong>{t('descripcionVerificacion.parte2', { lng: lang })}</strong>.{" "}
+                {t('descripcionVerificacion.parte3', { lng: lang })} <strong>{t('modal', { lng: lang })}</strong>{" "}
+                {t('descripcionVerificacion.parte4', { lng: lang })}
               </dd>
 
-              <dt className="col-sm-3">Prevención de perfiles falsos</dt>
+              <dt className="col-sm-3">{t('prevencionPerfiles', { lng: lang })}</dt>
               <dd className="col-sm-9">
-                Los perfiles creados con correos falsos nunca podrán ser verificados, 
-                y por lo tanto no podrán publicar, comentar, dar like ni realizar acciones.  
-                Además, el sistema revisa la base de datos cada <strong>24 horas</strong> 
-                y elimina automáticamente los correos no verificados.
+                {t('descripcionPrevencion.parte1', { lng: lang })} <strong>{t('24horas', { lng: lang })}</strong>{" "}
+                {t('descripcionPrevencion.parte2', { lng: lang })}
               </dd>
 
               <dd className="col-sm-9">
@@ -62,7 +61,7 @@ const SeguridadInfo = () => {
                       onClick={handleVerImagenes}
                     >
                       <FaExternalLinkAlt className="me-1" />
-                      <span className="ms-1">ver imágenes</span>
+                      <span className="ms-1">{t('verImagenes', { lng: lang })}</span>
                     </span>
                   </p>
                 </dl>

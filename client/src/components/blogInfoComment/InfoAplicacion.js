@@ -1,12 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import { Container, Card, Badge, Row, Col, Button } from "react-bootstrap";
 import {
-  PersonCircle,  CheckCircleFill,
+  PersonCircle, CheckCircleFill,
   ShieldShaded, Hourglass, FlagFill, Send, HeartFill, ChatSquareText,
-  Cart, Brush, CodeSlash, Globe, Award, Lock, Unlock, ExclamationTriangleFill 
+  Cart, Brush, CodeSlash, Globe, Award, Lock, Unlock, ExclamationTriangleFill
 } from "react-bootstrap-icons";
 import { useTranslation } from 'react-i18next';
-import { useSelector  } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import Actualizaciones from "./folder/Actualizaciones";
 import Admin from "./folder/Admin";
@@ -15,12 +15,9 @@ import ContactoComunicacion from "./folder/ContactoComunicacion";
 import IntroMarketplace from "./folder/IntroMarketplace";
 import Language from "./folder/Language";
 import PublicacionesInfo from "./folder/PublicacionesInfo";
- import Registro from "./folder/Registro";
+import Registro from "./folder/Registro";
 import Search from "./folder/Search";
 import SeguridadInfo from "./folder/SeguridadInfo";
- 
-
-
 
 const FeatureCard = ({ icon, title, children, color = "primary" }) => (
   <Card className="h-100 border-0 shadow-sm">
@@ -38,46 +35,41 @@ const FeatureCard = ({ icon, title, children, color = "primary" }) => (
 );
 
 const InfoAplicacion = () => {
-
-  const { languageReducer  } = useSelector(state => state);
+  const { languageReducer } = useSelector(state => state);
   const { t, i18n } = useTranslation('aplicacion');
 
- 
- 
   const lang = languageReducer.language || 'en';
   if (i18n.language !== lang) i18n.changeLanguage(lang);
- 
-  // ---- Refs que coinciden 1 a 1 con el acordeón ----
+
+  // ---- Refs que coinciden con BlogInfoIndex ----
   const registroRef = useRef(null);
   const loginRef = useRef(null);
-  const perfilRef = useRef(null);
-  
   const activarCuentaRef = useRef(null);
   const recuperarPasswordRef = useRef(null);
-
   const tecnologiasRef = useRef(null);
   const novedadesRef = useRef(null);
-
   const blogRef = useRef(null);
-  const nuevaPublicacionRef = useRef(null);
-
+  const publicacionesRef = useRef(null);
+ 
   const location = useLocation();
 
   useEffect(() => {
     const target = location.state && location.state.scrollTo;
     if (!target) return;
+
     const map = {
       registro: registroRef,
       login: loginRef,
-      perfil: perfilRef,
- 
       activarCuenta: activarCuentaRef,
       recuperarPassword: recuperarPasswordRef,
       tecnologias: tecnologiasRef,
       novedades: novedadesRef,
       blog: blogRef,
-      nuevaPublicacion: nuevaPublicacionRef,
+   
+publicaciones: publicacionesRef
+    
     };
+
     const ref = map[target];
     if (ref && ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -89,27 +81,23 @@ const InfoAplicacion = () => {
       direction: lang === 'ar' ? 'rtl' : 'ltr',
       textAlign: lang === 'ar' ? 'right' : 'left',
     }}>
-<IntroMarketplace/>
+      {/* Secciones importadas */}
+      <IntroMarketplace />
+      <Registro ref={registroRef} />
+     
+      <SeguridadInfo />
+      <PublicacionesInfo ref={publicacionesRef} />
+      <ContactoComunicacion />
+      <Language />
+      <Admin />
+      <BlogPortafolio />
+      <Actualizaciones />
 
-   <Registro/>
-     <Search/>
-  <SeguridadInfo/>
-     <PublicacionesInfo/>
-<ContactoComunicacion/>
-<Language/>
-<Admin/>
-
-<BlogPortafolio/>
-<Actualizaciones/>
       {/* USO DE LA APLICACIÓN */}
       <section className="mb-5">
         <h2 className="text-center mb-4 fw-bold">
           <PersonCircle className="me-2 text-primary" /> {t('access.title')}
         </h2>
-
-       
-
-       
         <div className="text-center mt-4">
           <p className="text-muted">
             <CheckCircleFill className="text-success me-1" /> {t('access.verification')}
@@ -117,16 +105,16 @@ const InfoAplicacion = () => {
         </div>
       </section>
 
-      {/* SEGURIDAD EN LA APLICACIÓN */}
+      {/* SEGURIDAD */}
       <section className="mb-5">
         <h2 className="text-center mb-4 fw-bold">
           <ShieldShaded className="me-2 text-primary" /> {t('security.title')}
         </h2>
 
-        <h3 ref={activarCuentaRef} className="h5 mb-2">Activar cuenta22</h3>
+        <h3 ref={activarCuentaRef} className="h5 mb-2">Activación de cuenta</h3>
         <p className="text-muted">{t('security.features.verification.description')}</p>
 
-        <h3 ref={recuperarPasswordRef} className="h5 mt-4 mb-2">Recuperar contraseñahh</h3>
+        <h3 ref={recuperarPasswordRef} className="h5 mt-4 mb-2">Recuperar contraseña</h3>
         <p className="text-muted mb-3">{t('security.features.appeals.description')}</p>
 
         <Card className="border-primary border-2 bg-primary bg-opacity-10">
@@ -169,7 +157,7 @@ const InfoAplicacion = () => {
         </h2>
       </section>
 
-      {/* DESARROLLO DE LA APLICACIÓN */}
+      {/* DESARROLLO */}
       <section className="mb-5">
         <h2 className="text-center mb-4 fw-bold">
           <CodeSlash className="me-2" /> {t('technology.title')}
@@ -206,21 +194,18 @@ const InfoAplicacion = () => {
         </Card>
       </section>
 
-      {/* BLOG DEL ARTISTA */}
+      {/* BLOG */}
       <section className="mb-5">
         <h2 className="text-center mb-4 fw-bold">
           Blog del artista
         </h2>
-        <Card.Title ref={blogRef} > Ver blog</Card.Title>
+        <Card.Title ref={blogRef}>Ver blog</Card.Title>
 
-        <h3 className="h5 mb-2">ver nlog</h3>
-        <p className="text-muted mb-3">{t('founder.badges.moderated')}</p>
-
-        <h3 ref={nuevaPublicacionRef} className="h5 mb-2">Nueva publicación</h3>
+        <h3 ref={publicacionesRef} className="h5 mb-2">Nueva publicación</h3>
         <p className="text-muted mb-4">{t('features.items.publishing.description')}</p>
       </section>
 
-      {/* Fundador */}
+      {/* FUNDADOR */}
       <Card className="border-0 shadow-sm overflow-hidden">
         <div className="row g-0">
           <div className="col-md-4 bg-primary text-white d-flex align-items-center p-4">

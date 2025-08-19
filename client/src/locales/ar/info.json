@@ -2,16 +2,347 @@
     
    
     "art_painting": "بيع الفن",
+    "registro" :"registrooooooooooooooooooooooooooooooooooooo",
+  "imagenesDeRegistro": "صور التسجيل",
+  "cerrar": "إغلاق",
+  "pasoNumero": "الخطوة {{paso}}",
+  "contadorImagenes": "{{actual}} من {{total}}",
+  "comoRegistrarme": "كيف يمكنني التسجيل؟",
+  "descripcionIntro": "للاستفادة من جميع وظائف التطبيق، يتيح لك النظام التسجيل بـ",
+  "tresFormasDiferentes": "3 طرق مختلفة",
+  "crearCuentaManual": "إنشاء حساب يدويًا",
+  "descripcionManual": "تحتاج إلى إنشاء حساب مجاني باستخدام بريدك الإلكتروني واسم المستخدم وكلمة المرور.",
+    "usandoGoogle": "باستخدام زر جوجل",
+  "descripcionGoogle": "إذا كان لديك حساب Google، ما عليك سوى النقر فوق زر Google وستكون داخل التطبيق في لحظة.",
+  "usandoFacebook": "باستخدام زر فيسبوك",
+  "descripcionFacebook": "إذا كان لديك حساب فيسبوك، ما عليك سوى النقر فوق زر تسجيل الدخول باستخدام فيسبوك.",
+  "olvidasteContrasena": "هل نسيت كلمة المرور؟",
+  "recuperacionContrasena": "استعادة كلمة المرور",
+  "descripcionRecuperacion": "يمكنك استعادة كلمة المرور الخاصة بك باتباع الخطوات في نموذج الاستعادة.",
+ 
+ 
+
+
+
+  "serarch" :"serarchoooooooooooooooooooooooooooooooooooo",
+ 
+  "comoFuncionaLaBusqueda": "كيف يعمل البحث؟",
+  "sistemaBusquedaPart1": "نظام",
+  "busquedaInteligente": "البحث الذكي",
+  "sistemaBusquedaPart2": "يسمح للمستخدمين باستكشاف الأعمال الفنية بسرعة ودقة",
+  "usuariosSinAutenticacion": "المستخدمون غير المسجلين",
+  "descripcionBusquedaSimplePart1": "يمكنهم استخدام",
+  "inputBusquedaSimple": "حقل بحث بسيط",
+  "descripcionBusquedaSimplePart2": "الذي، رغم محدوديته، قوي جدًا: يجد النتائج حسب",
+  "categoria": "الفئة",
+  "tema": "الموضوع",
+  "estilo": "النمط",
+  "o": "أو",
+  "tambienAdmite": "كما يدعم تركيبات مثل",
+  "combinacion1": "الفئة + الموضوع",
+  "combinacion2": "الفئة + الموضوع + النمط",
+  "usuariosAutenticados": "المستخدمون المسجلون",
+  "tienenAcceso": "لديهم إمكانية الوصول إلى",
+  "buscadorAvanzado": "باحث متقدم",
+  "enTiempoReal": "في الوقت الفعلي",
+  "aquiSePueden": "هنا يمكن تطبيق عوامل تصفية محددة حسب:",
+  "titulo": "العنوان",
+  "fechaPublicacion": "تاريخ النشر",
+  "facilitaEncontrar": "هذا يسهل العثور على ما تبحث عنه بالضبط في ثوانٍ.",
+  "verImagenes": "عرض الصور",
+ 
+
+  "publicoaciones inforr" :"publicoaciones inforroooooooooooooooooooooooooooooooooooo",
+  "tituloPublicaciones": "منشورات الفنانين",
+  "descripcionArtistasPart1": "يمكن للفنانين",
+  "autenticadosVerificados": "المعتمدين والموثقين",
+  "descripcionArtistasPart2": "إنشاء منشورات بسهولة وأمان داخل المنصة",
+  "comoPublicar": "كيفية النشر",
+  "descripcionComoPublicarPart1": "يمكن إنشاء منشور من خلال",
+  "iconoPlus": "أيقونة الزائد",
+  "descripcionComoPublicarPart2": "في شريط التنقل أو من",
+  "menuAvatar": "القائمة تحت الصورة الشخصية",
+  "alPublicar": "عند النشر، يخطر النظام بـ",
+  "exitoOFracaso": "النجاح أو الفشل",
+  "delEnvio": "لإرسال المنشور",
+  "revisionContenido": "مراجعة المحتوى",
+  "descripcionRevisionPart1": "لضمان الجودة الفنية، يمر كل منشور عبر",
+  "revisionAdministradores": "مراجعة من قبل المشرفين",
+  "descripcionRevisionPart2": "يتم مراجعة الصور والعناوين والوصوف قبل أن تصبح مرئية",
+  "aprobacionVisibilidad": "الموافقة والظهور",
+  "descripcionAprobacionPart1": "بعد الموافقة، يظهر المنشور في",
+  "home": "الصفحة الرئيسية",
+  "descripcionAprobacionPart2": "في نتائج البحث وفي قسم",
+  "misPublicaciones": "منشوراتي",
+  "descripcionAprobacionPart3": "في ملف الفنان الشخصي",
+  "gestionPost": "إدارة المنشور",
+  "descripcionGestionPart1": "في صفحة",
+  "detallePost": "تفاصيل المنشور",
+  "descripcionGestionPart2": "تظهر تاريخ الإنشاء والوصوف والصور. يمكن للفنان",
+  "editar": "تعديل",
+  "eliminar": "حذف",
+  "descripcionGestionPart3": "منشوره في أي وقت",
+  "interaccionTiempoReal": "التفاعل في الوقت الحقيقي",
+  "descripcionInteraccionPart1": "يمكن للمستخدمين",
+  "comentar": "التعليق",
+  "dar": "إعطاء",
+  "like": "إعجاب",
+  "descripcionInteraccionPart2": "ويتلقى الفنان إشعارات فورية. بالإضافة إلى ذلك، يمكن للعميل المحتمل بدء",
+  "chatPrivado": "محادثة خاصة مباشرة",
+  "descripcionInteraccionPart3": "من المنشور",
+ 
+ 
+
+  "language inforr" :"languageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeo",
+  "tituloPrincipal": "عالم واحد، العديد من اللغات",
+  "descripcionSistemaPart1": "لم يتم إنشاء هذا النظام ليقتصر على مكان واحد أو لغة واحدة، بل لـ",
+  "abrirseMundo": "الانفتاح على العالم بأسره",
+  "descripcionSistemaPart2": "الفن لا يفهم الحدود، ولذلك كان من الضروري أن يتمكن تطبيقي من التحدث مع الجميع",
+  "componenteLanguagePart1": "مكون",
+  "languageComponent": "اللغة",
+  "componenteLanguagePart2": "ينبع من هذه الرؤية العالمية: يمكن لأي فنان أو محب للفن التفاعل باللغة الأقرب إليه. لقد كرست أسابيع وشهورًا لدراسة نظام",
+  "componenteLanguagePart3": "دمج الترجمات في كل من العميل والخادم، بحيث يتم حفظ اللغة المختارة ومزامنتها تلقائيًا",
+  "significadoPart1": "هذا يعني أنه ليس من الضروري إعادة تكوين اللغة في كل اتصال:",
+  "significadoPart2": "سيتذكر التطبيق ذلك وسيتكيف مع تفضيلات كل شخص",
+  "idiomasActuales": "اللغات الحالية",
+  "ingles": "الإنجليزية",
+  "arabe": "العربية",
+  "visionFutura": "الرؤية المستقبلية",
+  "metaAmpliar": "هدفي هو توسيع الترجمات لاستقبال مستخدمين من:",
+  "francia": "فرنسا",
+  "rusia": "روسيا",
+  "china": "الصين",
+  "espana": "إسبانيا",
+  "kabile": "وطني الأم بلغة القبائل",
+  "lenguajeArtePart1": "تعتبر",
+  "lenguaje": "اللغة",
+  "lenguajeArtePart2": "أول مفتاح يفتح الباب للفن. يضمن هذا المكون أن تكون المنصة شاملة ويمكن الوصول إليها ومفتوحة للجميع، مع احترام التنوع الثقافي واللغوي",
+ 
+
+  "intro market placeeeeeeeeeeeeeeeeeeee" :"intro market placeeeeeeeeeeeeeeeeeeee",
+  "tituloPrincipall": {
+    "parte1": "مرحبًا بكم في",
+    "parte2": "سوق الفن الخاص بنا"
+  },
+  "subtitulo": "مجتمع عالمي حيث يتواصل الفنانون وعشاق الفن، يشاركون ويجمعون أعمالًا فريدة.",
+  "tecnologias": {
+    "parte1": "مبنية بتقنيات حديثة",
+    "parte2": "(MERN, Redux, i18n, sockets في الوقت الحقيقي)",
+    "parte3": "تدمج وظائف اجتماعية مثل الإعجابات والتعليقات والدردشة الخاصة، جنبًا إلى جنب مع نظام متعدد اللغات يكسر الحواجز الثقافية واللغوية."
+  },
+  "disponibilidad": {
+    "parte1": "متاح بـ",
+    "parte2": "7 لغات",
+    "parte3": "ومع",
+    "parte4": "8 فئات فنية",
+    "parte5": "ينشر الفنانون أعمالهم بنقرة واحدة، بينما يستكشف المشترون بعمليات بحث متقدمة، يتفاعلون مباشرة ويحصلون على الفن بأمان."
+  },
+  "pwa": {
+    "parte1": "تطبيقنا",
+    "parte2": "PWA",
+    "parte3": "يعمل على الهواتف المحمولة والأجهزة اللوحية وأجهزة الكمبيوتر، مع مصادقة آمنة، إشعارات فورية ونظام ثقة يحمي كلًا من المبدعين والمشترين."
+  },
+  "cierreInspirador": "الفن لا يفهم الحدود. اكتشف، تواصل وجمع من أي مكان في العالم.",
+ 
+
+
+  "seguridaddddddddddddddddddddddddddddddddddddddd" :"seguridaddddddddddddddddddddddddddddddddddddddd",
+  "tituloPrincipalk": "الأمان في التطبيق",
+  "descripcionSeguridad": "الأمان هو أولوية. نظامنا يحمي المستخدمين والمنصة لضمان تجربة موثوقة.",
+  "encriptacionDatos": "تشفير البيانات",
+  "descripcionEncriptacion": {
+    "parte1": "جميع المعلومات المرسلة عند التسجيل يتم نقلها بشكل",
+    "parte2": "مشفرة إلى الخلفية",
+    "parte3": "ضمان بقاء البيانات الشخصية محمية."
+  },
+  "registroManual": "التسجيل اليدوي مع رمز التحقق",
+  "descripcionRegistro": {
+    "parte1": "عندما يسجل المستخدم يدويًا، يقوم النظام بإنشاء",
+    "parte2": "رمز تحقق",
+    "parte3": "بعد التحقق من البيانات، يتم إرساله مباشرة إلى",
+    "parte4": "بدون الحاجة إلى تسجيل الدخول مرة أخرى."
+  },
   
-    "categorias": {
-      "subcategorias_art_textile": {
-        "broderie": "تطريز",
-        "fibre_textile": "ألياف نسيجية",
-        "fil": "خيط"
-        
-      }}
+  "verificacionCorreo": "التحقق عبر البريد الإلكتروني",
+  "descripcionVerificacion": {
+    "parte1": "لتأكيد الهوية، يجب على المستخدم التحقق من حسابه من خلال",
+    "parte2": "زر التحقق",
+    "parte3": "إذا حاول تنفيذ أي إجراء دون التحقق، يفتح",
+    "parte4": "مع زر يرسل تلقائيًا بريد التحقق."
+  },
+  "modal": "نافذة منبثقة",
+  "prevencionPerfiles": "منع الملفات المزيفة",
+  "descripcionPrevencion": {
+    "parte1": "الملفات الشخصية المنشأة ببريد إلكتروني مزيف لن يتم التحقق منها أبدًا، وبالتالي لن تتمكن من النشر أو التعليق أو الإعجاب أو تنفيذ إجراءات. بالإضافة إلى ذلك، يفحص النظام قاعدة البيانات كل",
+    "parte2": "ويحذف تلقائيًا البريد غير المؤكد."
+  },
+  "24horas": "24 ساعة",
+ 
+
+
+
+
+
+
+
+ "contactoooooooooooooooooooooooooooooooooo" :"contactoooooooooooooooooooooooooooooooooo",
+  "tituloPrincipalll": "الاتصال والتواصل",
+  "descripcionPlataforma": "تقدم منصتنا طرقًا مختلفة للتواصل حتى يتمكن المستخدمون من حل الشكاوى أو تلقي المساعدة بسرعة وسهولة.",
+  "formularioContacto": "نموذج الاتصال",
+  "autenticadoVerificado": "المصادق عليه والمتحقق منه",
+  "descripcionFormulario": {
+    "parte1": "يمكن لأي مستخدم",
+    "parte2": "إرسال رسالة لنا عبر",
+    "parte3": "يكتب فقط",
+    "parte4": "وعند النقر على",
+    "parte5": "سيصلنا بريد إلكتروني. نرد عندما يكون ذلك مناسبًا لتقديم أفضل خدمة."
+  },
   
-  
-  
-  
+ 
+  "descripcionAsunto": "وصف الموضوع",
+  "enviar": "إرسال",
+  "chatAdministradores": "الدردشة الخاصة مع المشرفين",
+  "chatTiempoReal": "دردشة خاصة في الوقت الحقيقي",
+  "descripcionChat": {
+    "parte1": "بالإضافة إلى البريد الإلكتروني، يمكن للمستخدم فتح",
+    "parte2": "مع المشرفين. هناك يمكنك الكتابة مباشرة مع فريقنا لحل أي استفسار على الفور."
+  },
+  "atencionPersonalizada": "اهتمام شخصي",
+  "comunicacionCercana": "تواصل وثيق",
+  "descripcionAtencion": {
+    "parte1": "هدفنا هو الحفاظ على",
+    "parte2": "مع الفنانين والمشترين، مما يضمن بيئة موثوقة وشفافة."
+  },
+
+  "adminnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" :"adminnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+  "tituloPrincipal0": "الإدارة والأمن",
+  "descripcionPlataformaa": "منصتنا لا تربط الفنانين والجامعين فحسب، بل تضمن أيضًا بيئة آمنة وموثوقة.",
+  "equipoAdmin": {
+    "parte1": "يقوم فريق الإدارة بـ",
+    "parte2": "لحماية قيمة الفن وسلامة المجتمع."
+  },
+  "evaluarPosts": "تقييم المنشورات",
+  "moderarComentarios": "تنظيم التعليقات غير المناسبة",
+ 
+  "supervisarUsuarios": "مراقبة المستخدمين الضارين",
+  "sistemaSeguridad": {
+    "parte1": "على الرغم من أننا نمتلك نظام أمن متقدم، تظل الإدارة دائمًا منتبهة لـ",
+    "parte2": "يتم مراجعة كل موقف بجدية لضمان الشفافية والثقة."
+  },
+  "correosReportes": "رسائل المستخدمين، التقارير، الشكاوى والبلاغات",
+  "funcionalidadApp": {
+    "parte1": "بالإضافة إلى ذلك، يسمح تطبيقنا لأي مستخدم يتم تقييمه على أنه مؤهل بأن يصبح",
+    "parte2": "عند تغيير دوره، تتحول الواجهة وسيتمكن من التعاون في خدمة الفنانين وعشاق الفن في الوقت الحقيقي."
+  },
+  "adminUnClic": "مسؤول بنقرة واحدة",
+  "garantiaFinal": "بفضل هذه المجموعة من التكنولوجيا والإشراف البشري، نضمن تجربة عادلة وآمنة وعالية الجودة للجميع.",
+ 
+
+ 
+  "blog y portaforlio": "blog y portaforliooooooooooooooooooooooooooooooooooo ",
+ 
+  "tituloPrincipa": "المدونة والملف الشخصي",
+  "nombreAutor": "جمال بوعلي",
+  "descripcionEspacio": {
+    "parte1": "تم إنشاء هذا المساحة خصيصًا لعرض مسيرتي كـ",
+    "parte2": "شغفان عميقان رافقاني لسنوات عديدة ولن أستبدلهما بكل كنوز العالم."
+  },
+  "artistaPintor": "فنان تشكيلي",
+  "y": "و",
+  "desarrolladorMERN": "مطور MERN",
+  "miniBiografia": "سيرة ذاتية مصغرة",
+  "ventaArte": "بيع وشراء الفن",
+  "biografia": {
+    "parte1": "لقد قضيت سنوات في نشر أعمالي على وسائل التواصل الاجتماعي، لكني فهمت أن هذه المنصات ليست مخصصة لـ",
+    "parte2": "إنها مصممة للتسلية المستمرة بالألعاب والبث المباشر والدردشات، وليس للتركيز على النشر الفني."
+  },
+  "pinturaProgramacion": "الرسم والبرمجة",
+  "decision": {
+    "parte1": "لذلك قررت دراسة واستكشاف البرمجة بعمق، مستعينًا بالذكاء الاصطناعي، خاصة ChatGPT، أعمل أيامًا وليالي بين",
+    "parte2": "قسمت وقتي بين صقل موهبتي الفنية وتعلم Express والسوكيتس والمصادقة وواجهات برمجة تطبيقات جوجل، وكل ما يلزم لإنشاء تطبيق حيث يمكنني ليس فقط نشر أعمالي، ولكن أيضًا توفير الفرصة لفنانين آخرين من فئات مختلفة."
+  },
+  "retoPersonal": "تحدي شخصي",
+  "vision": {
+    "parte1": "هذا التطبيق لا يسعى لمنافسة أي أحد؛ إنه",
+    "parte2": "ومشروع في تطور مستمر. كل يوم أرسم لتحسين فني وأبرمج لتحسين تجربة المستخدمين. أنا حتى منفتح على انضمام مطورين MERN آخرين لتوسيع هذا المشروع أكثر وأكثر، لأننا لا نعرف ما قد يحمله المستقبل."
+  },
+  "enlaces": "روابط",
+  "descripcionEnlaces": "هنا يمكنك أيضًا العثور على روابط لتطبيقاتي ومشاريعي الأخرى. (👉 هنا يمكنك إدراج أزرار أو روابط خارجية باستخدام React-Bootstrap).",
+  "comentarios": "تعليقات",
+  "autenticadoVerificadoo": "مصادق عليه ومتحقق منه",
+  "interaccion": {
+    "parte1": "أسفل هذا القسم، يمكن لأي مستخدم",
+    "parte2": "ترك",
+    "parte3": "تعليق أو",
+    "parte4": "إعجاب دائم في مدونتي/ملفي الشخصي، كدعم لعملي كفنان ومطور."
+  },
+ 
+
+  "actulazacionesss": "actualizacionessssssssssssssssssssssss",
+  "tituloPrincip": "التحديثات القادمة",
+  "descripcionMejoras": "نستمر في التحسين لتقديم أفضل تجربة في عالم الفن الرقمي. إليك بعض الميزات التي ستكون متاحة قريبًا:",
+  "notificacionesTiempoReal": "إشعارات في الوقت الحقيقي",
+  "descNotificaciones": "تلقي تنبيهات عندما يعلق أحد أو يعجب أو يشتري عملاً فنياً",
+  "favoritosColecciones": "المفضلة والمجموعات",
+  "descFavoritos": "احفظ ونظم أعمالك المفضلة في معرضك الخاص",
+  "buscadorAvanza": "محرك بحث متقدم",
+  "descBuscador": "استكشف الفن حسب التقنية، الأسلوب، السعر، الفنان والمزيد",
+  "panelArtistas": "لوحة التحكم للفنانين",
+  "descPanelArtistas": "إحصائيات وقياسات لمعرفة تأثير أعمالك",
+  "mensajeriaMejorada": "مراسلة محسنة",
+  "descMensajeria": "تواصل بشكل خاص مع الفنانين والمشترين في الوقت الحقيقي",
+  "modoOscuroClaro": "الوضع المظلم/الفاتح",
+  "descModoVisual": "اختر النمط البصري الذي تفضله للتصفح المريح",
+  "certificacionObras": "شهادات الأعمال",
+  "descCertificacion": "مزيد من الثقة مع التحقق اليدوي للقطع الفريدة",
+  "compromiso": "التزامنا هو تنمية المجتمع الفني الرقمي بأدوات آمنة، حديثة ومفيدة.",
+
+
+"bloginfo  es el modal":"bloginfo  es el modallllllllllllllllllllllllllllllllllllllll",
+
+ 
+  "tituloCentroAyuda": "مركز المساعدة",
+  "descripcionCentroAyuda": "ابحث عن الأدلة والحلول والتفاصيل حول استخدام التطبيق.",
+  "ariaIrA": "الذهاب إلى",
+  "secciones": {
+    "usoApp": {
+      "titulo": "معلومات واستخدام التطبيق",
+      "info": "معلومات",
+      "registro": "التسجيل",
+      "login": "تسجيل الدخول",
+      "recuperar": "استعادة كلمة المرور"
+    },
+    "seguridad": {
+      "titulo": "الأمان في التطبيق",
+      "verificacion": "التحقق من الحساب",
+      "activacion": "تفعيل الحساب",
+      "suspension": "تعليق الحساب",
+      "bloqueo": "حظر الحساب",
+      "eliminacion": "حذف الحساب",
+      "falsosPerfiles": "الملفات المزيفة"
+    },
+    "desarrollo": {
+      "titulo": "تطوير التطبيق",
+      "tecnologias": "التقنيات المستخدمة",
+      "novedades": "الأخبار والتحديثات"
+    },
+    "blog": {
+      "titulo": "المحفظة والمدونة",
+      "sobreMi": "وصف المطور",
+      "proyectos": "المشاريع قيد التطوير",
+      "comentarios": "إضافة تعليق"
+    }
   }
+ 
+
+
+
+
+
+
+
+
+
+}
+
+ 

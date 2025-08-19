@@ -1,7 +1,13 @@
 import React from "react";
 import { Row, Col, Card } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const Actualizaciones = () => {
+  const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('info');
+  const lang = languageReducer.language || 'es';
+
   return (
     <div className="my-4">
       <Row className="justify-content-center">
@@ -9,40 +15,38 @@ const Actualizaciones = () => {
           <Card className="shadow-lg border-0 rounded-4">
             <div className="p-4">
               <h2 className="fw-bold text-center mb-4">
-                🚀 Próximas Actualizaciones
+                🚀 {t('tituloPrincip', { lng: lang })}
               </h2>
               <p className="text-muted text-center fs-5 mb-4">
-                Seguimos mejorando para ofrecerte la mejor experiencia en el
-                mundo del arte digital. Estas son algunas de las funciones que
-                pronto estarán disponibles:
+                {t('descripcionMejoras', { lng: lang })}
               </p>
 
               <ul className="fs-6">
                 <li>
-                  🔔 <strong>Notificaciones en tiempo real:</strong> recibe alertas cuando alguien comenta, da like o compra una obra.
+                  🔔 <strong>{t('notificacionesTiempoReal', { lng: lang })}:</strong> {t('descNotificaciones', { lng: lang })}
                 </li>
                 <li>
-                  💾 <strong>Favoritos y colecciones:</strong> guarda y organiza tus obras preferidas en tu propia galería privada.
+                  💾 <strong>{t('favoritosColecciones', { lng: lang })}:</strong> {t('descFavoritos', { lng: lang })}
                 </li>
                 <li>
-                  🔍 <strong>Buscador avanzado:</strong> explora el arte por técnica, estilo, precio, artista y mucho más.
+                  🔍 <strong>{t('buscadorAvanza', { lng: lang })}:</strong> {t('descBuscador', { lng: lang })}
                 </li>
                 <li>
-                  🎨 <strong>Panel para artistas:</strong> estadísticas y métricas para conocer el impacto de tus obras.
+                  🎨 <strong>{t('panelArtistas', { lng: lang })}:</strong> {t('descPanelArtistas', { lng: lang })}
                 </li>
                 <li>
-                  💬 <strong>Mensajería mejorada:</strong> conecta en privado con artistas y compradores en tiempo real.
+                  💬 <strong>{t('mensajeriaMejorada', { lng: lang })}:</strong> {t('descMensajeria', { lng: lang })}
                 </li>
                 <li>
-                  🌙☀️ <strong>Modo oscuro/claro:</strong> elige el estilo visual que prefieras para navegar cómodamente.
+                  🌙☀️ <strong>{t('modoOscuroClaro', { lng: lang })}:</strong> {t('descModoVisual', { lng: lang })}
                 </li>
                 <li>
-                  ✅ <strong>Certificación de obras:</strong> más confianza con la verificación manual de piezas únicas.
+                  ✅ <strong>{t('certificacionObras', { lng: lang })}:</strong> {t('descCertificacion', { lng: lang })}
                 </li>
               </ul>
 
               <p className="fw-semibold text-center mt-4">
-                Nuestro compromiso es hacer crecer la comunidad artística digital con herramientas seguras, modernas y útiles.
+                {t('compromiso', { lng: lang })}
               </p>
             </div>
           </Card>

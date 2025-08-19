@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { Card, Container, Button, Row, Col, Modal, Carousel } from "react-bootstrap";
+import { Card, Container, Button,  Modal, Carousel } from "react-bootstrap";
 import {
-  FaFacebook,
-  FaGoogle,
+ 
   FaUserEdit,
-  FaKey,
+ 
   FaExternalLinkAlt,
   FaChevronLeft,
   FaChevronRight,
@@ -27,7 +26,7 @@ const IMAGENES_POR_METODO = {
   ]
 };
 
-const Registro = () => {
+const Introducion = () => {
   const [showModal, setShowModal] = useState(false);
   const [imagenesModal, setImagenesModal] = useState([]);
   const [tituloModal, setTituloModal] = useState("");
@@ -161,4 +160,4 @@ const Registro = () => {
   );
 };
 
-export default Registro;
+export default Introducion;

@@ -1,65 +1,113 @@
+import { forwardRef, useRef, useImperativeHandle } from "react";
 import { Card, Container } from "react-bootstrap";
-import { FaPlusCircle, FaCheckCircle, FaComments } from "react-icons/fa";
+import { FaPlusCircle } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
-const PublicacionesInfo = () => {
+// 👇 PublicacionesInfo recibe ref y expone scrollIntoView al padre
+const PublicacionesInfo = forwardRef((props, ref) => {
+  const { languageReducer } = useSelector((state) => state);
+  const { t } = useTranslation("info");
+  const lang = languageReducer.language || "es";
+
+  // ref interno apuntando al título
+  const titleRef = useRef(null);
+
+  // 👇 Exponemos una función scroll al padre
+  useImperativeHandle(ref, () => ({
+    scrollToTitle: () => {
+      if (titleRef.current) {
+        titleRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }));
+
   return (
-    <Container className="my-3">
-      <h3 className="text-left mb-2">
-        <FaPlusCircle className="me-2" style={{ color: "#6f42c1" }} />
-        <span style={{ color: "#6f42c1" }}>Publicaciones de artistas</span>
-      </h3>
+    <div
+      style={{
+        direction: lang === "ar" ? "rtl" : "ltr",
+        textAlign: lang === "ar" ? "right" : "left"
+      }}
+    >
+      <Container className="my-3">
+        {/* 👇 ref en el título, no en el wrapper */}
+        <h3 ref={titleRef} className="text-left mb-2">
+          <FaPlusCircle className="me-2" style={{ color: "#6f42c1" }} />
+          <span style={{ color: "#6f42c1" }}>
+            {t("tituloPublicaciones", { lng: lang })}
+          </span>
+        </h3>
 
-      <Card className="shadow-sm border-0 bg-light">
-        <Card.Body className="p-1">
-          <p className="fs-5">
-            Los artistas <strong>autenticados y verificados</strong> pueden crear 
-            publicaciones de forma sencilla y segura dentro de la plataforma.
-          </p>
+        <Card className="shadow-sm border-0 bg-light">
+          <Card.Body className="p-1">
+            <p className="fs-5">
+              {t("descripcionArtistasPart1", { lng: lang })}{" "}
+              <strong>{t("autenticadosVerificados", { lng: lang })}</strong>{" "}
+              {t("descripcionArtistasPart2", { lng: lang })}
+            </p>
 
-          <div>
-            <dl className="row">
-              <dt className="col-sm-3">Cómo publicar</dt>
-              <dd className="col-sm-9">
-                Se puede crear un post desde el <strong>icono plus</strong> en la barra 
-                de navegación o desde el <strong>menú bajo el avatar</strong>.  
-                Al publicar, el sistema notifica el <em>éxito o fracaso</em> del envío.
-              </dd>
+            <div>
+              <dl className="row">
+                <dt className="col-sm-3">{t("comoPublicar", { lng: lang })}</dt>
+                <dd className="col-sm-9">
+                  {t("descripcionComoPublicarPart1", { lng: lang })}{" "}
+                  <strong>{t("iconoPlus", { lng: lang })}</strong>{" "}
+                  {t("descripcionComoPublicarPart2", { lng: lang })}{" "}
+                  <strong>{t("menuAvatar", { lng: lang })}</strong>.{" "}
+                  {t("alPublicar", { lng: lang })}{" "}
+                  <em>{t("exitoOFracaso", { lng: lang })}</em>{" "}
+                  {t("delEnvio", { lng: lang })}.
+                </dd>
 
-              <dt className="col-sm-3">Revisión de contenido</dt>
-              <dd className="col-sm-9">
-                Para garantizar la calidad artística, cada publicación pasa por una 
-                <strong> revisión de administradores</strong>.  
-                Se revisan imágenes, títulos y descripciones antes de ser visibles.
-              </dd>
+                <dt className="col-sm-3">
+                  {t("revisionContenido", { lng: lang })}
+                </dt>
+                <dd className="col-sm-9">
+                  {t("descripcionRevisionPart1", { lng: lang })}{" "}
+                  <strong>{t("revisionAdministradores", { lng: lang })}</strong>.{" "}
+                  {t("descripcionRevisionPart2", { lng: lang })}
+                </dd>
 
-              <dt className="col-sm-3">Aprobación y visibilidad</dt>
-              <dd className="col-sm-9">
-                Una vez aprobada, la publicación aparece en el <strong>Home</strong>, 
-                en los resultados de búsqueda y en la sección <em>“Mis publicaciones”</em> 
-                del perfil del artista.
-              </dd>
+                <dt className="col-sm-3">
+                  {t("aprobacionVisibilidad", { lng: lang })}
+                </dt>
+                <dd className="col-sm-9">
+                  {t("descripcionAprobacionPart1", { lng: lang })}{" "}
+                  <strong>{t("home", { lng: lang })}</strong>,{" "}
+                  {t("descripcionAprobacionPart2", { lng: lang })}{" "}
+                  <em>{t("misPublicaciones", { lng: lang })}</em>{" "}
+                  {t("descripcionAprobacionPart3", { lng: lang })}
+                </dd>
 
-              <dt className="col-sm-3">Gestión del post</dt>
-              <dd className="col-sm-9">
-                En la página de <strong>detalle del post</strong> se muestran la fecha 
-                de creación, descripciones e imágenes.  
-                El artista puede <strong>editar</strong> o <strong>eliminar</strong> 
-                su publicación en cualquier momento.
-              </dd>
+                <dt className="col-sm-3">{t("gestionPost", { lng: lang })}</dt>
+                <dd className="col-sm-9">
+                  {t("descripcionGestionPart1", { lng: lang })}{" "}
+                  <strong>{t("detallePost", { lng: lang })}</strong>{" "}
+                  {t("descripcionGestionPart2", { lng: lang })}{" "}
+                  <strong>{t("editar", { lng: lang })}</strong>{" "}
+                  {t("o", { lng: lang })}{" "}
+                  <strong>{t("eliminar", { lng: lang })}</strong>{" "}
+                  {t("descripcionGestionPart3", { lng: lang })}
+                </dd>
 
-              <dt className="col-sm-3">Interacción en tiempo real</dt>
-              <dd className="col-sm-9">
-                Los usuarios pueden <strong>comentar</strong>, dar <strong>like</strong> 
-                y el artista recibe notificaciones instantáneas.  
-                Además, un posible cliente puede iniciar un 
-                <strong> chat privado directamente</strong> desde el post.
-              </dd>
-            </dl>
-          </div>
-        </Card.Body>
-      </Card>
-    </Container>
+                <dt className="col-sm-3">
+                  {t("interaccionTiempoReal", { lng: lang })}
+                </dt>
+                <dd className="col-sm-9">
+                  {t("descripcionInteraccionPart1", { lng: lang })}{" "}
+                  <strong>{t("comentar", { lng: lang })}</strong>, {t("dar", { lng: lang })}{" "}
+                  <strong>{t("like", { lng: lang })}</strong>{" "}
+                  {t("descripcionInteraccionPart2", { lng: lang })}{" "}
+                  <strong>{t("chatPrivado", { lng: lang })}</strong>{" "}
+                  {t("descripcionInteraccionPart3", { lng: lang })}
+                </dd>
+              </dl>
+            </div>
+          </Card.Body>
+        </Card>
+      </Container>
+    </div>
   );
-};
+});
 
 export default PublicacionesInfo;

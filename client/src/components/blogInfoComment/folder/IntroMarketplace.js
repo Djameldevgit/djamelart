@@ -1,7 +1,13 @@
 import React from "react";
 import { Row, Col, Card } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const IntroMarketplace = () => {
+  const { languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('info');
+  const lang = languageReducer.language || 'es';
+
   return (
     <div className="my-2">
       <Row className="justify-content-center">
@@ -10,36 +16,34 @@ const IntroMarketplace = () => {
             <div className="p-1 text-center">
               {/* Título destacado */}
               <h1 className="fw-bold display-5 mb-3 text-gradient">
-                🎨 Bienvenido a nuestro <span className="text-primary">Marketplace de Arte</span>
+                🎨 {t('tituloPrincipall.parte1')} <span className="text-primary">{t('tituloPrincipal.parte2')}</span>
               </h1>
 
               {/* Subtítulo breve */}
               <p className="text-muted fs-5 mb-4">
-                Una comunidad global donde artistas y amantes del arte se conectan, comparten y coleccionan obras únicas.
+                {t('subtitulo')}
               </p>
 
               {/* Descripción por secciones */}
               <p className="fs-6">
-                Construida con tecnologías modernas <strong>(MERN, Redux, i18n, sockets en tiempo real)</strong>, 
-                integra funciones sociales como likes, comentarios y chat privado, junto a un sistema 
-                multilingüe que rompe las fronteras culturales y lingüísticas.
+                {t('tecnologias.parte1')} <strong>{t('tecnologias.parte2')}</strong>,{" "}
+                {t('tecnologias.parte3')}
               </p>
 
               <p className="fs-6">
-                Disponible en <strong>7 idiomas</strong> y con <strong>8 categorías artísticas</strong>, 
-                los artistas publican sus obras en pocos clics, mientras los compradores exploran con 
-                búsquedas avanzadas, interactúan directamente y adquieren arte de forma segura.
+                {t('disponibilidad.parte1')} <strong>{t('disponibilidad.parte2')}</strong>{" "}
+                {t('disponibilidad.parte3')} <strong>{t('disponibilidad.parte4')}</strong>,{" "}
+                {t('disponibilidad.parte5')}
               </p>
 
               <p className="fs-6">
-                Nuestra aplicación <strong>PWA</strong> funciona en móviles, tablets y ordenadores, 
-                con autenticación segura, notificaciones instantáneas y un sistema de confianza 
-                que protege tanto a creadores como a compradores.
+                {t('pwa.parte1')} <strong>{t('pwa.parte2')}</strong>{" "}
+                {t('pwa.parte3')}
               </p>
 
               {/* Cierre inspirador */}
               <p className="fw-semibold fs-5 mt-4 text-dark">
-                🌍 El arte no entiende de límites. Descubre, conecta y colecciona desde cualquier lugar del mundo.
+                🌍 {t('cierreInspirador')}
               </p>
             </div>
           </Card>
