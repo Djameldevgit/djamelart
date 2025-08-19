@@ -142,7 +142,7 @@ const Navbar2 = ({ onFiltersChange }) => {
               {showDrawer ? '✖' : <FaBars size={20} />}
             </Button>
             <Navbar.Brand href="/" className="py-2 d-none d-lg-block">
-              <Card.Title>{t('navbar:appName')} </Card.Title>
+              <Card.Title>{t('navbar:appName')}</Card.Title>
             </Navbar.Brand>
           </div>
 
@@ -152,16 +152,14 @@ const Navbar2 = ({ onFiltersChange }) => {
             </div>
 
             <div className="d-none d-lg-block">
-
+              <FaSearch
+                size={18}
+                className="text-secondary cursor-pointer"
+                onClick={openModal}
+                title={t('navbar:search')}
+                style={{ cursor: 'pointer' }}
+              />
             </div>
-
-            <FaSearch
-              size={18}
-              className="text-secondary cursor-pointer"
-              onClick={openModal}
-              title={t('navbar:search')}
-              style={{ cursor: 'pointer' }}
-            />
             <div className='fas fa-plus' onClick={openStatusModal}>
 
             </div>
@@ -187,7 +185,7 @@ const Navbar2 = ({ onFiltersChange }) => {
             )}
 
             <NavDropdown
-              align="end"
+                  align="end"
               show={showUserMenu}
               onToggle={(next) => {
                 wasOpenRef.current = next;

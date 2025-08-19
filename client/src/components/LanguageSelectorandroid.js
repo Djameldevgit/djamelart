@@ -56,15 +56,15 @@ function LanguageSelectorandroid() {
 
   return (
     <div className="d-block d-md-none" style={{ width: '100%', padding: 0, margin: 0 }}>
-       <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-    
-        <Link to="/"  >
+      <div style={{ display: 'flex', width: '100%', gap: '3px' }}>
+
+        <a href="/" >
           <h3 className='ml-4 mt-2' style={{ flex: '1 1 0' }} >
-            {t('Tassili', { lng: lang })}
+            <i className='fas fa-home mt-1'></i>
           </h3>
-        </Link>
+        </a>
 
-
+     
         {/* Selector de idioma */}
         <div style={{ flex: '1 1 0' }}>
           <Dropdown as={ButtonGroup} className="w-100">
