@@ -1,14 +1,15 @@
 import { Card, Container, Button } from "react-bootstrap";
-import { FaSearch, FaExternalLinkAlt } from "react-icons/fa";
+import { FaSearch, FaExternalLinkAlt ,FaArrowLeft} from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useRef } from "react";
+import { useHistory } from 'react-router-dom';
 
 const Search = () => {
   const { languageReducer } = useSelector((state) => state);
   const { t } = useTranslation("info");
   const lang = languageReducer.language || "es";
-
+const history = useHistory()
   // 🔹 referencia al bloque de usuarios autenticados
   const autenticadosRef = useRef(null);
 
@@ -21,9 +22,32 @@ const Search = () => {
       autenticadosRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-
+const handleGoBack = () => {
+    history.push("/bloginfo");
+  };
   return (
     <Container className="my-3">
+
+
+  <div className="mb-3">
+  <Button
+    variant="outline-primary"
+    onClick={handleGoBack}
+    className="d-flex align-items-center"
+    style={{
+      borderRadius: "20px",
+      padding: "0.3rem 1rem",
+      fontSize: "0.9rem",
+      fontWeight: "500"
+    }}
+  >
+    <FaArrowLeft className="me-1 mt-1 d-none d-sm-inline" />
+  {t("atras", { lng: lang })}
+
+
+  </Button>
+</div>
+
       <h3 className="text-left mb-2">
         <FaSearch className="me-2" style={{ color: "#6f42c1" }} />
         <span style={{ color: "#6f42c1" }}>

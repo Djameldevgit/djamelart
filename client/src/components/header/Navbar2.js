@@ -18,7 +18,7 @@ import { FaSearch } from 'react-icons/fa'
 
 import ActivateButton from '../../auth/ActivateButton'
 
-import Navbar2Auth from './Navbar2Auth';
+
 import VerifyModal from '../authAndVerify/VerifyModal';
 import Acordion from '../Acordion';
 import Modalsearchhome from './Modalsearchhome';
@@ -154,17 +154,20 @@ const Navbar2 = ({ onFiltersChange }) => {
             <div className="d-none d-lg-block">
 
             </div>
+            
+              <FaSearch
+                size={18}
+                className="text-secondary cursor-pointer"
+                onClick={openModal}
+                title={t('navbar:search')}
+                style={{ cursor: 'pointer' }}
+              />  
+            {auth.user &&
+              <i className='fas fa-plus' onClick={openStatusModal}> </i>
 
-            <FaSearch
-              size={18}
-              className="text-secondary cursor-pointer"
-              onClick={openModal}
-              title={t('navbar:search')}
-              style={{ cursor: 'pointer' }}
-            />
-            <div className='fas fa-plus' onClick={openStatusModal}>
+            }
 
-            </div>
+
             {auth.user && (
               <NavDropdown
                 title={<i className="fas fa-bell text-danger" style={{ fontSize: '1.2rem' }} />}
@@ -188,33 +191,113 @@ const Navbar2 = ({ onFiltersChange }) => {
 
             <NavDropdown
               align="end"
-              show={showUserMenu}
-              onToggle={(next) => {
-                wasOpenRef.current = next;
-                setShowUserMenu(next);
-              }}
               title={
                 auth.user ? (
                   <div className="d-flex dropdown-avatar">
                     <Avatar src={auth.user.avatar} size="medium-avatar" />
-                    {role !== 'user' && (
-                      <Badge
-                        bg={role === 'admin' ? 'danger' :
-                          role === 'Moderateur' ? 'warning' : 'info'}
-                        className="position-absolute top-0 start-100 translate-middle"
-                        style={{ fontSize: '0.6rem' }}
-                      >
-                        {role.charAt(0).toUpperCase()}
-                      </Badge>
-                    )}
                   </div>
                 ) : (
                   <FaUserCircle size={25} />
                 )
               }
               id="nav-user-dropdown"
+              className="custom-dropdown"
+              key={`nav-role-${auth.user?.role}`} // Doble clave de seguridad
+
             >
-              <Navbar2Auth key={`${auth.user?._id || 'guest'}-${role}`} />
+              <div className="dropdown-scroll-wrapper">
+                {auth.user ? (
+                  <>
+                    <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span > <strong>{auth.user.username}</strong> </span> </NavDropdown.Header>
+
+                    <NavDropdown.Item onClick={openStatusModal}>
+                      ➕ {t('navbar:addPost')}
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/contact">
+                      📩 {t('navbar:contact')}
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/bloginfo">
+                      ℹ️ {t('navbar:appInfo')}
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
+                      <FaUserCircle className="me-2" />
+                      {t('navbar:profile')}
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/message">
+                      💬 {t('navbar:conversations')}
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item as={Link} to="/rolesuser">
+                      🛠️ {t('navbar:roles')}
+                    </NavDropdown.Item>
+
+                    {/* Sección de Admin - Actualiza en tiempo real */}
+                    {auth.user?.role === "admin" && (
+                      <>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Header>🛡️ {t('navbar:panelAministrativo')}</NavDropdown.Header>
+
+                        <NavDropdown.Item as={Link} to="/blog"> blog</NavDropdown.Item>
+
+
+
+                        <NavDropdown.Item as={Link} to="/messageadmin">
+                          💼 {t('navbar:chatear con los administradores')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/users/adminsendemail">
+                          {t('navbar:adminSendEmail')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/users/userss">
+                          {t('navbar:users')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/postspendientes">
+                          {t('navbar:pendingPosts')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/users/usersaction">
+                          {t('navbar:userActions')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/reportesusers">
+                          {t('navbar:userReports')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/users/bloqueos">
+                          {t('navbar:blockedUsers')}
+                        </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/cart/orderss">
+                          {t('navbar:orders')}
+                        </NavDropdown.Item>
+                      </>
+                    )}
+
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item onClick={toggleTheme}>
+                      {theme ? '🌞 ' + t('navbar:lightMode') : '🌙 ' + t('navbar:darkMode')}
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item onClick={handleLogout}>
+                      <FaSignOutAlt className="me-1 text-danger" />
+                      {t('navbar:logout')}
+                    </NavDropdown.Item>
+                  </>
+                ) : (
+                  <>
+                    <NavDropdown.Item as={Link} to="/login">
+                      <FaSignInAlt className="me-2 text-success" />
+                      {t('navbar:login')}
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/register">
+                      <FaUserPlus className="me-2 text-success"/>
+                      {t('navbar:register')}
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/bloginfo">
+                      ℹ️ {t('navbar:appInfo')}
+                    </NavDropdown.Item>
+                  </>
+                )}
+              </div>
             </NavDropdown>
 
           </div>

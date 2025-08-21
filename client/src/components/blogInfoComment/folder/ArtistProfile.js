@@ -1,9 +1,11 @@
 import React from 'react';
 import { Card, Button, Container, Carousel, Image } from 'react-bootstrap';
-import { FaInstagram, FaGlobe } from 'react-icons/fa';
+import { FaInstagram, FaGlobe , FaArrowLeft} from 'react-icons/fa';
+import { useHistory } from 'react-router-dom';
 
  
-const ArtistProfile = () => {
+const ArtistProfile = () => {  
+  const history = useHistory()
   // Datos del artista (puedes pasarlos como props o traerlos de tu API)
   const artistData = {
     name: "Diego Rivera",
@@ -18,9 +20,29 @@ const ArtistProfile = () => {
     instagram: "@diegorivera.art",
     website: "www.diegorivera.org"
   };
-
+ const handleGoBack = () => {
+    history.push("/bloginfo");
+  };
   return (
     <Container className="mb-5 artist-highlight">
+ 
+  <div className="mb-3">
+  <Button
+    variant="outline-primary"
+    onClick={handleGoBack}
+    className="d-flex align-items-center"
+    style={{
+      borderRadius: "20px",
+      padding: "0.3rem 1rem",
+      fontSize: "0.9rem",
+      fontWeight: "500"
+    }}
+  >
+     <FaArrowLeft className="me-1 mt-1 d-none d-sm-inline" />
+  {t("atras", { lng: lang })}
+  </Button>
+</div>
+
       <Card className="border-0 shadow-sm">
         <div className="artist-grid">
           {/* Carrusel de imágenes */}

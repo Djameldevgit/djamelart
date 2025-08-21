@@ -30,7 +30,30 @@ const SocketClient = () => {
     useEffect(() => {
         socket.emit('joinUser', auth.user)
     },[socket, auth.user])
-
+// App.js (o un listener global)
+useEffect(() => {
+    if (!socket) return;
+  
+    const handler = (notify) => {
+      // Guarda en Redux tu nueva notificación
+      dispatch({ type: 'CREATE_NOTIFY', payload: notify })
+      // Opcional: muestra un toast al autor
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { success: notify.text } })
+    }
+  
+    socket.on('createNotifyToClient', handler)
+    return () => socket.off('createNotifyToClient', handler)
+  }, [socket, dispatch])
+  socket.on("addMessageAdminToClient", (msg) => {
+    // ejemplo: mostrar un toast o alerta
+    store.dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { success: msg.text }
+    });
+  
+    // si quieres guardar en Redux paralelo:
+    // store.dispatch({ type: "ADD_MESSAGE_ADMIN", payload: msg });
+  });
     // Likes
     useEffect(() => {
         socket.on('likeToClient', newPost =>{

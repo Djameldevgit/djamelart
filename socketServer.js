@@ -38,8 +38,31 @@ const SocketServer = (socket) => {
         users = users.filter(user => user.socketId !== socket.id)
     })
 
-
-    // Likes
+    socket.on('createNotify', (notify) => {
+        // Siempre esperamos un array de recipients
+        const recipients = Array.isArray(notify.recipients) ? notify.recipients : []
+    
+        recipients.forEach(recipientId => {
+          const client = users.find(u => u.id === recipientId)
+          if (client) {
+            // Enviar SOLO al dueño del post
+            socket.to(client.socketId).emit('createNotifyToClient', notify)
+          }
+        })
+      })
+     
+        // recibir mensaje del admin
+        socket.on("addMessageAdmin", (msg) => {
+          // filtramos al destinatario
+          const recipient = users.find(user => msg.recipients.includes(user.id));
+      
+          if (recipient) {
+            // enviamos solo al dueño del post
+            socket.to(`${recipient.socketId}`).emit("addMessageAdminToClient", msg);
+          }
+        });
+      
+      
     socket.on('likePost', newPost => {
         const ids = [...newPost.user.followers, newPost.user._id]
         const clients = users.filter(user => ids.includes(user.id))

@@ -120,10 +120,11 @@
  
 
   "intro market placeeeeeeeeeeeeeeeeeeee" :"intro market placeeeeeeeeeeeeeeeeeeee",
-  "tituloPrincipall": {
-    "parte1": "مرحبًا بكم في",
-    "parte2": "سوق الفن الخاص بنا"
-  },
+  "tituloPrincipaleparte1": "مرحبًا بكم في",
+    "tassili": "تاسيلي",
+    "tituloPrincipaleparte3": "لبيع وشراء الأعمال الفنية."
+
+  ,
   "subtitulo": "مجتمع عالمي حيث يتواصل الفنانون وعشاق الفن، يشاركون ويجمعون أعمالًا فريدة.",
   "tecnologias": {
     "parte1": "مبنية بتقنيات حديثة",

@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Card, Container, Modal, Carousel, Button } from "react-bootstrap";
@@ -7,8 +7,10 @@ import {
   FaExternalLinkAlt,
   FaTimes,
   FaChevronLeft,
-  FaChevronRight
+  FaChevronRight,
+  FaArrowLeft
 } from "react-icons/fa";
+import { useHistory } from "react-router-dom";
 
 const IMAGENES_POR_METODO = {
   google: ["/images/a.jpg", "/images/djamel1.jpg"],
@@ -16,12 +18,13 @@ const IMAGENES_POR_METODO = {
   manual: ["/images/djamel0.jpg", "/images/djamel1.jpg"]
 };
 
-// 👇 forwardRef para poder recibir el ref desde el padre
-const Registro = forwardRef((props, ref) => {
+// ✅ CORREGIDO: Quité los paréntesis extraños
+const Registro = () => {
+
   const { languageReducer } = useSelector(state => state);
   const lang = languageReducer.language || "es";
   const { t } = useTranslation("info");
-
+  const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const [imagenesModal, setImagenesModal] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -36,16 +39,32 @@ const Registro = forwardRef((props, ref) => {
     setActiveIndex(selectedIndex);
   };
 
+  // Función para volver al menú principal
+  const handleGoBack = () => {
+    history.push("/infoAplicacion");
+  };
+
   return (
-    // 👇 ref aplicado en el contenedor raíz
-    <div
-      ref={ref}
-      style={{
-        direction: lang === "ar" ? "rtl" : "ltr",
-        textAlign: lang === "ar" ? "right" : "left"
-      }}
-    >
+    <div>
       <Container className="my-3">
+        {/* Botón Atrás */}
+        <div className="mb-3">
+          <Button 
+            variant="outline-primary" 
+            onClick={handleGoBack}
+            className="d-flex align-items-center"
+            style={{
+              borderRadius: "20px",
+              padding: "0.4rem 1rem",
+              fontSize: "0.9rem",
+              fontWeight: "500"
+            }}
+          >
+         <FaArrowLeft className="me-1 mt-1 d-none d-sm-inline" />
+  {t("atras", { lng: lang })}
+          </Button>
+        </div>
+
         <Modal
           show={showModal}
           onHide={() => setShowModal(false)}
@@ -227,6 +246,6 @@ const Registro = forwardRef((props, ref) => {
       </Container>
     </div>
   );
-});
+};
 
 export default Registro;

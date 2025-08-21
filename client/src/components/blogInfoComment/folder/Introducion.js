@@ -3,13 +3,13 @@ import { Card, Container, Button,  Modal, Carousel } from "react-bootstrap";
 import {
  
   FaUserEdit,
- 
+ FaArrowLeft ,
   FaExternalLinkAlt,
   FaChevronLeft,
   FaChevronRight,
   FaTimes
 } from "react-icons/fa";
-
+ 
 // Datos de las imágenes (ajusta los nombres según tus archivos en /public/images/)
 const IMAGENES_POR_METODO = {
   google: [
@@ -25,21 +25,40 @@ const IMAGENES_POR_METODO = {
     "/images/djamel1.jpg"
   ]
 };
+import { useHistory } from 'react-router-dom';
 
 const Introducion = () => {
   const [showModal, setShowModal] = useState(false);
   const [imagenesModal, setImagenesModal] = useState([]);
   const [tituloModal, setTituloModal] = useState("");
-
+  const history = useHistory()
   const handleVerImagenes = (metodo) => {
     setImagenesModal(IMAGENES_POR_METODO[metodo]);
     setTituloModal(`Registro con ${metodo.charAt(0).toUpperCase() + metodo.slice(1)}`);
     setShowModal(true);
   };
-
+ const handleGoBack = () => {
+    history.push("/bloginfo");
+  };
   return (
     <Container className="my-3">
-
+ 
+  <div className="mb-3">
+  <Button
+    variant="outline-primary"
+    onClick={handleGoBack}
+    className="d-flex align-items-center"
+    style={{
+      borderRadius: "20px",
+      padding: "0.3rem 1rem",
+      fontSize: "0.9rem",
+      fontWeight: "500"
+    }}
+  >
+   <FaArrowLeft className="me-1 mt-1 d-none d-sm-inline" />
+  {t("atras", { lng: lang })}
+  </Button>
+</div>
       <h3 className="text-left mb-2">
         <FaUserEdit className="me-2" style={{ color: "#6f42c1" }} />
         <span style={{ color: "#6f42c1" }}>¿Cómo registrarme?</span>

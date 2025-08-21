@@ -1,4 +1,5 @@
 import { getDataAPI, postDataAPI, putDataAPI, deleteDataAPI } from '../../utils/fetchData';
+import { createNotify, removeNotify } from '../actions/notifyAction'
 
 // Obtener todos los comentarios
 export const getComments = () => async dispatch => {
@@ -18,10 +19,14 @@ export const getComments = () => async dispatch => {
 };
 
 // Crear un nuevo comentario
+// Crear un nuevo comentario (notificar al admin)
+ 
+
+// Crear un nuevo comentario
 export const createComment = (data, socket) => async (dispatch, getState) => {
   try {
-    const token =
-      getState().auth?.token || localStorage.getItem('token');
+    const { auth } = getState();
+    const token = auth?.token || localStorage.getItem('token');
 
     const res = await postDataAPI('blog/comments', data, token);
 
@@ -35,14 +40,22 @@ export const createComment = (data, socket) => async (dispatch, getState) => {
       socket.emit('blog:comment:new', { comment: res.data.comment });
     }
 
-    dispatch({
-      type: 'NOTIFY_ADD',
-      payload: { text: 'Nuevo comentario', url: '/blog' }
-    });
+    // ✅ Notificación usando createNotify
+    const msg = {
+      id: res.data.comment._id,
+      text: 'Nuevo comentario sobre ti',
+      recipients: [auth.adminId], // aquí pones el ID del admin
+      url: '/blog',
+      content: data.content,
+      image: null
+    };
+
+    dispatch(createNotify({ msg, auth, socket }));
   } catch (err) {
     console.error(err);
   }
 };
+
 
 // Responder a un comentario
 export const replyComment = (commentId, data, socket) => async (dispatch, getState) => {

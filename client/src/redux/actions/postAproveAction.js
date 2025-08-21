@@ -53,7 +53,7 @@ export const createPostAprove = ({ postData, images, auth, socket }) => async (d
     }
 }
 
-
+/*
 export const aprovarPostPendiente = ({ post, estado, auth }) => async (dispatch) => {
     try {
         dispatch({ type: POST_TYPES_APROVE.LOADING_POST, payload: true });
@@ -74,6 +74,107 @@ export const aprovarPostPendiente = ({ post, estado, auth }) => async (dispatch)
         });
     }
 };
+
+
+
+export const aprovarPostPendiente = ({ post, estado, auth, socket }) => async (dispatch) => {
+  try {
+    dispatch({ type: POST_TYPES_APROVE.LOADING_POST, payload: true });
+
+    const res = await patchDataAPI(`aprovarpost/${post._id}/aprovado`, { estado }, auth.token);
+
+    dispatch({
+      type: POST_TYPES_APROVE.APROVAR_POST_PENDIENTE,
+      payload: res.data,
+    });
+
+    // 🔥 Notify SOLO al dueño del post aprobado
+    const msg = {
+      id: res.data.post._id, // id único de la notificación (puede ser el id del post aprobado)
+      text: 'Tu post ha sido aprobado ✅',
+      recipients: [post.user._id], // solo el dueño del post
+      url: `/post/${post._id}`,
+      content: post.content,
+      image: post.images[0]?.url
+    };
+
+    dispatch(createNotify({ msg, auth, socket }));
+
+    dispatch({ type: POST_TYPES_APROVE.LOADING_POST, payload: false });
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });
+  } catch (error) {
+    console.error("Error en aprobarPostPendiente:", error);
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { error: error.message || "Error inesperado" },
+    });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+*/
+
+ 
+// ✅ Agrega `socket` para emitir la notify
+export const aprovarPostPendiente = ({ post, estado, auth, socket }) => async (dispatch) => {
+  try {
+    dispatch({ type: POST_TYPES_APROVE.LOADING_POST, payload: true });
+
+    const res = await patchDataAPI(
+      `aprovarpost/${post._id}/aprovado`,
+      { estado },
+      auth.token
+    );
+
+    dispatch({
+      type: POST_TYPES_APROVE.APROVAR_POST_PENDIENTE,
+      payload: res.data,
+    });
+
+    dispatch({ type: POST_TYPES_APROVE.LOADING_POST, payload: false });
+
+    // ✅ Toast local para el admin que aprobó
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });
+
+    // ✅ Notify SOLO al autor del post
+    const msg = {
+      // Usa el mensaje localizado del backend si quieres
+      text: res.data.msg || 'Tu publicación ha sido aprobada.',
+      // Solo el dueño del post
+      recipients: [post.user._id],
+      // Para que el usuario pueda ir a su post
+      url: `/post/${post._id}`,
+      // Extras útiles si tu notify los muestra
+      category: post.category,
+      image: post.images?.[0]?.url,
+      // Quién disparó la acción (el admin actual)
+      sender: {
+        _id: auth.user._id,
+        username: auth.user.username,
+        avatar: auth.user.avatar,
+      },
+      // Un id de referencia al recurso (post)
+      id: post._id,
+      type: 'post_approved'
+    };
+
+    dispatch(createNotify({ msg, auth, socket }));
+  } catch (error) {
+    console.error("Error en aprobarPostPendiente:", error);
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { error: error.message || "Error inesperado" },
+    });
+  }
+}
 
 
 export const getPostsPendientes = (token) => async (dispatch) => {

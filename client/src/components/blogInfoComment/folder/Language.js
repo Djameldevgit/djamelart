@@ -1,15 +1,49 @@
-import { Card, Container } from "react-bootstrap";
+import React, { useRef, useEffect } from "react";
+import { FaArrowLeft } from "react-icons/fa";
 import { FaGlobeAmericas } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-
+import { useLocation } from "react-router-dom";
+import { Card, Container,   Button } from "react-bootstrap";
+import { useHistory } from 'react-router-dom';
+ 
 const Language = () => {
   const { languageReducer } = useSelector(state => state);
   const { t } = useTranslation('info');
   const lang = languageReducer.language || 'es';
-
+  const sectionRef = useRef(null);
+  const location = useLocation();
+  const history = useHistory()
+  // 👇 cuando entres a /infoAplicacion con state.scrollTo === "language",
+  // este useEffect hará el scroll automático
+  useEffect(() => {
+    if (location.state?.scrollTo === "language" && sectionRef.current) {
+      sectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [location]);
+ const handleGoBack = () => {
+    history.push("/bloginfo");
+  };
   return (
-    <Container className="my-3">
+    <Container ref={sectionRef} className="my-3">
+ 
+  <div className="mb-3">
+  <Button
+    variant="outline-primary"
+    onClick={handleGoBack}
+    className="d-flex align-items-center"
+    style={{
+      borderRadius: "20px",
+      padding: "0.3rem 1rem",
+      fontSize: "0.9rem",
+      fontWeight: "500"
+    }}
+  >
+   <FaArrowLeft className="me-1 mt-1 d-none d-sm-inline" />
+  {t("atras", { lng: lang })}
+  </Button>
+</div>
+
       <h3 className="text-left mb-2">
         <FaGlobeAmericas className="me-2" style={{ color: "#198754" }} />
         <span style={{ color: "#198754" }}>{t('tituloPrincipal', { lng: lang })}</span>

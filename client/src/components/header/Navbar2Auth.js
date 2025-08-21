@@ -8,10 +8,11 @@ import { FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
 import { logout } from '../../redux/actions/authAction';
 
 const Navbar2Auth = memo(() => {
-  const { auth, roleReducer } = useSelector((state) => ({
+  const { auth, roleReducer } = useSelector(state => ({
     auth: state.auth,
     roleReducer: state.roleReducer
   }));
+  
 
   const { t } = useTranslation(['navbar']);
   const dispatch = useDispatch();

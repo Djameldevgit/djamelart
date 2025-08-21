@@ -39,7 +39,7 @@ const PostsPendientes = () => {
 
   const handleAprovePost = (post) => {
     if (window.confirm(t('confirm.approve'))) {
-      dispatch(aprovarPostPendiente({ post, auth }));
+      dispatch(aprovarPostPendiente({ post, auth,socket }));
       history.push("/postspendientes");
     }
   };

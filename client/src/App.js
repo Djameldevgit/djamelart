@@ -67,12 +67,14 @@ import Messagesadmin from './pages/messagesadmin';
 import Conversationadmin from './pages/messageadmin/[id]';
 import InfoAplicacion from './components/blogInfoComment/InfoAplicacion';
 
-import BlogInfo from './pages/BlogInfo';
+ 
 import Publoblog from './pages/publoblog';
-import Blog from './pages/Blog';
+ 
 import LanguageModalGeneral from './components/LanguageModalGeneral';
 import FormCheckBox from './components/FormChekBox';
 import Navbar2 from './components/header/Navbar2';
+import Commentss from './pages/Commentss';
+import Accordionn from './pages/Accordionn';
  
 
 function App() {
@@ -185,7 +187,7 @@ function App() {
             <Route exact path="/messageadmin/:id" component={auth.token ? Conversationadmin : Login} />
             <Route exact path="/messageadmin" component={auth.token ? Messagesadmin : Login} />
 
-            <Route path="/blog" component={auth.token ? Blog : Login} />
+            <Route path="/commentsss" component={auth.token ? Commentss : Login} />
 
             <Route path="/form" component={auth.token ? FormCheckBox: Login} />
 
@@ -208,8 +210,8 @@ function App() {
 
             <Route exact path="/users/bloqueos" component={auth.token ? ListaUseariosbloqueadoss : Login} />
 
-            <Route exact path="/bloginfo" component={BlogInfo} />
-            <Route exact path="/blog" component={auth.token ? Blog : Login} />
+            <Route exact path="/bloginfo" component={Accordionn} />
+     
             <Route exact path="/infoaplicacion" component={InfoAplicacion} />
 
             <Route exact path="/orderss" component={auth.token ? Orderss : Login} />

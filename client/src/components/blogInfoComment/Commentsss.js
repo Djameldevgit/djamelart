@@ -15,7 +15,7 @@ import {
 import Avatar from '../Avatar';
  
 
-const BlogCommentItem = ({comment}) => {
+const Commentsss = ({comment}) => {
   const dispatch = useDispatch();
   const auth = useSelector(state => state.auth) || {};
   const socket = useSelector(state => state.socket) || null;
@@ -256,4 +256,4 @@ const BlogCommentItem = ({comment}) => {
     </Card></div>
   );
 };
-export default BlogCommentItem
+export default Commentsss
