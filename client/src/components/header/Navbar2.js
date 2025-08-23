@@ -25,7 +25,7 @@ import Modalsearchhome from './Modalsearchhome';
 import DesactivateModal from '../authAndVerify/DesactivateModal';
 
 const Navbar2 = ({ onFiltersChange }) => {
-  const { auth, theme, cart, roleReducer } = useSelector((state) => state)
+  const { auth, theme, cart, notify } = useSelector((state) => state)
   const dispatch = useDispatch()
   const { languageReducer } = useSelector(state => state)
   const { t } = useTranslation(['searchhome'])
@@ -154,14 +154,14 @@ const Navbar2 = ({ onFiltersChange }) => {
             <div className="d-none d-lg-block">
 
             </div>
-            
-              <FaSearch
-                size={18}
-                className="text-secondary cursor-pointer"
-                onClick={openModal}
-                title={t('navbar:search')}
-                style={{ cursor: 'pointer' }}
-              />  
+
+            <FaSearch
+              size={18}
+              className="text-secondary cursor-pointer"
+              onClick={openModal}
+              title={t('navbar:search')}
+              style={{ cursor: 'pointer' }}
+            />
             {auth.user &&
               <i className='fas fa-plus' onClick={openStatusModal}> </i>
 
@@ -169,13 +169,29 @@ const Navbar2 = ({ onFiltersChange }) => {
 
 
             {auth.user && (
-              <NavDropdown
-                title={<i className="fas fa-bell text-danger" style={{ fontSize: '1.2rem' }} />}
-              >
 
-                <NotifyModal user={auth.user} />
 
-              </NavDropdown>
+              <div className="nav-item dropdown" style={{ opacity: 1 }} >
+                <span className="nav-link position-relative" id="navbarDropdown"
+                  role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                  <span className="material-icons"
+                    style={{ color: notify.data.length > 0 ? 'crimson' : '' }}>
+                    favorite
+                  </span>
+
+                  <span className="notify_length">{notify.data.length}</span>
+
+                </span>
+
+                <div className="dropdown-menu" aria-labelledby="navbarDropdown"
+                  style={{ transform: 'translateX(75px)' }}>
+                  <NotifyModal />
+                </div>
+
+              </div>
+
+
             )}
 
             {auth.user && (
@@ -289,7 +305,7 @@ const Navbar2 = ({ onFiltersChange }) => {
                       {t('navbar:login')}
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/register">
-                      <FaUserPlus className="me-2 text-success"/>
+                      <FaUserPlus className="me-2 text-success" />
                       {t('navbar:register')}
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/bloginfo">

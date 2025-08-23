@@ -38,15 +38,29 @@ const SocketServer = (socket) => {
         users = users.filter(user => user.socketId !== socket.id)
     })
 
-
-    // Likes
-    socket.on('likePost', newPost => {
+    socket.on('createNotify', (notify) => {
+        // Siempre esperamos un array de recipients
+        const recipients = Array.isArray(notify.recipients) ? notify.recipients : []
+    
+        recipients.forEach(recipientId => {
+          const client = users.find(u => u.id === recipientId)
+          if (client) {
+            // Enviar SOLO al dueño del post
+            socket.to(client.socketId).emit('createNotifyToClient', notify)
+          }
+        })
+      })
+     
+       
+      
+      
+    socket.on('postAprove', newPost => {
         const ids = [...newPost.user.followers, newPost.user._id]
         const clients = users.filter(user => ids.includes(user.id))
 
         if (clients.length > 0) {
             clients.forEach(client => {
-                socket.to(`${client.socketId}`).emit('likeToClient', newPost)
+                socket.to(`${client.socketId}`).emit('postAprovelikeToClient', newPost)
             })
         }
     })
@@ -171,6 +185,51 @@ const SocketServer = (socket) => {
             }
         }
     })
+
+
+
+
+// Comentarios del Blog
+// Eventos de comentarios sin lógica de followers/following
+socket.on('blog:comment:new', (data) => {
+    socket.broadcast.emit('blog:comment:new', data)
+  })
+
+  // ====== ACTUALIZAR COMENTARIO ======
+  socket.on('blog:comment:update', (data) => {
+    socket.broadcast.emit('blog:comment:update', data)
+  })
+
+  // ====== ELIMINAR COMENTARIO ======
+  socket.on('blog:comment:delete', (data) => {
+    socket.broadcast.emit('blog:comment:delete', data)
+  })
+
+  // ====== RESPONDER COMENTARIO ======
+  socket.on('blog:comment:reply', (data) => {
+    socket.broadcast.emit('blog:comment:reply', data)
+  })
+
+  // ====== LIKE COMENTARIO ======
+  socket.on('blog:comment:like', (data) => {
+    socket.broadcast.emit('blog:comment:like', data)
+  })
+
+  // ====== DISLIKE COMENTARIO ======
+  socket.on('blog:comment:dislike', (data) => {
+    socket.broadcast.emit('blog:comment:dislike', data)
+  })
+
+
+
+
+
+
+
+
+
+
+
 }
 
 module.exports = SocketServer

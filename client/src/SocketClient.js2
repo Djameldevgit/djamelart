@@ -39,7 +39,13 @@ const SocketClient = () => {
 
         return () => socket.off('likeToClient')
     },[socket, dispatch])
+    useEffect(() => {
+        socket.on('postAprovelikeToClient', newPost =>{
+            dispatch({type: POST_TYPES.UPDATE_POST, payload: newPost})
+        })
 
+        return () => socket.off('postAprovelikeToClient')
+    },[socket, dispatch])
     useEffect(() => {
         socket.on('unLikeToClient', newPost =>{
             dispatch({type: POST_TYPES.UPDATE_POST, payload: newPost})
@@ -95,7 +101,7 @@ const SocketClient = () => {
                 msg.user.username + ' ' + msg.text,
                 msg.user.avatar,
                 msg.url,
-                'V-NETWORK'
+                'Tassili Art'
             )
         })
 
@@ -174,6 +180,18 @@ const SocketClient = () => {
 
         return () => socket.off('callUserToClient')
     },[socket, dispatch])
+
+    useEffect(() => {
+        socket.on('addMessageAdminToClient', newPost => {
+            dispatch({ type: POST_TYPES_APROVE.APROVAR_POST_PENDIENTE, payload: newPost })
+        })
+    
+        return () => socket.off('addMessageAdminToClient')
+    }, [socket, dispatch])
+
+
+
+
 
     useEffect(() => {
         socket.on('userBusy', data =>{

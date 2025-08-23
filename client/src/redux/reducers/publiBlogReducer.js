@@ -1,4 +1,5 @@
 import { POST_TYPES_ADMIN } from "../actions/publiBlogAction."
+import { EditData } from '../actions/globalTypes'
 const initialState = {
     loading: false,
     posts: [],

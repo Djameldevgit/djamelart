@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
- 
-import Comments from '../components/home/Comments';
+import Comments from '../components/blogInfoComment/Commentsss';
  
 import { getComments, createComment } from '../redux/actions/blogAction';
  
  
-const Commentss = () => {
+const Comment = () => {
   const { auth, socket } = useSelector(state => state);
   const { comments = [], loading } = useSelector(state => state.blog || {});
   const dispatch = useDispatch();
@@ -90,4 +89,4 @@ const Commentss = () => {
   );
 };
 
-export default Commentss;
+export default Comment;

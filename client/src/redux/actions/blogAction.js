@@ -36,21 +36,7 @@ export const createComment = (data, socket) => async (dispatch, getState) => {
     });
 
     // 🔹 Emitir evento en tiempo real
-    if (socket) {
-      socket.emit('blog:comment:new', { comment: res.data.comment });
-    }
-
-    // ✅ Notificación usando createNotify
-    const msg = {
-      id: res.data.comment._id,
-      text: 'Nuevo comentario sobre ti',
-      recipients: [auth.adminId], // aquí pones el ID del admin
-      url: '/blog',
-      content: data.content,
-      image: null
-    };
-
-    dispatch(createNotify({ msg, auth, socket }));
+   
   } catch (err) {
     console.error(err);
   }
@@ -58,7 +44,7 @@ export const createComment = (data, socket) => async (dispatch, getState) => {
 
 
 // Responder a un comentario
-export const replyComment = (commentId, data, socket) => async (dispatch, getState) => {
+export const replyComment = (commentId, data ) => async (dispatch, getState) => {
   try {
     const token =
       getState().auth?.token || localStorage.getItem('token');

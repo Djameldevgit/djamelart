@@ -13,15 +13,24 @@ import Search from "./folder/Search";
 import ContactoComunicacion from "./folder/ContactoComunicacion";
 import Language from "./folder/Language";
 import Admin from "./folder/Admin";
- 
 import Actualizaciones from "./folder/Actualizaciones";
 import BlogPortafolio from "./folder/BlogPortaforlio";
  
-const InfoAplicacion = () => {
+// JSON de traducción en árabe
+ 
+
+const InfoAplicacion = ( ) => {
   const { languageReducer } = useSelector(state => state);
   const lang = languageReducer.language || "es";
-  const { t } = useTranslation("info");
+  const { t, i18n } = useTranslation("info");
   const location = useLocation();
+
+  // Cargar traducciones árabes si no están ya cargadas
+  useEffect(() => {
+    if (!i18n.hasResourceBundle('ar', 'info')) {
+      i18n.addResourceBundle('ar', 'info', arabicTranslations.info);
+    }
+  }, [i18n]);
 
   // Refs para cada sección
   const introRef = useRef(null);
@@ -35,7 +44,7 @@ const InfoAplicacion = () => {
   const blogRef = useRef(null);
   const actualizacionesRef = useRef(null);
   const tecnologiasRef = useRef(null);
-
+ 
   // Mapeo de secciones a refs
   const sectionRefs = {
     intro: introRef,
@@ -48,7 +57,9 @@ const InfoAplicacion = () => {
     admin: adminRef,
     blog: blogRef,
     actualizaciones: actualizacionesRef,
-    tecnologias: tecnologiasRef
+    tecnologias: tecnologiasRef,
+  
+
   };
 
   // useEffect para manejar el scroll automático
@@ -75,8 +86,12 @@ const InfoAplicacion = () => {
     }
   };
 
+  // Aplicar estilos RTL si el idioma es árabe
+  const isRTL = lang === "ar";
+
   return (
-    <Container className="my-4">
+    <div   >
+    <Container className="my-4" dir={isRTL ? "rtl" : "ltr"} >
       {/* Navegación interna */}
       <Form className="bg-light p-3 rounded shadow-sm mb-4">
         <Form.Group className="mb-3">
@@ -89,6 +104,7 @@ const InfoAplicacion = () => {
                 variant="outline-primary" 
                 className="w-100 text-start"
                 onClick={() => scrollToSection(introRef)}
+                
               >
                 📋 {t("introMarketplace", { lng: lang })}
               </Button>
@@ -100,7 +116,7 @@ const InfoAplicacion = () => {
                 className="w-100 text-start"
                 onClick={() => scrollToSection(registroRef)}
               >
-                👤 {t("registro", { lng: lang })}
+                👤 {t("registroo", { lng: lang })}
               </Button>
             </Nav.Item>
 
@@ -190,7 +206,7 @@ const InfoAplicacion = () => {
                 className="w-100 text-start"
                 onClick={() => scrollToSection(tecnologiasRef)}
               >
-                💻 {t("tecnologias", { lng: lang })}
+                💻 {t("tecnologiass", { lng: lang })}
               </Button>
             </Nav.Item>
           </Nav>
@@ -237,7 +253,7 @@ const InfoAplicacion = () => {
       <div ref={actualizacionesRef}>
         <Actualizaciones />
       </div>
-
+      
       <div ref={tecnologiasRef}>
         <div className="card mt-4">
           <div className="card-body">
@@ -258,7 +274,7 @@ const InfoAplicacion = () => {
           </div>
         </div>
       </div>
-    </Container>
+    </Container></div>
   );
 };
 

@@ -73,8 +73,9 @@ import Publoblog from './pages/publoblog';
 import LanguageModalGeneral from './components/LanguageModalGeneral';
 import FormCheckBox from './components/FormChekBox';
 import Navbar2 from './components/header/Navbar2';
-import Commentss from './pages/Commentss';
+ 
 import Accordionn from './pages/Accordionn';
+import Comment from './pages/Commentss';
  
 
 function App() {
@@ -187,7 +188,7 @@ function App() {
             <Route exact path="/messageadmin/:id" component={auth.token ? Conversationadmin : Login} />
             <Route exact path="/messageadmin" component={auth.token ? Messagesadmin : Login} />
 
-            <Route path="/commentsss" component={auth.token ? Commentss : Login} />
+            <Route path="/commentss" component={auth.token ? Comment  : Login} />
 
             <Route path="/form" component={auth.token ? FormCheckBox: Login} />
 

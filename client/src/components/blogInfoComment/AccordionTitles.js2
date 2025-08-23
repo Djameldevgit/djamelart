@@ -118,7 +118,7 @@ const AccordionTitles = () => {
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                fontWeight: "600",
+                fontWeight: "900",
                 fontSize: "0.9rem"
               }}
               onClick={() => goToSection(title.path)}

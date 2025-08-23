@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { createComment } from '../../redux/actions/commentAction'
 import Icons from '../Icons'
 
-const InputComment = ({children, user, onReply, setOnReply}) => {
+const InputComment = ({children, post, onReply, setOnReply}) => {
     const [content, setContent] = useState('')
 
     const { auth, socket, theme } = useSelector(state => state)
@@ -27,7 +27,7 @@ const InputComment = ({children, user, onReply, setOnReply}) => {
             tag: onReply && onReply.user
         }
         
-        dispatch(createComment({user, newComment, auth, socket}))
+        dispatch(createComment({post, newComment, auth, socket}))
 
         if(setOnReply) return setOnReply(false);
     }
@@ -46,7 +46,7 @@ const InputComment = ({children, user, onReply, setOnReply}) => {
             <Icons setContent={setContent} content={content} theme={theme} />
 
             <button type="submit" className="postBtn">
-                user
+                Post
             </button>
         </form>
     )
