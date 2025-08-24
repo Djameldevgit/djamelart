@@ -51,13 +51,28 @@ const Navbar2 = ({ onFiltersChange }) => {
   const [menuVersion, setMenuVersion] = useState(0);
   const history = useHistory();
 
+  const [prevRole, setPrevRole] = useState('');
+  const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
+
+  // Obtener el rol actual
   const currentRoleState = useSelector(state => state.roleReducer);
   const role = auth.user?.role ||
     (currentRoleState.isAdmin ? 'admin' :
       currentRoleState.isSuperUser ? 'Super-utilisateur' :
         currentRoleState.isModerator ? 'Moderateur' : 'user');
 
+  // URL del cliente admin
+  const ADMIN_CLIENT_URL = 'https://djamelartadmin.onrender.com';
 
+  // Efecto para detectar cambio de rol a admin
+  useEffect(() => {
+    if (role === 'admin' && prevRole !== 'admin' && auth.user) {
+      setPrevRole(role);
+      setShowAdminRedirectModal(true);
+    }
+  }, [role, prevRole, auth.user]);
+
+  // Resto de tus efectos existentes...
   useEffect(() => {
     // Incrementa la versión del menú cuando cambia el rol
     setMenuVersion(v => v + 1);
@@ -67,8 +82,10 @@ const Navbar2 = ({ onFiltersChange }) => {
       setShowUserMenu(false);
       setTimeout(() => setShowUserMenu(true), 0);
     }
-  }, [role, currentRoleState]); // Añade currentRoleState como dependencia
+  }, [role, currentRoleState]);
 
+   
+ 
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -680,6 +697,45 @@ const Navbar2 = ({ onFiltersChange }) => {
         actionText={t('auth.contact_us', { lng: lang })}
         actionLink="/contact"
       />
+
+{showAdminRedirectModal && (
+  <div className="modal" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999}}>
+    <div className="modal-dialog modal-dialog-centered">
+      <div className="modal-content">
+        <div className="modal-header bg-primary text-white">
+          <h5 className="modal-title">🎉 ¡Felicidades! Rol de Administrador</h5>
+        </div>
+        <div className="modal-body">
+          <p>Ahora tienes permisos de administrador. ¿Deseas ir al panel de administración?</p>
+          <p className="text-muted small">Serás redirigido a: {ADMIN_CLIENT_URL}</p>
+        </div>
+        <div className="modal-footer">
+          <button 
+            type="button" 
+            className="btn btn-secondary" 
+            onClick={() => setShowAdminRedirectModal(false)}
+          >
+            Permanecer aquí
+          </button>
+          <button 
+            type="button" 
+            className="btn btn-primary"
+            onClick={() => {
+              window.location.href = ADMIN_CLIENT_URL;
+            }}
+          >
+            Ir al Panel Admin
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
+
     </div>
   )
 }

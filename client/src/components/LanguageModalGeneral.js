@@ -63,9 +63,13 @@ export default function LanguageModalGeneral() {
       size="lg"
     >
       <Modal.Header>
-        <Modal.Title style={{ fontWeight: 'bold', fontSize: '1.5rem', width: '100%', textAlign: 'center' }}>
-          🌍 {t('Selecciona el idioma para continuar')}
+    
+           <Modal.Title style={{ fontWeight: 'bold', fontSize: '1.5rem', width: '100%', textAlign: 'center' }}>
+          🌍 {t('Select the language')}
         </Modal.Title>
+    
+       
+       
       </Modal.Header>
 
       <Modal.Body>
