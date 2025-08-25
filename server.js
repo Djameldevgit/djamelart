@@ -10,17 +10,12 @@ const i18n = require('i18n');
 const SocketServer = require('./socketServer');
 const morgan = require('morgan');
 
-// --- Express App ---
-const app = express();
-
-// --- Middleware Express ---
-app.use(express.json());
-
+ 
 // ✅ CORS para Express
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true
-}));
+const app = express()
+app.use(express.json())
+app.use(cors())
+app.use(cookieParser())
 
 app.use(cookieParser());
 app.use(morgan('dev'));
@@ -36,6 +31,16 @@ i18n.configure({
   updateFiles: false
 });
 app.use(i18n.init);
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
+
+io.on('connection', socket => {
+    SocketServer(socket)
+})
+// ✅ Manejo de eventos con tu archivo personalizado
+io.on('connection', socket => {
+  SocketServer(socket, io); // <-- Pasa socket e io si tu lógica lo requiere
+});
 
 // --- Rutas de API ---
 app.get('/api/set-language', (req, res) => {
@@ -68,43 +73,29 @@ app.use("/api/forms", require("./routes/formRouter"));
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 
 // --- Conexión a MongoDB ---
-const URI = process.env.MONGODB_URL;
+const URI = process.env.MONGODB_URL
 mongoose.connect(URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 }, err => {
-  if (err) throw err;
-  console.log('✅ Conectado a MongoDB');
-});
+    if(err) throw err;
+    console.log('Connected to mongodb')
+})
 
 // --- Servidor HTTP y Socket.IO ---
-const http = require('http').createServer(app);
-
-// ✅ CORS para Socket.IO
-const { Server } = require('socket.io');
-const io = new Server(http, {
-  cors: {
-    origin: process.env.CLIENT_URL,
-    methods: ['GET', 'POST', 'DELETE'],
-    credentials: true
-  }
-});
-
-// ✅ Manejo de eventos con tu archivo personalizado
-io.on('connection', socket => {
-  SocketServer(socket, io); // <-- Pasa socket e io si tu lógica lo requiere
-});
-
+ 
 // --- Producción: servir frontend ---
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+if(process.env.NODE_ENV === 'production'){
+  app.use(express.static('client/build'))
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-  });
+      res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
+  })
 }
 
-// --- Iniciar servidor ---
-const PORT = process.env.PORT || 5000;
-http.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
-});
+
+const port = process.env.PORT || 5000
+http.listen(port, () => {
+  console.log('Server is running on port', port)
+})
