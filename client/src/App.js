@@ -95,16 +95,30 @@ function App() {
 
  
      
+  useEffect(() => {
+    dispatch(refreshToken());
+  
+    const socket = io(
+      process.env.REACT_APP_SOCKET_URL || "http://localhost:5000",
+      {
+        withCredentials: true,
+        transports: ["websocket"], // 🔥 evita fallback a polling
+      }
+    );
+  
+    dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
+  
+    return () => socket.close();
+  }, [dispatch]);
 
-
-
+/*
   useEffect(() => {
     dispatch(refreshToken())
 
     const socket = io()
     dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
     return () => socket.close()
-  }, [dispatch])
+  }, [dispatch])*/
 
 
   useEffect(() => {

@@ -62,7 +62,7 @@ const Navbar2 = ({ onFiltersChange }) => {
         currentRoleState.isModerator ? 'Moderateur' : 'user');
 
   // URL del cliente admin
-  const ADMIN_CLIENT_URL = 'https://djamelartadmin.onrender.com';
+  const ADMIN_CLIENT_URL = 'https://djamelartadmin.onrender.com/';
 
   // Efecto para detectar cambio de rol a admin
   useEffect(() => {

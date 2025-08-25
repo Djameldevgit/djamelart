@@ -7,43 +7,25 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const i18n = require('i18n');
-const { Server } = require('socket.io');
 const SocketServer = require('./socketServer');
 const morgan = require('morgan');
 
+// --- Express App ---
 const app = express();
 
-// --- Lista de dominios permitidos ---
-const allowedOrigins = [
-  'https://djamelartadmin.onrender.com',
-  'https://djamelart.onrender.com',
-  'http://localhost:3000',
-  'http://localhost:3001'
-];
-
-// --- Configuración CORS para Express ---
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Permitir solicitudes sin origen (como herramientas de API o solicitudes de servidor)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('No permitido por CORS'));
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-
-// --- Middleware ---
-app.use(cors(corsOptions));
+// --- Middleware Express ---
 app.use(express.json());
+
+// ✅ CORS para Express
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}));
+
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-// --- Idiomas ---
+// --- Configuración de idiomas ---
 i18n.configure({
   locales: ['en', 'es', 'fr', 'ar', 'ru', 'kab', 'chino'],
   directory: path.join(__dirname, 'locales'),
@@ -55,14 +37,15 @@ i18n.configure({
 });
 app.use(i18n.init);
 
-// --- Rutas ---
+// --- Rutas de API ---
 app.get('/api/set-language', (req, res) => {
   const lang = req.query.lang;
   if (lang && i18n.getLocales().includes(lang)) {
     res.cookie('lang', lang, { maxAge: 900000, httpOnly: false });
-    return res.send({ message: `Idioma cambiado a ${lang}` });
+    res.send({ message: `Idioma cambiado a ${lang}` });
+  } else {
+    res.status(400).send({ error: 'Idioma no válido' });
   }
-  res.status(400).send({ error: 'Idioma no válido' });
 });
 
 app.use('/api', require('./routes/authRouter'));
@@ -81,7 +64,7 @@ app.use('/api', require('./routes/reportRouter'));
 app.use('/api/blog/comments', require('./routes/blogCommentRoutes'));
 app.use("/api/forms", require("./routes/formRouter"));
 
-// --- Tareas automáticas ---
+// --- Auto desbloqueo de usuarios cada 5 min ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 
 // --- Conexión a MongoDB ---
@@ -94,39 +77,25 @@ mongoose.connect(URI, {
   console.log('✅ Conectado a MongoDB');
 });
 
-// --- Servidor HTTP ---
-const server = require('http').createServer(app);
+// --- Servidor HTTP y Socket.IO ---
+const http = require('http').createServer(app);
 
-// --- Configuración CORS para Socket.IO ---
-const io = new Server(server, {
+// ✅ CORS para Socket.IO
+const { Server } = require('socket.io');
+const io = new Server(http, {
   cors: {
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ["GET", "POST", "DELETE", "PUT"],
+    origin: process.env.CLIENT_URL,
+    methods: ['GET', 'POST', 'DELETE'],
     credentials: true
   }
 });
 
-io.on('connection', socket => SocketServer(socket, io));
-
-// --- Manejo de errores CORS ---
-app.use((err, req, res, next) => {
-  if (err.message === 'No permitido por CORS') {
-    return res.status(403).json({ 
-      error: 'CORS policy violation',
-      message: 'Dominio no permitido',
-      allowedOrigins: allowedOrigins
-    });
-  }
-  next(err);
+// ✅ Manejo de eventos con tu archivo personalizado
+io.on('connection', socket => {
+  SocketServer(socket, io); // <-- Pasa socket e io si tu lógica lo requiere
 });
 
-// --- Producción ---
+// --- Producción: servir frontend ---
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
   app.get('*', (req, res) => {
@@ -136,14 +105,6 @@ if (process.env.NODE_ENV === 'production') {
 
 // --- Iniciar servidor ---
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
-  console.log(`🌐 Dominios permitidos: ${allowedOrigins.join(', ')}`);
 });
-
-// --- Opcional: También puedes cargar dominios desde variables de entorno ---
-// const CLIENT_URLS = process.env.CLIENT_URLS || '';
-// const allowedOrigins = CLIENT_URLS.split(',').map(url => url.trim()).filter(url => url);
-// if (allowedOrigins.length === 0) {
-//   allowedOrigins.push('http://localhost:3000');
-// }
