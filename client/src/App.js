@@ -95,7 +95,7 @@ function App() {
 
  
      
-  useEffect(() => {
+ /* useEffect(() => {
     dispatch(refreshToken());
   
     const socket = io(
@@ -111,14 +111,14 @@ function App() {
     return () => socket.close();
   }, [dispatch]);
 
-/*
+*/
   useEffect(() => {
     dispatch(refreshToken())
 
     const socket = io()
     dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
     return () => socket.close()
-  }, [dispatch])*/
+  }, [dispatch]) 
 
 
   useEffect(() => {
