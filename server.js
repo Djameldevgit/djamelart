@@ -10,7 +10,6 @@ const i18n = require('i18n');
 const SocketServer = require('./socketServer');
 const morgan = require('morgan');
 
- 
 // ✅ CORS para Express
 const app = express()
 app.use(express.json())
@@ -31,15 +30,23 @@ i18n.configure({
   updateFiles: false
 });
 app.use(i18n.init);
-const http = require('http').createServer(app)
-const io = require('socket.io')(http)
 
-io.on('connection', socket => {
-    SocketServer(socket)
-})
+const http = require('http').createServer(app)
+
+// ✅ Configuración de Socket.IO con CORS para producción y local
+const io = require('socket.io')(http, {
+  cors: {
+    origin: [
+      'https://djamelart.onrender.com',   // Producción
+      'http://localhost:3000'     // Local React dev
+    ],
+    methods: ['GET', 'POST']
+  }
+});
+
 // ✅ Manejo de eventos con tu archivo personalizado
 io.on('connection', socket => {
-  SocketServer(socket, io); // <-- Pasa socket e io si tu lógica lo requiere
+  SocketServer(socket, io); // Pasamos socket e io
 });
 
 // --- Rutas de API ---
@@ -84,8 +91,6 @@ mongoose.connect(URI, {
     console.log('Connected to mongodb')
 })
 
-// --- Servidor HTTP y Socket.IO ---
- 
 // --- Producción: servir frontend ---
 if(process.env.NODE_ENV === 'production'){
   app.use(express.static('client/build'))
@@ -93,7 +98,6 @@ if(process.env.NODE_ENV === 'production'){
       res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
   })
 }
-
 
 const port = process.env.PORT || 5000
 http.listen(port, () => {

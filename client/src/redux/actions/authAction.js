@@ -155,13 +155,7 @@ export const login = (data) => async (dispatch) => {
               user: res.data.user
           }
       })
-      dispatch({
-          type: GLOBALTYPES.AUTH,
-          payload: {
-              token: res.data.access_token,
-              user: res.data.user
-          }
-      })
+    
 
       localStorage.setItem("firstLogin", true)
       dispatch({

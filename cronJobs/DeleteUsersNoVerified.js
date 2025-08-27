@@ -4,18 +4,9 @@ const Users = require('../models/userModel');
 const Posts = require('../models/postModel');
 const Comments = require('../models/commentModel');
 const Report = require('../models/reportModel');
+const Notify = require('../models/notifyModel'); // 👈 añade tu modelo de notificaciones
 
-// ─────────────────────────────────────────────
-// CRON Frecuencias explicadas:
-// ---------------------------------------------
-// ⏱️ Cada 1 minuto (modo prueba):      * * * * *
-// ⏱️ Cada 1 hora:                      0 * * * *
-// ⏱️ Cada 5 horas:                     0 */5 * * *
-// ⏱️ Cada 24 horas (producción):       0 0 * * *
-// Significa: Ejecuta a las 00:00 (medianoche)
-// ─────────────────────────────────────────────
-
-// Ejecutar limpieza profunda cada 24 horas (producción)
+// Ejecutar limpieza profunda cada 24 horas (medianoche)
 cron.schedule('0 0 * * *', async () => {
   console.log('🧹 Iniciando limpieza profunda...');
 
@@ -35,6 +26,12 @@ cron.schedule('0 0 * * *', async () => {
       await Users.deleteMany({ _id: { $in: userIds } });
       await Posts.deleteMany({ user: { $in: userIds } });
       await Comments.deleteMany({ user: { $in: userIds } });
+      await Notify.deleteMany({
+        $or: [
+          { user: { $in: userIds } },        // notificaciones enviadas por este usuario
+          { recipients: { $in: userIds } }   // notificaciones dirigidas a este usuario
+        ]
+      });
 
       await Users.updateMany({}, {
         $pull: {
@@ -59,7 +56,7 @@ cron.schedule('0 0 * * *', async () => {
     const allPostIds = await Posts.find({}).select('_id');
     const existingPostIds = new Set(allPostIds.map(p => p._id.toString()));
 
-    // 🔹 3. Eliminar posts huérfanos (usuario eliminado)
+    // 🔹 3. Eliminar posts huérfanos
     const remainingPosts = await Posts.find({});
     for (const post of remainingPosts) {
       if (post.user && !existingUserIds.has(post.user.toString())) {
@@ -68,7 +65,7 @@ cron.schedule('0 0 * * *', async () => {
       }
     }
 
-    // 🔹 4. Eliminar comentarios huérfanos (usuario eliminado)
+    // 🔹 4. Eliminar comentarios huérfanos
     const remainingComments = await Comments.find({});
     for (const comment of remainingComments) {
       if (comment.user && !existingUserIds.has(comment.user.toString())) {
@@ -77,18 +74,16 @@ cron.schedule('0 0 * * *', async () => {
       }
     }
 
-    // 🔹 5. Eliminar usuarios verificados pero INACTIVOS (sin posts ni comentarios en 30 días)
+    // 🔹 5. Eliminar usuarios verificados pero INACTIVOS (30 días)
     const inactiveUsers = await Users.find({
       isVerified: true,
       createdAt: { $lt: oneMonthAgo }
     }).select('_id username email');
 
     const trulyInactive = [];
-
     for (const user of inactiveUsers) {
       const hasPosts = await Posts.exists({ user: user._id });
       const hasComments = await Comments.exists({ user: user._id });
-
       if (!hasPosts && !hasComments) {
         trulyInactive.push(user);
       }
@@ -97,8 +92,13 @@ cron.schedule('0 0 * * *', async () => {
     if (trulyInactive.length > 0) {
       const inactiveIds = trulyInactive.map(user => user._id);
       await Users.deleteMany({ _id: { $in: inactiveIds } });
+      await Notify.deleteMany({
+        $or: [
+          { user: { $in: inactiveIds } },
+          { recipients: { $in: inactiveIds } }
+        ]
+      });
 
-      // Actualizar seguidores y seguidos
       await Users.updateMany({}, {
         $pull: {
           followers: { $in: inactiveIds },
@@ -124,10 +124,27 @@ cron.schedule('0 0 * * *', async () => {
       ]
     });
 
-    console.log('✅ Reportes huérfanos eliminados');
+    // 🔹 7. Eliminar notificaciones huérfanas
+    await Notify.deleteMany({
+      $or: [
+        { user: { $nin: Array.from(existingUserIds) } },
+        { recipients: { $nin: Array.from(existingUserIds) } },
+        { postId: { $nin: Array.from(existingPostIds) } }
+      ]
+    });
+
+    // 🔹 8. Limpiar likes huérfanos en posts y comentarios
+    await Posts.updateMany({}, {
+      $pull: { likes: { $nin: Array.from(existingUserIds) } }
+    });
+    await Comments.updateMany({}, {
+      $pull: { likes: { $nin: Array.from(existingUserIds) } }
+    });
+
+    console.log('✅ Likes huérfanos eliminados de posts y comentarios');
+    console.log('✅ Reportes y notificaciones huérfanas eliminados');
     console.log('🧼 Limpieza completa realizada');
   } catch (err) {
     console.error('❌ Error en limpieza profunda:', err.message);
   }
 });
-

@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 //import PostsPubliBlog from '../components/home/PostsPubliBlog';
   
 const Home = ({ filters }) => {
-  const { homePosts, languageReducer  } = useSelector(state => state);
+  const {auth,  homePosts, languageReducer  } = useSelector(state => state);
   const { t } = useTranslation('search');
   const lang = languageReducer.language || 'en';
-
+console.log(auth.token)   
   // Función para aplicar filtros
   const applyFilters = (posts) => {
     if (!filters) return posts;

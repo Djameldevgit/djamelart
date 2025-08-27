@@ -278,7 +278,7 @@ const userCtrl = {
       return res.status(500).json({ msg: err.message })
     }
   },
-
+/*
 
   deleteUser: async (req, res) => {
     const session = await mongoose.startSession();
@@ -423,7 +423,139 @@ const userCtrl = {
     }
   },
 
+*/
+deleteUser: async (req, res) => {
+  try {
+    // 1. Verificar permisos de administrador
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        msg: 'Acceso denegado. Se requieren privilegios de administrador'
+      });
+    }
 
+    // 2. Validar ID del usuario
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        msg: 'ID de usuario no válido'
+      });
+    }
+
+    // 3. Obtener usuario a eliminar
+    const userToDelete = await Users.findById(req.params.id);
+    if (!userToDelete) {
+      return res.status(404).json({
+        success: false,
+        msg: 'Usuario no encontrado'
+      });
+    }
+
+    // 4. Prevenir auto-eliminación
+    if (userToDelete._id.toString() === req.user._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        msg: 'No puedes eliminarte a ti mismo'
+      });
+    }
+
+    // 5. Obtener todos los posts del usuario
+    const userPosts = await Posts.find({ user: req.params.id });
+
+    // 6. Eliminación en cascada (secuencial, sin Promise.all para evitar conflictos)
+
+    // Eliminar posts
+    await Posts.deleteMany({ user: req.params.id });
+
+    // Eliminar comentarios de esos posts
+    await Comments.deleteMany({
+      post: { $in: userPosts.map(p => p._id) }
+    });
+
+    // Eliminar denuncias en las que el usuario esté involucrado
+    await Report.deleteMany({
+      $or: [
+        { userId: req.params.id },
+        { reportedBy: req.params.id }
+      ]
+    });
+
+    // Eliminar comentarios hechos por el usuario
+    await Comments.deleteMany({ user: req.params.id });
+
+    // Eliminar notificaciones
+    await Notifications.deleteMany({
+      $or: [
+        { sender: req.params.id },
+        { recipient: req.params.id }
+      ]
+    });
+
+    // Actualizar relaciones de usuarios (followers, following, saved)
+    await Users.updateMany(
+      {
+        $or: [
+          { followers: req.params.id },
+          { following: req.params.id },
+          { saved: req.params.id }
+        ]
+      },
+      {
+        $pull: {
+          followers: req.params.id,
+          following: req.params.id,
+          saved: req.params.id
+        }
+      }
+    );
+
+    // Limpiar likes del usuario en posts
+    await Posts.updateMany(
+      { likes: req.params.id },
+      { $pull: { likes: req.params.id } }
+    );
+
+    // Limpiar referencias en carritos de otros usuarios
+    await Users.updateMany(
+      { "cart.items.postId": { $in: userPosts.map(p => p._id) } },
+      { $pull: { "cart.items": { postId: { $in: userPosts.map(p => p._id) } } } }
+    );
+
+    // Recalcular totales de carritos afectados
+    const affectedUsers = await Users.find({
+      "cart.items.postId": { $in: userPosts.map(p => p._id) }
+    });
+
+    for (const user of affectedUsers) {
+      const total = user.cart.items.reduce(
+        (sum, item) => sum + (item.price * item.quantity),
+        0
+      );
+      await Users.updateOne(
+        { _id: user._id },
+        { $set: { "cart.totalPrice": total } }
+      );
+    }
+
+    // 7. Eliminar al usuario (esto activará cualquier middleware pre('remove'))
+    await userToDelete.deleteOne();
+
+    // 8. Respuesta final
+    res.json({
+      success: true,
+      msg: 'Usuario y todo su contenido relacionado eliminados permanentemente',
+      deletedAt: new Date()
+    });
+
+  } catch (err) {
+    console.error('Error en eliminación completa:', err);
+    res.status(500).json({
+      success: false,
+      msg: 'Error al eliminar usuario',
+      error: err.message
+    });
+  }
+},
 
 
   getUsersAction: async (req, res) => {
