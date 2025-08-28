@@ -37,12 +37,15 @@ const http = require('http').createServer(app)
 const io = require('socket.io')(http, {
   cors: {
     origin: [
-      'https://djamelart.onrender.com',   // Producción
-      'http://localhost:3000'     // Local React dev
+      'https://djamelart.onrender.com',
+      'http://localhost:3000'
     ],
-    methods: ['GET', 'POST']
-  }
+    methods: ['GET', 'POST'],
+    credentials: true
+  },
+  transports: ['websocket'] // 🔥 fuerza WS en Render
 });
+
 
 // ✅ Manejo de eventos con tu archivo personalizado
 io.on('connection', socket => {

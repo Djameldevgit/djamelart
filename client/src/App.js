@@ -112,21 +112,22 @@ function App() {
   }, [dispatch]);
 
 */
-  useEffect(() => {
-    dispatch(refreshToken())
+useEffect(() => {
+  dispatch(refreshToken())
 
-    const socket = io()
-    dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
-    return () => socket.close()
-  }, [dispatch]) 
-
-
-  useEffect(() => {
-    if (language) {
-      i18n.changeLanguage(language); // ✅ sincroniza con i18n
-      localStorage.setItem('language', language); // ✅ persistencia
+  const socket = io(
+    process.env.REACT_APP_SOCKET_URL || window.location.origin,
+    {
+      withCredentials: true,
+      transports: ['websocket'], // 🔥 fuerza WebSocket
     }
-  }, [language]);
+  )
+
+  dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
+
+  return () => socket.close()
+}, [dispatch])
+
   // Efecto para manejar el idioma y dirección del texto
 
 
