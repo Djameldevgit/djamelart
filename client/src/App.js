@@ -113,22 +113,17 @@ function App() {
 
 */
 useEffect(() => {
-  dispatch(refreshToken())
+  dispatch(refreshToken());
 
-  const socket = io(
-    process.env.REACT_APP_SOCKET_URL || window.location.origin,
-    {
-      withCredentials: true,
-      transports: ['websocket'], // 🔥 fuerza WebSocket
-    }
-  )
+  const socket = io(process.env.REACT_APP_SOCKET_URL || "http://localhost:5000", {
+    withCredentials: true,
+    transports: ["websocket"], // 🔥 evita polling
+  });
+  dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
 
-  dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
+  return () => socket.close();
+}, [dispatch]);
 
-  return () => socket.close()
-}, [dispatch])
-
-  // Efecto para manejar el idioma y dirección del texto
 
 
 
@@ -193,9 +188,7 @@ useEffect(() => {
             <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
-            <Route exact path="/forgot_password" component={ForgotPassword} />
-            <Route exact path="/user/reset/:token" component={ResetPassword} />
-            <Route exact path="/user/activate/:activation_token" component={ActivatePage} />
+       
             <Route exact path="/post/:id" component={Post} />
             <Route exact path="/message/:id" component={auth.token ? Message : Login} />
             <Route exact path="/message" component={auth.token ? Messages : Login} />
