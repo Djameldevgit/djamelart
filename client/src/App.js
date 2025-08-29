@@ -81,7 +81,7 @@ import Comment from './pages/Commentss';
 function App() {
   const { auth, status, modal, languageReducer } = useSelector(state => state)
 
-  const language = languageReducer?.language || localStorage.getItem("lang") || "en";
+  //const language = languageReducer?.language || localStorage.getItem("lang") || "en";
   const dispatch = useDispatch()
   const [filters, setFilters] = useState({
     category: '',
@@ -92,40 +92,15 @@ function App() {
     maxPrice: '',
   });
 
+  useEffect(() => {
+    dispatch(refreshToken())
 
+    const socket = io()
+    dispatch({type: GLOBALTYPES.SOCKET, payload: socket})
+    return () => socket.close()
+  },[dispatch])
  
-     
- /* useEffect(() => {
-    dispatch(refreshToken());
-  
-    const socket = io(
-      process.env.REACT_APP_SOCKET_URL || "http://localhost:5000",
-      {
-        withCredentials: true,
-        transports: ["websocket"], // 🔥 evita fallback a polling
-      }
-    );
-  
-    dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
-  
-    return () => socket.close();
-  }, [dispatch]);
-
-*/
-useEffect(() => {
-  dispatch(refreshToken());
-
-  const socket = io(process.env.REACT_APP_SOCKET_URL || "http://localhost:5000", {
-    withCredentials: true,
-    transports: ["websocket"], // 🔥 evita polling
-  });
-  dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
-
-  return () => socket.close();
-}, [dispatch]);
-
-
-
+ 
 
   useEffect(() => {
 
@@ -188,7 +163,9 @@ useEffect(() => {
             <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
-       
+            <Route exact path="/forgot_password" component={ForgotPassword} />
+            <Route exact path="/user/reset/:token" component={ResetPassword} />
+            <Route exact path="/user/activate/:activation_token" component={ActivatePage} />
             <Route exact path="/post/:id" component={Post} />
             <Route exact path="/message/:id" component={auth.token ? Message : Login} />
             <Route exact path="/message" component={auth.token ? Messages : Login} />

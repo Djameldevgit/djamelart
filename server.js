@@ -52,7 +52,7 @@ app.get('/api/set-language', (req, res) => {
     res.status(400).send({ error: 'Idioma no válido' });
   }
 });
-
+ 
 app.use('/api', require('./routes/authRouter'));
 app.use('/api', require('./routes/userRouter'));
 app.use('/api', require('./routes/postRouter'));
