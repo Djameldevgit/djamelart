@@ -3,23 +3,23 @@ require('./cronJobs/DeleteUsersNoVerified');
 const { autoUnblockUsers } = require('./controllers/autoUnBlockUser');
 const express = require('express');
 const mongoose = require('mongoose');
-//const cors = require('cors');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const i18n = require('i18n');
 const SocketServer = require('./socketServer');
 const morgan = require('morgan');
-const { Server } = require("socket.io");
-const http = require('http');
 
-// ----------------- EXPRESS -----------------
-const app = express();
-app.use(express.json());
-//app.use(cors());
+// ✅ CORS para Express
+const app = express()
+app.use(express.json())
+app.use(cors())
+app.use(cookieParser())
+
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-// ----------------- I18N -----------------
+// --- Configuración de idiomas ---
 i18n.configure({
   locales: ['en', 'es', 'fr', 'ar', 'ru', 'kab', 'chino'],
   directory: path.join(__dirname, 'locales'),
@@ -31,18 +31,28 @@ i18n.configure({
 });
 app.use(i18n.init);
 
-// ----------------- HTTP + SOCKET.IO -----------------
-const server = http.createServer(app);
+const http = require('http').createServer(app)
 
-const io = new Server(server, {
-  cors: false // no hace falta en el mismo dominio
+// ✅ Configuración de Socket.IO con CORS para producción y local
+const io = require('socket.io')(http, {
+  cors: {
+    origin: [
+      'https://djamelart.onrender.com',
+      'http://localhost:3000'
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true
+  },
+  transports: ['websocket'] // 🔥 fuerza WS en Render
 });
 
+
+// ✅ Manejo de eventos con tu archivo personalizado
 io.on('connection', socket => {
-  SocketServer(socket, io); // tu lógica en socketServer.js
+  SocketServer(socket, io); // Pasamos socket e io
 });
 
-// ----------------- RUTAS -----------------
+// --- Rutas de API ---
 app.get('/api/set-language', (req, res) => {
   const lang = req.query.lang;
   if (lang && i18n.getLocales().includes(lang)) {
@@ -52,7 +62,7 @@ app.get('/api/set-language', (req, res) => {
     res.status(400).send({ error: 'Idioma no válido' });
   }
 });
- 
+
 app.use('/api', require('./routes/authRouter'));
 app.use('/api', require('./routes/userRouter'));
 app.use('/api', require('./routes/postRouter'));
@@ -67,31 +77,32 @@ app.use('/api', require('./routes/userActionRouter'));
 app.use('/api', require('./routes/blockUserRouter'));
 app.use('/api', require('./routes/reportRouter'));
 app.use('/api/blog/comments', require('./routes/blogCommentRoutes'));
-app.use('/api/forms', require('./routes/formRouter'));
+app.use("/api/forms", require("./routes/formRouter"));
 
-// --- Auto desbloqueo cada 5 min ---
+// --- Auto desbloqueo de usuarios cada 5 min ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 
-// ----------------- MONGODB -----------------
-const URI = process.env.MONGODB_URL;
+// --- Conexión a MongoDB ---
+const URI = process.env.MONGODB_URL
 mongoose.connect(URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 }, err => {
-  if(err) throw err;
-  console.log('✅ Connected to MongoDB');
-});
+    if(err) throw err;
+    console.log('Connected to mongodb')
+})
 
-// ----------------- PRODUCCIÓN -----------------
+// --- Producción: servir frontend ---
 if(process.env.NODE_ENV === 'production'){
-  app.use(express.static('client/build'));
+  app.use(express.static('client/build'))
   app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-  });
+      res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
+  })
 }
 
-// ----------------- PUERTO -----------------
-const port = process.env.PORT || 5000;
-server.listen(port, () => {
-  console.log('🚀 Server is running on port', port);
-});
+const port = process.env.PORT || 5000
+http.listen(port, () => {
+  console.log('Server is running on port', port)
+})
