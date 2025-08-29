@@ -32,25 +32,13 @@ i18n.configure({
 app.use(i18n.init);
 
 const http = require('http').createServer(app)
+const io = require('socket.io')(http)
 
-// ✅ Configuración de Socket.IO con CORS para producción y local
-const io = require('socket.io')(http, {
-  cors: {
-    origin: [
-      'https://djamelart.onrender.com',
-      'http://localhost:3000'
-    ],
-    methods: ['GET', 'POST'],
-    credentials: true
-  },
-  transports: ['websocket'] // 🔥 fuerza WS en Render
-});
-
-
-// ✅ Manejo de eventos con tu archivo personalizado
 io.on('connection', socket => {
-  SocketServer(socket, io); // Pasamos socket e io
-});
+    SocketServer(socket)
+})
+
+ 
 
 // --- Rutas de API ---
 app.get('/api/set-language', (req, res) => {
