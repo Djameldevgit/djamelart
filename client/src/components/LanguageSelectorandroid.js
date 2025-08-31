@@ -4,8 +4,8 @@ import { useCookies } from 'react-cookie';
 import { useTranslation } from 'react-i18next';
 import * as languageActions from '../redux/actions/languageAction';
 import { Dropdown, ButtonGroup } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-function LanguageSelectorandroid() {
+ 
+const  LanguageSelectorandroid = () =>{
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
   const { t } = useTranslation('language');

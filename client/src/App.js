@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-//import i18n from './i18n';
+import { BrowserRouter as Router, Route , Switch } from 'react-router-dom'
+
+ 
 import PageRender from './customRouter/PageRender'
 import PrivateRouter from './customRouter/PrivateRouter'
 import Home from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
-
+import ActivatePage from './auth/ActivatePage';
 import Alert from './components/alert/Alert'
 
 import StatusModal from './components/StatusModal'
@@ -23,30 +24,30 @@ import SocketClient from './SocketClient'
 import { getNotifies } from './redux/actions/notifyAction'
 
 import { getPostsPendientes } from './redux/actions/postAproveAction'
- 
+
 
 
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
- 
+
 
 import { getCart } from './redux/actions/cartAction';
 
- 
+
 import { getOrders } from './redux/actions/orderAction';
 import ForgotPassword from './auth/ForgotPassword';
 import ResetPassword from './auth/ResetPassword';
 
 import { io } from 'socket.io-client';
- 
+
 import { getUsers } from './redux/actions/userAction';
 import { getBlockedUsers } from './redux/actions/userBlockAction';
- 
- 
+
+
 import Navbar2 from './components/header/Navbar2'
 import Accordionn from './pages/Accordionn'
- 
 
- 
+
+
 function App() {
   const { auth, status, modal, languageReducer } = useSelector(state => state)
 
@@ -69,7 +70,7 @@ function App() {
     return () => socket.close()
   }, [dispatch])
 
-  
+
   useEffect(() => {
 
     dispatch(getPosts())//EHECUTAR LAS ACCIONES GETUSER Y GETUSERSACTION EN SUS PROPIOS COMPONENTE
@@ -111,7 +112,7 @@ function App() {
     )
   }
 
-  
+
 
   return (
     <Router>
@@ -119,20 +120,28 @@ function App() {
 
       <input type="checkbox" id="theme" />
       <div className={`App ${(status || modal) && 'mode'}`}>
+        <LanguageSelectorandroid />
         <div className="main">
-     <Navbar2 />
+      
+          <Navbar2 onFiltersChange={setFilters} />
+
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
-        
-          
-          <Route exact path="/" component={  Home  } />
+
+<Switch>
+          <Route exact path="/" component={Home} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/bloginfo" component={Accordionn} />
 
+          <Route exact path="/forgot_password" component={ForgotPassword} />
+          <Route path="/user/reset/:token" component={ResetPassword} exact />
+
+          <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />*/
+
           <PrivateRouter exact path="/:page" component={PageRender} />
           <PrivateRouter exact path="/:page/:id" component={PageRender} />
-          
+</Switch>
         </div>
       </div>
     </Router>
