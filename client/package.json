@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "proxy": "https://djamelart.onrender.com/api",
+  "homepage": "https://djamelart.onrender.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
