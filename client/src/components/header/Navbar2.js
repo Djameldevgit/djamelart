@@ -84,8 +84,8 @@ const Navbar2 = ({ onFiltersChange }) => {
     }
   }, [role, currentRoleState]);
 
-   
- 
+
+
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -186,28 +186,29 @@ const Navbar2 = ({ onFiltersChange }) => {
 
 
             {auth.user && (
+              <NavDropdown.Header
+
+                
+                   className="nav-link position-relative" id="navbarDropdown"
+                    role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                    <span className="material-icons"
+                      style={{ color: notify.data.length > 0 ? 'crimson' : '' }}>
+                      favorite
+                    </span>
+
+                    <span className="notify_length">{notify.data.length}</span>
+
+                
+
+                  <div className="dropdown-menu" aria-labelledby="navbarDropdown"
+                    style={{ transform: 'translateX(75px)' }}>
+                    <NotifyModal />
+                  </div>
 
 
-              <div className="nav-item dropdown" style={{ opacity: 1 }} >
-                <span className="nav-link position-relative" id="navbarDropdown"
-                  role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                  <span className="material-icons"
-                    style={{ color: notify.data.length > 0 ? 'crimson' : '' }}>
-                    favorite
-                  </span>
-
-                  <span className="notify_length">{notify.data.length}</span>
-
-                </span>
-
-                <div className="dropdown-menu" aria-labelledby="navbarDropdown"
-                  style={{ transform: 'translateX(75px)' }}>
-                  <NotifyModal />
-                </div>
-
-              </div>
-
+                
+              </NavDropdown.Header>
 
             )}
 
@@ -292,12 +293,12 @@ const Navbar2 = ({ onFiltersChange }) => {
                         </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/usersactionn">
                           {t('navbar:userActions')}
-                        </NavDropdown.Item>  
+                        </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/edicionusers">
-                       edicion Users
-                        </NavDropdown.Item> 
+                          edicion Users
+                        </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/listuserbloque">
-                        listuserbloque
+                          listuserbloque
                         </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/reportuser">
                           {t('navbar:userReports')}
@@ -704,39 +705,39 @@ const Navbar2 = ({ onFiltersChange }) => {
         actionLink="/contact"
       />
 
-{showAdminRedirectModal && (
-  <div className="modal" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999}}>
-    <div className="modal-dialog modal-dialog-centered">
-      <div className="modal-content">
-        <div className="modal-header bg-primary text-white">
-          <h5 className="modal-title">🎉 ¡Felicidades! Rol de Administrador</h5>
+      {showAdminRedirectModal && (
+        <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header bg-primary text-white">
+                <h5 className="modal-title">🎉 ¡Felicidades! Rol de Administrador</h5>
+              </div>
+              <div className="modal-body">
+                <p>Ahora tienes permisos de administrador. ¿Deseas ir al panel de administración?</p>
+                <p className="text-muted small">Serás redirigido a: {ADMIN_CLIENT_URL}</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowAdminRedirectModal(false)}
+                >
+                  Permanecer aquí
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    window.location.href = ADMIN_CLIENT_URL;
+                  }}
+                >
+                  Ir al Panel Admin
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="modal-body">
-          <p>Ahora tienes permisos de administrador. ¿Deseas ir al panel de administración?</p>
-          <p className="text-muted small">Serás redirigido a: {ADMIN_CLIENT_URL}</p>
-        </div>
-        <div className="modal-footer">
-          <button 
-            type="button" 
-            className="btn btn-secondary" 
-            onClick={() => setShowAdminRedirectModal(false)}
-          >
-            Permanecer aquí
-          </button>
-          <button 
-            type="button" 
-            className="btn btn-primary"
-            onClick={() => {
-              window.location.href = ADMIN_CLIENT_URL;
-            }}
-          >
-            Ir al Panel Admin
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
 
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter as Router, Route , Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
- 
+
 import PageRender from './customRouter/PageRender'
 import PrivateRouter from './customRouter/PrivateRouter'
 import Home from './pages/home'
@@ -122,26 +122,26 @@ function App() {
       <div className={`App ${(status || modal) && 'mode'}`}>
         <LanguageSelectorandroid />
         <div className="main">
-      
+
           <Navbar2 onFiltersChange={setFilters} />
 
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
 
-<Switch>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/register" component={Register} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/bloginfo" component={Accordionn} />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/bloginfo" component={Accordionn} />
 
-          <Route exact path="/forgot_password" component={ForgotPassword} />
-          <Route path="/user/reset/:token" component={ResetPassword} exact />
+            <Route exact path="/forgot_password" component={ForgotPassword} />
+            <Route path="/user/reset/:token" component={ResetPassword} exact />
 
-          <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />*/
+            <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />*/
 
-          <PrivateRouter exact path="/:page" component={PageRender} />
-          <PrivateRouter exact path="/:page/:id" component={PageRender} />
-</Switch>
+            <PrivateRouter exact path="/:page" component={PageRender} />
+            <PrivateRouter exact path="/:page/:id" component={PageRender} />
+          </Switch>
         </div>
       </div>
     </Router>

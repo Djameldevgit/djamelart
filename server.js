@@ -70,7 +70,7 @@ app.use("/api/forms", require("./routes/formRouter"));
 // --- Auto desbloqueo de usuarios cada 5 min ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 
-// --- Conexión a MongoDB ---
+
 const URI = process.env.MONGODB_URL
 mongoose.connect(URI, {
     useCreateIndex: true,
@@ -82,15 +82,15 @@ mongoose.connect(URI, {
     console.log('Connected to mongodb')
 })
 
-// --- Producción: servir frontend ---
 if(process.env.NODE_ENV === 'production'){
-  app.use(express.static('client/build'))
-  app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
-  })
+    app.use(express.static('client/build'))
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
+    })
 }
+
 
 const port = process.env.PORT || 5000
 http.listen(port, () => {
-  console.log('Server is running on port', port)
+    console.log('Server is running on port', port)
 })

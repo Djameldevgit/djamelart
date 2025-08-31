@@ -39,16 +39,6 @@ const SocketServer = (socket) => {
     })
 
 
-    socket.on('addMessage', msg => {
-        const recipientId = msg.recipient;
-        const recipient = users.find(user => user.id === recipientId);
-    
-        if (recipient) {
-            socket.to(`${recipient.socketId}`).emit('addMessageToClient', msg);
-        }
-    });
-
-
     // Likes
     socket.on('likePost', newPost => {
         const ids = [...newPost.user.followers, newPost.user._id]
