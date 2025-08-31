@@ -1,8 +1,8 @@
 import React from 'react'
-import ReportedUsers from '../../components/adminitration/ReporteUsers'
+import ReportedUsers from '../components/adminitration/ReporteUsers'
 //import ReportedUsers from '../../../components/adminitration/ReporteUsers'
 
-const Reportuser = () => {
+const reportuser = () => {
   return (
     <div>
         <ReportedUsers/>
@@ -11,4 +11,4 @@ const Reportuser = () => {
   )
 }
 
-export default Reportuser
+export default reportuser

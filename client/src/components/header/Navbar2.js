@@ -68,7 +68,7 @@ const Navbar2 = ({ onFiltersChange }) => {
   useEffect(() => {
     if (role === 'admin' && prevRole !== 'admin' && auth.user) {
       setPrevRole(role);
-      setShowAdminRedirectModal(true);
+      //setShowAdminRedirectModal(true);
     }
   }, [role, prevRole, auth.user]);
 
@@ -212,7 +212,7 @@ const Navbar2 = ({ onFiltersChange }) => {
             )}
 
             {auth.user && (
-              <Link to="/cart/cartcarrito" className="position-relative text-decoration-none">
+              <Link to="/cart" className="position-relative text-decoration-none">
                 <BsCartFill size={20} className="text-dark" />
                 {totalItems > 0 && (
                   <Badge pill bg="danger" className="position-absolute top-0 start-100 translate-middle" style={{ fontSize: '0.6rem' }}>
@@ -264,7 +264,7 @@ const Navbar2 = ({ onFiltersChange }) => {
                       💬 {t('navbar:conversations')}
                     </NavDropdown.Item>
 
-                    <NavDropdown.Item as={Link} to="/rolesuser">
+                    <NavDropdown.Item as={Link} to="/roles">
                       🛠️ {t('navbar:roles')}
                     </NavDropdown.Item>
 
@@ -278,25 +278,31 @@ const Navbar2 = ({ onFiltersChange }) => {
 
 
 
-                        <NavDropdown.Item as={Link} to="/messageadmin">
+                        <NavDropdown.Item as={Link} to="/message">
                           💼 {t('navbar:chatear con los administradores')}
                         </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/users/adminsendemail">
+                        <NavDropdown.Item as={Link} to="/mails">
                           {t('navbar:adminSendEmail')}
                         </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/users/userss">
+                        <NavDropdown.Item as={Link} to="/users">
                           {t('navbar:users')}
                         </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/postspendientes">
                           {t('navbar:pendingPosts')}
                         </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/users/usersaction">
+                        <NavDropdown.Item as={Link} to="/usersactionn">
                           {t('navbar:userActions')}
+                        </NavDropdown.Item>  
+                        <NavDropdown.Item as={Link} to="/edicionusers">
+                       edicion Users
+                        </NavDropdown.Item> 
+                        <NavDropdown.Item as={Link} to="/listuserbloque">
+                        listuserbloque
                         </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/reportesusers">
+                        <NavDropdown.Item as={Link} to="/reportuser">
                           {t('navbar:userReports')}
                         </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/users/bloqueos">
+                        <NavDropdown.Item as={Link} to="/bloqueos">
                           {t('navbar:blockedUsers')}
                         </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/cart/orderss">

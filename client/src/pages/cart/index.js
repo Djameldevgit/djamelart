@@ -1,7 +1,7 @@
 import React from 'react'
 import CartCarrito from '../../components/Cart/CartCarrito';
  
-const Cart = () => {
+const index = () => {
   return (
     <div>
  <CartCarrito/>
@@ -10,4 +10,4 @@ const Cart = () => {
   )
 }
 
-export default Cart
+export default index

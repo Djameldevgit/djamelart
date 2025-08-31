@@ -16,8 +16,8 @@ import {
   Col
 } from 'react-bootstrap';
 import ModalEmail from './ModalEmail';
-
-const SendEmailsAdmin = () => {
+ 
+const Sendemailadmin = () => {
   const { auth, homeUsers, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { t } = useTranslation('modales');
@@ -175,4 +175,4 @@ const SendEmailsAdmin = () => {
   );
 };
 
-export default SendEmailsAdmin;
+export default Sendemailadmin

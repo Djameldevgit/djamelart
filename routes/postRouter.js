@@ -10,7 +10,7 @@ router.get('/posts',   postCtrl.getPosts)
 
 router.route('/post/:id')
     .patch(auth, postCtrl.updatePost)
-    .get(   postCtrl.getPost)
+    .get( auth,  postCtrl.getPost)
     .delete(auth, postCtrl.deletePost)
 
 router.patch('/post/:id/like', auth, postCtrl.likePost)
