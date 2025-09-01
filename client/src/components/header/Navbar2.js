@@ -153,7 +153,7 @@ const Navbar2 = ({ onFiltersChange }) => {
 
   return (
     <div>
-      <Navbar expand="lg" className="navbar bg-body-tertiary mb-2 shadow-sm px-3">
+      <Navbar expand="lg"   className="navbar bg-body-tertiary mb-2 shadow-sm px-3">
         <Container fluid className="align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <Button onClick={handleShowDrawer} variant="outline-primary" className="me-2">
@@ -189,7 +189,7 @@ const Navbar2 = ({ onFiltersChange }) => {
               align="end"
               title={
                 <div className="d-flex justify-content-center align-items-center position-relative"
-                  style={{ width: '40px', height: '40px' }}>
+                  style={{ width: '20px', height: '40px' }}>
                   <FaBell size={20} color={notify.data.length > 0 ? "crimson" : "black"} />
                   {notify.data.length > 0 && (
                     <Badge
@@ -202,11 +202,11 @@ const Navbar2 = ({ onFiltersChange }) => {
                     </Badge>
                   )}
                 </div>
-              }
+              } 
               id="nav-notify-dropdown"
             >
               <NavDropdown.Header>🔔 Notificaciones</NavDropdown.Header>
-              <div style={{ maxHeight: "200px", overflowY: "auto" }}>
+              <div   style={{ height: "200px" , overflowY: "auto" }}>
                 <NotifyModal />
               </div>
             </NavDropdown>
