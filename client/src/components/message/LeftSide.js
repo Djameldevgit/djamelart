@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import UserCard from '../UserCard'
 import { useSelector, useDispatch } from 'react-redux'
-import { getDataAPI } from '../../utils/fetchData'
-import { GLOBALTYPES } from '../../redux/actions/globalTypes'
+ 
 import { useHistory, useParams } from 'react-router-dom'
 import { MESS_TYPES, getConversations } from '../../redux/actions/messageAction'
 
@@ -21,19 +20,7 @@ const LeftSide = () => {
     const [page, setPage] = useState(0)
 
     
-    const handleSearch = async e => {
-        e.preventDefault()
-        if(!search) return setSearchUsers([]);
-
-        try {
-            const res = await getDataAPI(`search?username=${search}`, auth.token)
-            setSearchUsers(res.data.users)
-        } catch (err) {
-            dispatch({
-                type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}
-            })
-        }
-    }
+   
 
     const handleAddUser = (user) => {
         setSearch('')
@@ -82,13 +69,7 @@ const LeftSide = () => {
 
     return (
         <>
-            <form className="message_header" onSubmit={handleSearch} >
-                <input type="text" value={search}
-                placeholder="Enter to Search..."
-                onChange={e => setSearch(e.target.value)} />
-
-                <button type="submit" style={{display: 'none'}}>Search</button>
-            </form>
+           
 
             <div className="message_chat_list">
                 {

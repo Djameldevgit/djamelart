@@ -11,6 +11,7 @@ import { Navbar, Container, NavDropdown, Offcanvas, Button, Badge } from 'react-
 import { BsCartFill } from 'react-icons/bs'
 import NotifyModal from '../NotifyModal'
 
+import { FaBell } from 'react-icons/fa';
 
 import LanguageSelectorpc from '../LanguageSelectorpc'
 
@@ -184,33 +185,32 @@ const Navbar2 = ({ onFiltersChange }) => {
 
             }
 
+            <NavDropdown
+              align="end"
+              title={
+                <div className="d-flex justify-content-center align-items-center position-relative"
+                  style={{ width: '40px', height: '40px' }}>
+                  <FaBell size={20} color={notify.data.length > 0 ? "crimson" : "black"} />
+                  {notify.data.length > 0 && (
+                    <Badge
+                      pill
+                      bg="danger"
+                      className="position-absolute top-0 start-100 translate-middle"
+                      style={{ fontSize: '0.6rem' }}
+                    >
+                      {notify.data.length}
+                    </Badge>
+                  )}
+                </div>
+              }
+              id="nav-notify-dropdown"
+            >
+              <NavDropdown.Header>🔔 Notificaciones</NavDropdown.Header>
+              <div style={{ maxHeight: "200px", overflowY: "auto" }}>
+                <NotifyModal />
+              </div>
+            </NavDropdown>
 
-            {auth.user && (
-              <NavDropdown.Header
-
-                
-                   className="nav-link position-relative" id="navbarDropdown"
-                    role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                    <span className="material-icons"
-                      style={{ color: notify.data.length > 0 ? 'crimson' : '' }}>
-                      favorite
-                    </span>
-
-                    <span className="notify_length">{notify.data.length}</span>
-
-                
-
-                  <div className="dropdown-menu" aria-labelledby="navbarDropdown"
-                    style={{ transform: 'translateX(75px)' }}>
-                    <NotifyModal />
-                  </div>
-
-
-                
-              </NavDropdown.Header>
-
-            )}
 
             {auth.user && (
               <Link to="/cart" className="position-relative text-decoration-none">

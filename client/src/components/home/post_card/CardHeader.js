@@ -13,7 +13,7 @@ import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
 import { createReport } from '../../../redux/actions/reportUserAction';
 
 const CardHeader = ({ post }) => {
-  const { auth, socket,languageReducer } = useSelector((state) => state);
+  const { auth, homeUsers, socket, languageReducer } = useSelector((state) => state);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const dispatch = useDispatch();
@@ -28,6 +28,18 @@ const CardHeader = ({ post }) => {
       dispatch(aprovarPostPendiente(post, 'aprovado', auth));
       history.push("/administration/homepostspendientes");
     }
+  };
+
+  // Buscar el primer usuario que tenga role === "admin"
+  const adminUser = homeUsers.users.find(user => user.role === "admin");
+  const handleChatWithAdmin = () => {
+    if (!adminUser) {
+      return dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: t('noAdminAvailable') }
+      });
+    }
+    handleAddUser(adminUser);
   };
 
   const handleEditPost = () => {
@@ -87,10 +99,10 @@ const CardHeader = ({ post }) => {
             <span className="material-icons">more_horiz</span>
           </Dropdown.Toggle>
 
-          <Dropdown.Menu align="end"style={{
-      direction: lang === 'ar' ? 'rtl' : 'ltr',
-        textAlign: lang === 'ar' ? 'right' : 'left',
-      }}>
+          <Dropdown.Menu align="end" style={{
+            direction: lang === 'ar' ? 'rtl' : 'ltr',
+            textAlign: lang === 'ar' ? 'right' : 'left',
+          }}>
             {auth.user.role === 'admin' && (
               <>
                 <Dropdown.Item onClick={handleAprove}>
@@ -116,12 +128,23 @@ const CardHeader = ({ post }) => {
               </>
             )}
 
-            <Dropdown.Item onClick={() => handleAddUser(post.user)}style={{
-      direction: lang === 'ar' ? 'rtl' : 'ltr',
-        textAlign: lang === 'ar' ? 'right' : 'left',
-      }}>
+            <Dropdown.Item onClick={() => handleAddUser(post.user)} style={{
+              direction: lang === 'ar' ? 'rtl' : 'ltr',
+              textAlign: lang === 'ar' ? 'right' : 'left',
+            }}>
               💬 {t('contactSeller')}
             </Dropdown.Item>
+            <Dropdown.Item
+              onClick={handleChatWithAdmin}
+              style={{
+                direction: lang === 'ar' ? 'rtl' : 'ltr',
+                textAlign: lang === 'ar' ? 'right' : 'left',
+              }}
+            >
+              🛡️ contactar admin
+            </Dropdown.Item>
+
+
             <Dropdown.Item>
               👤 {t('followAuthor')}
             </Dropdown.Item>
@@ -147,10 +170,10 @@ const CardHeader = ({ post }) => {
             <Form.Control
               as="select"
               value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}style={{
+              onChange={(e) => setReportReason(e.target.value)} style={{
                 direction: lang === 'ar' ? 'rtl' : 'ltr',
-                  textAlign: lang === 'ar' ? 'right' : 'left',
-                }}
+                textAlign: lang === 'ar' ? 'right' : 'left',
+              }}
             >
               <option value="">{t('selectReason')}</option>
               <option value="abuse">{t('reasons.abuse')}</option>
