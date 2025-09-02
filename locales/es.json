@@ -105,7 +105,7 @@
 	"role": {
 		"user_not_found": "Usuario no encontrado",
 		"role_assigned": "Rol de usuario asignado exitosamente",
-		"superuser_assigned": "Rol de superusuario asignado exitosamente",
+		"Super-utilisateur": "Rol de superusuario asignado exitosamente",
 		"moderator_assigned": "Rol de moderador asignado exitosamente",
 		"admin_assigned": "Rol de administrador asignado exitosamente",
 		"update_error": "Error actualizando el rol del usuario"

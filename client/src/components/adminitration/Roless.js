@@ -58,11 +58,11 @@ const Roless = () => {
   const handleRoleChange = async (user, selectedRole) => {
     setSelectedRoles(prev => ({ ...prev, [user._id]: selectedRole }));
     await handleChangeRole(user, selectedRole);
-  
+
     setUsersList(prevUsers =>
       prevUsers.map(u => (u._id === user._id ? { ...u, role: selectedRole } : u))
     );
-  
+
     // 🔹 Si el usuario editado es el autenticado => actualiza Redux auth
     if (auth.user && auth.user._id === user._id) {
       dispatch({
@@ -71,7 +71,7 @@ const Roless = () => {
       });
     }
   };
-  
+
 
   const getRoleBadge = (role) => {
     const variants = {
@@ -156,7 +156,7 @@ const Roless = () => {
                             className="w-75"
                           >
                             <option value="user">{t('roles.user')}</option>
-                            <option value="Super-utilisateur">{t('roles.Super-utilisateur')}</option>
+                            <option value="Super-utilisateur">{t('roles.Super-utilisateur')}</option> {/* Cambiado aquí */}
                             <option value="Moderateur">{t('roles.Moderateur')}</option>
                             <option value="admin">{t('roles.admin')}</option>
                           </Form.Select>

@@ -110,7 +110,7 @@
 	"role": {
 		"user_not_found": "Ulac aseqdac",
 		"role_assigned": "Aγerfi n useqdac yettwasbadu akken ilaq",
-		"superuser_assigned": "Aγerfi n superuser yettwasbadu",
+		"Super-utilisateur": "Aγerfi n superuser yettwasbadu",
 		"moderator_assigned": "Aγerfi n umsengad yettwasbadu",
 		"admin_assigned": "Aγerfi n umaεiul yettwasbadu",
 		"update_error": "Tuccḍa deg uleqqed n uγerfi"

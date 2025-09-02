@@ -110,7 +110,7 @@
 	"role": {
 		"user_not_found": "User not found",
 		"role_assigned": "User role assigned successfully",
-		"superuser_assigned": "Superuser role assigned successfully",
+		"Super-utilisateur": "Superuser role assigned successfully",
 		"moderator_assigned": "Moderator role assigned successfully",
 		"admin_assigned": "Admin role assigned successfully",
 		"update_error": "Error updating user role"

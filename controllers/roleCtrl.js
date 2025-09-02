@@ -31,7 +31,7 @@ const roleCtrl = {
             const user = await Users.findByIdAndUpdate(req.params.id, { role }, { new: true });
             if (!user) return res.status(404).json({ msg: req.__('role.user_not_found') });
 
-            res.json({ msg: req.__('role.superuser_assigned') });
+            res.json({ msg: req.__('role.Super-utilisateur') });
         } catch (error) {
             res.status(500).json({ msg: req.__('role.update_error') });
         }

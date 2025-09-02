@@ -11,7 +11,7 @@ import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '.
 import LoadIcon from '../../images/loading.gif'
 
 const RightSide = () => {
-    const { auth, message, roleReducer, theme, socket, peer } = useSelector(state => state)
+    const { auth, message,   theme, socket  } = useSelector(state => state)
     const dispatch = useDispatch()
 
     const { id } = useParams()
@@ -56,13 +56,16 @@ const RightSide = () => {
         let newMedia = []
     
         // 🔥 Determinar límite según el rol del usuario
-        const maxMedia = auth.user?.role === "Super-utilisateur" ? 2 : 0 ;
+        const isSuperUser = auth.user?.role === "Super-utilisateur";
+        const isAdmin = auth.user?.role === "admin";
+        
+        const maxMedia = (isSuperUser || isAdmin) ? 4 : 0; // Ambos roles pueden subir hasta 4 archivos
         const totalAfterUpload = media.length + files.length;
     
-        // Validar límite de archivos
+        // Resto del código permanece igual...
         if (totalAfterUpload > maxMedia) {
-            err = `Maximum ${maxMedia} files allowed. ${maxMedia === 2 ? 
-                   "Super-users can upload up to 4 files." : ""}`;
+            err = `Maximum ${maxMedia} files allowed. ${maxMedia === 4 ? 
+                   "Super-users and Admins can upload up to 4 files." : ""}`;
             dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
             return;
         }
@@ -258,20 +261,19 @@ const RightSide = () => {
 
                 <Icons setContent={setText} content={text} theme={theme} />
 
-                {auth.user.role === "Super-utilisateur" && (
-                    <div className="file_upload">
-                        <i className="fas fa-image text-danger" />
-                        <input
-                            type="file"
-                            name="file"
-                            id="file"
-                            multiple
-                            accept="image/*,video/*"
-                            onChange={handleChangeMedia}
-                        />
-                    </div>
-                )}
-
+                {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
+    <div className="file_upload">
+        <i className="fas fa-image text-danger" />
+        <input
+            type="file"
+            name="file"
+            id="file"
+            multiple
+            accept="image/*,video/*"
+            onChange={handleChangeMedia}
+        />
+    </div>
+)}
 
                 <button type="submit" className="material-icons"
                     disabled={(text || media.length > 0) ? false : true}>

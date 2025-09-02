@@ -4,8 +4,8 @@ import { useCookies } from 'react-cookie';
 import { useTranslation } from 'react-i18next';
 import * as languageActions from '../redux/actions/languageAction';
 import { Dropdown, ButtonGroup } from 'react-bootstrap';
- 
-const  LanguageSelectorandroid = () =>{
+
+const LanguageSelectorandroid = () => {
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
   const { t } = useTranslation('language');
@@ -14,24 +14,24 @@ const  LanguageSelectorandroid = () =>{
 
   const handleLanguageChange = useCallback((language) => {
     if (language === lang) return;
-  
+
     dispatch(languageActions.changeLanguage(language)); // ✅ única función
-  
+
     setCookie('language', language, { path: '/' });
   }, [dispatch, setCookie, lang]);
-  
+
 
   useEffect(() => {
     const defaultLanguage = cookies.language || 'fr';
-  
+
     if (defaultLanguage !== languageReducer?.language) {
       handleLanguageChange(defaultLanguage);
     }
   }, [cookies.language, languageReducer?.language, handleLanguageChange]);
-  
-  
-  
-  
+
+
+
+
 
   const flagPath = (lang) => `/flags/${lang}.png`;
 
@@ -55,26 +55,79 @@ const  LanguageSelectorandroid = () =>{
   };
 
   return (
-    <div className="d-block d-md-none" style={{ width: '100%', padding: 0, margin: 0 }}>
-      <div style={{ display: 'flex', width: '100%', gap: '3px' }}>
- 
-        <a href="/" >
-          <h3 className='ml-4 mt-2' style={{ flex: '1 1 0' }} >
-            {t('Tassili', { lng: lang })}
-          </h3>
-        </a>
-     
-        {/* Selector de idioma */}
-        <div style={{ flex: '1 1 0' }}>
+    <div className="d-block d-md-none" style={{
+      width: '100%',
+      padding: 0,
+      margin: 0,
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      zIndex: 1040,
+      background: 'white',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+    }}>
+      {/* CONTENEDOR PRINCIPAL CON DISTRIBUCIÓN 50/50 */}
+      <div style={{ 
+        display: 'flex', 
+        width: '100%', 
+        alignItems: 'center', // Centra verticalmente
+        justifyContent: 'space-between', // Distribuye el espacio
+        padding: '5px 10px', // Padding interno
+        boxSizing: 'border-box' // Incluye padding en el ancho
+      }}>
+
+        {/* LOGO - 50% */}
+        <div style={{ 
+          flex: '0 0 50%', // Ocupa exactamente el 50% del ancho
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start' // Alinea a la izquierda
+        }}>
+          <a href="/" style={{ textDecoration: 'none' }}>
+            <h3 style={{ 
+              margin: 0, 
+              fontSize: '1.3rem', 
+              fontWeight: 'bold',
+              color: '#333'
+            }}>
+              {t('Tassili', { lng: lang })}
+            </h3>
+          </a>
+        </div>
+
+        {/* SELECTOR DE IDIOMA - 50% */}
+        <div style={{ 
+          flex: '0 0 50%', // Ocupa exactamente el 50% del ancho
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end' // Alinea a la derecha
+        }}>
           <Dropdown as={ButtonGroup} className="w-100">
-            <Dropdown.Toggle variant="secondary" id="dropdown-language" className="w-100">
+            <Dropdown.Toggle 
+              variant="outline-secondary" 
+              id="dropdown-language" 
+              className="w-100"
+              style={{
+                padding: '6px 12px',
+                fontSize: '1rem',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
               <img src={flagPath(lang)} alt="flag" style={flagStyle} />
-              {languageNames[lang]}
+              <span style={{ marginLeft: '5px' }}>
+                {languageNames[lang]}
+              </span>
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="w-100">
               {['ar', 'fr', 'en', 'es', 'ru', 'kab', 'chino'].map((langCode) => (
-                <Dropdown.Item key={langCode} onClick={() => handleLanguageChange(langCode)}>
+                <Dropdown.Item 
+                  key={langCode} 
+                  onClick={() => handleLanguageChange(langCode)}
+                  style={{ fontSize: '0.9rem' }}
+                >
                   <img src={flagPath(langCode)} alt={`${langCode} flag`} style={flagStyle} />
                   {languageNames[langCode]}
                 </Dropdown.Item>

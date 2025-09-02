@@ -61,7 +61,10 @@ console.log(auth.token)
   const filteredPosts = applyFilters(homePosts.posts || []);
 
   return (
-    <div >
+    <div  style={{
+      marginTop:100,
+
+    }} >
   
       {homePosts.loading ? (
         <img src={LoadIcon} alt="loading" className="d-block mx-auto" />

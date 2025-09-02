@@ -1,7 +1,7 @@
 import React from 'react'
 import Contact from '../components/adminitration/Contact'
  
-const Contactt = () => {
+const contactt = () => {
   return (
     <div> 
 <Contact/>
@@ -10,4 +10,4 @@ const Contactt = () => {
   )
 }
 
-export default Contactt
+export default contactt

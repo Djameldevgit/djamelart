@@ -110,7 +110,7 @@
 	"role": {
 		"user_not_found": "用户未找到",
 		"role_assigned": "用户角色分配成功",
-		"superuser_assigned": "超级用户角色分配成功",
+		"Super-utilisateur": "超级用户角色分配成功",
 		"moderator_assigned": "版主角色分配成功",
 		"admin_assigned": "管理员角色分配成功",
 		"update_error": "更新用户角色时出错"
