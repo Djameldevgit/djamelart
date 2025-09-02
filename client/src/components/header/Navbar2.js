@@ -24,7 +24,7 @@ import VerifyModal from '../authAndVerify/VerifyModal';
 import Acordion from '../Acordion';
 import Modalsearchhome from './Modalsearchhome';
 import DesactivateModal from '../authAndVerify/DesactivateModal';
-
+ 
 const Navbar2 = ({ onFiltersChange }) => {
   const { auth, theme, cart, notify } = useSelector((state) => state)
   const dispatch = useDispatch()
@@ -153,7 +153,7 @@ const Navbar2 = ({ onFiltersChange }) => {
 
   return (
     <div>
-      <Navbar expand="lg"   className="navbar bg-body-tertiary mb-2 shadow-sm px-3">
+      <Navbar expand="lg" className="navbar bg-body-tertiary mb-2 shadow-sm px-3">
         <Container fluid className="align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <Button onClick={handleShowDrawer} variant="outline-primary" className="me-2">
@@ -175,38 +175,49 @@ const Navbar2 = ({ onFiltersChange }) => {
 
             <FaSearch
               size={18}
-              className="text-secondary cursor-pointer"
+              className="text-secondary cursor-pointer mr-2"
+
               onClick={openModal}
               title={t('navbar:search')}
               style={{ cursor: 'pointer' }}
             />
             {auth.user &&
-              <i className='fas fa-plus' onClick={openStatusModal}> </i>
+              <i className='fas fa-plus  ' onClick={openStatusModal}> </i>
 
             }
+
 
             <NavDropdown
               align="end"
               title={
-                <div className="d-flex justify-content-center align-items-center position-relative"
-                  style={{ width: '20px', height: '40px' }}>
+                <div   
+                  >
                   <FaBell size={20} color={notify.data.length > 0 ? "crimson" : "black"} />
                   {notify.data.length > 0 && (
                     <Badge
                       pill
                       bg="danger"
                       className="position-absolute top-0 start-100 translate-middle"
-                      style={{ fontSize: '0.6rem' }}
+                      style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
                     >
                       {notify.data.length}
                     </Badge>
                   )}
                 </div>
-              } 
+              }
               id="nav-notify-dropdown"
+              drop="down"
+              className="notification-dropdown"
             >
-              <NavDropdown.Header>🔔 Notificaciones</NavDropdown.Header>
-              <div   style={{ height: "200px" , overflowY: "auto" }}>
+              <NavDropdown.Header className="fw-bold">🔔 Notificaciones</NavDropdown.Header>
+              <NavDropdown.Divider />
+              <div style={{
+                width: '350px',
+                maxWidth: '90vw',
+                maxHeight: '400px',
+                overflowY: 'auto',
+                padding: '0'
+              }}>
                 <NotifyModal />
               </div>
             </NavDropdown>
@@ -243,6 +254,7 @@ const Navbar2 = ({ onFiltersChange }) => {
                 {auth.user ? (
                   <>
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span > <strong>{auth.user.username}</strong> </span> </NavDropdown.Header>
+                    <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span >Role: <strong>{auth.user.role}</strong> </span> </NavDropdown.Header>
 
                     <NavDropdown.Item onClick={openStatusModal}>
                       ➕ {t('navbar:addPost')}

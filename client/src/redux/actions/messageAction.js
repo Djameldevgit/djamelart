@@ -1,6 +1,9 @@
 import { GLOBALTYPES, DeleteData } from '../actions/globalTypes'
 import { postDataAPI, getDataAPI, deleteDataAPI } from '../../utils/fetchData'
+import { createNotify } from './notifyAction'
 
+
+ 
 export const MESS_TYPES = {
     ADD_USER: 'ADD_USER',
     ADD_MESSAGE: 'ADD_MESSAGE',
@@ -14,19 +17,48 @@ export const MESS_TYPES = {
 
 
 
-export const addMessage = ({msg, auth, socket}) => async (dispatch) =>{
+export const addMessage = ({msg, auth, socket}) => async (dispatch) => {
+    // Validación inicial
+    if (!msg || !msg.recipient || !msg.text) {
+        return dispatch({
+            type: GLOBALTYPES.ALERT, 
+            payload: {error: 'Invalid message structure'}
+        });
+    }
+
     dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
 
-    const { _id, avatar, fullname, username } = auth.user
-    socket.emit('addMessage', {...msg, user: { _id, avatar, fullname, username } })
+    const { _id, avatar, fullname, username } = auth.user;
+    socket.emit('addMessage', {...msg, user: { _id, avatar, fullname, username }})
     
     try {
-        await postDataAPI('message', msg, auth.token)
+        const response = await postDataAPI('message', msg, auth.token);
+        
+        // Notificación solo si la API fue exitosa
+        if (response && response.data) {
+            const notifyMsg = {
+                id: _id,
+                text: 'sent you a message.',
+                recipients: [msg.recipient],
+                url: `/message/${_id}`,
+                content: msg.text.substring(0, 50), // Primeros 50 caracteres
+                image: avatar
+            }
+            dispatch(createNotify({msg: notifyMsg, auth, socket}))
+        }
+
     } catch (err) {
-        dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
+        // Manejo seguro del error
+        const errorMessage = err.response?.data?.msg || 
+                            err.message || 
+                            'Error sending message';
+        
+        dispatch({
+            type: GLOBALTYPES.ALERT, 
+            payload: {error: errorMessage}
+        })
     }
 }
-
 export const getConversations = ({auth, page = 1}) => async (dispatch) => {
     try {
         const res = await getDataAPI(`conversations?limit=${page * 9}`, auth.token)

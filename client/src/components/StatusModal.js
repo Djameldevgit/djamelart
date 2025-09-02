@@ -151,62 +151,110 @@ const StatusModal = () => {
     };
 
 
-
     const handleChangeImages = e => {
         const files = [...e.target.files]
         let err = ""
         let newImages = []
-
+    
+        // 🔥 Determinar límite según el rol del usuario
+        const maxImages = auth.user?.role === "Super-utilisateur" ? 4 : 2;
+        const totalAfterUpload = images.length + files.length;
+    
+        // Validar límite de imágenes
+        if (totalAfterUpload > maxImages) {
+            err = `Maximum ${maxImages} images allowed. ${maxImages === 2 ? 
+                   "Super-users can upload up to 4 images." : ""}`;
+            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
+            return;
+        }
+    
         files.forEach(file => {
-            if (!file) return err = "File does not exist."
-
-            if (file.size > 1024 * 1024 * 5) {
-                return err = "The image/video largest is 5mb."
+            if (!file) {
+                err = "File does not exist.";
+                return;
             }
-
-            return newImages.push(file)
+    
+            // 🔥 Validar tipo de archivo - SOLO IMAGENES
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                err = "Only image files are allowed (JPEG, JPG, PNG, GIF).";
+                return;
+            }
+    
+            // Validar tamaño
+            if (file.size > 1024 * 1024 * 5) {
+                err = "The image largest is 5mb.";
+                return;
+            }
+    
+            newImages.push(file)
         })
-
-        if (err) dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
-        setImages([...images, ...newImages])
+    
+        if (err) {
+            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
+        } else {
+            setImages([...images, ...newImages])
+        }
     }
-
-    const deleteImage = (index) => {
-        const newArr = [...images]
-        newArr.splice(index, 1)
-        setImages(newArr)
-    }
-
 
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!postData.wilaya || !postData.commune) {
+        
+        // Validación de ubicación
+        if (!postData.category) {
             return dispatch({
                 type: GLOBALTYPES.ALERT,
-                payload: { error: "Por favor selecciona una wilaya y una comuna." },
+                payload: { error: "Por favor selecciona una categoria." },
             });
         }
+    
+        // Validación de al menos una imagen
         if (images.length === 0) {
             return dispatch({
                 type: GLOBALTYPES.ALERT,
-                payload: { error: "Por favor agrega una foto o video." },
+                payload: { error: "Por favor agrega al menos una imagen." },
             });
         }
-
+    
+        // 🔥 Validación de tipo de archivos (por si acaso)
+        const invalidFiles = images.some(file => {
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            return !allowedTypes.includes(file.type);
+        });
+    
+        if (invalidFiles) {
+            return dispatch({
+                type: GLOBALTYPES.ALERT,
+                payload: { error: "Solo se permiten archivos de imagen (JPEG, JPG, PNG, GIF, WEBP)." },
+            });
+        }
+    
+        // 🔥 Validación final de límite de imágenes
+        const maxImages = auth.user?.role === "super-user" ? 4 : 2;
+        if (images.length > maxImages) {
+            return dispatch({
+                type: GLOBALTYPES.ALERT,
+                payload: { 
+                    error: `Máximo ${maxImages} imágenes permitidas. ${maxImages === 2 ? 
+                           "Los super-usuarios pueden subir hasta 4 imágenes." : ""}` 
+                },
+            });
+        }
+    
+        // Ejecutar la acción correspondiente
         if (status.onEdit) {
             dispatch(updatePost({ postData, images, auth, status }));
         } else {
             dispatch(createPostAprove({ postData, images, auth, socket }));
         }
-
+    
+        // Resetear el formulario
         setPostData(initialState);
         setImages([]);
-
         dispatch({ type: GLOBALTYPES.STATUS, payload: false });
     };
-
     useEffect(() => {
 
         if (status?.onEdit) {

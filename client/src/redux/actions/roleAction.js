@@ -84,11 +84,11 @@ export const rolesuperuser = (user, auth) => async (dispatch) => {
   try {
     dispatch({ type: ROLES_TYPES.LOADING, payload: true });
 
-    const res = await patchDataAPI(`user/${user._id}/rolesuperuser`, { role: 'superuser' }, auth.token);
+    const res = await patchDataAPI(`user/${user._id}/rolesuperuser`, { role: 'Super-utilisateur' }, auth.token);
 
     dispatch({
       type: ROLES_TYPES.SUPERUSER_ROLE,
-      payload: { user: { ...user, role: 'superuser' } } // Se envía el usuario con el rol actualizado
+      payload: { user: { ...user, role: 'Super-utilisateur' } } // Se envía el usuario con el rol actualizado
     });
 
     dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });

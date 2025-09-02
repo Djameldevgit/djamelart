@@ -54,23 +54,45 @@ export const createPostAprove = ({ postData, images, auth, socket }) => async (d
 }
 
 
-export const aprovarPostPendiente = ({ post, estado, auth }) => async (dispatch) => {
+export const aprovarPostPendiente = ({ post, estado, auth, socket }) => async (dispatch) => {
     try {
         dispatch({ type: POST_TYPES_APROVE.LOADING_POST, payload: true });
 
         const res = await patchDataAPI(`aprovarpost/${post._id}/aprovado`, { estado }, auth.token);
+        
+        // 1. Dispatch para actualizar el estado
         dispatch({
             type: POST_TYPES_APROVE.APROVAR_POST_PENDIENTE,
             payload: res.data,
         });
 
+        // 2. Notificación al usuario dueño del post
+        const notifyMsg = {
+            id: auth.user._id,
+            text: 'approved your post.',
+            recipients: [post.user._id],
+            url: `/post/${post._id}`,
+            // ⚡ Sin content - elimina la línea completamente
+            image: post.images[0]?.url
+        }
+
+        // 3. Dispatch para crear la notificación
+        dispatch(createNotify({msg: notifyMsg, auth, socket}))
+
         dispatch({ type: POST_TYPES_APROVE.LOADING_POST, payload: false });
         dispatch({ type: GLOBALTYPES.ALERT, payload: { success: res.data.msg } });
+
     } catch (error) {
         console.error("Error en aprobarPostPendiente:", error);
+        
+        // Manejo seguro del error
+        const errorMessage = error.response?.data?.msg || 
+                            error.message || 
+                            "Error inesperado";
+        
         dispatch({
             type: GLOBALTYPES.ALERT,
-            payload: { error: error.message || "Error inesperado" },
+            payload: { error: errorMessage },
         });
     }
 };

@@ -54,19 +54,46 @@ const RightSide = () => {
         const files = [...e.target.files]
         let err = ""
         let newMedia = []
-
+    
+        // 🔥 Determinar límite según el rol del usuario
+        const maxMedia = auth.user?.role === "Super-utilisateur" ? 2 : 0 ;
+        const totalAfterUpload = media.length + files.length;
+    
+        // Validar límite de archivos
+        if (totalAfterUpload > maxMedia) {
+            err = `Maximum ${maxMedia} files allowed. ${maxMedia === 2 ? 
+                   "Super-users can upload up to 4 files." : ""}`;
+            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
+            return;
+        }
+    
         files.forEach(file => {
-            if (!file) return err = "File does not exist."
-
-            if (file.size > 1024 * 1024 * 5) {
-                return err = "The image/video largest is 5mb."
+            if (!file) {
+                err = "File does not exist.";
+                return;
             }
-
-            return newMedia.push(file)
+    
+            // 🔥 Validar tipo de archivo - SOLO IMAGENES
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                err = "Only image files are allowed (JPEG, JPG, PNG, GIF).";
+                return;
+            }
+    
+            // Validar tamaño
+            if (file.size > 1024 * 1024 * 5) {
+                err = "The image largest is 5mb.";
+                return;
+            }
+    
+            newMedia.push(file)
         })
-
-        if (err) dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
-        setMedia([...media, ...newMedia])
+    
+        if (err) {
+            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
+        } else {
+            setMedia([...media, ...newMedia])
+        }
     }
 
     const handleDeleteMedia = (index) => {
@@ -231,7 +258,7 @@ const RightSide = () => {
 
                 <Icons setContent={setText} content={text} theme={theme} />
 
-                {roleReducer.isSuperUser && (
+                {auth.user.role === "Super-utilisateur" && (
                     <div className="file_upload">
                         <i className="fas fa-image text-danger" />
                         <input
