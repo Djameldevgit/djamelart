@@ -51,7 +51,7 @@ const ReportedUsers = () => {
   };
 
   return (
-    <Container fluid className="py-4"  >
+    <Container fluid className="py-4" style={{ marginTop: 110 }} >
       <h2 className="mb-4">{t("headerrr.title")}</h2>
 
       {loading ? (

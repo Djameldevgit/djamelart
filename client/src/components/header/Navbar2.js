@@ -289,9 +289,7 @@ const Navbar2 = ({ onFiltersChange }) => {
                         <NavDropdown.Item as={Link} to="/usersactionn">
                           {t('navbar:userActions')}
                         </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/edicionusers">
-                          edicion Users
-                        </NavDropdown.Item>
+                        
                         <NavDropdown.Item as={Link} to="/listuserbloque">
                           listuserbloque
                         </NavDropdown.Item>

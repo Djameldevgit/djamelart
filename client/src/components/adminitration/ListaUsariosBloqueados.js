@@ -31,7 +31,7 @@ const ListaUsuariosBloqueados = () => {
   };
 
   return (
-    <div className="modalusersearchlist">
+    <div className="modalusersearchlist"style={{ marginTop: 110 }}>
       <div className="headersearchlist">
         <h5 className="titlesearchlist">{t('usuariosBloqueados', { lng: lang })}</h5>
       </div>

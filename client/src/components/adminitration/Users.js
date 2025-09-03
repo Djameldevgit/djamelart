@@ -10,6 +10,10 @@ import {
   Spinner,
   Button,
   Modal,
+  Row,
+  Col,
+  Card,
+  Accordion
 } from "react-bootstrap";
 import {
   PencilFill,
@@ -49,7 +53,6 @@ const Users = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation('aplicacion');
   const lang = languageReducer.language || 'es';
-  console.log("Usuario activado:", auth.user.isVerified)
   const [load, setLoad] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -59,11 +62,22 @@ const Users = () => {
   const [, forceRender] = useState(0);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [userForPermission, setUserForPermission] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
 
   // Configurar moment.js según el idioma
   useEffect(() => {
     moment.locale(lang === 'ar' ? 'ar' : 'es');
   }, [lang]);
+
+  // Detectar tamaño de pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 992);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleOpenPermissionModal = (user) => {
     setUserForPermission(user);
@@ -215,7 +229,7 @@ const Users = () => {
   }
 
   return (
-    <Container fluid style={{marginTop:120}} >
+    <Container fluid  style={{ marginTop: 150 }}>
       {/* Modal Confirmación Eliminar */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
@@ -234,117 +248,254 @@ const Users = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Tabla de Usuarios */}
-      <div className="table-responsive">
-        <Table striped bordered hover className="align-middle">
-          <thead className="table-dark">
-            <tr>
-              <th>#</th>
-              <th>{t('tableHeaderssss.user')}</th>
-              <th>{t('tableHeaderssss.status')}</th>
-              <th>{t('tableHeaderssss.lastDisconnect')}</th>
-              <th>{t('tableHeaderssss.registration')}</th>
-              <th>{t('tableHeaderssss.verification')}</th>
-              <th>{t('tableHeaderssss.accountStatus')}</th>
-              <th>{t('tableHeaderssss.blockStatus')}</th>
-              <th>{t('tableHeaderssss.actions')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {homeUsers.users.map((user, index) => (
-              <tr key={user._id}>
-                <td>{index + 1}</td>
-                <td><UserCard user={user} /></td>
-                <td>
-                  {online.some((u) => u._id === user._id) ? (
-                    <Badge bg="success">{t('statu.online')}</Badge>
-                  ) : user.lastDisconnectedAt ? (
-                    <Badge bg="secondary">
-                      {t('statu.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
-                    </Badge>
-                  ) : (
-                    <Badge bg="secondary">{t('statu.offline')}</Badge>
-                  )}
-                </td>
-                <td>
-                  {user.lastDisconnectedAt ? (
-                    <small className="text-muted" title={new Date(user.lastDisconnectedAt).toLocaleString()}>
-                      {moment(user.lastDisconnectedAt).fromNow()}
-                    </small>
-                  ) : (
-                    <span className="text-muted">--</span>
-                  )}
-                </td>
-                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                <td>
-                  {user.isVerified ? (
-                    <Badge bg="success"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('statu.verified')}</Badge>
-                  ) : (
-                    <Badge bg="danger"><XCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('statu.notVerified')}</Badge>
-                  )}
-                </td>
-                <td>
-                  {user.isActive ? (
-                    <Badge bg="success">{t('statu.active')}</Badge>
-                  ) : (
-                    <Badge bg="warning" text="dark">{t('statu.inactive')}</Badge>
-                  )}
-                </td>
-                <td>
-                  {user.esBloqueado ? (
-                    <Badge bg="danger">{t('statu.blocked')}</Badge>
-                  ) : (
-                    <Badge bg="success">{t('statu.notBlocked')}</Badge>
-                  )}
-                </td>
-                <td>
-                  <Dropdown drop={lang === 'ar' ? 'start' : 'end'}>
-                    <Dropdown.Toggle variant="outline-secondary" size="sm" id="dropdown-actions">
-                      <ThreeDotsVertical />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.Item disabled>
-                        <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.edit')}
-                      </Dropdown.Item>
-                      <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
-                        <TrashFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.delete')}
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
-                        🛡️ {t('action.managePermissions')}
-                      </Dropdown.Item>
+      {isMobile ? (
+        // Vista para móviles con Accordion
+        <Row>
+          <Col>
+            {homeUsers.users.length === 0 ? (
+              <Card className="text-center p-4">
+                <Card.Body>
+                  <p className="mb-0 text-muted">{t('noUsersFound')}</p>
+                </Card.Body>
+              </Card>
+            ) : (
+              <Accordion flush>
+                {homeUsers.users.map((user, index) => (
+                  <Accordion.Item key={user._id} eventKey={user._id} className="mb-3 shadow-sm">
+                    <Accordion.Header>
+                      <div className="d-flex align-items-center w-100">
+                        <span className="text-muted">#{index + 1}</span>
+                        <UserCard user={user} />
+                      </div>
+                    </Accordion.Header>
+                    <Accordion.Body>
+                      {/* Información del usuario */}
+                      <Row className="g-3 mb-3">
+                        <Col xs={6}>
+                          <strong>{t('tableHeaderssss.status')}:</strong>
+                          <br />
+                          {online.some((u) => u._id === user._id) ? (
+                            <Badge bg="success">{t('statu.online')}</Badge>
+                          ) : user.lastDisconnectedAt ? (
+                            <Badge bg="secondary">
+                              {t('statu.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
+                            </Badge>
+                          ) : (
+                            <Badge bg="secondary">{t('statu.offline')}</Badge>
+                          )}
+                        </Col>
+                        <Col xs={6}>
+                          <strong>{t('tableHeaderssss.lastDisconnect')}:</strong>
+                          <br />
+                          {user.lastDisconnectedAt ? (
+                            <small className="text-muted">
+                              {moment(user.lastDisconnectedAt).fromNow()}
+                            </small>
+                          ) : (
+                            <span className="text-muted">--</span>
+                          )}
+                        </Col>
+                        <Col xs={6}>
+                          <strong>{t('tableHeaderssss.registration')}:</strong>
+                          <br />
+                          <span className="text-muted">
+                            {new Date(user.createdAt).toLocaleDateString()}
+                          </span>
+                        </Col>
+                        <Col xs={6}>
+                          <strong>{t('tableHeaderssss.verification')}:</strong>
+                          <br />
+                          {user.isVerified ? (
+                            <Badge bg="success"><CheckCircleFill className="me-1" /> {t('statu.verified')}</Badge>
+                          ) : (
+                            <Badge bg="danger"><XCircleFill className="me-1" /> {t('statu.notVerified')}</Badge>
+                          )}
+                        </Col>
+                        <Col xs={6}>
+                          <strong>{t('tableHeaderssss.accountStatus')}:</strong>
+                          <br />
+                          {user.isActive ? (
+                            <Badge bg="success">{t('statu.active')}</Badge>
+                          ) : (
+                            <Badge bg="warning" text="dark">{t('statu.inactive')}</Badge>
+                          )}
+                        </Col>
+                        <Col xs={6}>
+                          <strong>{t('tableHeaderssss.blockStatus')}:</strong>
+                          <br />
+                          {user.esBloqueado ? (
+                            <Badge bg="danger">{t('statu.blocked')}</Badge>
+                          ) : (
+                            <Badge bg="success">{t('statu.notBlocked')}</Badge>
+                          )}
+                        </Col>
+                      </Row>
 
-                      <Dropdown.Item
-                        className={user.isActive ? "text-warning" : "text-success"}
-                        onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
-                      >
+                      {/* Acciones */}
+                      <Dropdown>
+                        <Dropdown.Toggle variant="outline-primary" size="sm" className="w-100 mb-2">
+                          <ThreeDotsVertical className="me-2" />
+                          {t('tableHeaderssss.actions')}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className="w-100">
+                          <Dropdown.Item disabled>
+                            <PencilFill className="me-2" /> {t('action.edit')}
+                          </Dropdown.Item>
+                          <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
+                            <TrashFill className="me-2" /> {t('action.delete')}
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
+                            🛡️ {t('action.managePermissions')}
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            className={user.isActive ? "text-warning" : "text-success"}
+                            onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
+                          >
+                            {user.isActive ? (
+                              <LockFill className="me-2" />
+                            ) : (
+                              <UnlockFill className="me-2" />
+                            )}
+                            {user.isActive ? t('action.deactivate') : t('action.activate')}
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            className={user.esBloqueado ? "text-success" : "text-danger"}
+                            onClick={() =>
+                              user.esBloqueado ? handleUnblockUser(user) : handleOpenModal(user)
+                            }
+                          >
+                            {user.esBloqueado ? (
+                              <UnlockFill className="me-2" />
+                            ) : (
+                              <LockFill className="me-2" />
+                            )}
+                            {user.esBloqueado ? t('action.unblock') : t('action.block')}
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
+            )}
+          </Col>
+        </Row>
+      ) : (
+        // Vista para desktop con Table
+        <Card className="shadow-sm">
+          <Card.Body className="p-0">
+            <div className="table-responsive">
+              <Table striped bordered hover className="align-middle mb-0">
+                <thead className="table-dark">
+                  <tr>
+                    <th>#</th>
+                    <th>{t('tableHeaderssss.user')}</th>
+                    <th>{t('tableHeaderssss.status')}</th>
+                    <th>{t('tableHeaderssss.lastDisconnect')}</th>
+                    <th>{t('tableHeaderssss.registration')}</th>
+                    <th>{t('tableHeaderssss.verification')}</th>
+                    <th>{t('tableHeaderssss.accountStatus')}</th>
+                    <th>{t('tableHeaderssss.blockStatus')}</th>
+                    <th>{t('tableHeaderssss.actions')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {homeUsers.users.map((user, index) => (
+                    <tr key={user._id}>
+                      <td>{index + 1}</td>
+                      <td><UserCard user={user} /></td>
+                      <td>
+                        {online.some((u) => u._id === user._id) ? (
+                          <Badge bg="success">{t('statu.online')}</Badge>
+                        ) : user.lastDisconnectedAt ? (
+                          <Badge bg="secondary">
+                            {t('statu.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
+                          </Badge>
+                        ) : (
+                          <Badge bg="secondary">{t('statu.offline')}</Badge>
+                        )}
+                      </td>
+                      <td>
+                        {user.lastDisconnectedAt ? (
+                          <small className="text-muted" title={new Date(user.lastDisconnectedAt).toLocaleString()}>
+                            {moment(user.lastDisconnectedAt).fromNow()}
+                          </small>
+                        ) : (
+                          <span className="text-muted">--</span>
+                        )}
+                      </td>
+                      <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                      <td>
+                        {user.isVerified ? (
+                          <Badge bg="success"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('statu.verified')}</Badge>
+                        ) : (
+                          <Badge bg="danger"><XCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('statu.notVerified')}</Badge>
+                        )}
+                      </td>
+                      <td>
                         {user.isActive ? (
-                          <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                          <Badge bg="success">{t('statu.active')}</Badge>
                         ) : (
-                          <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                          <Badge bg="warning" text="dark">{t('statu.inactive')}</Badge>
                         )}
-                        {user.isActive ? t('action.deactivate') : t('action.activate')}
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        className={user.esBloqueado ? "text-success" : "text-danger"}
-                        onClick={() =>
-                          user.esBloqueado ? handleUnblockUser(user) : handleOpenModal(user)
-                        }
-                      >
+                      </td>
+                      <td>
                         {user.esBloqueado ? (
-                          <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                          <Badge bg="danger">{t('statu.blocked')}</Badge>
                         ) : (
-                          <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                          <Badge bg="success">{t('statu.notBlocked')}</Badge>
                         )}
-                        {user.esBloqueado ? t('action.unblock') : t('action.block')}
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
+                      </td>
+                      <td>
+                        <Dropdown drop={lang === 'ar' ? 'start' : 'end'}>
+                          <Dropdown.Toggle variant="outline-secondary" size="sm" id="dropdown-actions">
+                            <ThreeDotsVertical />
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            <Dropdown.Item disabled>
+                              <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.edit')}
+                            </Dropdown.Item>
+                            <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
+                              <TrashFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.delete')}
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
+                              🛡️ {t('action.managePermissions')}
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              className={user.isActive ? "text-warning" : "text-success"}
+                              onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
+                            >
+                              {user.isActive ? (
+                                <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                              ) : (
+                                <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                              )}
+                              {user.isActive ? t('action.deactivate') : t('action.activate')}
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              className={user.esBloqueado ? "text-success" : "text-danger"}
+                              onClick={() =>
+                                user.esBloqueado ? handleUnblockUser(user) : handleOpenModal(user)
+                              }
+                            >
+                              {user.esBloqueado ? (
+                                <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                              ) : (
+                                <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                              )}
+                              {user.esBloqueado ? t('action.unblock') : t('action.block')}
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          </Card.Body>
+        </Card>
+      )}
 
       {/* Botón Cargar más */}
       {load && (
