@@ -8,7 +8,7 @@ const Toast = ({ msg, handleShow, bgColor, lang = 'en' }) => {
         top: '5px',
         right: '5px',
         minWidth: '280px',
-        zIndex: 50,
+        zIndex: 1055,
         direction: lang === 'ar' ? 'rtl' : 'ltr',
         textAlign: lang === 'ar' ? 'right' : 'left',
       }}

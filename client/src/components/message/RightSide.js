@@ -183,7 +183,7 @@ const RightSide = () => {
    
 
     return (
-        <>
+        <div style={{marginTop:110}}>
             <div className="message_header" style={{ cursor: 'pointer' }} >
                 {
                     user.length !== 0 &&
@@ -280,7 +280,7 @@ const RightSide = () => {
                     near_me
                 </button>
             </form>
-        </>
+        </div>
     )
 }
 

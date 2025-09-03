@@ -64,7 +64,7 @@ const CartCarrito = () => {
   }
 
   return (
-    <div className="cart-container">
+    <div className="cart-container"style={{marginTop:100}} >
       <h2 className="cart-title"style={{
     direction: lang === 'ar' ? 'rtl' : 'ltr',
       textAlign: lang === 'ar' ? 'right' : 'left',

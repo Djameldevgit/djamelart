@@ -58,6 +58,7 @@ const Contact = () => {
     <Container className="py-5" style={{
     direction: lang === 'ar' ? 'rtl' : 'ltr',
       textAlign: lang === 'ar' ? 'right' : 'left',
+      marginTop:100
     }}>
       <h3 className="mb-4 text-center">{t('contact_form')}</h3>
 

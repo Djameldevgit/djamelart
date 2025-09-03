@@ -72,7 +72,7 @@ const UsersEdicion = () => {
   };
 
   return (
-    <div>
+    <div style={{ marginTop: 120 }}>
   {/* Contenido de la tabla y filtros */}
   <div>
     <div className="dropdown mb-3">

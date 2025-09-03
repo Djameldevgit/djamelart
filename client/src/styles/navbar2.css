@@ -67,3 +67,25 @@
     margin-right: 0;
   }
 }
+
+/* Navbar principal */
+.navbar-main {
+  z-index: 1030;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+/* Solo en móviles */
+@media (max-width: 767px) {
+  .navbar-main {
+    margin-top: 60px !important;
+  }
+}
+
+/* En desktop */
+@media (min-width: 768px) {
+  .navbar-main {
+    margin-top: 0 !important;
+  }
+}

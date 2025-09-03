@@ -68,7 +68,7 @@ const LeftSide = () => {
     },[online, message.firstLoad, dispatch])
 
     return (
-        <>
+        <div style={{marginTop:110}}>
            
 
             <div className="message_chat_list">
@@ -109,7 +109,7 @@ const LeftSide = () => {
                
                <button ref={pageEnd} style={{opacity: 0}} >Load More</button>
             </div>
-        </>
+        </div>
     )
 }
 

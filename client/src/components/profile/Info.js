@@ -36,7 +36,7 @@ const Info = ({id, auth, profile, dispatch}) => {
     },[showFollowers, showFollowing, onEdit, dispatch])
 
     return (
-        <div className="info">
+        <div className="info" style={{marginTop:110}}>
             
             {userData.map(user => (
                 <div className="info_container" key={user._id}>

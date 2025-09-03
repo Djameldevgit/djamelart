@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Dropdown,DropdownButton} from 'react-bootstrap';
+import { Container,  Dropdown, DropdownButton } from 'react-bootstrap';
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { getDataAPI } from "../../utils/fetchData";
@@ -77,37 +77,37 @@ const UsersAction = () => {
   };
 
   return (
-    <div  >
-      <div className="dropdown mb-3">
-      <DropdownButton
-  id="dropdown-filter-button"
-  title={t("filterUsers")}
-  variant="primary"
-  className="mb-3"
->
-  <Dropdown.Item onClick={() => handleFilter("latestRegistered")}>
-    {t("filter.latestRegistered")}
-  </Dropdown.Item>
-  <Dropdown.Item onClick={() => handleFilter("lastLogin")}>
-    {t("filter.lastLogin")}
-  </Dropdown.Item>
-  <Dropdown.Item onClick={() => handleFilter("mostLikes")}>
-    {t("filter.mostLikes")}
-  </Dropdown.Item>
-  <Dropdown.Item onClick={() => handleFilter("mostComments")}>
-    {t("filter.mostComments")}
-  </Dropdown.Item>
-  <Dropdown.Item onClick={() => handleFilter("mostFollowers")}>
-    {t("filter.mostFollowers")}
-  </Dropdown.Item>
-  <Dropdown.Item onClick={() => handleFilter("mostPosts")}>
-    {t("filter.mostPosts")}
-  </Dropdown.Item>
-  <Dropdown.Item onClick={() => handleFilter("mostReports")}>
-    {t("filter.mostReports")}
-  </Dropdown.Item>
-</DropdownButton>
- </div>
+    <Container fluid style={{ marginTop: 110 }}>
+      <div >
+        <DropdownButton
+          id="dropdown-filter-button"
+          title={t("filterUsers")}
+          variant="primary"
+          className="mb-3"
+        >
+          <Dropdown.Item onClick={() => handleFilter("latestRegistered")}>
+            {t("filter.latestRegistered")}
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => handleFilter("lastLogin")}>
+            {t("filter.lastLogin")}
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => handleFilter("mostLikes")}>
+            {t("filter.mostLikes")}
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => handleFilter("mostComments")}>
+            {t("filter.mostComments")}
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => handleFilter("mostFollowers")}>
+            {t("filter.mostFollowers")}
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => handleFilter("mostPosts")}>
+            {t("filter.mostPosts")}
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => handleFilter("mostReports")}>
+            {t("filter.mostReports")}
+          </Dropdown.Item>
+        </DropdownButton>
+      </div>
       <table className="table table-striped table-bordered text-center">
         <thead className="table-dark">
           <tr>
@@ -180,7 +180,7 @@ const UsersAction = () => {
         load={load}
         handleLoadMore={handleLoadMore}
       />
-    </div>
+    </Container>
   );
 };
 

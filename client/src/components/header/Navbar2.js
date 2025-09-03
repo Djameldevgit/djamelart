@@ -47,46 +47,19 @@ const Navbar2 = ({ onFiltersChange }) => {
   const handleCloseDrawer = () => setShowDrawer(false)
   const handleShowDrawer = () => setShowDrawer(true)
 
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const wasOpenRef = useRef(false);
-  const [menuVersion, setMenuVersion] = useState(0);
+ 
   const history = useHistory();
 
-  const [prevRole, setPrevRole] = useState('');
+ 
   const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
 
-  /*
-    const currentRoleState = useSelector(state => state.roleReducer);
-    const role = auth.user?.role ||
-      (currentRoleState.isAdmin ? 'admin' :
-        currentRoleState.isSuperUser ? 'Super-utilisateur' :
-          currentRoleState.isModerator ? 'Moderateur' : 'user');
   
-    // URL del cliente admin
-    const ADMIN_CLIENT_URL = 'https://djamelartadmin.onrender.com/';
-  
-    // Efecto para detectar cambio de rol a admin
-    useEffect(() => {
-      if (role === 'admin' && prevRole !== 'admin' && auth.user) {
-        setPrevRole(role);
-        //setShowAdminRedirectModal(true);
-      }
-    }, [role, prevRole, auth.user]);
-  
-    // Resto de tus efectos existentes...
-    useEffect(() => {
-      // Incrementa la versión del menú cuando cambia el rol
-      setMenuVersion(v => v + 1);
-  
-      // Si el menú estaba abierto, ciérralo y reábrelo en el próximo tick
-      if (wasOpenRef.current) {
-        setShowUserMenu(false);
-        setTimeout(() => setShowUserMenu(true), 0);
-      }
-    }, [role, currentRoleState]);
-  */
-
-
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 700);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -154,11 +127,12 @@ const Navbar2 = ({ onFiltersChange }) => {
   return (
     <div>
       <Navbar
-        expand="lg"
-        className="navbar bg-body-tertiary shadow-sm px-3 fixed-top"
+        expand="lg" 
+        className="bg-body-tertiary fixed-top"
         style={{
           zIndex: 1030,
-          marginTop: window.innerWidth < 768 ? '50px' : '0rem'
+          // 🔥 MARGEN CONDICIONAL: Solo en móviles
+          marginTop: isMobile ? '55px' : '0'
         }}
       >
         <Container fluid className="align-items-center justify-content-between">
@@ -166,6 +140,8 @@ const Navbar2 = ({ onFiltersChange }) => {
             <Button onClick={handleShowDrawer} variant="outline-primary" className="me-2">
               {showDrawer ? '✖' : <FaBars size={20} />}
             </Button>
+
+
             <Navbar.Brand href="/" className="py-2 d-none d-lg-block  ">
               <Card.Title>{t('navbar:appName')} </Card.Title>
             </Navbar.Brand>
@@ -176,9 +152,9 @@ const Navbar2 = ({ onFiltersChange }) => {
               <LanguageSelectorpc />
             </div>
 
-            <div className="d-none d-lg-block">
 
-            </div>
+
+
 
             <FaSearch
               size={18}
@@ -193,41 +169,41 @@ const Navbar2 = ({ onFiltersChange }) => {
               <i className='fas fa-plus' onClick={openStatusModal}> </i>
             }
 
-<NavDropdown
-  align="end"
-  title={
-    <div>
-      <FaBell size={20} color={notify.data.length > 0 ? "crimson" : "black"} />
-      {notify.data.length > 0 && (
-        <Badge
-          pill
-          bg="danger"
-          className="position-absolute top-0 start-100 translate-middle"
-          style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
-        >
-          {notify.data.length}
-        </Badge>
-      )}
-    </div>
-  }
-  id="nav-notify-dropdown"
-  drop="down"
-  className="notification-dropdown"
->
-  <NavDropdown.Header className="fw-bold">🔔 Notificaciones</NavDropdown.Header>
-  <NavDropdown.Divider />
-  
-  {/* 🔥 CONTENEDOR AJUSTADO PARA MÓVILES */}
-  <div style={{
-    
-    overflowY: 'auto',
-    padding: '0',
-    position: 'auto',
-    
-  }}>
-    <NotifyModal />
-  </div>
-</NavDropdown>
+            <NavDropdown
+              align="end"
+              title={
+                <div>
+                  <FaBell size={20} color={notify.data.length > 0 ? "crimson" : "black"} />
+                  {notify.data.length > 0 && (
+                    <Badge
+                      pill
+                      bg="danger"
+                      className="position-absolute top-3 start-100 translate-middle"
+                      style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
+                    >
+                      {notify.data.length}
+                    </Badge>
+                  )}
+                </div>
+              }
+              id="nav-notify-dropdown"
+              drop="down"
+              className="notification-dropdown"
+            >
+              <NavDropdown.Header className="fw-bold">🔔 Notificaciones</NavDropdown.Header>
+              <NavDropdown.Divider />
+
+              {/* 🔥 CONTENEDOR AJUSTADO PARA MÓVILES */}
+              <div style={{
+
+                overflowY: 'auto',
+                padding: '0',
+                position: 'auto',
+
+              }}>
+                <NotifyModal />
+              </div>
+            </NavDropdown>
 
             {auth.user && (
               <Link to="/cart" className="position-relative text-decoration-none">
@@ -365,7 +341,7 @@ const Navbar2 = ({ onFiltersChange }) => {
           </div>
         </Container>
       </Navbar>
-      {/* Drawer (Offcanvas) */}
+
       <Offcanvas
         show={showDrawer}
         onHide={handleCloseDrawer}
