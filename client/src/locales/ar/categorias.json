@@ -456,5 +456,25 @@
   },
   "messages0": {
     "noStylesFound": "لم يتم العثور على أساليب"
-  }
+  },
+
+  
+    "descriptionMinLength": "10 أحرف على الأقل للحصول على وصف ذي معنى",
+    "descriptionMaxLength": "1000 حرف كحد أقصى",
+    "descriptionInvalidChars": "تم اكتشاف أحرف غير مسموح بها",
+    "descriptionNotEmpty": "لا يمكن أن يكون الوصف فارغًا",
+    "descriptionTooManySpecialChars": "عدد كبير جدًا من الأحرف الخاصة (30٪ كحد أقصى)",
+    "caracteres": "أحرف",
+    "delLimite": "من الحد المسموح",
+    "sugerencias": "اقتراحات للحصول على وصف جيد:",
+    "sugerencia1": "صف المواد المستخدمة",
+    "sugerencia2": "اذكر التقنية الفنية",
+    "sugerencia3": "اشرح الإلهام أو المعنى",
+    "sugerencia4": "أدرج الأبعاد والوزن إذا كان ذلك مناسبًا"
+ 
+
+
+
+
+  
 }

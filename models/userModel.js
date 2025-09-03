@@ -6,18 +6,35 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
     trim: true,
+    minlength: 3, // 👈 Mínimo 3 caracteres
     maxlength: 25,
-    unique: true
+    unique: true,
+    validate: {
+      validator: function (v) {
+        // 👇 Solo permite letras, números y guiones bajos
+        return /^[a-zA-Z0-9_]+$/.test(v);
+      },
+      message: props => `${props.value} no es un username válido. Solo se permiten letras, números y guiones bajos.`
+    }
   },
   email: {
     type: String,
     required: true,
     trim: true,
-    unique: true
+    unique: true,
+    lowercase: true, // 👈 Convierte a minúsculas
+    validate: {
+      validator: function (v) {
+        // 👇 Validación robusta de email
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      },
+      message: props => `${props.value} no es un email válido.`
+    }
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    minlength: 6 // 👈 Mínimo 6 caracteres
   },
   avatar: {
     type: String,

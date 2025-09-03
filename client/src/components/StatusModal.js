@@ -150,7 +150,7 @@ const StatusModal = () => {
         });
     };
 
-
+/*
     const handleChangeImages = e => {
         const files = [...e.target.files]
         let err = ""
@@ -196,8 +196,90 @@ const StatusModal = () => {
             setImages([...images, ...newImages])
         }
     }
+*/
+  
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+const validateImageDimensions = (file) => {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = () => {
+            const { width, height } = img;
+            // Validar dimensiones mínimas/máximas
+            if (width < 100 || height < 100) {
+                resolve("La imagen debe tener al menos 100x100 píxeles.");
+            } else if (width > 4000 || height > 4000) {
+                resolve("La imagen no puede exceder 4000x4000 píxeles.");
+            } else {
+                resolve(null);
+            }
+            URL.revokeObjectURL(img.src);
+        };
+        img.onerror = () => resolve("Error al cargar la imagen.");
+    });
+}
+const handleChangeImages = async e => {
+    const files = [...e.target.files];
+    let err = "";
+    let newImages = [];
 
+    // Límite según rol
+    const maxImages = auth.user?.role === "Super-utilisateur" ? 4 : 2;
+    const totalAfterUpload = images.length + files.length;
 
+    if (totalAfterUpload > maxImages) {
+        err = `Máximo ${maxImages} imágenes permitidas. ${maxImages === 2 ? 
+               "Los super-usuarios pueden subir hasta 4 imágenes." : ""}`;
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
+        return;
+    }
+
+    for (const file of files) {
+        if (!file) {
+            err = "El archivo no existe.";
+            break;
+        }
+
+        // Validar tipo
+        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+            err = "Solo se permiten archivos de imagen (JPEG, JPG, PNG, GIF).";
+            break;
+        }
+
+        // Validar nombre
+        if (!/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name)) {
+            err = `El nombre "${file.name}" contiene caracteres no permitidos.`;
+            break;
+        }
+
+        // Validar tamaño
+        if (file.size > 5 * 1024 * 1024) {
+            err = "La imagen no puede ser mayor a 5MB.";
+            break;
+        }
+
+        // Validar dimensiones
+        const dimensionError = await validateImageDimensions(file);
+        if (dimensionError) {
+            err = dimensionError;
+            break;
+        }
+
+        // Evitar duplicados
+        if (images.some(img => img.name === file.name)) {
+            err = `La imagen "${file.name}" ya fue seleccionada.`;
+            break;
+        }
+
+        newImages.push(file);
+    }
+
+    if (err) {
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
+    } else {
+        setImages([...images, ...newImages]);
+    }
+};
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -255,6 +337,10 @@ const StatusModal = () => {
         setImages([]);
         dispatch({ type: GLOBALTYPES.STATUS, payload: false });
     };
+
+
+   
+
     useEffect(() => {
 
         if (status?.onEdit) {

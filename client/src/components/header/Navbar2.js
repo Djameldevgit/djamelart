@@ -47,13 +47,13 @@ const Navbar2 = ({ onFiltersChange }) => {
   const handleCloseDrawer = () => setShowDrawer(false)
   const handleShowDrawer = () => setShowDrawer(true)
 
- 
+
   const history = useHistory();
 
- 
+
   const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
 
-  
+
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 700);
@@ -127,7 +127,7 @@ const Navbar2 = ({ onFiltersChange }) => {
   return (
     <div>
       <Navbar
-        expand="lg" 
+        expand="lg"
         className="bg-body-tertiary fixed-top"
         style={{
           zIndex: 1030,
@@ -165,10 +165,9 @@ const Navbar2 = ({ onFiltersChange }) => {
               style={{ cursor: 'pointer' }}
             />
 
-            {auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin" &&
+            {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") &&
               <i className='fas fa-plus' onClick={openStatusModal}> </i>
             }
-
             <NavDropdown
               align="end"
               title={
@@ -238,12 +237,10 @@ const Navbar2 = ({ onFiltersChange }) => {
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span > <strong>{auth.user.username}</strong> </span> </NavDropdown.Header>
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span >Role: <strong>{auth.user.role}</strong> </span> </NavDropdown.Header>
 
-                    {auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin" && (
-
+                    {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
                       <NavDropdown.Item onClick={openStatusModal}>
                         ➕ {t('navbar:addPost')}
                       </NavDropdown.Item>
-
                     )}
 
                     <NavDropdown.Item as={Link} to="/contactt">

@@ -416,5 +416,26 @@
   },
   "messages0": {
     "noStylesFound": "No se encontraron estilos"
-  }
+  },
+
+
+  "segiridad descripcion": "segiridad descripcionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+ 
+    "descriptionMinLength": "Mínimo 10 caracteres para una descripción significativa",
+    "descriptionMaxLength": "Máximo 1000 caracteres",
+    "descriptionInvalidChars": "Caracteres no permitidos detectados",
+    "descriptionNotEmpty": "La descripción no puede estar vacía",
+    "descriptionTooManySpecialChars": "Demasiados caracteres especiales (máximo 30%)",
+    "caracteres": "caracteres",
+    "delLimite": "del límite",
+    "sugerencias": "Sugerencias para una buena descripción:",
+    "sugerencia1": "Describe los materiales utilizados",
+    "sugerencia2": "Menciona la técnica artística",
+    "sugerencia3": "Explica la inspiración o significado",
+    "sugerencia4": "Incluye dimensiones y peso si aplica"
+ 
+
+
+
+
 }

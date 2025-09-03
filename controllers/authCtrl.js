@@ -8,45 +8,72 @@ const sendCustomEmail = require('./sendCustomEmail')
 const { google } = require('googleapis')
 const { OAuth2 } = google.auth
 const { CLIENT_URL } = process.env
- 
-const client = new OAuth2(process.env.GOOGLE_CLIENT_ID)
 
+const client = new OAuth2(process.env.GOOGLE_CLIENT_ID)
+const { sanitizeInput, isValidEmail, preventNoSQLInjection } = require('../utils/securityUtils');
+/*Sanitización centralizada: Elimina XSS, scripts y caracteres peligrosos.
+
+Validación de email: Asegura formatos correctos.
+
+Prevención de inyección: Tanto para SQL como NoSQL.
+
+Código más limpio y seguro.
+*/
 const authCtrl = {
+
 
     register: async (req, res) => {
         try {
-            const { username, email, password } = req.body
+            let { username, email, password } = req.body;
 
+            // Sanitizar y validar inputs
+            username = sanitizeInput(username);
+            email = sanitizeInput(email);
+            password = sanitizeInput(password);
 
-            let newUserName = username.toLowerCase().replace(/ /g, '')
+            // Prevenir inyección NoSQL (opcional pero recomendado)
+            username = preventNoSQLInjection(username);
+            email = preventNoSQLInjection(email);
 
-            const user_name = await Users.findOne({ username: newUserName })
-            if (user_name)
-                return res.status(400).json({ msg: req.__('auth.username_exists') })
+            // Validar formato de email
+            if (!isValidEmail(email)) {
+                return res.status(400).json({ msg: req.__('auth.invalid_email') });
+            }
 
-            const user_email = await Users.findOne({ email })
-            if (user_email)
-                return res.status(400).json({ msg: req.__('auth.email_exists') })
+            let newUserName = username.toLowerCase().replace(/ /g, '');
 
-            if (password.length < 6)
-                return res.status(400).json({ msg: req.__('auth.password_too_short') })
+            const user_name = await Users.findOne({ username: newUserName });
+            if (user_name) {
+                return res.status(400).json({ msg: req.__('auth.username_exists') });
+            }
 
-            const passwordHash = await bcrypt.hash(password, 12)
+            const user_email = await Users.findOne({ email });
+            if (user_email) {
+                return res.status(400).json({ msg: req.__('auth.email_exists') });
+            }
+
+            if (password.length < 6) {
+                return res.status(400).json({ msg: req.__('auth.password_too_short') });
+            }
+
+            const passwordHash = await bcrypt.hash(password, 12);
 
             const newUser = new Users({
-                username: newUserName, email, password: passwordHash
-            })
+                username: newUserName,
+                email,
+                password: passwordHash
+            });
 
-            const access_token = createAccessToken({ id: newUser._id })
-            const refresh_token = createRefreshToken({ id: newUser._id })
+            const access_token = createAccessToken({ id: newUser._id });
+            const refresh_token = createRefreshToken({ id: newUser._id });
 
             res.cookie('refreshtoken', refresh_token, {
                 httpOnly: true,
                 path: '/api/refresh_token',
-                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días
-            })
+                maxAge: 30 * 24 * 60 * 60 * 1000
+            });
 
-            await newUser.save()
+            await newUser.save();
 
             res.json({
                 msg: req.__('auth.register_success'),
@@ -55,49 +82,95 @@ const authCtrl = {
                     ...newUser._doc,
                     password: ''
                 }
-            })
+            });
         } catch (err) {
-            return res.status(500).json({ msg: req.__('auth.server_error') })
+            return res.status(500).json({ msg: req.__('auth.server_error') });
+        }
+    },
+    login: async (req, res) => {
+        try {
+            let { email, password } = req.body;
+
+            // Sanitizar inputs
+            email = sanitizeInput(email);
+            password = sanitizeInput(password);
+
+            // Prevenir inyección NoSQL
+            email = preventNoSQLInjection(email);
+
+            // Validar formato de email
+            if (!isValidEmail(email)) {
+                return res.status(400).json({ msg: req.__('auth.invalid_email') });
+            }
+
+            const user = await Users.findOne({ email });
+            if (!user) {
+                return res.status(400).json({ msg: req.__('auth.email_not_exist') });
+            }
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ msg: req.__('auth.incorrect_password') });
+            }
+
+            const access_token = createAccessToken({ id: user._id });
+            const refresh_token = createRefreshToken({ id: user._id });
+
+            res.cookie('refreshtoken', refresh_token, {
+                httpOnly: true,
+                path: '/api/refresh_token',
+                maxAge: 30 * 24 * 60 * 60 * 1000
+            });
+
+            res.json({
+                msg: req.__('auth.login_success'),
+                access_token,
+                user: {
+                    ...user._doc,
+                    password: ''
+                }
+            });
+        } catch (err) {
+            return res.status(500).json({ msg: req.__('auth.server_error') });
+        }
+    },
+    sendActivationEmail: async (req, res) => {
+        try {
+            const user = await Users.findById(req.user._id);
+            if (!user)
+                return res.status(400).json({ msg: req.__('auth.user_not_found') });
+
+            if (user.isVerified)
+                return res.status(400).json({ msg: req.__('auth.already_verified') });
+
+            const activation_token = createActivationToken({ id: user._id });
+            const url = `${CLIENT_URL}/user/activate/${activation_token}`;
+
+            await sendMail(user.email, url, req.getLocale(), 'activation');
+
+            res.json({ msg: req.__('activation_email_sent') });
+        } catch (err) {
+            return res.status(500).json({ msg: req.__('auth.server_error') });
         }
     },
 
-    sendActivationEmail: async (req, res) => {
-        try {
-          const user = await Users.findById(req.user._id);
-          if (!user)
-            return res.status(400).json({ msg: req.__('auth.user_not_found') });
-      
-          if (user.isVerified)
-            return res.status(400).json({ msg: req.__('auth.already_verified') });
-           
-          const activation_token = createActivationToken({ id: user._id });
-          const url = `${CLIENT_URL}/user/activate/${activation_token}`;
-      
-          await sendMail(user.email, url, req.getLocale(), 'activation'); 
-      
-          res.json({ msg: req.__('activation_email_sent') });
-        } catch (err) {
-          return res.status(500).json({ msg: req.__('auth.server_error') });
-        }
-      },
-      
 
 
-      activationAccount: async (req, res) => {
+    activationAccount: async (req, res) => {
         try {
             const { activation_token } = req.body;
             const decoded = jwt.verify(activation_token, process.env.ACTIVATION_TOKEN_SECRET);
             const { id } = decoded;
-    
+
             const user = await Users.findById(id);
             if (!user) return res.status(400).json({ msg: req.__('auth.user_not_found') });
-    
+
             if (user.isVerified)
                 return res.status(400).json({ msg: req.__('auth.already_verified') });
-    
+
             user.isVerified = true;
             await user.save();
-    
+
             // Devolver usuario actualizado
             res.json({
                 msg: req.__('auth.account_activated'),
@@ -107,26 +180,26 @@ const authCtrl = {
             return res.status(500).json({ msg: req.__('auth.server_error') });
         }
     },
-    
+
 
     forgotPassword: async (req, res) => {
         try {
-          const { email } = req.body;
-          const user = await Users.findOne({ email });
-          if (!user)
-            return res.status(400).json({ msg: req.__('auth.email_not_exist') });
-      
-          const access_token = createAccessToken({ id: user._id });
-          const url = `${CLIENT_URL}/user/reset/${access_token}`;
-      
-          await sendMail(user.email, url, req.getLocale(), 'reset');
-      
-          res.json({ msg: req.__('auth.reset_email_sent') });
+            const { email } = req.body;
+            const user = await Users.findOne({ email });
+            if (!user)
+                return res.status(400).json({ msg: req.__('auth.email_not_exist') });
+
+            const access_token = createAccessToken({ id: user._id });
+            const url = `${CLIENT_URL}/user/reset/${access_token}`;
+
+            await sendMail(user.email, url, req.getLocale(), 'reset');
+
+            res.json({ msg: req.__('auth.reset_email_sent') });
         } catch (err) {
-          return res.status(500).json({ msg: req.__('auth.server_error') });
+            return res.status(500).json({ msg: req.__('auth.server_error') });
         }
-      },
-      
+    },
+
 
     resetPassword: async (req, res) => {
         try {
@@ -149,65 +222,30 @@ const authCtrl = {
 
     sendEmailsParaUsers: async (req, res) => {
         try {
-          const { recipients, subject, message, url } = req.body;
-          const lang = req.getLocale() || 'es';
-      
-          if (!recipients || !Array.isArray(recipients) || recipients.length === 0)
-            return res.status(400).json({ msg: 'No se seleccionaron destinatarios.' });
-      
-          if (!subject || !message)
-            return res.status(400).json({ msg: 'Faltan el asunto o el mensaje.' });
-      
-          const users = await Users.find({ _id: { $in: recipients } });
-          const emails = users.map(user => user.email);
-      
-          for (const email of emails) {
-            await sendMail(email, url || '#', lang, 'informativo', subject, message);
-          }
-          
-      
-          return res.json({ msg: `✅ Correos enviados a ${emails.length} usuarios.` });
-      
+            const { recipients, subject, message, url } = req.body;
+            const lang = req.getLocale() || 'es';
+
+            if (!recipients || !Array.isArray(recipients) || recipients.length === 0)
+                return res.status(400).json({ msg: 'No se seleccionaron destinatarios.' });
+
+            if (!subject || !message)
+                return res.status(400).json({ msg: 'Faltan el asunto o el mensaje.' });
+
+            const users = await Users.find({ _id: { $in: recipients } });
+            const emails = users.map(user => user.email);
+
+            for (const email of emails) {
+                await sendMail(email, url || '#', lang, 'informativo', subject, message);
+            }
+
+
+            return res.json({ msg: `✅ Correos enviados a ${emails.length} usuarios.` });
+
         } catch (err) {
-          return res.status(500).json({ msg: err.message });
-        }
-      },
-      
-
-
-    login: async (req, res) => {
-        try {
-            const { email, password } = req.body
-
-            const user = await Users.findOne({ email })
-            if (!user)
-                return res.status(400).json({ msg: req.__('auth.email_not_exist') })
-
-            const isMatch = await bcrypt.compare(password, user.password)
-            if (!isMatch)
-                return res.status(400).json({ msg: req.__('auth.incorrect_password') })
-
-            const access_token = createAccessToken({ id: user._id })
-            const refresh_token = createRefreshToken({ id: user._id })
-
-            res.cookie('refreshtoken', refresh_token, {
-                httpOnly: true,
-                path: '/api/refresh_token',
-                maxAge: 30 * 24 * 60 * 60 * 1000
-            })
-
-            res.json({
-                msg: req.__('auth.login_success'),
-                access_token,
-                user: {
-                    ...user._doc,
-                    password: ''
-                }
-            })
-        } catch (err) {
-            return res.status(500).json({ msg: req.__('auth.server_error') })
+            return res.status(500).json({ msg: err.message });
         }
     },
+
 
 
     googleLogin: async (req, res) => {
@@ -281,76 +319,76 @@ const authCtrl = {
 
     facebookLogin: async (req, res) => {
         try {
-          const { accessToken, userID } = req.body;
-      
-          // 1. Llamada a la API de Facebook para obtener datos del usuario
-          const URL = `https://graph.facebook.com/v2.9/${userID}?fields=id,name,email,picture&access_token=${accessToken}`;
-          const response = await axios.get(URL);
-      
-          const { email, name, picture } = response.data;
-      
-          if (!email)
-            return res.status(400).json({ msg: "Tu cuenta de Facebook no tiene un correo confirmado." });
-      
-          // 2. Creamos una contraseña segura basada en el email y una secret
-          const password = email + process.env.FACEBOOK_SECRET;
-          const passwordHash = await bcrypt.hash(password, 12);
-      
-          // 3. Buscamos el usuario por email
-          let user = await Users.findOne({ email });
-      
-          if (user) {
-            // Si existe, validamos la contraseña generada
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) return res.status(400).json({ msg: "Autenticación fallida." });
-      
-            // Si existe y no está verificado, lo marcamos como verificado
-            if (!user.isVerified) {
-              user.isVerified = true;
-              await user.save();
+            const { accessToken, userID } = req.body;
+
+            // 1. Llamada a la API de Facebook para obtener datos del usuario
+            const URL = `https://graph.facebook.com/v2.9/${userID}?fields=id,name,email,picture&access_token=${accessToken}`;
+            const response = await axios.get(URL);
+
+            const { email, name, picture } = response.data;
+
+            if (!email)
+                return res.status(400).json({ msg: "Tu cuenta de Facebook no tiene un correo confirmado." });
+
+            // 2. Creamos una contraseña segura basada en el email y una secret
+            const password = email + process.env.FACEBOOK_SECRET;
+            const passwordHash = await bcrypt.hash(password, 12);
+
+            // 3. Buscamos el usuario por email
+            let user = await Users.findOne({ email });
+
+            if (user) {
+                // Si existe, validamos la contraseña generada
+                const isMatch = await bcrypt.compare(password, user.password);
+                if (!isMatch) return res.status(400).json({ msg: "Autenticación fallida." });
+
+                // Si existe y no está verificado, lo marcamos como verificado
+                if (!user.isVerified) {
+                    user.isVerified = true;
+                    await user.save();
+                }
+            } else {
+                // 4. Si no existe, generamos un username a partir del correo
+                const username = email.split("@")[0].toLowerCase().replace(/\s/g, '');
+
+                // 5. Creamos el nuevo usuario
+                user = new Users({
+                    name,
+                    username,
+                    email,
+                    password: passwordHash,
+                    avatar: picture.data.url,
+                    isVerified: true  // 👈 Se considera confiable porque viene de Facebook
+                });
+
+                await user.save();
             }
-          } else {
-            // 4. Si no existe, generamos un username a partir del correo
-            const username = email.split("@")[0].toLowerCase().replace(/\s/g, '');
-      
-            // 5. Creamos el nuevo usuario
-            user = new Users({
-              name,
-              username,
-              email,
-              password: passwordHash,
-              avatar: picture.data.url,
-              isVerified: true  // 👈 Se considera confiable porque viene de Facebook
+
+            // 6. Creamos y devolvemos tokens
+            const access_token = createAccessToken({ id: user._id });
+            const refresh_token = createRefreshToken({ id: user._id });
+
+            res.cookie('refreshtoken', refresh_token, {
+                httpOnly: true,
+                path: '/api/refresh_token',
+                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días
             });
-      
-            await user.save();
-          }
-      
-          // 6. Creamos y devolvemos tokens
-          const access_token = createAccessToken({ id: user._id });
-          const refresh_token = createRefreshToken({ id: user._id });
-      
-          res.cookie('refreshtoken', refresh_token, {
-            httpOnly: true,
-            path: '/api/refresh_token',
-            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días
-          });
-      
-          res.json({
-            msg: "Inicio de sesión exitoso",
-            access_token,
-            user: {
-              ...user._doc,
-              password: ''
-            }
-          });
-      
+
+            res.json({
+                msg: "Inicio de sesión exitoso",
+                access_token,
+                user: {
+                    ...user._doc,
+                    password: ''
+                }
+            });
+
         } catch (err) {
-          console.error(err);
-          return res.status(500).json({ msg: "Error del servidor en login con Facebook." });
+            console.error(err);
+            return res.status(500).json({ msg: "Error del servidor en login con Facebook." });
         }
-      },
-      
+    },
+
     logout: async (req, res) => {
         try {
             res.clearCookie('refreshtoken', { path: '/api/refresh_token' })

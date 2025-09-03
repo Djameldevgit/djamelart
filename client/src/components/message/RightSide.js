@@ -11,7 +11,7 @@ import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '.
 import LoadIcon from '../../images/loading.gif'
 
 const RightSide = () => {
-    const { auth, message,   theme, socket  } = useSelector(state => state)
+    const { auth, message, theme, socket } = useSelector(state => state)
     const dispatch = useDispatch()
 
     const { id } = useParams()
@@ -19,6 +19,7 @@ const RightSide = () => {
     const [text, setText] = useState('')
     const [media, setMedia] = useState([])
     const [loadMedia, setLoadMedia] = useState(false)
+    const [textError, setTextError] = useState('')
 
     const refDisplay = useRef()
     const pageEnd = useRef()
@@ -29,6 +30,40 @@ const RightSide = () => {
     const [isLoadMore, setIsLoadMore] = useState(0)
 
     const history = useHistory()
+
+    // 🔥 Validación en tiempo real del texto
+    useEffect(() => {
+        const validateText = () => {
+            if (text.length > 1000) {
+                return "Máximo 1000 caracteres permitidos";
+            }
+            
+            // Validar caracteres permitidos
+            const allowedRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-.,!?()'"@#$%&*+=:;/\\\n\r\t¿¡€£¥©®—–•§¶\p{Emoji}]*$/u;
+            if (text && !allowedRegex.test(text)) {
+                return "Caracteres no permitidos detectados";
+            }
+            
+            // Validar proporción de caracteres especiales
+            const specialCharsCount = (text.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?€£¥©®—–•§¶]/g) || []).length;
+            if (specialCharsCount > text.length * 0.4) {
+                return "Demasiados caracteres especiales";
+            }
+            
+            return "";
+        };
+        
+        setTextError(validateText());
+    }, [text]);
+
+    // 🔥 Función de sanitización de texto
+    const sanitizeText = (input) => {
+        return input
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+            .replace(/<[^>]*>/g, '')
+            .replace(/(\b)(on\w+)=([^>]*)/gi, '')
+            .slice(0, 1000);
+    };
 
     useEffect(() => {
         const newData = message.data.find(item => item._id === id)
@@ -59,33 +94,39 @@ const RightSide = () => {
         const isSuperUser = auth.user?.role === "Super-utilisateur";
         const isAdmin = auth.user?.role === "admin";
         
-        const maxMedia = (isSuperUser || isAdmin) ? 4 : 0; // Ambos roles pueden subir hasta 4 archivos
+        const maxMedia = (isSuperUser || isAdmin) ? 4 : 0;
         const totalAfterUpload = media.length + files.length;
     
-        // Resto del código permanece igual...
         if (totalAfterUpload > maxMedia) {
-            err = `Maximum ${maxMedia} files allowed. ${maxMedia === 4 ? 
-                   "Super-users and Admins can upload up to 4 files." : ""}`;
+            err = `Máximo ${maxMedia} archivos permitidos. ${maxMedia === 4 ? 
+                   "Super-usuarios y Admins pueden subir hasta 4 archivos." : ""}`;
             dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
             return;
         }
     
         files.forEach(file => {
             if (!file) {
-                err = "File does not exist.";
+                err = "El archivo no existe.";
                 return;
             }
     
             // 🔥 Validar tipo de archivo - SOLO IMAGENES
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
             if (!allowedTypes.includes(file.type)) {
-                err = "Only image files are allowed (JPEG, JPG, PNG, GIF).";
+                err = "Solo se permiten archivos de imagen (JPEG, JPG, PNG, GIF).";
                 return;
             }
     
             // Validar tamaño
             if (file.size > 1024 * 1024 * 5) {
-                err = "The image largest is 5mb.";
+                err = "La imagen no puede ser mayor a 5MB.";
+                return;
+            }
+
+            // 🔥 Validar nombre de archivo
+            const isValidFileName = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name);
+            if (!isValidFileName) {
+                err = `El nombre "${file.name}" contiene caracteres no permitidos.`;
                 return;
             }
     
@@ -107,7 +148,15 @@ const RightSide = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        
+        // 🔥 Validación final antes de enviar
         if (!text.trim() && media.length === 0) return;
+        if (textError) {
+            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: textError } })
+            return;
+        }
+
+        const sanitizedText = sanitizeText(text);
         setText('')
         setMedia([])
         setLoadMedia(true)
@@ -118,7 +167,7 @@ const RightSide = () => {
         const msg = {
             sender: auth.user._id,
             recipient: id,
-            text,
+            text: sanitizedText, // 🔥 Texto sanitizado
             media: newArr,
             createdAt: new Date().toISOString()
         }
@@ -142,7 +191,6 @@ const RightSide = () => {
         getMessagesData()
     }, [id, dispatch, auth, message.data])
 
-
     // Load More
     useEffect(() => {
         const observer = new IntersectionObserver(entries => {
@@ -163,24 +211,23 @@ const RightSide = () => {
                 setIsLoadMore(1)
             }
         }
-        // eslint-disable-next-line
-    }, [isLoadMore])
+    }, [isLoadMore, result, page, dispatch, auth, id])
 
     const handleDeleteConversation = () => {
-        if (window.confirm('Do you want to delete?')) {
+        if (window.confirm('¿Estás seguro de que quieres eliminar esta conversación?')) {
             dispatch(deleteConversation({ auth, id }))
             return history.push('/message')
         }
     }
 
-   
     const handleGoBack = () => {
         history.push('/message');
-      };
-    
-    
+    };
 
-   
+    const handleTextChange = (e) => {
+        const value = e.target.value;
+        setText(value.slice(0, 1000)); // 🔥 Limitar longitud
+    };
 
     return (
         <div style={{marginTop:110}}>
@@ -224,7 +271,6 @@ const RightSide = () => {
                         ))
                     }
 
-
                     {
                         loadMedia &&
                         <div className="chat_row you_message">
@@ -251,35 +297,64 @@ const RightSide = () => {
             </div>
 
             <form className="chat_input" onSubmit={handleSubmit} >
-                <input type="text" placeholder="Enter you message..."
-                    value={text} onChange={e => setText(e.target.value)}
+                <input 
+                    type="text" 
+                    placeholder="Escribe tu mensaje..."
+                    value={text} 
+                    onChange={handleTextChange} // 🔥 Función mejorada
                     style={{
                         filter: theme ? 'invert(1)' : 'invert(0)',
                         background: theme ? '#040404' : '',
-                        color: theme ? 'white' : ''
-                    }} />
+                        color: theme ? 'white' : '',
+                        border: textError ? '1px solid #dc3545' : ''
+                    }} 
+                />
+
+                {/* 🔥 Contador de caracteres */}
+                {text.length > 0 && (
+                    <div className="small text-muted" style={{ 
+                        position: 'absolute', 
+                        bottom: '-20px', 
+                        right: '10px',
+                        fontSize: '10px',
+                        color: text.length > 900 ? '#dc3545' : '#6c757d'
+                    }}>
+                        {text.length}/1000
+                    </div>
+                )}
 
                 <Icons setContent={setText} content={text} theme={theme} />
 
                 {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
-    <div className="file_upload">
-        <i className="fas fa-image text-danger" />
-        <input
-            type="file"
-            name="file"
-            id="file"
-            multiple
-            accept="image/*,video/*"
-            onChange={handleChangeMedia}
-        />
-    </div>
-)}
+                    <div className="file_upload">
+                        <i className="fas fa-image text-danger" />
+                        <input
+                            type="file"
+                            name="file"
+                            id="file"
+                            multiple
+                            accept="image/*"
+                            onChange={handleChangeMedia}
+                        />
+                    </div>
+                )}
 
-                <button type="submit" className="material-icons"
-                    disabled={(text || media.length > 0) ? false : true}>
+                <button 
+                    type="submit" 
+                    className="material-icons"
+                    disabled={(text.trim() || media.length > 0) && !textError ? false : true}
+                    style={{ opacity: (text.trim() || media.length > 0) && !textError ? 1 : 0.5 }}
+                >
                     near_me
                 </button>
             </form>
+
+            {/* 🔥 Mensaje de error del texto */}
+            {textError && (
+                <div className="small text-danger mt-1" style={{ padding: '0 10px' }}>
+                    ⚠️ {textError}
+                </div>
+            )}
         </div>
     )
 }

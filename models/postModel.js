@@ -19,8 +19,17 @@ const postSchema = new mongoose.Schema({
   disponibilidad: {
     type: String,
   },
- title: {
+  title: {
     type: String,
+    required: true, // 👈 Ahora es obligatorio
+    trim: true,
+    maxlength: 100,
+    validate: {
+      validator: function(v) {
+        return /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\.,!?()]+$/.test(v); // 👈 Caracteres permitidos
+      },
+      message: 'El título contiene caracteres no permitidos.'
+    }
   },
   envolverobra: {
     type: String,
@@ -33,7 +42,14 @@ const postSchema = new mongoose.Schema({
 
   measurementValue: {
     type: String,
-
+    trim: true,
+    maxlength: 20,
+  /*  validate: {
+      validator: function(v) {
+        return /^[0-9.,]+$/.test(v); // 👈 Solo números y decimales
+      },
+      message: 'El valor de medida solo puede contener números y decimales.'
+    }*/
   },
   venteOption: {
     type: String,
@@ -42,7 +58,14 @@ const postSchema = new mongoose.Schema({
  
   price: {
     type: String,
-
+    trim: true,
+    maxlength: 20,
+  /*  validate: {
+      validator: function(v) {
+        return /^[0-9.,]+$/.test(v); // 👈 Solo números y decimales
+      },
+      message: 'El precio solo puede contener números y decimales.'
+    }*/
   },
   
   negociable: {
@@ -73,7 +96,14 @@ const postSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-
+    trim: true,
+    maxlength: 1000, // 👈 Límite de caracteres
+    validate: {
+      validator: function(v) {
+        return /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\.,!?()@#\$%&*+='":;]+$/.test(v); // 👈 Caracteres permitidos
+      },
+      message: 'La descripción contiene caracteres no permitidos.'
+    }
   },
 
  wilaya: {
