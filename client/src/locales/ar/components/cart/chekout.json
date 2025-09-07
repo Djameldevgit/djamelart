@@ -1,0 +1,23 @@
+{
+    "paymentForm": "نموذج الدفع",
+    "selectCountryLabel": "اختر بلدك",
+    "paymentMethod": "طريقة الدفع",
+    "algeriaPostTitle": "تفاصيل الدفع عبر بريد الجزائر (CCP)",
+    "accountName": "اسم الحساب",
+    "accountNumberCCP": "رقم حساب CCP",
+    "postalCode": "الرمز البريدي",
+    "ccpKey": "مفتاح CCP",
+    "ccpInstruction1": "يرجى إجراء الإيداع في الحساب المحدد.",
+    "ccpInstruction2": "احتفظ بإيصال الدفع وأرسله إلى الدعم.",
+    "d17payInstruction": "امسح رمز QR أو استخدم تطبيق D17PAY لإتمام الدفع.",
+    "payWithD17PAY": "ادفع باستخدام D17PAY",
+    "internationalBankTitle": "تفاصيل التحويل البنكي الدولي",
+    "beneficiary": "المستفيد",
+    "bankName": "البنك",
+    "bankAddress": "عنوان البنك",
+    "internationalNotice1": "العميل مسؤول عن دفع رسوم البنك.",
+    "internationalNotice2": "سيتم معالجة الطلب بعد استلام الدفع.",
+    "confirmOrder": "تأكيد الطلب",
+    "needHelp": "هل تحتاج إلى مساعدة؟ اتصل بنا:"
+  }
+  

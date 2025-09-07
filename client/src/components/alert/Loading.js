@@ -3,7 +3,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import { useTranslation } from 'react-i18next';
 
 const Loading = () => {
-  const { t } = useTranslation("aplicacion");
+  const { t } = useTranslation("loading");
 
   return (
     <div

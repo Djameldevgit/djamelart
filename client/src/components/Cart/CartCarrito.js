@@ -10,7 +10,7 @@ const CartCarrito = () => {
   const dispatch = useDispatch();
   const { auth, cart, languageReducer } = useSelector(state => state);
   const [showMessage, setShowMessage] = useState({ show: false, text: '', type: '' });
-  const { t } = useTranslation('cart');
+  const { t } = useTranslation('cartt');
   const lang = languageReducer.language || 'en';
 
   useEffect(() => {

@@ -1,0 +1,23 @@
+{
+    "paymentForm": "Formulario de Pago",
+    "selectCountryLabel": "Selecciona tu país",
+    "paymentMethod": "Método de pago",
+    "algeriaPostTitle": "Detalles para pago por Correos de Argelia (CCP)",
+    "accountName": "Nombre de la cuenta",
+    "accountNumberCCP": "Número de cuenta CCP",
+    "postalCode": "Código postal",
+    "ccpKey": "Clave CCP",
+    "ccpInstruction1": "Por favor, realiza el depósito en la cuenta indicada.",
+    "ccpInstruction2": "Guarda el comprobante de pago y envíalo al soporte.",
+    "d17payInstruction": "Escanea el código QR o usa la app D17PAY para completar tu pago.",
+    "payWithD17PAY": "Pagar con D17PAY",
+    "internationalBankTitle": "Detalles para transferencia bancaria internacional",
+    "beneficiary": "Beneficiario",
+    "bankName": "Banco",
+    "bankAddress": "Dirección del banco",
+    "internationalNotice1": "El cliente es responsable de cubrir las comisiones bancarias.",
+    "internationalNotice2": "El pedido será procesado una vez recibido el pago.",
+    "confirmOrder": "Confirmar pedido",
+    "needHelp": "¿Necesitas ayuda? Contáctanos:"
+  }
+  

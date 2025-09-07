@@ -16,8 +16,9 @@ const Login = () => {
     const { auth, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
     const history = useHistory()
-    const { t } = useTranslation('auth')
-    const lang = languageReducer?.language || 'en'
+    const { t, i18n } = useTranslation('auth');
+    const lang = languageReducer.language || 'es';
+    if (i18n.language !== lang) i18n.changeLanguage(lang);
    
     useEffect(() => {
         if (auth.token) history.push("/")
@@ -34,7 +35,7 @@ const Login = () => {
     }
 
     return (
-        <div className={`auth_page ${lang === "ar" ? "rtl" : ""}`}>
+        <div    className={`auth_page ${lang === "ar" ? "rtl" : ""}`}style={{ marginTop: 110 }}>
 
 
             <form onSubmit={handleSubmit}>

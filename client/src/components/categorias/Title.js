@@ -125,8 +125,7 @@ export function TitleInput({ handleChangeInput, postData }) {
       {/* Ejemplos de títulos válidos */}
       {!localValue && (
         <div className="text-muted small mt-2">
-          <strong>Ejemplos:</strong> "Paisaje al atardecer", "Retrato abstracto", "Escultura moderna"
-        </div>
+             </div>
       )}
     </div>
   );

@@ -1,25 +1,37 @@
-// utils/securityUtils.js
 const validator = require('validator');
 
-// Sanitizar input: elimina scripts, etiquetas HTML y caracteres peligrosos
-const sanitizeInput = (input) => {
-  if (typeof input !== 'string') return input;
-  return validator.escape(input.trim());
+// Sanitizar username (permite solo letras, números y guiones bajos)
+const sanitizeUsername = (username) => {
+  if (typeof username !== 'string') return username;
+  return validator.escape(username.trim());
 };
 
-// Validar email
+// Sanitizar email (solo trim y normalización, no escape)
+const sanitizeEmail = (email) => {
+  if (typeof email !== 'string') return '';
+  const normalized = validator.normalizeEmail(email.trim());
+  return normalized || ''; // Retorna string vacío si es inválido
+};
+
 const isValidEmail = (email) => {
-  return validator.isEmail(email);
+  return typeof email === 'string' && validator.isEmail(email);
 };
 
-// Prevenir SQL Injection (aunque MongoDB es menos vulnerable, es buena práctica)
+// Sanitizar password (solo trim, no modificar caracteres)
+const sanitizePassword = (password) => {
+  if (typeof password !== 'string') return password;
+  return password.trim();
+};
+
+// Prevenir NoSQL Injection (para username o texto libre, no emails)
 const preventNoSQLInjection = (input) => {
-  // Elimina caracteres peligrosos para consultas NoSQL
   return input.replace(/\$|\{|\}|\\|\./g, '');
 };
 
 module.exports = {
-  sanitizeInput,
+  sanitizeUsername,
+  sanitizeEmail,
+  sanitizePassword,
   isValidEmail,
   preventNoSQLInjection
 };

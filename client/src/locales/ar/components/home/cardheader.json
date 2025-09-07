@@ -1,0 +1,29 @@
+{
+    "approve": "الموافقة على المنشور",
+  "edit": "تعديل المنشور",
+  "delete": "حذف المنشور",
+  "report": "الإبلاغ عن المنشور",
+  "reportTitle": "الإبلاغ عن المنشور",
+  "reportLabel": "اختر سبب الإبلاغ",
+  "selectReason": "اختر السبب",
+  "contactSeller": "اتصل بالبائع",
+  "followAuthor": "تابع المؤلف",
+  "save": "حفظ المنشور",
+  "submitReport": "إرسال الإبلاغ",
+  "reportRequired": "يرجى تقديم سبب للإبلاغ.",
+  "confirmApprove": "هل تريد الموافقة على هذا المنشور؟",
+  "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا المنشور؟",
+  "reasonss": {
+    "abuse": "سلوك مسيء",
+    "spam": "رسائل غير مرغوب فيها",
+    "terms": "انتهاك شروط الاستخدام",
+    "offensive": "لغة مسيئة",
+    "fraud": "احتيال",
+    "impersonation": "انتحال الهوية",
+    "inappropriate": "محتوى غير لائق",
+    "privacy": "انتهاك الخصوصية",
+    "disruption": "تعطيل الخدمة",
+    "suspicious": "نشاط مريب",
+    "other": "أخرى"
+  }
+}

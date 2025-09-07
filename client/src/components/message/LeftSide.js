@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
 import UserCard from '../UserCard'
 import { useSelector, useDispatch } from 'react-redux'
- import { GLOBALTYPES } from '../../redux/actions/globalTypes'
-
+import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import { useHistory, useParams } from 'react-router-dom'
 import { MESS_TYPES, getConversations } from '../../redux/actions/messageAction'
 import { getDataAPI } from '../../utils/fetchData'
+import { useTranslation } from 'react-i18next'
 
- 
 const LeftSide = () => {
-    const { auth, message, online } = useSelector(state => state)
+    const { auth, message, online, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
+    const { t, i18n } = useTranslation('chat')
 
     const [search, setSearch] = useState('')
     const [searchUsers, setSearchUsers] = useState([])
@@ -21,17 +21,25 @@ const LeftSide = () => {
     const pageEnd = useRef()
     const [page, setPage] = useState(0)
 
+    // 🔥 Cambiar idioma activamente
+    const lang = languageReducer.language || 'es'
+    useEffect(() => {
+        if (i18n.language !== lang) {
+            i18n.changeLanguage(lang)
+        }
+    }, [lang, i18n])
 
     const handleSearch = async e => {
         e.preventDefault()
-        if(!search) return setSearchUsers([]);
+        if(!search) return setSearchUsers([])
 
         try {
             const res = await getDataAPI(`search?username=${search}`, auth.token)
             setSearchUsers(res.data.users)
         } catch (err) {
             dispatch({
-                type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}
+                type: GLOBALTYPES.ALERT, 
+                payload: { error: err.response?.data?.msg || t('message.searchError') }
             })
         }
     }
@@ -45,12 +53,12 @@ const LeftSide = () => {
     }
 
     const isActive = (user) => {
-        if (id === user._id) return 'active';
+        if (id === user._id) return 'active'
         return ''
     }
 
     useEffect(() => {
-        if (message.firstLoad) return;
+        if (message.firstLoad) return
         dispatch(getConversations({ auth }))
     }, [dispatch, auth, message.firstLoad])
 
@@ -73,7 +81,6 @@ const LeftSide = () => {
         }
     }, [message.resultUsers, page, auth, dispatch])
 
-
     // Check User Online - Offline
     useEffect(() => {
         if (message.firstLoad) {
@@ -82,55 +89,82 @@ const LeftSide = () => {
     }, [online, message.firstLoad, dispatch])
 
     return (
-        <div style={{ marginTop: 110 }}>
+        <div style={{ 
+            marginTop: 110,
+            direction: lang === 'ar' ? 'rtl' : 'ltr'
+        }}>
             {auth.user?.role === "admin" &&
                 <form className="message_header" onSubmit={handleSearch} >
-                    <input type="text" value={search}
-                        placeholder="Enter to Search..."
-                        onChange={e => setSearch(e.target.value)} />
+                    <input 
+                        type="text" 
+                        value={search}
+                        placeholder={t('message.searchPlaceholder')}
+                        onChange={e => setSearch(e.target.value)}
+                        style={{
+                            direction: lang === 'ar' ? 'rtl' : 'ltr',
+                            textAlign: lang === 'ar' ? 'right' : 'left'
+                        }}
+                    />
 
-                    <button type="submit" style={{ display: 'none' }}>Search</button>
+                    <button type="submit" style={{ display: 'none' }}>
+                        {t('message.searchButton')}
+                    </button>
                 </form>
-
             }
 
             <div className="message_chat_list">
-                {
-                    searchUsers.length !== 0
-                        ? <>
-                            {
-                                searchUsers.map(user => (
-                                    <div key={user._id} className={`message_user ${isActive(user)}`}
-                                        onClick={() => handleAddUser(user)}>
-                                        <UserCard user={user} />
-                                    </div>
-                                ))
-                            }
-
-                        </>
-                        : <>
-                            {
-                                message.users.map(user => (
-                                    <div key={user._id} className={`message_user ${isActive(user)}`}
-                                        onClick={() => handleAddUser(user)}>
-                                        <UserCard user={user} msg={true}>
-                                            {
-                                                user.online
-                                                    ? <i className="fas fa-circle text-success" />
-                                                    : auth.user.following.find(item =>
-                                                        item._id === user._id
-                                                    ) && <i className="fas fa-circle" />
-
-                                            }
-
-                                        </UserCard>
-                                    </div>
-                                ))
-                            }
-                        </>
+                {searchUsers.length !== 0
+                    ? <>
+                        {searchUsers.map(user => (
+                            <div 
+                                key={user._id} 
+                                className={`message_user ${isActive(user)}`}
+                                onClick={() => handleAddUser(user)}
+                            >
+                                <UserCard user={user} />
+                            </div>
+                        ))}
+                      </>
+                    : <>
+                        {message.users.length === 0 ? (
+                            <div className="text-center p-3 text-muted">
+                                {t('message.noUsersFound')}
+                            </div>
+                        ) : (
+                            message.users.map(user => (
+                                <div 
+                                    key={user._id} 
+                                    className={`message_user ${isActive(user)}`}
+                                    onClick={() => handleAddUser(user)}
+                                >
+                                    <UserCard user={user} msg={true}>
+                                        {user.online ? (
+                                            <i 
+                                                className="fas fa-circle text-success"
+                                                title={t('message.online')}
+                                            />
+                                        ) : (
+                                            auth.user.following.find(item => item._id === user._id) && (
+                                                <i 
+                                                    className="fas fa-circle"
+                                                    title={t('message.offline')}
+                                                />
+                                            )
+                                        )}
+                                    </UserCard>
+                                </div>
+                            ))
+                        )}
+                      </>
                 }
 
-                <button ref={pageEnd} style={{ opacity: 0 }} >Load More</button>
+                <button 
+                    ref={pageEnd} 
+                    style={{ opacity: 0 }}
+                    aria-label={t('message.loadMore2')}
+                >
+                    {t('message.loadMore2')}
+                </button>
             </div>
         </div>
     )

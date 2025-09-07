@@ -30,7 +30,7 @@ const PRIVILEGIOS = [
 const ModalPrivilegios = ({ user, setShowModal, token }) => {
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('modales');
+  const { t } = useTranslation('privelegios');
   const lang = languageReducer.language || 'es';
   
   const [seleccionados, setSeleccionados] = useState(

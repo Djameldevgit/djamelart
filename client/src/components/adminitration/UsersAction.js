@@ -23,8 +23,12 @@ import UserCard from "../UserCard";
 const UsersAction = () => {
   const { usersActionReducer, auth, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
-  const { t } = useTranslation("aplicacion");
-  const lang = languageReducer.language || "es";
+ 
+  const { t, i18n } = useTranslation('usersactions');
+
+  // Cambiar el idioma activamente si es diferente
+  const lang = languageReducer.language || 'es';
+  if (i18n.language !== lang) i18n.changeLanguage(lang);
 
   const [load, setLoad] = useState(false);
   const [search, setSearch] = useState("");

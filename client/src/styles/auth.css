@@ -1,6 +1,6 @@
 :root {
-    --color-background: linear-gradient(135deg, #f3f4f6, #e0e7ff);
-    --color-white: #ffffff;
+    
+ 
     --color-shadow: rgba(0, 0, 0, 0.1);
     --color-text: #333333;
     --color-accent: #6366f1;
@@ -11,7 +11,7 @@
 .auth_page {
     width: 100%;
     min-height: 100vh;
-    background: var(--color-background);
+ 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -19,8 +19,7 @@
 }
 
 .auth_page form {
-
-    background: var(--color-white);
+ 
     max-width: 400px;
     width: 100%;
     border-radius: var(--border-radius);

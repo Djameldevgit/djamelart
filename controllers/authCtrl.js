@@ -10,70 +10,44 @@ const { OAuth2 } = google.auth
 const { CLIENT_URL } = process.env
 
 const client = new OAuth2(process.env.GOOGLE_CLIENT_ID)
-const { sanitizeInput, isValidEmail, preventNoSQLInjection } = require('../utils/securityUtils');
-/*Sanitización centralizada: Elimina XSS, scripts y caracteres peligrosos.
-
-Validación de email: Asegura formatos correctos.
-
-Prevención de inyección: Tanto para SQL como NoSQL.
-
-Código más limpio y seguro.
-*/
+ 
+ 
+ 
 const authCtrl = {
-
-
     register: async (req, res) => {
         try {
-            let { username, email, password } = req.body;
+            const { username, email, password } = req.body
 
-            // Sanitizar y validar inputs
-            username = sanitizeInput(username);
-            email = sanitizeInput(email);
-            password = sanitizeInput(password);
 
-            // Prevenir inyección NoSQL (opcional pero recomendado)
-            username = preventNoSQLInjection(username);
-            email = preventNoSQLInjection(email);
+            let newUserName = username.toLowerCase().replace(/ /g, '')
 
-            // Validar formato de email
-            if (!isValidEmail(email)) {
-                return res.status(400).json({ msg: req.__('auth.invalid_email') });
-            }
+            const user_name = await Users.findOne({ username: newUserName })
+            if (user_name)
+                return res.status(400).json({ msg: req.__('auth.username_exists') })
 
-            let newUserName = username.toLowerCase().replace(/ /g, '');
+            const user_email = await Users.findOne({ email })
+            if (user_email)
+                return res.status(400).json({ msg: req.__('auth.email_exists') })
 
-            const user_name = await Users.findOne({ username: newUserName });
-            if (user_name) {
-                return res.status(400).json({ msg: req.__('auth.username_exists') });
-            }
+            if (password.length < 6)
+                return res.status(400).json({ msg: req.__('auth.password_too_short') })
 
-            const user_email = await Users.findOne({ email });
-            if (user_email) {
-                return res.status(400).json({ msg: req.__('auth.email_exists') });
-            }
-
-            if (password.length < 6) {
-                return res.status(400).json({ msg: req.__('auth.password_too_short') });
-            }
-
-            const passwordHash = await bcrypt.hash(password, 12);
+            const passwordHash = await bcrypt.hash(password, 12)
 
             const newUser = new Users({
-                username: newUserName,
-                email,
-                password: passwordHash
-            });
+                username: newUserName, email, password: passwordHash
+            })
 
-            const access_token = createAccessToken({ id: newUser._id });
-            const refresh_token = createRefreshToken({ id: newUser._id });
+            const access_token = createAccessToken({ id: newUser._id })
+            const refresh_token = createRefreshToken({ id: newUser._id })
 
             res.cookie('refreshtoken', refresh_token, {
                 httpOnly: true,
                 path: '/api/refresh_token',
-                maxAge: 30 * 24 * 60 * 60 * 1000
-            });
+                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días
+            })
 
-            await newUser.save();
+            await newUser.save()
 
             res.json({
                 msg: req.__('auth.register_success'),
@@ -82,45 +56,32 @@ const authCtrl = {
                     ...newUser._doc,
                     password: ''
                 }
-            });
+            })
         } catch (err) {
-            return res.status(500).json({ msg: req.__('auth.server_error') });
+            return res.status(500).json({ msg: req.__('auth.server_error') })
         }
     },
+
     login: async (req, res) => {
         try {
-            let { email, password } = req.body;
+            const { email, password } = req.body
 
-            // Sanitizar inputs
-            email = sanitizeInput(email);
-            password = sanitizeInput(password);
+            const user = await Users.findOne({ email })
+            if (!user)
+                return res.status(400).json({ msg: req.__('auth.email_not_exist') })
 
-            // Prevenir inyección NoSQL
-            email = preventNoSQLInjection(email);
+            const isMatch = await bcrypt.compare(password, user.password)
+            if (!isMatch)
+                return res.status(400).json({ msg: req.__('auth.incorrect_password') })
 
-            // Validar formato de email
-            if (!isValidEmail(email)) {
-                return res.status(400).json({ msg: req.__('auth.invalid_email') });
-            }
-
-            const user = await Users.findOne({ email });
-            if (!user) {
-                return res.status(400).json({ msg: req.__('auth.email_not_exist') });
-            }
-
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return res.status(400).json({ msg: req.__('auth.incorrect_password') });
-            }
-
-            const access_token = createAccessToken({ id: user._id });
-            const refresh_token = createRefreshToken({ id: user._id });
+            const access_token = createAccessToken({ id: user._id })
+            const refresh_token = createRefreshToken({ id: user._id })
 
             res.cookie('refreshtoken', refresh_token, {
                 httpOnly: true,
                 path: '/api/refresh_token',
                 maxAge: 30 * 24 * 60 * 60 * 1000
-            });
+            })
 
             res.json({
                 msg: req.__('auth.login_success'),
@@ -129,9 +90,9 @@ const authCtrl = {
                     ...user._doc,
                     password: ''
                 }
-            });
+            })
         } catch (err) {
-            return res.status(500).json({ msg: req.__('auth.server_error') });
+            return res.status(500).json({ msg: req.__('auth.server_error') })
         }
     },
     sendActivationEmail: async (req, res) => {

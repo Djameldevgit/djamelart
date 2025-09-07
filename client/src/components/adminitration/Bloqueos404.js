@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 
 const Bloqueos404 = () => {
     const { auth, userBlockReducer, languageReducer } = useSelector(state => state);
-    const { t } = useTranslation('aplicacion');
+    const { t } = useTranslation('bloqueos404');
     const lang = languageReducer.language || 'en';
     const user = auth.user;
     

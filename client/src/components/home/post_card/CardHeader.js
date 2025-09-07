@@ -18,7 +18,7 @@ const CardHeader = ({ post }) => {
   const [reportReason, setReportReason] = useState('');
   const dispatch = useDispatch();
   const history = useHistory();
-  const { t, i18n } = useTranslation('aplicacion');
+  const { t, i18n } = useTranslation('cardheader');
 
   // Cambiar el idioma activamente si es diferente
   const lang = languageReducer.language || 'es';

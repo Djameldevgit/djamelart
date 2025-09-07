@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 const PostsPendientes = () => {
   const { homePostsAprove, auth, socket, languageReducer } = useSelector((state) => state);
-  const { t } = useTranslation('aplicacion');
+  const { t } = useTranslation('postspendientes');
   const lang = languageReducer.language || 'es';
 
   const dispatch = useDispatch();

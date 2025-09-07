@@ -23,7 +23,7 @@ const ReportedUsers = () => {
   const { auth, languageReducer } = useSelector((state) => state);
   const { reports, loading } = useSelector((state) => state.reportReducer);
   const dispatch = useDispatch();
-  const { t } = useTranslation("aplicacion");
+  const { t } = useTranslation("reporteusers");
 
   const lang = languageReducer.language || "es";
   const isArabic = lang === "ar";

@@ -16,7 +16,7 @@ import {
 const Roless = () => {
   const { homeUsers, auth, alert, languageReducer } = useSelector(state => state);
   const dispatch = useDispatch();
-  const { t } = useTranslation('modales');
+  const { t } = useTranslation('roles');
   const lang = languageReducer.language || 'es';
 
   const [selectedRoles, setSelectedRoles] = useState({});
@@ -89,7 +89,7 @@ const Roless = () => {
   };
 
   return (
-    <Container className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <Container className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}style={{ marginTop: 70 }}>
       <Card className="shadow-sm">
         <Card.Header className="bg-primary text-white" style={{
           direction: lang === 'ar' ? 'rtl' : 'ltr',
@@ -100,8 +100,8 @@ const Roless = () => {
             {t('headers.title')}
           </h5>
         </Card.Header>
-        <Card.Header className="text-muted small">
-          {t('headers.totalUsers', { count: usersList.length })}
+        <Card.Header >
+       <strong>{t('headers.totalUsers', { count: usersList.length })}</strong>   
         </Card.Header>
 
         <Card.Body>

@@ -19,7 +19,7 @@ import { bloquearUsuario } from "../../redux/actions/userAction";
 const BloqueModalUser = ({ show, handleClose, user }) => {
   const { auth, languageReducer } = useSelector(state => state);
   const dispatch = useDispatch();
-  const { t } = useTranslation('modales');
+  const { t } = useTranslation('bloqueomodaluser');
   const lang = languageReducer.language || 'es';
   const [errorrr, setError] = useState(null);
 
@@ -61,7 +61,7 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
       <Modal.Header className="bg-danger text-white position-relative">
         <Modal.Title className="d-flex align-items-center">
           <ExclamationTriangleFill className={`${lang === 'ar' ? 'ms-2' : 'me-2'}`} />
-          {t('headd.title')}
+          {t('head.title')}
         </Modal.Title>
         <CloseButton
           variant="white"
@@ -84,7 +84,7 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
           <Form.Group className="mb-3">
             <Form.Label>
               <InfoCircleFill className={`${lang === 'ar' ? 'ms-2' : 'me-2'} text-warning`} />
-              {t('formmm.reasonLabel')}
+              {t('form.reasonLabel')}
             </Form.Label>
             <Form.Select
               name="motivo"
@@ -92,7 +92,7 @@ const BloqueModalUser = ({ show, handleClose, user }) => {
               onChange={handleChangeInput}
               required
             >
-              <option value="">{t('formmm.selectReason')}</option>
+              <option value="">{t('form.selectReason')}</option>
               <option value="Comportement abusif">{t('reason.abusiveBehavior')}</option>
               <option value="Spam">{t('reason.spam')}</option>
               <option value="Violation des conditions d'utilisation">{t('reason.termsViolation')}</option>

@@ -1,0 +1,44 @@
+{
+    "head": {
+      "title": "Bloquear usuario"
+    },
+    "errorsss": {
+      "missingFields": "Por favor, complete todos los campos requeridos."
+    },
+    "form": {
+      "reasonLabel": "Motivo del bloqueo",
+      "selectReason": "Seleccione un motivo"
+    },
+    "formmm": {
+      "detailsLabel": "Detalles adicionales",
+      "detailsPlaceholder": "Escriba aquí los detalles del motivo..."
+    },
+    "formm": {
+      "blockDuration": "Duración del bloqueo",
+      "dateLabel": "Fecha límite",
+      "timeLabel": "Hora límite"
+    },
+    "reason": {
+      "abusiveBehavior": "Comportamiento abusivo",
+      "spam": "Spam",
+      "termsViolation": "Violación de las condiciones de uso",
+      "offensiveLanguage": "Lenguaje ofensivo",
+      "fraud": "Fraude",
+      "identityTheft": "Suplantación de identidad",
+      "inappropriateContent": "Contenido inapropiado",
+      "privacyViolation": "Violación de la privacidad",
+      "serviceDisruption": "Interrupción del servicio",
+      "suspiciousActivity": "Actividad sospechosa",
+      "other": "Otro"
+    },
+    "actions": {
+      "close": "Cerrar"
+    },
+    "actionse": {
+      "cancel": "Cancelar"
+    },
+    "actionnn": {
+      "confirmBlock": "Confirmar bloqueo"
+    }
+  }
+  

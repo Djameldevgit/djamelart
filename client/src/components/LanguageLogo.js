@@ -6,7 +6,7 @@ const LanguageLogo = () => {
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
-    
+    const { t } = useTranslation('components/administration/users');
     // Actualizar dirección del documento para RTL/LTR
     if (lng === 'ar' || lng === 'kab') {
       document.documentElement.dir = 'rtl';

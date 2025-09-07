@@ -9,10 +9,12 @@ import { imageShow, videoShow } from '../../utils/mediaShow'
 import { imageUpload } from '../../utils/imageUpload'
 import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '../../redux/actions/messageAction'
 import LoadIcon from '../../images/loading.gif'
+ import { useTranslation } from 'react-i18next';
 
 const RightSide = () => {
-    const { auth, message, theme, socket } = useSelector(state => state)
+    const { auth, message, theme, socket, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
+    const { t, i18n } = useTranslation('chat')
 
     const { id } = useParams()
     const [user, setUser] = useState([])
@@ -28,33 +30,39 @@ const RightSide = () => {
     const [result, setResult] = useState(9)
     const [page, setPage] = useState(0)
     const [isLoadMore, setIsLoadMore] = useState(0)
-
+   
     const history = useHistory()
 
-    // 🔥 Validación en tiempo real del texto
+    // 🔥 Cambiar idioma activamente
+    const lang = languageReducer.language || 'es'
+    useEffect(() => {
+        if (i18n.language !== lang) {
+            i18n.changeLanguage(lang)
+        }
+    }, [lang, i18n])
+
+    // 🔥 Validación en tiempo real del texto (internacionalizada)
     useEffect(() => {
         const validateText = () => {
             if (text.length > 1000) {
-                return "Máximo 1000 caracteres permitidos";
+                return t('chat.maxChars')
             }
             
-            // Validar caracteres permitidos
             const allowedRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-.,!?()'"@#$%&*+=:;/\\\n\r\t¿¡€£¥©®—–•§¶\p{Emoji}]*$/u;
             if (text && !allowedRegex.test(text)) {
-                return "Caracteres no permitidos detectados";
+                return t('chat.invalidChars')
             }
             
-            // Validar proporción de caracteres especiales
             const specialCharsCount = (text.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?€£¥©®—–•§¶]/g) || []).length;
             if (specialCharsCount > text.length * 0.4) {
-                return "Demasiados caracteres especiales";
+                return t('chat.tooManySpecial')
             }
             
-            return "";
-        };
+            return ""
+        }
         
-        setTextError(validateText());
-    }, [text]);
+        setTextError(validateText())
+    }, [text, t])
 
     // 🔥 Función de sanitización de texto
     const sanitizeText = (input) => {
@@ -90,44 +98,42 @@ const RightSide = () => {
         let err = ""
         let newMedia = []
     
-        // 🔥 Determinar límite según el rol del usuario
-        const isSuperUser = auth.user?.role === "Super-utilisateur";
-        const isAdmin = auth.user?.role === "admin";
+        const isSuperUser = auth.user?.role === "Super-utilisateur"
+        const isAdmin = auth.user?.role === "admin"
         
-        const maxMedia = (isSuperUser || isAdmin) ? 4 : 0;
-        const totalAfterUpload = media.length + files.length;
+        const maxMedia = (isSuperUser || isAdmin) ? 4 : 0
+        const totalAfterUpload = media.length + files.length
     
         if (totalAfterUpload > maxMedia) {
-            err = `Máximo ${maxMedia} archivos permitidos. ${maxMedia === 4 ? 
-                   "Super-usuarios y Admins pueden subir hasta 4 archivos." : ""}`;
+            err = t('chat.maxFiles', { 
+                max: maxMedia,
+                extraInfo: maxMedia === 4 ? t('chat.superAdminInfo') : ""
+            })
             dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
-            return;
+            return
         }
     
         files.forEach(file => {
             if (!file) {
-                err = "El archivo no existe.";
-                return;
+                err = t('chat.fileNotFound')
+                return
             }
     
-            // 🔥 Validar tipo de archivo - SOLO IMAGENES
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
             if (!allowedTypes.includes(file.type)) {
-                err = "Solo se permiten archivos de imagen (JPEG, JPG, PNG, GIF).";
-                return;
+                err = t('chat.onlyImages')
+                return
             }
     
-            // Validar tamaño
             if (file.size > 1024 * 1024 * 5) {
-                err = "La imagen no puede ser mayor a 5MB.";
-                return;
+                err = t('chat.fileTooLarge')
+                return
             }
 
-            // 🔥 Validar nombre de archivo
-            const isValidFileName = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name);
+            const isValidFileName = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name)
             if (!isValidFileName) {
-                err = `El nombre "${file.name}" contiene caracteres no permitidos.`;
-                return;
+                err = t('chat.invalidFileName', { fileName: file.name })
+                return
             }
     
             newMedia.push(file)
@@ -230,96 +236,95 @@ const RightSide = () => {
     };
 
     return (
-        <div style={{marginTop:110}}>
+        <div style={{
+            marginTop: 110, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            height: 'calc(100vh - 170px)',
+            direction: lang === 'ar' ? 'rtl' : 'ltr'
+        }}>
             <div className="message_header" style={{ cursor: 'pointer' }} >
-                {
-                    user.length !== 0 &&
+                {user.length !== 0 &&
                     <UserCard user={user}>
                         <div>
-                        <i className="fas fa-arrow-left mr-3" onClick={handleGoBack} />
-                            <i className="fas fa-trash text-danger"
-                                onClick={handleDeleteConversation} />
+                            <i className="fas fa-arrow-left mr-3" onClick={handleGoBack} />
+                            <i className="fas fa-trash text-danger" onClick={handleDeleteConversation} />
                         </div>
                     </UserCard>
                 }
             </div>
 
-            <div className="chat_container"
-                style={{ height: media.length > 0 ? 'calc(100% - 180px)' : '' }} >
+            <div className="chat_container" style={{ flex: 1, overflowY: 'auto' }}>
                 <div className="chat_display" ref={refDisplay}>
                     <button style={{ marginTop: '-25px', opacity: 0 }} ref={pageEnd}>
-                        Load more
+                        {t('chat.loadMore')}
                     </button>
 
-                    {
-                        data.map((msg, index) => (
-                            <div key={index}>
-                                {
-                                    msg.sender !== auth.user._id &&
-                                    <div className="chat_row other_message">
-                                        <MsgDisplay user={user} msg={msg} theme={theme} />
-                                    </div>
-                                }
+                    {data.map((msg, index) => (
+                        <div key={index}>
+                            {msg.sender !== auth.user._id &&
+                                <div className="chat_row other_message">
+                                    <MsgDisplay user={user} msg={msg} theme={theme} />
+                                </div>
+                            }
+                            {msg.sender === auth.user._id &&
+                                <div className="chat_row you_message">
+                                    <MsgDisplay user={auth.user} msg={msg} theme={theme} data={data} />
+                                </div>
+                            }
+                        </div>
+                    ))}
 
-                                {
-                                    msg.sender === auth.user._id &&
-                                    <div className="chat_row you_message">
-                                        <MsgDisplay user={auth.user} msg={msg} theme={theme} data={data} />
-                                    </div>
-                                }
-                            </div>
-                        ))
-                    }
-
-                    {
-                        loadMedia &&
+                    {loadMedia &&
                         <div className="chat_row you_message">
-                            <img src={LoadIcon} alt="loading" />
+                            <img src={LoadIcon} alt={t('chat.loading')} />
                         </div>
                     }
-
                 </div>
             </div>
 
-            <div className="show_media" style={{ display: media.length > 0 ? 'grid' : 'none' }} >
-                {
-                    media.map((item, index) => (
-                        <div key={index} id="file_media">
-                            {
-                                item.type.match(/video/i)
-                                    ? videoShow(URL.createObjectURL(item), theme)
-                                    : imageShow(URL.createObjectURL(item), theme)
-                            }
-                            <span onClick={() => handleDeleteMedia(index)} >&times;</span>
-                        </div>
-                    ))
-                }
+            <div className="show_media" style={{ display: media.length > 0 ? 'grid' : 'none' }}>
+                {media.map((item, index) => (
+                    <div key={index} id="file_media">
+                        {item.type.match(/video/i)
+                            ? videoShow(URL.createObjectURL(item), theme)
+                            : imageShow(URL.createObjectURL(item), theme)
+                        }
+                        <span onClick={() => handleDeleteMedia(index)}>&times;</span>
+                    </div>
+                ))}
             </div>
 
-            <form className="chat_input" onSubmit={handleSubmit} >
+            <form className="chat_input" onSubmit={handleSubmit} style={{
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 15px'
+            }}>
                 <input 
                     type="text" 
-                    placeholder="Escribe tu mensaje..."
+                    placeholder={t('chat.placeholder')}
                     value={text} 
-                    onChange={handleTextChange} // 🔥 Función mejorada
+                    onChange={handleTextChange}
                     style={{
                         filter: theme ? 'invert(1)' : 'invert(0)',
                         background: theme ? '#040404' : '',
                         color: theme ? 'white' : '',
-                        border: textError ? '1px solid #dc3545' : ''
+                        border: textError ? '1px solid #dc3545' : '',
+                        direction: lang === 'ar' ? 'rtl' : 'ltr'
                     }} 
                 />
 
-                {/* 🔥 Contador de caracteres */}
                 {text.length > 0 && (
                     <div className="small text-muted" style={{ 
                         position: 'absolute', 
                         bottom: '-20px', 
-                        right: '10px',
+                        right: lang === 'ar' ? 'auto' : '10px',
+                        left: lang === 'ar' ? '10px' : 'auto',
                         fontSize: '10px',
                         color: text.length > 900 ? '#dc3545' : '#6c757d'
                     }}>
-                        {text.length}/1000
+                        {t('chat.charCount', { count: text.length })}
                     </div>
                 )}
 
@@ -344,15 +349,15 @@ const RightSide = () => {
                     className="material-icons"
                     disabled={(text.trim() || media.length > 0) && !textError ? false : true}
                     style={{ opacity: (text.trim() || media.length > 0) && !textError ? 1 : 0.5 }}
+                    title={t('chat.send')}
                 >
                     near_me
                 </button>
             </form>
 
-            {/* 🔥 Mensaje de error del texto */}
             {textError && (
                 <div className="small text-danger mt-1" style={{ padding: '0 10px' }}>
-                    ⚠️ {textError}
+                    {t('chat.validationError', { error: textError })}
                 </div>
             )}
         </div>

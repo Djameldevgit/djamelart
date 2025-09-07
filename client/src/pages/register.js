@@ -10,8 +10,9 @@ const Register = () => {
     const { auth, alert, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
     const history = useHistory()
-    const { t } = useTranslation('auth')
-    const lang = languageReducer?.language || 'en'
+    const { t, i18n } = useTranslation('auth');
+  const lang = languageReducer.language || 'es';
+  if (i18n.language !== lang) i18n.changeLanguage(lang);
 
     const initialState = {
         username: '', email: '', password: '', cf_password: ''
@@ -54,7 +55,7 @@ const Register = () => {
 
 
     return (
-        <div className={`auth_page ${lang === "ar" ? "rtl" : ""}`}>
+        <div style={{ marginTop: 110 }} className={`auth_page ${lang === "ar" ? "rtl" : ""}`}>
             <form onSubmit={handleSubmit}>
                 <h3 className="text-uppercase text-center mb-4">{t('nameregister', { lng: lang })}</h3>
 

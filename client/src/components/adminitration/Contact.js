@@ -11,7 +11,7 @@ const Contact = () => {
   const [feedback, setFeedback] = useState(null);
 
   const { auth, languageReducer } = useSelector(state => state);
-  const { t, i18n } = useTranslation('aplicacion');
+  const { t, i18n } = useTranslation('contact');
 
   // Cambiar el idioma activamente si es diferente
   const lang = languageReducer.language || 'es';

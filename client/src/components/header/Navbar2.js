@@ -6,20 +6,29 @@ import { useTranslation } from 'react-i18next'
 import { Link, useHistory } from 'react-router-dom'
 import Avatar from '../Avatar'
 import Card from 'react-bootstrap/Card'
-import { FaBars, FaSignOutAlt, FaUserCircle, FaSignInAlt, FaUserPlus } from 'react-icons/fa'
+import {
+  FaPlus,
+  FaEnvelope,
+  FaInfoCircle,
+  FaComments,
+  FaTools,
+  FaShieldAlt,
+  FaBlog,
+  FaUsers,
+  FaClipboardList,
+  FaUserCog,
+  FaUserSlash,
+  FaFlag,
+  FaBan,
+  FaShoppingCart
+} from 'react-icons/fa';
+
+import { FaBars, FaSignOutAlt, FaUserCircle, FaSignInAlt, FaUserPlus, FaSearch, FaBell } from 'react-icons/fa'
 import { Navbar, Container, NavDropdown, Offcanvas, Button, Badge } from 'react-bootstrap'
 import { BsCartFill } from 'react-icons/bs'
 import NotifyModal from '../NotifyModal'
-
-import { FaBell } from 'react-icons/fa';
-
 import LanguageSelectorpc from '../LanguageSelectorpc'
-
-import { FaSearch } from 'react-icons/fa'
-
 import ActivateButton from '../../auth/ActivateButton'
-
-
 import VerifyModal from '../authAndVerify/VerifyModal';
 import Acordion from '../Acordion';
 import Modalsearchhome from './Modalsearchhome';
@@ -29,8 +38,10 @@ const Navbar2 = ({ onFiltersChange }) => {
   const { auth, theme, cart, notify } = useSelector((state) => state)
   const dispatch = useDispatch()
   const { languageReducer } = useSelector(state => state)
-  const { t } = useTranslation(['searchhome'])
-  const lang = languageReducer.language || 'en'
+  const { t, i18n } = useTranslation('navbar');  
+  const lang = languageReducer.language || 'es';
+  if (i18n.language !== lang) i18n.changeLanguage(lang);
+
   const [showDrawer, setShowDrawer] = useState(false)
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const totalItems = cart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
@@ -47,20 +58,15 @@ const Navbar2 = ({ onFiltersChange }) => {
   const handleCloseDrawer = () => setShowDrawer(false)
   const handleShowDrawer = () => setShowDrawer(true)
 
-
   const history = useHistory();
-
-
   const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
-
-
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
+  
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 700);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -72,21 +78,16 @@ const Navbar2 = ({ onFiltersChange }) => {
     maxPrice: '',
   });
 
-
-  // Añade estas funciones
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-
-
-  // Navbar2.js
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     const newFilters = { ...filters, [name]: value };
     setFilters(newFilters);
-    // Notificar al componente padre sobre el cambio
-    if (onFiltersChange) onFiltersChange(newFilters);  // Esta línea es crucial
+    if (onFiltersChange) onFiltersChange(newFilters);
   };
+  
   const resetFilters = () => {
     const newFilters = {
       category: '',
@@ -97,32 +98,30 @@ const Navbar2 = ({ onFiltersChange }) => {
       maxPrice: '',
     };
     setFilters(newFilters);
-    // Notificar al componente padre sobre el reset
     if (onFiltersChange) onFiltersChange(newFilters);
   };
 
   const canProceed = () => {
     if (!auth.token || !auth.user) {
-      closeModal(); // Cierra el modal de búsqueda primero
-      setShowModal(true); // Mostrar modal de "Conéctate o regístrate"
+      closeModal();
+      setShowModal(true);
       return false;
     }
 
     if (!auth.user.isVerified) {
-      closeModal(); // Cierra el modal de búsqueda primero
+      closeModal();
       setShowVerifyModal(true);
       return false;
     }
 
     if (auth.user.isActive === false) {
-      closeModal(); // Cierra el modal de búsqueda primero
+      closeModal();
       setShowDeactivatedModal(true);
       return false;
     }
 
     return true;
   };
-
 
   return (
     <div>
@@ -131,7 +130,6 @@ const Navbar2 = ({ onFiltersChange }) => {
         className="bg-body-tertiary fixed-top"
         style={{
           zIndex: 1030,
-          // 🔥 MARGEN CONDICIONAL: Solo en móviles
           marginTop: isMobile ? '55px' : '0'
         }}
       >
@@ -141,9 +139,8 @@ const Navbar2 = ({ onFiltersChange }) => {
               {showDrawer ? '✖' : <FaBars size={20} />}
             </Button>
 
-
             <Navbar.Brand href="/" className="py-2 d-none d-lg-block  ">
-              <Card.Title>{t('navbar:appName')} </Card.Title>
+              <Card.Title>{t('appName')} </Card.Title>
             </Navbar.Brand>
           </div>
 
@@ -152,22 +149,18 @@ const Navbar2 = ({ onFiltersChange }) => {
               <LanguageSelectorpc />
             </div>
 
-
-
-
-
             <FaSearch
               size={18}
               className="text-secondary cursor-pointer mr-2"
-
               onClick={openModal}
-              title={t('navbar:search')}
+              title={t('search')}
               style={{ cursor: 'pointer' }}
             />
 
             {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") &&
               <i className='fas fa-plus' onClick={openStatusModal}> </i>
             }
+            
             <NavDropdown
               align="end"
               title={
@@ -189,16 +182,13 @@ const Navbar2 = ({ onFiltersChange }) => {
               drop="down"
               className="notification-dropdown"
             >
-              <NavDropdown.Header className="fw-bold">🔔 Notificaciones</NavDropdown.Header>
+              <NavDropdown.Header className="fw-bold">🔔 {t('notifications')}</NavDropdown.Header>
               <NavDropdown.Divider />
 
-              {/* 🔥 CONTENEDOR AJUSTADO PARA MÓVILES */}
               <div style={{
-
                 overflowY: 'auto',
                 padding: '0',
                 position: 'auto',
-
               }}>
                 <NotifyModal />
               </div>
@@ -228,111 +218,133 @@ const Navbar2 = ({ onFiltersChange }) => {
               }
               id="nav-user-dropdown"
               className="custom-dropdown"
-              key={`nav-role-${auth.user?.role}`} // Doble clave de seguridad
-
+              key={`nav-role-${auth.user?.role}`}
             >
               <div className="dropdown-scroll-wrapper">
                 {auth.user ? (
                   <>
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span > <strong>{auth.user.username}</strong> </span> </NavDropdown.Header>
-                    <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span >Role: <strong>{auth.user.role}</strong> </span> </NavDropdown.Header>
+                    <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span >{t('role')}: <strong>{auth.user.role}</strong> </span> </NavDropdown.Header>
 
                     {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
-                      <NavDropdown.Item onClick={openStatusModal}>
-                        ➕ {t('navbar:addPost')}
-                      </NavDropdown.Item>
-                    )}
+  <NavDropdown.Item onClick={openStatusModal}>
+    <FaPlus className="me-2" />
+    {t('addPost')}
+  </NavDropdown.Item>
+)}
 
-                    <NavDropdown.Item as={Link} to="/contactt">
-                      📩 {t('navbar:contact')}
-                    </NavDropdown.Item>
+<NavDropdown.Item as={Link} to="/contactt">
+  <FaEnvelope className="me-2" />
+  {t('contact')}
+</NavDropdown.Item>
 
-                    <NavDropdown.Item as={Link} to="/bloginfo">
-                      ℹ️ {t('navbar:appInfo')}
-                    </NavDropdown.Item>
+<NavDropdown.Item as={Link} to="/bloginfo">
+  <FaInfoCircle className="me-2" />
+  {t('appInfo')}
+</NavDropdown.Item>
 
-                    <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
-                      <FaUserCircle className="me-2" />
-                      {t('navbar:profile')}
-                    </NavDropdown.Item>
+<NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
+  <FaUserCircle className="me-2" />
+  {t('profile')}
+</NavDropdown.Item>
 
-                    <NavDropdown.Item as={Link} to="/message">
-                      💬 {t('navbar:conversations')}
-                    </NavDropdown.Item>
+<NavDropdown.Item as={Link} to="/message">
+  <FaComments className="me-2" />
+  {t('conversations')}
+</NavDropdown.Item>
 
-                    <NavDropdown.Item as={Link} to="/roles">
-                      🛠️ {t('navbar:roles')}
-                    </NavDropdown.Item>
+<NavDropdown.Item as={Link} to="/roles">
+  <FaTools className="me-2" />
+  {t('roles')}
+</NavDropdown.Item>
 
-                    {/* Sección de Admin - Actualiza en tiempo real */}
-                    {auth.user?.role === "admin" && (
-                      <>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Header>🛡️ {t('navbar:panelAministrativo')}</NavDropdown.Header>
+{auth.user?.role === "admin" && (
+  <>
+    <NavDropdown.Divider />
+    <NavDropdown.Header>
+      <FaShieldAlt className="me-2" />
+      {t('adminPanel')}
+    </NavDropdown.Header>
 
-                        <NavDropdown.Item as={Link} to="/blog"> blog</NavDropdown.Item>
+    <NavDropdown.Item as={Link} to="/blog">
+      <FaBlog className="me-2" />
+      {t('blog')}
+    </NavDropdown.Item>
 
-
-
-                        <NavDropdown.Item as={Link} to="/message">
-                          💼 {t('navbar:chatear con los administradores')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/mails">
-                          {t('navbar:adminSendEmail')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/users">
-                          {t('navbar:users')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/postspendientes">
-                          {t('navbar:pendingPosts')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/usersactionn">
-                          {t('navbar:userActions')}
-                        </NavDropdown.Item>
-                        
-                        <NavDropdown.Item as={Link} to="/listuserbloque">
-                          listuserbloque
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/reportuser">
-                          {t('navbar:userReports')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/bloqueos">
-                          {t('navbar:blockedUsers')}
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/cart/orderss">
-                          {t('navbar:orders')}
-                        </NavDropdown.Item>
-                      </>
-                    )}
+    <NavDropdown.Item as={Link} to="/message">
+      <FaComments className="me-2" />
+      {t('chatWithAdmins')}
+    </NavDropdown.Item>
+    
+    <NavDropdown.Item as={Link} to="/mails">
+      <FaEnvelope className="me-2" />
+      {t('adminSendEmail')}
+    </NavDropdown.Item>
+    
+    <NavDropdown.Item as={Link} to="/users">
+      <FaUsers className="me-2" />
+      {t('users')}
+    </NavDropdown.Item>
+    
+    <NavDropdown.Item as={Link} to="/postspendientes">
+      <FaClipboardList className="me-2" />
+      {t('pendingPosts')}
+    </NavDropdown.Item>
+    
+    <NavDropdown.Item as={Link} to="/usersactionn">
+      <FaUserCog className="me-2" />
+      {t('userActions')}
+    </NavDropdown.Item>
+    
+    <NavDropdown.Item as={Link} to="/listuserbloque">
+      <FaUserSlash className="me-2" />
+      {t('blockedUsersList')}
+    </NavDropdown.Item>
+    
+    <NavDropdown.Item as={Link} to="/reportuser">
+      <FaFlag className="me-2" />
+      {t('userReports')}
+    </NavDropdown.Item>
+    
+    <NavDropdown.Item as={Link} to="/bloqueos">
+      <FaBan className="me-2" />
+      {t('blockedUsers')}
+    </NavDropdown.Item>
+    
+    <NavDropdown.Item as={Link} to="/cart/orderss">
+      <FaShoppingCart className="me-2" />
+      {t('orders')}
+    </NavDropdown.Item>
+  </>
+)}
 
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={toggleTheme}>
-                      {theme ? '🌞 ' + t('navbar:lightMode') : '🌙 ' + t('navbar:darkMode')}
+                      {theme ? '🌞 ' + t('lightMode') : '🌙 ' + t('darkMode')}
                     </NavDropdown.Item>
 
                     <NavDropdown.Item onClick={handleLogout}>
                       <FaSignOutAlt className="me-1 text-danger" />
-                      {t('navbar:logout')}
+                      {t('logout')}
                     </NavDropdown.Item>
                   </>
                 ) : (
                   <>
                     <NavDropdown.Item as={Link} to="/login">
                       <FaSignInAlt className="me-2 text-success" />
-                      {t('navbar:login')}
+                      {t('login')}
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/register">
                       <FaUserPlus className="me-2 text-success" />
-                      {t('navbar:register')}
+                      {t('register')}
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/bloginfo">
-                      ℹ️ {t('navbar:appInfo')}
+                      ℹ️ {t('appInfo')}
                     </NavDropdown.Item>
                   </>
                 )}
               </div>
             </NavDropdown>
-
           </div>
         </Container>
       </Navbar>
@@ -344,7 +356,7 @@ const Navbar2 = ({ onFiltersChange }) => {
         style={{ top: '56px', height: 'calc(100vh - 56px)', width: '270px' }}
       >
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t('navbar:menu')}</Offcanvas.Title>
+          <Offcanvas.Title>{t('menu')}</Offcanvas.Title>
         </Offcanvas.Header>
 
         <Offcanvas.Body style={{ overflowY: 'auto', padding: '0.5rem' }}>
@@ -352,20 +364,20 @@ const Navbar2 = ({ onFiltersChange }) => {
             {!auth.user ? (
               <div className="text-center">
                 <Link to="/login" onClick={handleCloseDrawer} className="btn btn-outline-primary w-100 mb-2">
-                  <FaSignInAlt className="me-2" /> {t('navbar:login')}
+                  <FaSignInAlt className="me-2" /> {t('login')}
                 </Link>
                 <Link to="/register" onClick={handleCloseDrawer} className="btn btn-outline-secondary w-100">
-                  <FaUserPlus className="me-2" /> {t('navbar:register')}
+                  <FaUserPlus className="me-2" /> {t('register')}
                 </Link>
               </div>
             ) : (
               <div className="">
                 <h6 className="text-center mb-3">{auth.user.username}</h6>
                 <Link to={`/profile/${auth.user._id}`} onClick={handleCloseDrawer} className="btn btn-outline-success w-100 my-2">
-                  <FaUserCircle className="me-2" /> {t('navbar:profile')}
+                  <FaUserCircle className="me-2" /> {t('profile')}
                 </Link>
                 <Button variant="outline-danger" onClick={handleLogout} className="w-100">
-                  <FaSignOutAlt className="me-2" /> {t('navbar:logout')}
+                  <FaSignOutAlt className="me-2" /> {t('logout')}
                 </Button>
               </div>
             )}
@@ -383,7 +395,7 @@ const Navbar2 = ({ onFiltersChange }) => {
         }}>
 
         <div className="filter-group">
-          <h5 className='mx-auto'>{t('busqueda_de_obras_arte', { lng: lang })}</h5>
+          <h5 className='mx-auto'>{t('artworkSearch')}</h5>
         </div>
 
         <div style={{
@@ -394,16 +406,14 @@ const Navbar2 = ({ onFiltersChange }) => {
             <input
               type="text"
               name="search"
-              placeholder={t('seleccione_titulo_busqueda', { lng: lang })}
+              placeholder={t('searchTitlePlaceholder')}
               onChange={handleFilterChange}
               value={filters.search}
-
             />
           </div>
 
           <div className="modalcontentsearch">
             <div className="titlebusqueda">
-
               <button
                 className="modalclosesearch"
                 onClick={() => {
@@ -427,7 +437,6 @@ const Navbar2 = ({ onFiltersChange }) => {
               </button>
             </div>
             <div className="titlebusqueda">
-
               <Button
                 variant="link"
                 onClick={() => {
@@ -438,15 +447,12 @@ const Navbar2 = ({ onFiltersChange }) => {
                 className="p-0 text-decoration-none"
               >
                 {showAdvancedSearch ?
-                  t('hide_advanced_search', { lng: lang }) :
-                  t('show_advanced_search', { lng: lang })}
+                  t('hideAdvancedSearch') :
+                  t('showAdvancedSearch')}
               </Button>
             </div>
             {showAdvancedSearch && (
               <div className="filters-container">
-
-
-
                 <div className="filter-group">
                   <select
                     name="category"
@@ -454,15 +460,15 @@ const Navbar2 = ({ onFiltersChange }) => {
                     onChange={handleFilterChange}
                     required
                   >
-                    <option value="">{t('select_category', { lng: lang })}</option>
-                    <option value="painting">{t('category.painting', { lng: lang })}</option>
-                    <option value="sculpture">{t('category.sculpture', { lng: lang })}</option>
-                    <option value="photography">{t('category.photography', { lng: lang })}</option>
-                    <option value="drawing">{t('category.drawing', { lng: lang })}</option>
-                    <option value="engraving">{t('category.engraving', { lng: lang })}</option>
-                    <option value="digital_art">{t('category.digital_art', { lng: lang })}</option>
-                    <option value="collage">{t('category.collage', { lng: lang })}</option>
-                    <option value="textile_art">{t('category.textile_art', { lng: lang })}</option>
+                    <option value="">{t('selectCategory')}</option>
+                    <option value="painting">{t('categories.painting')}</option>
+                    <option value="sculpture">{t('categories.sculpture')}</option>
+                    <option value="photography">{t('categories.photography')}</option>
+                    <option value="drawing">{t('categories.drawing')}</option>
+                    <option value="engraving">{t('categories.engraving')}</option>
+                    <option value="digital_art">{t('categories.digital_art')}</option>
+                    <option value="collage">{t('categories.collage')}</option>
+                    <option value="textile_art">{t('categories.textile_art')}</option>
                   </select>
                 </div>
 
@@ -473,73 +479,65 @@ const Navbar2 = ({ onFiltersChange }) => {
                     onChange={handleFilterChange}
                     required
                   >
-                    <option value="">{t('select_theme', { lng: lang })}</option>
-
-                    {/* 🎨 أنماط */}
-                    <optgroup label={t('theme_groups.styles', { lng: lang })}>
-                      <option value="abstrait">{t('theme.abstrait', { lng: lang })}</option>
-                      <option value="colore">{t('theme.colore', { lng: lang })}</option>
-                      <option value="graffiti">{t('theme.graffiti', { lng: lang })}</option>
-                      <option value="geometrique">{t('theme.geometrique', { lng: lang })}</option>
-                      <option value="surrealisme">{t('theme.surrealisme', { lng: lang })}</option>
-                      <option value="conceptuel">{t('theme.conceptuel', { lng: lang })}</option>
-                      <option value="replica">{t('theme.replica', { lng: lang })}</option>
-                      <option value="reproduction">{t('theme.reproduction', { lng: lang })}</option>
+                    <option value="">{t('selectTheme')}</option>
+                    <optgroup label={t('themeGroups.styles')}>
+                      <option value="abstrait">{t('themes.abstrait')}</option>
+                      <option value="colore">{t('themes.colore')}</option>
+                      <option value="graffiti">{t('themes.graffiti')}</option>
+                      <option value="geometrique">{t('themes.geometrique')}</option>
+                      <option value="surrealisme">{t('themes.surrealisme')}</option>
+                      <option value="conceptuel">{t('themes.conceptuel')}</option>
+                      <option value="replica">{t('themes.replica')}</option>
+                      <option value="reproduction">{t('themes.reproduction')}</option>
                     </optgroup>
 
-                    {/* 🐾 حيوانات */}
-                    <optgroup label={t('theme_groups.animaux', { lng: lang })}>
-                      <option value="animal">{t('theme.animal', { lng: lang })}</option>
-                      <option value="chat">{t('theme.chat', { lng: lang })}</option>
-                      <option value="chien">{t('theme.chien', { lng: lang })}</option>
-                      <option value="cheval">{t('theme.cheval', { lng: lang })}</option>
-                      <option value="oiseau">{t('theme.oiseau', { lng: lang })}</option>
-                      <option value="poisson">{t('theme.poisson', { lng: lang })}</option>
+                    <optgroup label={t('themeGroups.animals')}>
+                      <option value="animal">{t('themes.animal')}</option>
+                      <option value="chat">{t('themes.chat')}</option>
+                      <option value="chien">{t('themes.chien')}</option>
+                      <option value="cheval">{t('themes.cheval')}</option>
+                      <option value="oiseau">{t('themes.oiseau')}</option>
+                      <option value="poisson">{t('themes.poisson')}</option>
                     </optgroup>
 
-                    {/* 🌳 طبيعة */}
-                    <optgroup label={t('theme_groups.nature', { lng: lang })}>
-                      <option value="paysage">{t('theme.paysage', { lng: lang })}</option>
-                      <option value="foret">{t('theme.foret', { lng: lang })}</option>
-                      <option value="montagne">{t('theme.montagne', { lng: lang })}</option>
-                      <option value="fleurs">{t('theme.fleurs', { lng: lang })}</option>
-                      <option value="mer">{t('theme.mer', { lng: lang })}</option>
-                      <option value="ciel">{t('theme.ciel', { lng: lang })}</option>
+                    <optgroup label={t('themeGroups.nature')}>
+                      <option value="paysage">{t('themes.paysage')}</option>
+                      <option value="foret">{t('themes.foret')}</option>
+                      <option value="montagne">{t('themes.montagne')}</option>
+                      <option value="fleurs">{t('themes.fleurs')}</option>
+                      <option value="mer">{t('themes.mer')}</option>
+                      <option value="ciel">{t('themes.ciel')}</option>
                     </optgroup>
 
-                    {/* 👤 إنسان */}
-                    <optgroup label={t('theme_groups.humain', { lng: lang })}>
-                      <option value="portrait">{t('theme.portrait', { lng: lang })}</option>
-                      <option value="corps_humain">{t('theme.corps_humain', { lng: lang })}</option>
-                      <option value="famille">{t('theme.famille', { lng: lang })}</option>
+                    <optgroup label={t('themeGroups.human')}>
+                      <option value="portrait">{t('themes.portrait')}</option>
+                      <option value="corps_humain">{t('themes.corps_humain')}</option>
+                      <option value="famille">{t('themes.famille')}</option>
                     </optgroup>
 
-                    {/* 🌍 ثقافة */}
-                    <optgroup label={t('theme_groups.culture', { lng: lang })}>
-                      <option value="culture_populaire">{t('theme.culture_populaire', { lng: lang })}</option>
-                      <option value="bandes_dessinees">{t('theme.bandes_dessinees', { lng: lang })}</option>
-                      <option value="cinema">{t('theme.cinema', { lng: lang })}</option>
-                      <option value="dessin_anime">{t('theme.dessin_anime', { lng: lang })}</option>
-                      <option value="jeu_video">{t('theme.jeu_video', { lng: lang })}</option>
-                      <option value="mode">{t('theme.mode', { lng: lang })}</option>
-                      <option value="mythologie">{t('theme.mythologie', { lng: lang })}</option>
-                      <option value="religion">{t('theme.religion', { lng: lang })}</option>
-                      <option value="histoire">{t('theme.histoire', { lng: lang })}</option>
+                    <optgroup label={t('themeGroups.culture')}>
+                      <option value="culture_populaire">{t('themes.culture_populaire')}</option>
+                      <option value="bandes_dessinees">{t('themes.bandes_dessinees')}</option>
+                      <option value="cinema">{t('themes.cinema')}</option>
+                      <option value="dessin_anime">{t('themes.dessin_anime')}</option>
+                      <option value="jeu_video">{t('themes.jeu_video')}</option>
+                      <option value="mode">{t('themes.mode')}</option>
+                      <option value="mythologie">{t('themes.mythologie')}</option>
+                      <option value="religion">{t('themes.religion')}</option>
+                      <option value="histoire">{t('themes.histoire')}</option>
                     </optgroup>
 
-                    {/* 🧠 خيال */}
-                    <optgroup label={t('theme_groups.imagination', { lng: lang })}>
-                      <option value="fantastique">{t('theme.fantastique', { lng: lang })}</option>
-                      <option value="science_fiction">{t('theme.science_fiction', { lng: lang })}</option>
-                      <option value="onirique">{t('theme.onirique', { lng: lang })}</option>
+                    <optgroup label={t('themeGroups.imagination')}>
+                      <option value="fantastique">{t('themes.fantastique')}</option>
+                      <option value="science_fiction">{t('themes.science_fiction')}</option>
+                      <option value="onirique">{t('themes.onirique')}</option>
                     </optgroup>
 
-                    {/* 🏙️ مجتمع */}
-                    <optgroup label={t('theme_groups.societe', { lng: lang })}>
-                      <option value="ville">{t('theme.ville', { lng: lang })}</option>
-                      <option value="architecture">{t('theme.architecture', { lng: lang })}</option>
-                      <option value="societe">{t('theme.societe', { lng: lang })}</option>
-                      <option value="technologie">{t('theme.technologie', { lng: lang })}</option>
+                    <optgroup label={t('themeGroups.society')}>
+                      <option value="ville">{t('themes.ville')}</option>
+                      <option value="architecture">{t('themes.architecture')}</option>
+                      <option value="societe">{t('themes.societe')}</option>
+                      <option value="technologie">{t('themes.technologie')}</option>
                     </optgroup>
                   </select>
                 </div>
@@ -551,59 +549,53 @@ const Navbar2 = ({ onFiltersChange }) => {
                     onChange={handleFilterChange}
                     required
                   >
-                    <option value="">{t('styles.select_style', { lng: lang })}</option>
-
-                    {/* Estilos Modernos */}
-                    <optgroup label={t('groups.modernes', { lng: lang })}>
-                      <option value="abstrait">{t('styles.abstrait', { lng: lang })}</option>
-                      <option value="impressionnisme">{t('styles.impressionnisme', { lng: lang })}</option>
-                      <option value="expressionnisme">{t('styles.expressionnisme', { lng: lang })}</option>
-                      <option value="cubisme">{t('styles.cubisme', { lng: lang })}</option>
-                      <option value="pop_art">{t('styles.pop_art', { lng: lang })}</option>
+                    <option value="">{t('selectStyle')}</option>
+                    <optgroup label={t('styleGroups.modern')}>
+                      <option value="abstrait">{t('styles.abstrait')}</option>
+                      <option value="impressionnisme">{t('styles.impressionnisme')}</option>
+                      <option value="expressionnisme">{t('styles.expressionnisme')}</option>
+                      <option value="cubisme">{t('styles.cubisme')}</option>
+                      <option value="pop_art">{t('styles.pop_art')}</option>
                     </optgroup>
 
-                    {/* Estilos Contemporáneos */}
-                    <optgroup label={t('groups.contemporains', { lng: lang })}>
-                      <option value="art_conceptuel">{t('styles.art_conceptuel', { lng: lang })}</option>
-                      <option value="street_art">{t('styles.street_art', { lng: lang })}</option>
-                      <option value="pixel_art">{t('styles.pixel_art', { lng: lang })}</option>
-                      <option value="nft">{t('styles.nft', { lng: lang })}</option>
-                      <option value="generatif">{t('styles.generatif', { lng: lang })}</option>
+                    <optgroup label={t('styleGroups.contemporary')}>
+                      <option value="art_conceptuel">{t('styles.art_conceptuel')}</option>
+                      <option value="street_art">{t('styles.street_art')}</option>
+                      <option value="pixel_art">{t('styles.pixel_art')}</option>
+                      <option value="nft">{t('styles.nft')}</option>
+                      <option value="generatif">{t('styles.generatif')}</option>
                     </optgroup>
 
-                    {/* Estilos Clásicos y Tradicionales */}
-                    <optgroup label={t('groups.classique_traditionnel', { lng: lang })}>
-                      <option value="figuratif">{t('styles.figuratif', { lng: lang })}</option>
-                      <option value="classicisme">{t('styles.classicisme', { lng: lang })}</option>
-                      <option value="baroque">{t('styles.baroque', { lng: lang })}</option>
-                      <option value="croquis">{t('styles.croquis', { lng: lang })}</option>
+                    <optgroup label={t('styleGroups.classic_traditional')}>
+                      <option value="figuratif">{t('styles.figuratif')}</option>
+                      <option value="classicisme">{t('styles.classicisme')}</option>
+                      <option value="baroque">{t('styles.baroque')}</option>
+                      <option value="croquis">{t('styles.croquis')}</option>
                     </optgroup>
 
-                    {/* Otros Estilos */}
-                    <optgroup label={t('groups.autres_styles', { lng: lang })}>
-                      <option value="documentaire">{t('styles.documentaire', { lng: lang })}</option>
-                      <option value="noir_et_blanc">{t('styles.noir_et_blanc', { lng: lang })}</option>
-                      <option value="tissagee">{t('textile_arttt.tissagee', { lng: lang })}</option>
-                      <option value="mixte">{t('styles.mixte', { lng: lang })}</option>
+                    <optgroup label={t('styleGroups.other_styles')}>
+                      <option value="documentaire">{t('styles.documentaire')}</option>
+                      <option value="noir_et_blanc">{t('styles.noir_et_blanc')}</option>
+                      <option value="tissagee">{t('textile_arttt.tissagee')}</option>
+                      <option value="mixte">{t('styles.mixte')}</option>
                     </optgroup>
                   </select>
                 </div>
 
-
                 <div className="filter-group">
-                  <small>{t('min_price', { lng: lang })}</small>
+                  <small>{t('minPrice')}</small>
                   <input
                     type="number"
                     name="minPrice"
-                    placeholder={t('min_price_placeholder', { lng: lang })}
+                    placeholder={t('minPricePlaceholder')}
                     onChange={handleFilterChange}
                     value={filters.minPrice}
                   />
-                  <small>{t('max_price', { lng: lang })}</small>
+                  <small>{t('maxPrice')}</small>
                   <input
                     type="number"
                     name="maxPrice"
-                    placeholder={t('max_price_placeholder', { lng: lang })}
+                    placeholder={t('maxPricePlaceholder')}
                     onChange={handleFilterChange}
                     value={filters.maxPrice}
                   />
@@ -611,22 +603,17 @@ const Navbar2 = ({ onFiltersChange }) => {
 
                 <div className="filter-group" style={{ gridColumn: '1 / -1' }}>
                   <button onClick={resetFilters} className="reset-button">
-                    {t('reset_filters', { lng: lang })}
+                    {t('resetFilters')}
                   </button>
                 </div>
               </div>)}
           </div>
-
         </div>
-
-
       </Modalsearchhome>
-
 
       {showModal && (
         <div className="modal">
           <div className="modal-content" style={{ position: 'relative' }}>
-            {/* Botón de cierre arriba derecha */}
             <button
               onClick={() => setShowModal(false)}
               style={{
@@ -646,26 +633,26 @@ const Navbar2 = ({ onFiltersChange }) => {
               ×
             </button>
 
-            <h4>{t("title2", { lng: languageReducer.language })}</h4>
-            <p>{t("message2", { lng: languageReducer.language })}</p>
+            <h4>{t("connectRequired")}</h4>
+            <p>{t("connectMessage")}</p>
 
             <div className="modal-buttons">
               <button onClick={() => {
-                setShowModal(false); // Cierra el modal primero
-                setTimeout(() => history.push("/login"), 200); // Pequeño delay para mejor UX
+                setShowModal(false);
+                setTimeout(() => history.push("/login"), 200);
               }}>
-                {t("login2", { lng: languageReducer.language })}
+                {t("login")}
               </button>
 
               <button onClick={() => {
-                setShowModal(false); // Cierra el modal primero
+                setShowModal(false);
                 setTimeout(() => history.push("/register"), 200);
               }}>
-                {t("register2", { lng: languageReducer.language })}
+                {t("register")}
               </button>
 
               <button onClick={() => setShowModal(false)}>
-                {t("close2", { lng: languageReducer.language })}
+                {t("close")}
               </button>
             </div>
           </div>
@@ -676,25 +663,24 @@ const Navbar2 = ({ onFiltersChange }) => {
         show={showVerifyModal}
         onClose={() => {
           setShowVerifyModal(false);
-          closeModal(); // Asegura que el modal de búsqueda también se cierre
+          closeModal();
         }}
-        title={t('auth.verify_account', { lng: lang })}
-        message={t('auth.verify_required', { lng: lang })}
-        actionText={t('auth.resend_verification', { lng: lang })}
+        title={t('auth.verifyAccount')}
+        message={t('auth.verifyRequired')}
+        actionText={t('auth.resendVerification')}
         actionLink="/resend-verification"
         onActionSuccess={() => {
           setShowVerifyModal(false);
-          closeModal(); // Cierra ambos modales cuando la acción es exitosa
+          closeModal();
         }}
       />
 
-      {/* Modal para cuentas desactivadas */}
       <DesactivateModal
         show={showDeactivatedModal}
         onClose={() => setShowDeactivatedModal(false)}
-        title={t('auth.account_deactivated', { lng: lang })}
-        message={t('auth.contact_admin', { lng: lang })}
-        actionText={t('auth.contact_us', { lng: lang })}
+        title={t('auth.accountDeactivated')}
+        message={t('auth.contactAdmin')}
+        actionText={t('auth.contactUs')}
         actionLink="/contact"
       />
 
@@ -703,11 +689,11 @@ const Navbar2 = ({ onFiltersChange }) => {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header bg-primary text-white">
-                <h5 className="modal-title">🎉 ¡Felicidades! Rol de Administrador</h5>
+                <h5 className="modal-title">🎉 {t('adminCongratulations')}</h5>
               </div>
               <div className="modal-body">
-                <p>Ahora tienes permisos de administrador. ¿Deseas ir al panel de administración?</p>
-                <p className="text-muted small">Serás redirigido a: {ADMIN_CLIENT_URL}</p>
+                <p>{t('adminMessage')}</p>
+                <p className="text-muted small">{t('adminRedirect')}: {ADMIN_CLIENT_URL}</p>
               </div>
               <div className="modal-footer">
                 <button
@@ -715,7 +701,7 @@ const Navbar2 = ({ onFiltersChange }) => {
                   className="btn btn-secondary"
                   onClick={() => setShowAdminRedirectModal(false)}
                 >
-                  Permanecer aquí
+                  {t('stayHere')}
                 </button>
                 <button
                   type="button"
@@ -724,18 +710,13 @@ const Navbar2 = ({ onFiltersChange }) => {
                     window.location.href = ADMIN_CLIENT_URL;
                   }}
                 >
-                  Ir al Panel Admin
+                  {t('goToAdminPanel')}
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
-
-
-
-
-
     </div>
   )
 }

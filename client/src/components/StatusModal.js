@@ -51,7 +51,7 @@ const StatusModal = () => {
 
     const { auth, theme, socket, status, languageReducer } = useSelector((state) => state);
 
-    const { t } = useTranslation('categorias');
+    const { t } = useTranslation('statusmodal');
     const lang = languageReducer.language || 'en';
 
     const dispatch = useDispatch()
@@ -199,133 +199,117 @@ const StatusModal = () => {
 */
   
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-const validateImageDimensions = (file) => {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-        img.onload = () => {
-            const { width, height } = img;
-            // Validar dimensiones mínimas/máximas
-            if (width < 100 || height < 100) {
-                resolve("La imagen debe tener al menos 100x100 píxeles.");
-            } else if (width > 4000 || height > 4000) {
-                resolve("La imagen no puede exceder 4000x4000 píxeles.");
-            } else {
-                resolve(null);
-            }
-            URL.revokeObjectURL(img.src);
-        };
-        img.onerror = () => resolve("Error al cargar la imagen.");
-    });
-}
-const handleChangeImages = async e => {
-    const files = [...e.target.files];
-    let err = "";
-    let newImages = [];
 
-    // Límite según rol
-    const maxImages = auth.user?.role === "Super-utilisateur" ? 4 : 2;
-    const totalAfterUpload = images.length + files.length;
+const validateImageDimensions = (file, t, lang) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
 
-    if (totalAfterUpload > maxImages) {
-        err = `Máximo ${maxImages} imágenes permitidas. ${maxImages === 2 ? 
-               "Los super-usuarios pueden subir hasta 4 imágenes." : ""}`;
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
-        return;
-    }
+    img.onload = () => {
+      const { width, height } = img;
 
-    for (const file of files) {
-        if (!file) {
-            err = "El archivo no existe.";
-            break;
-        }
+      // Validar dimensiones mínimas/máximas con traducción
+      if (width < 100 || height < 100) {
+        resolve(t('errors.minDimensions', { width: 100, height: 100, lng: lang }));
+      } else if (width > 4000 || height > 4000) {
+        resolve(t('errors.maxDimensions', { width: 4000, height: 4000, lng: lang }));
+      } else {
+        resolve(null);
+      }
 
-        // Validar tipo
-        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-            err = "Solo se permiten archivos de imagen (JPEG, JPG, PNG, GIF).";
-            break;
-        }
+      URL.revokeObjectURL(img.src);
+    };
 
-        // Validar nombre
-        if (!/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name)) {
-            err = `El nombre "${file.name}" contiene caracteres no permitidos.`;
-            break;
-        }
-
-        // Validar tamaño
-        if (file.size > 5 * 1024 * 1024) {
-            err = "La imagen no puede ser mayor a 5MB.";
-            break;
-        }
-
-        // Validar dimensiones
-        const dimensionError = await validateImageDimensions(file);
-        if (dimensionError) {
-            err = dimensionError;
-            break;
-        }
-
-        // Evitar duplicados
-        if (images.some(img => img.name === file.name)) {
-            err = `La imagen "${file.name}" ya fue seleccionada.`;
-            break;
-        }
-
-        newImages.push(file);
-    }
-
-    if (err) {
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
-    } else {
-        setImages([...images, ...newImages]);
-    }
+    img.onerror = () => resolve(t('errors.imageLoad', { lng: lang }));
+  });
 };
 
+ 
+const handleChangeImages = async (e) => {
+    let err = '';
+    const files = [...e.target.files];
+    const maxImages = 2;
+  
+    const totalAfterUpload = images.length + files.length;
+    if (totalAfterUpload > maxImages) {
+      err = t('errors.maxImages', { count: maxImages, lng: lang });
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
+      return;
+    }
+  
+    for (const file of files) {
+      if (!file) {
+        err = t('errors.fileNotExist', { lng: lang });
+        break;
+      }
+  
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        err = t('errors.invalidFileType', { lng: lang });
+        break;
+      }
+  
+      if (!/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name)) {
+        err = t('errors.invalidFileName', { file: file.name, lng: lang });
+        break;
+      }
+  
+      if (file.size > 5 * 1024 * 1024) {
+        err = t('errors.maxFileSize', { lng: lang });
+        break;
+      }
+  
+      const dimensionError = await validateImageDimensions(file);
+      if (dimensionError) {
+        err = t('errors.invalidDimensions', { lng: lang });
+        break;
+      }
+  
+      if (images.some(img => img.name === file.name)) {
+        err = t('errors.duplicateFile', { file: file.name, lng: lang });
+        break;
+      }
+    }
+  
+    if (err) {
+      dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
+    } else {
+      setImages([...images, ...files]);
+    }
+  };
+  
     const handleSubmit = (e) => {
         e.preventDefault();
-        
-        // Validación de ubicación
+  
         if (!postData.category) {
-            return dispatch({
-                type: GLOBALTYPES.ALERT,
-                payload: { error: "Por favor selecciona una categoria." },
-            });
+          return dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: { error: t('errors.noCategory', { lng: lang }) },
+          });
         }
-    
-        // Validación de al menos una imagen
+      
         if (images.length === 0) {
-            return dispatch({
-                type: GLOBALTYPES.ALERT,
-                payload: { error: "Por favor agrega al menos una imagen." },
-            });
+          return dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: { error: t('errors.noImage', { lng: lang }) },
+          });
         }
-    
-        // 🔥 Validación de tipo de archivos (por si acaso)
-        const invalidFiles = images.some(file => {
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-            return !allowedTypes.includes(file.type);
-        });
-    
+      
         if (invalidFiles) {
-            return dispatch({
-                type: GLOBALTYPES.ALERT,
-                payload: { error: "Solo se permiten archivos de imagen (JPEG, JPG, PNG, GIF, WEBP)." },
-            });
+          return dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: { error: t('errors.invalidFileType', { lng: lang }) },
+          });
         }
-    
-        // 🔥 Validación final de límite de imágenes
-        const maxImages = auth.user?.role === "super-user" ? 4 : 2;
-        if (images.length > maxImages) {
-            return dispatch({
-                type: GLOBALTYPES.ALERT,
-                payload: { 
-                    error: `Máximo ${maxImages} imágenes permitidas. ${maxImages === 2 ? 
-                           "Los super-usuarios pueden subir hasta 4 imágenes." : ""}` 
-                },
-            });
+      
+        if (images.length > 2) {
+          return dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: { error: t('errors.maxImages', { count: 2, lng: lang }) },
+          });
         }
+       
     
-        // Ejecutar la acción correspondiente
+        
         if (status.onEdit) {
             dispatch(updatePost({ postData, images, auth, status }));
         } else {
@@ -631,11 +615,11 @@ const handleChangeImages = async e => {
         }
     };
     return (
-        <div className={`status_modal ${lang === 'ar' ? 'rtl' : ''}`}  >
+        <div className={`status_modal ${lang === 'ar' ? 'rtl' : ''}`}    >
 
 
 
-            <Form.Group className="status_form_scrollable">
+            <Form.Group className="status_form_scrollable" >
                 <Form onSubmit={handleSubmit}>
                     <div className="status_header">
                         <h3 className="m-0"> {t('titulostatusmoddal', { lng: lang })}</h3>
@@ -858,7 +842,7 @@ const handleChangeImages = async e => {
 
                         <div className="status_footer">
                             <button className="btn btn-secondary w-100" type="submit">
-                                Post
+                            {t('button.post')}
                             </button>
                         </div>
 

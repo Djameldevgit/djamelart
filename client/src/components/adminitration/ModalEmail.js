@@ -16,7 +16,7 @@ import { sendAdminEmail } from '../../redux/actions/authAction';
 const ModalEmail = ({ show, handleClose, recipients }) => {
   const { auth, alert, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
-  const { t } = useTranslation('modales');
+  const { t } = useTranslation('modalemail');
   const lang = languageReducer.language || 'es';
 
   const [subject, setSubject] = useState('');

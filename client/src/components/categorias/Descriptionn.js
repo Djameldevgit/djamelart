@@ -115,7 +115,7 @@ export function DescriptionInput({ handleChangeInput, postData }) {
 
   return (
     <div className='form-group'>
-      <Form.Group controlId="descriptionInput" className="mb-3">
+      <Form.Group controlId="descriptionInput" className="mb-3"style={{ padding:'50'}}>
         <label>{t('description1', { lng: lang })}</label>
         
         <Form.Control
@@ -166,13 +166,7 @@ export function DescriptionInput({ handleChangeInput, postData }) {
         {/* Sugerencias para una buena descripción */}
         {!localValue && (
           <div className="text-muted small mt-3">
-            <strong>💡 {t('sugerencias', { lng: lang }) || 'Sugerencias:'}</strong>
-            <ul className="mb-0 ps-3">
-              <li>{t('sugerencia1', { lng: lang }) || 'Describe los materiales utilizados'}</li>
-              <li>{t('sugerencia2', { lng: lang }) || 'Menciona la técnica artística'}</li>
-              <li>{t('sugerencia3', { lng: lang }) || 'Explica la inspiración o significado'}</li>
-              <li>{t('sugerencia4', { lng: lang }) || 'Incluye dimensiones y peso si aplica'}</li>
-            </ul>
+        
           </div>
         )}
       </Form.Group>

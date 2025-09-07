@@ -51,8 +51,9 @@ import BloqueModalUser from "./BloqueModalUser";
 const Users = () => {
   const { homeUsers, auth, socket, online, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
-  const { t } = useTranslation('aplicacion');
+  const { t, i18n } = useTranslation('users');
   const lang = languageReducer.language || 'es';
+  if (i18n.language !== lang) i18n.changeLanguage(lang);
   const [load, setLoad] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -229,7 +230,7 @@ const Users = () => {
   }
 
   return (
-    <Container fluid  style={{ marginTop: 150 }}>
+    <Container fluid style={{ marginTop: 150 }}>
       {/* Modal Confirmación Eliminar */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
@@ -272,16 +273,16 @@ const Users = () => {
                       {/* Información del usuario */}
                       <Row className="g-3 mb-3">
                         <Col xs={6}>
-                          <strong>{t('tableHeaderssss.status')}:</strong>
+                          <strong>{t('tableHeader.status')}:</strong>
                           <br />
                           {online.some((u) => u._id === user._id) ? (
-                            <Badge bg="success">{t('statu.online')}</Badge>
+                            <Badge bg="success">{t('status.online')}</Badge>
                           ) : user.lastDisconnectedAt ? (
                             <Badge bg="secondary">
-                              {t('statu.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
+                              {t('status.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
                             </Badge>
                           ) : (
-                            <Badge bg="secondary">{t('statu.offline')}</Badge>
+                            <Badge bg="secondary">{t('status.offline')}</Badge>
                           )}
                         </Col>
                         <Col xs={6}>
@@ -303,30 +304,30 @@ const Users = () => {
                           </span>
                         </Col>
                         <Col xs={6}>
-                          <strong>{t('tableHeaderssss.verification')}:</strong>
+                          <strong>{t('tableHeader.verification')}:</strong>
                           <br />
                           {user.isVerified ? (
-                            <Badge bg="success"><CheckCircleFill className="me-1" /> {t('statu.verified')}</Badge>
+                            <Badge bg="success"><CheckCircleFill className="me-1" /> {t('status.verified')}</Badge>
                           ) : (
-                            <Badge bg="danger"><XCircleFill className="me-1" /> {t('statu.notVerified')}</Badge>
+                            <Badge bg="danger"><XCircleFill className="me-1" /> {t('status.notVerified')}</Badge>
                           )}
                         </Col>
                         <Col xs={6}>
-                          <strong>{t('tableHeaderssss.accountStatus')}:</strong>
+                          <strong>{t('tableHeaders.accountStatus')}:</strong>
                           <br />
                           {user.isActive ? (
-                            <Badge bg="success">{t('statu.active')}</Badge>
+                            <Badge bg="success">{t('status.active')}</Badge>
                           ) : (
-                            <Badge bg="warning" text="dark">{t('statu.inactive')}</Badge>
+                            <Badge bg="warning" text="dark">{t('status.inactive')}</Badge>
                           )}
                         </Col>
                         <Col xs={6}>
-                          <strong>{t('tableHeaderssss.blockStatus')}:</strong>
+                          <strong>{t('tableHeaders.blockStatus')}:</strong>
                           <br />
                           {user.esBloqueado ? (
-                            <Badge bg="danger">{t('statu.blocked')}</Badge>
+                            <Badge bg="danger">{t('status.blocked')}</Badge>
                           ) : (
-                            <Badge bg="success">{t('statu.notBlocked')}</Badge>
+                            <Badge bg="success">{t('status.notBlocked')}</Badge>
                           )}
                         </Col>
                       </Row>
@@ -335,7 +336,7 @@ const Users = () => {
                       <Dropdown>
                         <Dropdown.Toggle variant="outline-primary" size="sm" className="w-100 mb-2">
                           <ThreeDotsVertical className="me-2" />
-                          {t('tableHeaderssss.actions')}
+                          {t('tableHeaders.actions')}
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="w-100">
                           <Dropdown.Item disabled>
@@ -389,14 +390,14 @@ const Users = () => {
                 <thead className="table-dark">
                   <tr>
                     <th>#</th>
-                    <th>{t('tableHeaderssss.user')}</th>
-                    <th>{t('tableHeaderssss.status')}</th>
-                    <th>{t('tableHeaderssss.lastDisconnect')}</th>
-                    <th>{t('tableHeaderssss.registration')}</th>
-                    <th>{t('tableHeaderssss.verification')}</th>
-                    <th>{t('tableHeaderssss.accountStatus')}</th>
-                    <th>{t('tableHeaderssss.blockStatus')}</th>
-                    <th>{t('tableHeaderssss.actions')}</th>
+                    <th>{t('tableHeaders.user')}</th>
+                    <th>{t('tableHeaders.status')}</th>
+                    <th>{t('tableHeaders.lastDisconnect')}</th>
+                    <th>{t('tableHeaders.registration')}</th>
+                    <th>{t('tableHeaders.verification')}</th>
+                    <th>{t('tableHeaders.accountStatus')}</th>
+                    <th>{t('tableHeaders.blockStatus')}</th>
+                    <th>{t('tableHeaders.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -406,13 +407,13 @@ const Users = () => {
                       <td><UserCard user={user} /></td>
                       <td>
                         {online.some((u) => u._id === user._id) ? (
-                          <Badge bg="success">{t('statu.online')}</Badge>
+                          <Badge bg="success">{t('status.online')}</Badge>
                         ) : user.lastDisconnectedAt ? (
                           <Badge bg="secondary">
-                            {t('statu.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
+                            {t('status.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
                           </Badge>
                         ) : (
-                          <Badge bg="secondary">{t('statu.offline')}</Badge>
+                          <Badge bg="secondary">{t('status.offline')}</Badge>
                         )}
                       </td>
                       <td>
@@ -427,23 +428,23 @@ const Users = () => {
                       <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                       <td>
                         {user.isVerified ? (
-                          <Badge bg="success"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('statu.verified')}</Badge>
+                          <Badge bg="success"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.verified')}</Badge>
                         ) : (
-                          <Badge bg="danger"><XCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('statu.notVerified')}</Badge>
+                          <Badge bg="danger"><XCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.notVerified')}</Badge>
                         )}
                       </td>
                       <td>
                         {user.isActive ? (
-                          <Badge bg="success">{t('statu.active')}</Badge>
+                          <Badge bg="success">{t('status.active')}</Badge>
                         ) : (
-                          <Badge bg="warning" text="dark">{t('statu.inactive')}</Badge>
+                          <Badge bg="warning" text="dark">{t('status.inactive')}</Badge>
                         )}
                       </td>
                       <td>
                         {user.esBloqueado ? (
-                          <Badge bg="danger">{t('statu.blocked')}</Badge>
+                          <Badge bg="danger">{t('status.blocked')}</Badge>
                         ) : (
-                          <Badge bg="success">{t('statu.notBlocked')}</Badge>
+                          <Badge bg="success">{t('status.notBlocked')}</Badge>
                         )}
                       </td>
                       <td>
@@ -452,15 +453,12 @@ const Users = () => {
                             <ThreeDotsVertical />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            <Dropdown.Item disabled>
-                              <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.edit')}
-                            </Dropdown.Item>
+
+
                             <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
                               <TrashFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.delete')}
                             </Dropdown.Item>
-                            <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
-                              🛡️ {t('action.managePermissions')}
-                            </Dropdown.Item>
+
                             <Dropdown.Item
                               className={user.isActive ? "text-warning" : "text-success"}
                               onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
@@ -472,6 +470,7 @@ const Users = () => {
                               )}
                               {user.isActive ? t('action.deactivate') : t('action.activate')}
                             </Dropdown.Item>
+
                             <Dropdown.Item
                               className={user.esBloqueado ? "text-success" : "text-danger"}
                               onClick={() =>
@@ -485,6 +484,16 @@ const Users = () => {
                               )}
                               {user.esBloqueado ? t('action.unblock') : t('action.block')}
                             </Dropdown.Item>
+
+                            <Dropdown.Item disabled>
+                              <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.edit')}
+                            </Dropdown.Item>
+
+                            <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
+                              🛡️ {t('action.managePermissions')}
+                            </Dropdown.Item>
+
+
                           </Dropdown.Menu>
                         </Dropdown>
                       </td>

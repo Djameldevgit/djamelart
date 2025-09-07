@@ -20,7 +20,7 @@ import ModalEmail from './ModalEmail';
 const Sendemailadmin = () => {
   const { auth, homeUsers, languageReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
-  const { t } = useTranslation('modales');
+  const { t } = useTranslation('sendmailadmin');
   const lang = languageReducer.language || 'es';
 
   const [load, setLoad] = useState(false);

@@ -1,0 +1,35 @@
+{
+  "chat": {
+    "placeholder": "اكتب رسالتك...",
+    "send": "إرسال",
+    "loadMore": "تحميل المزيد",
+    "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذه المحادثة؟",
+    "maxChars": "الحد الأقصى 1000 حرف مسموح",
+    "invalidChars": "تم اكتشاف أحرف غير مسموحة",
+    "tooManySpecial": "الكثير من الأحرف الخاصة",
+    "fileNotFound": "الملف غير موجود.",
+    "onlyImages": "يسمح فقط بملفات الصور (JPEG, JPG, PNG, GIF).",
+    "fileTooLarge": "لا يمكن أن تكون الصورة أكبر من 5MB.",
+    "invalidFileName": "الاسم \"{{fileName}}\" يحتوي على أحرف غير مسموحة.",
+    "maxFiles": "الحد الأقصى {{max}} ملف مسموح. {{extraInfo}}",
+    "superAdminInfo": "المستخدمون المتميزون والمسؤولون يمكنهم رفع حتى 4 ملفات.",
+    "loading": "جاري التحميل...",
+    "charCount": "{{count}}/1000",
+    "validationError": "⚠️ {{error}}",
+
+ 
+      "message": {
+        "searchPlaceholder": "ابحث عن المستخدمين...",
+        "searchButton": "بحث",
+        "loadMore2": "تحميل المزيد",
+        "online": "متصل",
+        "offline": "غير متصل",
+        "noUsersFound": "لم يتم العثور على مستخدمين",
+        "searchError": "خطأ في البحث"
+      }
+    
+
+
+
+  }
+}

@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 const ListaUsuariosBloqueados = () => {
   const dispatch = useDispatch();
   const { userBlockReducer, auth, languageReducer } = useSelector((state) => state);
-  const { t } = useTranslation('aplicacion');
+  const { t } = useTranslation('listausariosbloqueados');
   const lang = languageReducer.language || 'en';
   
   const [blockedUsers, setBlockedUsers] = useState([]);

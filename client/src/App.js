@@ -45,6 +45,7 @@ import { getBlockedUsers } from './redux/actions/userBlockAction';
 
 import Navbar2 from './components/header/Navbar2'
 import Accordionn from './pages/Accordionn'
+import Bloqueos from './pages/bloqueos'
 
 
 

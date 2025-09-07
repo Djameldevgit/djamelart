@@ -14,7 +14,7 @@ const Chekout = () => {
   const [paymentMethod, setPaymentMethod] = useState('CCP');
   const [orderConfirmed, setOrderConfirmed] = useState(false);
 
-  const { t } = useTranslation('cart');
+  const { t } = useTranslation('chekout');
   const lang = languageReducer.language || 'es';
   const isAlgeria = countryCode === 'DZ';
   const currency = isAlgeria ? 'DA' : '€';
