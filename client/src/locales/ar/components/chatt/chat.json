@@ -20,6 +20,7 @@
  
       "message": {
         "searchPlaceholder": "ابحث عن المستخدمين...",
+       
         "searchButton": "بحث",
         "loadMore2": "تحميل المزيد",
         "online": "متصل",

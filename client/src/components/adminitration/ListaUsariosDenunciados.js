@@ -5,6 +5,7 @@ import { getReports } from "../../redux/actions/reportUserAction";
 import {
   Container,
   Table,
+  ButtonGroup,
   Dropdown,
   Spinner,
   Alert,
@@ -20,16 +21,25 @@ import {
   TrashFill,
   UnlockFill,
   ThreeDotsVertical,
-  EyeFill
+  EyeFill,
+  CheckCircleFill,
+  XCircleFill,
+  ClockHistory
 } from "react-bootstrap-icons";
- 
+
 const ListaUsariosDenuciados = () => {
   const { auth, languageReducer } = useSelector((state) => state);
   const { reports, loading } = useSelector((state) => state.reportReducer);
   const dispatch = useDispatch();
-  const { t } = useTranslation("reporteusers");
+ 
+  const { t, i18n } = useTranslation('usariosdenunciados');
+ 
 
-  const lang = languageReducer.language || "es";
+  // Cambiar el idioma activamente si es diferente
+  const lang = languageReducer.language || 'es';
+  if (i18n.language !== lang) i18n.changeLanguage(lang);
+  // Cambiar el idioma activamente si es diferente
+ 
   const isArabic = lang === "ar";
   const [error, setError] = useState(null);
   const [selectedReport, setSelectedReport] = useState(null);
@@ -42,9 +52,9 @@ const ListaUsariosDenuciados = () => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -69,49 +79,43 @@ const ListaUsariosDenuciados = () => {
   };
 
   const handleDelete = (userId) => {
-    // Implementar lógica de eliminación
     console.log("Eliminar usuario:", userId);
   };
 
   const handleDeactivate = (userId) => {
-    // Implementar lógica de desactivación
     console.log("Desactivar usuario:", userId);
   };
 
   const handleResolve = (reportId) => {
-    // Implementar lógica para marcar reporte como resuelto
     console.log("Marcar reporte como resuelto:", reportId);
   };
 
   const handleReject = (reportId) => {
-    // Implementar lógica para rechazar reporte
     console.log("Rechazar reporte:", reportId);
   };
 
-  // Filtrar reportes por estado
-  const filteredReports = filterStatus === "all" 
-    ? reports 
-    : reports.filter(report => report.status === filterStatus);
+  const filteredReports =
+    filterStatus === "all"
+      ? reports
+      : reports.filter((report) => report.status === filterStatus);
 
   if (!Array.isArray(reports)) {
     return <Alert variant="danger">{t("errors.invalidData")}</Alert>;
   }
 
-  // Función para obtener el variant del Badge según el estado
   const getStatusVariant = (status) => {
     switch (status) {
-      case 'resolved':
-        return 'success';
-      case 'pending':
-        return 'warning';
-      case 'rejected':
-        return 'danger';
+      case "resolved":
+        return "success";
+      case "pending":
+        return "warning";
+      case "rejected":
+        return "danger";
       default:
-        return 'secondary';
+        return "secondary";
     }
   };
 
-  // Vista para dispositivos móviles
   const renderMobileView = () => {
     return (
       <div className="reports-list">
@@ -128,10 +132,13 @@ const ListaUsariosDenuciados = () => {
                       width="30"
                       height="30"
                       onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/30';
+                        e.target.src = "https://via.placeholder.com/30";
                       }}
                     />
-                    <small className="text-muted">{t("tableHeaders.reporter")}: {report.reportedBy?.username || t("unknownUser")}</small>
+                    <small className="text-muted">
+                      {t("tableHeaders.reporter")}:{" "}
+                      {report.reportedBy?.username || t("unknownUser")}
+                    </small>
                   </div>
                   <div className="d-flex align-items-center mb-2">
                     <img
@@ -141,16 +148,28 @@ const ListaUsariosDenuciados = () => {
                       width="30"
                       height="30"
                       onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/30';
+                        e.target.src = "https://via.placeholder.com/30";
                       }}
                     />
-                    <small className="text-muted">{t("tableHeaders.reportedUser")}: {report.userId?.username || t("unknownUser")}</small>
+                    <small className="text-muted">
+                      {t("tableHeaders.reportedUser")}:{" "}
+                      {report.userId?.username || t("unknownUser")}
+                    </small>
                   </div>
-                  <h6 className="mb-1">{report.postId?.title || t("notAvailable")}</h6>
-                  <p className="text-truncate small mb-1">{report.reason || t("notSpecified")}</p>
-                  <small className="text-muted">{new Date(report.createdAt).toLocaleDateString()}</small>
+                  <h6 className="mb-1">
+                    {report.postId?.title || t("notAvailable")}
+                  </h6>
+                  <p className="text-truncate small mb-1">
+                    {report.reason || t("notSpecified")}
+                  </p>
+                  <small className="text-muted">
+                    {new Date(report.createdAt).toLocaleDateString()}
+                  </small>
                 </Col>
-                <Col xs={4} className="d-flex flex-column justify-content-between align-items-end">
+                <Col
+                  xs={4}
+                  className="d-flex flex-column justify-content-between align-items-end"
+                >
                   <Dropdown drop={isArabic ? "end" : "start"}>
                     <Dropdown.Toggle
                       variant="outline-secondary"
@@ -162,35 +181,45 @@ const ListaUsariosDenuciados = () => {
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item onClick={() => handleShowDetails(report)}>
-                        <EyeFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                        <EyeFill
+                          className={`me-2 ${isArabic ? "ms-2" : ""}`}
+                        />
                         {t("actions.view")}
                       </Dropdown.Item>
                       <Dropdown.Item
                         className="text-success"
                         onClick={() => handleResolve(report._id)}
                       >
-                        <CheckCircleFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                        <CheckCircleFill
+                          className={`me-2 ${isArabic ? "ms-2" : ""}`}
+                        />
                         {t("actions.resolve")}
                       </Dropdown.Item>
                       <Dropdown.Item
                         className="text-danger"
                         onClick={() => handleReject(report._id)}
                       >
-                        <XCircleFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                        <XCircleFill
+                          className={`me-2 ${isArabic ? "ms-2" : ""}`}
+                        />
                         {t("actions.reject")}
                       </Dropdown.Item>
                       <Dropdown.Item
                         className="text-warning"
                         onClick={() => handleDeactivate(report.userId?._id)}
                       >
-                        <UnlockFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                        <UnlockFill
+                          className={`me-2 ${isArabic ? "ms-2" : ""}`}
+                        />
                         {t("actions.deactivate")}
                       </Dropdown.Item>
                       <Dropdown.Item
                         className="text-danger"
                         onClick={() => handleDelete(report.userId?._id)}
                       >
-                        <TrashFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                        <TrashFill
+                          className={`me-2 ${isArabic ? "ms-2" : ""}`}
+                        />
                         {t("actions.delete")}
                       </Dropdown.Item>
                     </Dropdown.Menu>
@@ -207,7 +236,6 @@ const ListaUsariosDenuciados = () => {
     );
   };
 
-  // Vista para escritorio
   const renderDesktopView = () => {
     return (
       <div className="table-responsive" style={{ overflow: "visible" }}>
@@ -226,8 +254,12 @@ const ListaUsariosDenuciados = () => {
           <tbody>
             {filteredReports.map((report) => (
               <tr key={report._id}>
-                <td><UserInfo user={report.reportedBy} lang={lang} /></td>
-                <td><UserInfo user={report.userId} lang={lang} /></td>
+                <td>
+                  <UserInfo user={report.reportedBy} lang={lang} />
+                </td>
+                <td>
+                  <UserInfo user={report.userId} lang={lang} />
+                </td>
                 <td>{report.postId?.title || t("notAvailable")}</td>
                 <td>{report.reason || t("notSpecified")}</td>
                 <td>{new Date(report.createdAt).toLocaleDateString()}</td>
@@ -238,9 +270,9 @@ const ListaUsariosDenuciados = () => {
                 </td>
                 <td>
                   <div className="d-flex">
-                    <Button 
-                      variant="outline-primary" 
-                      size="sm" 
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
                       className="me-1"
                       onClick={() => handleShowDetails(report)}
                     >
@@ -260,28 +292,36 @@ const ListaUsariosDenuciados = () => {
                           className="text-success"
                           onClick={() => handleResolve(report._id)}
                         >
-                          <CheckCircleFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                          <CheckCircleFill
+                            className={`me-2 ${isArabic ? "ms-2" : ""}`}
+                          />
                           {t("actions.resolve")}
                         </Dropdown.Item>
                         <Dropdown.Item
                           className="text-danger"
                           onClick={() => handleReject(report._id)}
                         >
-                          <XCircleFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                          <XCircleFill
+                            className={`me-2 ${isArabic ? "ms-2" : ""}`}
+                          />
                           {t("actions.reject")}
                         </Dropdown.Item>
                         <Dropdown.Item
                           className="text-warning"
                           onClick={() => handleDeactivate(report.userId?._id)}
                         >
-                          <UnlockFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                          <UnlockFill
+                            className={`me-2 ${isArabic ? "ms-2" : ""}`}
+                          />
                           {t("actions.deactivate")}
                         </Dropdown.Item>
                         <Dropdown.Item
                           className="text-danger"
                           onClick={() => handleDelete(report.userId?._id)}
                         >
-                          <TrashFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                          <TrashFill
+                            className={`me-2 ${isArabic ? "ms-2" : ""}`}
+                          />
                           {t("actions.delete")}
                         </Dropdown.Item>
                       </Dropdown.Menu>
@@ -297,32 +337,37 @@ const ListaUsariosDenuciados = () => {
   };
 
   return (
-    <Container fluid className="py-4 report-container" style={{  direction: isArabic ? "rtl" : "ltr" }}>
+    <Container
+      fluid
+      className="py-4 report-container"
+      style={{ direction: isArabic ? "rtl" : "ltr" }}
+    >
       <h2 className="mb-4">{t("header.title")}</h2>
 
-      {/* Filtros */}
       <div className="d-flex justify-content-between mb-3">
         <ButtonGroup>
-          <Button 
-            variant={filterStatus === "all" ? "primary" : "outline-primary"} 
+          <Button
+            variant={filterStatus === "all" ? "primary" : "outline-primary"}
             onClick={() => setFilterStatus("all")}
           >
             {t("filters.all")}
           </Button>
-          <Button 
-            variant={filterStatus === "pending" ? "warning" : "outline-warning"} 
+          <Button
+            variant={filterStatus === "pending" ? "warning" : "outline-warning"}
             onClick={() => setFilterStatus("pending")}
           >
             <ClockHistory className="me-1" /> {t("filters.pending")}
           </Button>
-          <Button 
-            variant={filterStatus === "resolved" ? "success" : "outline-success"} 
+          <Button
+            variant={
+              filterStatus === "resolved" ? "success" : "outline-success"
+            }
             onClick={() => setFilterStatus("resolved")}
           >
             <CheckCircleFill className="me-1" /> {t("filters.resolved")}
           </Button>
-          <Button 
-            variant={filterStatus === "rejected" ? "danger" : "outline-danger"} 
+          <Button
+            variant={filterStatus === "rejected" ? "danger" : "outline-danger"}
             onClick={() => setFilterStatus("rejected")}
           >
             <XCircleFill className="me-1" /> {t("filters.rejected")}
@@ -343,12 +388,9 @@ const ListaUsariosDenuciados = () => {
       ) : filteredReports.length === 0 ? (
         <Alert variant="info">{t("noReports")}</Alert>
       ) : (
-        <>
-          {isMobile ? renderMobileView() : renderDesktopView()}
-        </>
+        <>{isMobile ? renderMobileView() : renderDesktopView()}</>
       )}
 
-      {/* Modal para detalles del reporte */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>{t("reportDetails")}</Modal.Title>
@@ -359,10 +401,10 @@ const ListaUsariosDenuciados = () => {
               <Col md={6}>
                 <h6>{t("tableHeaders.reporter")}</h6>
                 <UserInfo user={selectedReport.reportedBy} lang={lang} />
-                
+
                 <h6 className="mt-3">{t("tableHeaders.reportedUser")}</h6>
                 <UserInfo user={selectedReport.userId} lang={lang} />
-                
+
                 <h6 className="mt-3">{t("tableHeaders.date")}</h6>
                 <p>{new Date(selectedReport.createdAt).toLocaleString()}</p>
 
@@ -374,10 +416,10 @@ const ListaUsariosDenuciados = () => {
               <Col md={6}>
                 <h6>{t("tableHeaders.postTitle")}</h6>
                 <p>{selectedReport.postId?.title || t("notAvailable")}</p>
-                
+
                 <h6>{t("tableHeaders.reason")}</h6>
                 <p>{selectedReport.reason || t("notSpecified")}</p>
-                
+
                 <h6>{t("additionalInfo")}</h6>
                 <p>{selectedReport.additionalInfo || t("notProvided")}</p>
               </Col>
@@ -388,10 +430,16 @@ const ListaUsariosDenuciados = () => {
           <Button variant="secondary" onClick={handleCloseModal}>
             {t("close")}
           </Button>
-          <Button variant="success" onClick={() => handleResolve(selectedReport?._id)}>
+          <Button
+            variant="success"
+            onClick={() => handleResolve(selectedReport?._id)}
+          >
             <CheckCircleFill className="me-1" /> {t("actions.resolve")}
           </Button>
-          <Button variant="danger" onClick={() => handleReject(selectedReport?._id)}>
+          <Button
+            variant="danger"
+            onClick={() => handleReject(selectedReport?._id)}
+          >
             <XCircleFill className="me-1" /> {t("actions.reject")}
           </Button>
         </Modal.Footer>
@@ -403,7 +451,10 @@ const ListaUsariosDenuciados = () => {
 const UserInfo = ({ user, lang }) => {
   const { t } = useTranslation("reporteusers");
   return user ? (
-    <div className="d-flex align-items-center" lang={lang === "ar" ? "ar" : "es"}>
+    <div
+      className="d-flex align-items-center"
+      lang={lang === "ar" ? "ar" : "es"}
+    >
       <img
         src={user.avatar}
         alt={user.username}
@@ -411,7 +462,7 @@ const UserInfo = ({ user, lang }) => {
         width="30"
         height="30"
         onError={(e) => {
-          e.target.src = 'https://via.placeholder.com/30';
+          e.target.src = "https://via.placeholder.com/30";
         }}
       />
       <div>
@@ -424,4 +475,4 @@ const UserInfo = ({ user, lang }) => {
   );
 };
 
-export default ListaUsariosDenuciados
+export default ListaUsariosDenuciados;

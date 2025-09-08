@@ -559,6 +559,7 @@ deleteUser: async (req, res) => {
     });
   }
 },
+ 
 
 
   getUsersAction: async (req, res) => {
@@ -568,8 +569,8 @@ deleteUser: async (req, res) => {
       let query = Users.find();
 
       const features = new APIfeatures(query, req.query).paginating();
-
-      let users = await features.query;
+   
+      let users = await features.query.sort('-createdAt');
 
       const usersWithDetails = await Promise.all(
         users.map(async (user) => {

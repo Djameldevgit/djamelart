@@ -294,13 +294,7 @@ const handleChangeImages = async (e) => {
           });
         }
       
-        if (invalidFiles) {
-          return dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: { error: t('errors.invalidFileType', { lng: lang }) },
-          });
-        }
-      
+       
         if (images.length > 2) {
           return dispatch({
             type: GLOBALTYPES.ALERT,

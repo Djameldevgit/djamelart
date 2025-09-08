@@ -241,13 +241,13 @@ const RightSide = () => {
             display: 'flex', 
             flexDirection: 'column', 
             height: 'calc(100vh - 170px)',
-            direction: lang === 'ar' ? 'rtl' : 'ltr'
+           
         }}>
             <div className="message_header" style={{ cursor: 'pointer' }} >
                 {user.length !== 0 &&
                     <UserCard user={user}>
                         <div>
-                            <i className="fas fa-arrow-left mr-3" onClick={handleGoBack} />
+                            <i className="fas fa-arrow-left mr-4" onClick={handleGoBack} />
                             <i className="fas fa-trash text-danger" onClick={handleDeleteConversation} />
                         </div>
                     </UserCard>

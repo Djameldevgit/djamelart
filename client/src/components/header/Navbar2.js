@@ -38,14 +38,14 @@ const Navbar2 = ({ onFiltersChange }) => {
   const { auth, theme, cart, notify } = useSelector((state) => state)
   const dispatch = useDispatch()
   const { languageReducer } = useSelector(state => state)
-  const { t, i18n } = useTranslation('navbar');  
+  const { t, i18n } = useTranslation('navbar');
   const lang = languageReducer.language || 'es';
   useEffect(() => {
     if (lang && lang !== i18n.language) {
       i18n.changeLanguage(lang);
     }
   }, [lang, i18n]);
-  
+
 
   const [showDrawer, setShowDrawer] = useState(false)
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
@@ -66,7 +66,7 @@ const Navbar2 = ({ onFiltersChange }) => {
   const history = useHistory();
   const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
-  
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 700);
     window.addEventListener('resize', handleResize);
@@ -92,7 +92,7 @@ const Navbar2 = ({ onFiltersChange }) => {
     setFilters(newFilters);
     if (onFiltersChange) onFiltersChange(newFilters);
   };
-  
+
   const resetFilters = () => {
     const newFilters = {
       category: '',
@@ -127,7 +127,7 @@ const Navbar2 = ({ onFiltersChange }) => {
 
     return true;
   };
-//fixed-top
+  //fixed-top
   return (
     <div>
       <Navbar
@@ -165,39 +165,47 @@ const Navbar2 = ({ onFiltersChange }) => {
             {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") &&
               <i className='fas fa-plus' onClick={openStatusModal}> </i>
             }
-            
-            <NavDropdown
-              align="end"
-              title={
-                <div>
-                  <FaBell size={20} color={notify.data.length > 0 ? "crimson" : "black"} />
-                  {notify.data.length > 0 && (
-                    <Badge
-                      pill
-                      bg="danger"
-                      className="position-absolute top-3 start-100 translate-middle"
-                      style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
-                    >
-                      {notify.data.length}
-                    </Badge>
-                  )}
-                </div>
-              }
-              id="nav-notify-dropdown"
-              drop="down"
-              className="notification-dropdown"
-            >
-              <NavDropdown.Header className="fw-bold">🔔 {t('notifications')}</NavDropdown.Header>
-              <NavDropdown.Divider />
 
-              <div style={{
-                overflowY: 'auto',
-                padding: '0',
-                position: 'auto',
-              }}>
-                <NotifyModal />
-              </div>
-            </NavDropdown>
+            {
+              auth.user && (
+                <NavDropdown
+                  align="end"
+                  title={
+                    <div>
+                      <FaBell size={20} color={notify.data.length > 0 ? "crimson" : "black"} />
+                      {notify.data.length > 0 && (
+                        <Badge
+                          pill
+                          bg="danger"
+                          className="position-absolute top-3 start-100 translate-middle"
+                          style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
+                        >
+                          {notify.data.length}
+                        </Badge>
+                      )}
+                    </div>
+                  }
+                  id="nav-notify-dropdown"
+                  drop="down"
+                  className="notification-dropdown"
+                >
+                  <NavDropdown.Header className="fw-bold">🔔 {t('notifications')}</NavDropdown.Header>
+                  <NavDropdown.Divider />
+
+                  <div style={{
+                    overflowY: 'auto',
+                    padding: '0',
+                    position: 'auto',
+                  }}>
+                    <NotifyModal />
+                  </div>
+                </NavDropdown>
+
+              )
+
+
+
+            }
 
             {auth.user && (
               <Link to="/cart" className="position-relative text-decoration-none">
@@ -232,96 +240,96 @@ const Navbar2 = ({ onFiltersChange }) => {
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span >{t('role')}: <strong>{auth.user.role}</strong> </span> </NavDropdown.Header>
 
                     {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
-  <NavDropdown.Item onClick={openStatusModal}>
-    <FaPlus className="me-2" />
-    {t('addPost')}
-  </NavDropdown.Item>
-)}
+                      <NavDropdown.Item onClick={openStatusModal}>
+                        <FaPlus className="me-2" />
+                        {t('addPost')}
+                      </NavDropdown.Item>
+                    )}
 
-<NavDropdown.Item as={Link} to="/contactt">
-  <FaEnvelope className="me-2" />
-  {t('contact')}
-</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/contactt">
+                      <FaEnvelope className="me-2" />
+                      {t('contact')}
+                    </NavDropdown.Item>
 
-<NavDropdown.Item as={Link} to="/bloginfo">
-  <FaInfoCircle className="me-2" />
-  {t('appInfo')}
-</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/bloginfo">
+                      <FaInfoCircle className="me-2" />
+                      {t('appInfo')}
+                    </NavDropdown.Item>
 
-<NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
-  <FaUserCircle className="me-2" />
-  {t('profile')}
-</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
+                      <FaUserCircle className="me-2" />
+                      {t('profile')}
+                    </NavDropdown.Item>
 
-<NavDropdown.Item as={Link} to="/message">
-  <FaComments className="me-2" />
-  {t('conversations')}
-</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/message">
+                      <FaComments className="me-2" />
+                      {t('conversations')}
+                    </NavDropdown.Item>
 
-<NavDropdown.Item as={Link} to="/roles">
-  <FaTools className="me-2" />
-  {t('roles')}
-</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/roles">
+                      <FaTools className="me-2" />
+                      {t('roles')}
+                    </NavDropdown.Item>
 
-{auth.user?.role === "admin" && (
-  <>
-    <NavDropdown.Divider />
-    <NavDropdown.Header>
-      <FaShieldAlt className="me-2" />
-      {t('adminPanel')}
-    </NavDropdown.Header>
+                    {auth.user?.role === "admin" && (
+                      <>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Header>
+                          <FaShieldAlt className="me-2" />
+                          {t('adminPanel')}
+                        </NavDropdown.Header>
 
-    <NavDropdown.Item as={Link} to="/blog">
-      <FaBlog className="me-2" />
-      {t('blog')}
-    </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/blog">
+                          <FaBlog className="me-2" />
+                          {t('blog')}
+                        </NavDropdown.Item>
 
-    <NavDropdown.Item as={Link} to="/message">
-      <FaComments className="me-2" />
-      {t('chatWithAdmins')}
-    </NavDropdown.Item>
-    
-    <NavDropdown.Item as={Link} to="/mails">
-      <FaEnvelope className="me-2" />
-      {t('adminSendEmail')}
-    </NavDropdown.Item>
-    
-    <NavDropdown.Item as={Link} to="/users">
-      <FaUsers className="me-2" />
-      {t('users')}
-    </NavDropdown.Item>
-    
-    <NavDropdown.Item as={Link} to="/postspendientes">
-      <FaClipboardList className="me-2" />
-      {t('pendingPosts')}
-    </NavDropdown.Item>
-    
-    <NavDropdown.Item as={Link} to="/usersactionn">
-      <FaUserCog className="me-2" />
-      {t('userActions')}
-    </NavDropdown.Item>
-    
-    <NavDropdown.Item as={Link} to="/listuserbloque">
-      <FaUserSlash className="me-2" />
-      {t('blockedUsersList')}
-    </NavDropdown.Item>
-    
-    <NavDropdown.Item as={Link} to="/reportuser">
-      <FaFlag className="me-2" />
-      {t('userReports')}
-    </NavDropdown.Item>
-    
-    <NavDropdown.Item as={Link} to="/bloqueos">
-      <FaBan className="me-2" />
-      {t('blockedUsers')}
-    </NavDropdown.Item>
-    
-    <NavDropdown.Item as={Link} to="/cart/orderss">
-      <FaShoppingCart className="me-2" />
-      {t('orders')}
-    </NavDropdown.Item>
-  </>
-)}
+                        <NavDropdown.Item as={Link} to="/message">
+                          <FaComments className="me-2" />
+                          {t('chatWithAdmins')}
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item as={Link} to="/mails">
+                          <FaEnvelope className="me-2" />
+                          {t('adminSendEmail')}
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item as={Link} to="/users">
+                          <FaUsers className="me-2" />
+                          {t('users')}
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item as={Link} to="/postspendientes">
+                          <FaClipboardList className="me-2" />
+                          {t('pendingPosts')}
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item as={Link} to="/usersactionn">
+                          <FaUserCog className="me-2" />
+                          {t('userActions')}
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item as={Link} to="/listuserbloque">
+                          <FaUserSlash className="me-2" />
+                          {t('blockedUsersList')}
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item as={Link} to="/listausariosdenunciadoss">
+                          <FaFlag className="me-2" />
+                          {t('usariosdenunciados')}
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item as={Link} to="/bloqueos">
+                          <FaBan className="me-2" />
+                          {t('estadodeusuariosrespectoalbloqueo')}
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item as={Link} to="/cart/orderss">
+                          <FaShoppingCart className="me-2" />
+                          {t('orders')}
+                        </NavDropdown.Item>
+                      </>
+                    )}
 
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={toggleTheme}>
@@ -397,18 +405,18 @@ const Navbar2 = ({ onFiltersChange }) => {
         onClose={() => {
           closeModal();
           setShowAdvancedSearch(false);
-          
+
         }}
-        
+
         style={{
-          zIndex: 1100,
-        
+          zIndex: 2000,
+
         }}
-        
-        
-        
-        
-        >
+
+
+
+
+      >
 
         <div className="filter-group">
           <h5 className='mx-auto'>{t('artworkSearch')}</h5>

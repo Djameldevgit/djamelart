@@ -28,6 +28,8 @@
   "notifications": "الإشعارات",
   "blog": "مدونة",
   "blockedUsersList": "قائمة المستخدمين المحظورين",
+  "usariosdenunciados": "قائمة المستخدمين المبلغ عنهم" ,
+  "estadodeusuariosrespectoalbloqueo":"حالتي في النظام",
   "role": "الدور",
   "artworkSearch": "بحث الأعمال الفنية",
   "searchTitlePlaceholder": "أدخل العنوان...",

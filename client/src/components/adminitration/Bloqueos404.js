@@ -29,10 +29,7 @@ const Bloqueos404 = () => {
         setUserEmail(user.email || '');
       }, [user]);
       
-    useEffect(() => {
-        document.body.dir = isRTL ? 'rtl' : 'ltr';
-        return () => { document.body.dir = 'ltr'; };
-    }, [isRTL]);
+    
 
     const esBloqueado = userBlockReducer.blockedUsers.some(
         blockedUser => blockedUser.user && blockedUser.user._id === user._id && blockedUser.esBloqueado

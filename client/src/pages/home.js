@@ -61,7 +61,7 @@ const Home = ({ filters }) => {
   const filteredPosts = applyFilters(homePosts.posts || []);
 
   return (
-    <div >
+    <div style={{marginTop:'20'}} >
   
       {homePosts.loading ? (
         <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
