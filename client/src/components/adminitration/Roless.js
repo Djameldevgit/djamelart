@@ -89,7 +89,7 @@ const Roless = () => {
   };
 
   return (
-    <Container className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}style={{ marginTop: 70 }}>
+    <Container className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'} >
       <Card className="shadow-sm">
         <Card.Header className="bg-primary text-white" style={{
           direction: lang === 'ar' ? 'rtl' : 'ltr',

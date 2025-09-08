@@ -55,7 +55,7 @@ const Register = () => {
 
 
     return (
-        <div style={{ marginTop: 110 }} className={`auth_page ${lang === "ar" ? "rtl" : ""}`}>
+        <div   className={`auth_page ${lang === "ar" ? "rtl" : ""}`}>
             <form onSubmit={handleSubmit}>
                 <h3 className="text-uppercase text-center mb-4">{t('nameregister', { lng: lang })}</h3>
 

@@ -230,7 +230,7 @@ const Users = () => {
   }
 
   return (
-    <Container fluid style={{ marginTop: 150 }}>
+    <Container fluid  >
       {/* Modal Confirmación Eliminar */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>

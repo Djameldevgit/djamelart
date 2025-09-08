@@ -83,7 +83,7 @@ export default function LanguageModalGeneral() {
               >
                 <Card.Body>
                   <img src={flagPath(l.code)} alt={l.code} style={flagStyle} />
-                  <div style={{ marginTop: '10px', fontWeight: '500' }}>{l.name}</div>
+                  <div style={{   fontWeight: '500' }}>{l.name}</div>
                 </Card.Body>
               </Card>
             </Col>

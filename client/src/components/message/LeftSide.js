@@ -90,7 +90,7 @@ const LeftSide = () => {
 
     return (
         <div style={{ 
-            marginTop: 110,
+            
             direction: lang === 'ar' ? 'rtl' : 'ltr'
         }}>
             {auth.user?.role === "admin" &&

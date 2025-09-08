@@ -40,7 +40,12 @@ const Navbar2 = ({ onFiltersChange }) => {
   const { languageReducer } = useSelector(state => state)
   const { t, i18n } = useTranslation('navbar');  
   const lang = languageReducer.language || 'es';
-  if (i18n.language !== lang) i18n.changeLanguage(lang);
+  useEffect(() => {
+    if (lang && lang !== i18n.language) {
+      i18n.changeLanguage(lang);
+    }
+  }, [lang, i18n]);
+  
 
   const [showDrawer, setShowDrawer] = useState(false)
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
@@ -122,12 +127,12 @@ const Navbar2 = ({ onFiltersChange }) => {
 
     return true;
   };
-
+//fixed-top
   return (
     <div>
       <Navbar
         expand="lg"
-        className="bg-body-tertiary fixed-top"
+        className="bg-body-tertiary"
         style={{
           zIndex: 1030,
           marginTop: isMobile ? '55px' : '0'
@@ -392,7 +397,18 @@ const Navbar2 = ({ onFiltersChange }) => {
         onClose={() => {
           closeModal();
           setShowAdvancedSearch(false);
-        }}>
+          
+        }}
+        
+        style={{
+          zIndex: 1100,
+        
+        }}
+        
+        
+        
+        
+        >
 
         <div className="filter-group">
           <h5 className='mx-auto'>{t('artworkSearch')}</h5>

@@ -35,13 +35,13 @@ const Bloqueos404 = () => {
     }, [isRTL]);
 
     const esBloqueado = userBlockReducer.blockedUsers.some(
-        blockedUser => blockedUser.user._id === user._id && blockedUser.esBloqueado
-    );
-    
-    const blockedUserData = userBlockReducer.blockedUsers.find(
-        blockedUser => blockedUser.user._id === user._id
-    );
-
+        blockedUser => blockedUser.user && blockedUser.user._id === user._id && blockedUser.esBloqueado
+      );
+      
+      const blockedUserData = userBlockReducer.blockedUsers.find(
+        blockedUser => blockedUser.user && blockedUser.user._id === user._id
+      );
+      
     const handleContactSupport = () => {
         setShowContactModal(true);
     };

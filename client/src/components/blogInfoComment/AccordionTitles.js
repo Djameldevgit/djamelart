@@ -48,7 +48,7 @@ const AccordionTitles = () => {
   ];
 
   return (
-    <div style={{marginTop:140}}>
+    <div  >
       <h2 className="text-center mb-3 fw-bold text-primary" style={{ fontSize: "1.5rem" }}>
         {t("centroAyuda.titulo", { lng: lang })}
       </h2>

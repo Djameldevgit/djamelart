@@ -90,7 +90,7 @@ const InfoAplicacion = ( ) => {
   const isRTL = lang === "ar";
 
   return (
-    <div  style={{marginTop:110}} >
+    <div    >
     <Container className="my-4" dir={isRTL ? "rtl" : "ltr"} >
       {/* Navegación interna */}
       <Form className="bg-light p-3 rounded shadow-sm mb-4">

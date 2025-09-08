@@ -35,7 +35,7 @@ const Login = () => {
     }
 
     return (
-        <div    className={`auth_page ${lang === "ar" ? "rtl" : ""}`}style={{ marginTop: 110 }}>
+        <div    className={`auth_page ${lang === "ar" ? "rtl" : ""}`} >
 
 
             <form onSubmit={handleSubmit}>

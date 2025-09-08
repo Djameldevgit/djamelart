@@ -14,8 +14,12 @@ const ListaUsuariosBloqueados = () => {
   const [blockedUsers, setBlockedUsers] = useState([]);
 
   useEffect(() => {
-    setBlockedUsers(userBlockReducer.blockedUsers || []);
+    if (userBlockReducer.blockedUsers) {
+      const cleanUsers = userBlockReducer.blockedUsers.filter(b => b.user);
+      setBlockedUsers(cleanUsers);
+    }
   }, [userBlockReducer.blockedUsers]);
+  
   const formatDate = (date) => moment(date).locale('en').format("DD/MM/YYYY HH:mm");
 
 
@@ -31,7 +35,7 @@ const ListaUsuariosBloqueados = () => {
   };
 
   return (
-    <div className="modalusersearchlist"style={{ marginTop: 110 }}>
+    <div className="modalusersearchlist" >
       <div className="headersearchlist">
         <h5 className="titlesearchlist">{t('usuariosBloqueados', { lng: lang })}</h5>
       </div>
@@ -52,37 +56,40 @@ const ListaUsuariosBloqueados = () => {
             </tr>
           </thead>
           <tbody>
-            {blockedUsers.length > 0 ? (
-              blockedUsers.map((block, index) => (
-                <tr key={block.user._id}>
-                  <td>{index + 1}</td>
-                  <td><UserCard user={block.user} /></td>
-                  <td>{block.user?.email}</td>
-                  <td>{block.motivo || t('noEspecificado', { lng: lang })}</td>
-                  <td>{formatDate(block.fechaBloqueo)}</td>
-                  <td>{formatDate(block.fechaLimite)}</td>
-                  <td>{block.userquibloquea?.username || t('desconocido', { lng: lang })}</td>
-                  <td>{block.duracion || t('noEspecificado', { lng: lang })}</td>
-                  <td>{block.tipoBloqueo || t('noDisponible', { lng: lang })}</td>
-                  <td>
-                    <div className="action-dropdown">
-                      <button className="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        {t('accion', { lng: lang })}
-                      </button>
-                      <div className="dropdown-menu">
-                        <button className="dropdown-item" onClick={() => handleDesbloqueo(block.user)}>
-                          {t('desbloquear', { lng: lang })}
-                        </button>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="10">{t('noUsuariosBloqueados', { lng: lang })}</td>
-              </tr>
-            )}
+          {blockedUsers.length > 0 ? (
+  blockedUsers.map((block, index) => (
+    block.user ? (
+      <tr key={block.user._id}>
+        <td>{index + 1}</td>
+        <td><UserCard user={block.user} /></td>
+        <td>{block.user?.email}</td>
+        <td>{block.motivo || t('noEspecificado', { lng: lang })}</td>
+        <td>{formatDate(block.fechaBloqueo)}</td>
+        <td>{block.fechaLimite ? formatDate(block.fechaLimite) : t('noEspecificado', { lng: lang })}</td>
+        <td>{block.userquibloquea?.username || t('desconocido', { lng: lang })}</td>
+        <td>{block.duracion || t('noEspecificado', { lng: lang })}</td>
+        <td>{block.tipoBloqueo || t('noDisponible', { lng: lang })}</td>
+        <td>
+          <div className="action-dropdown">
+            <button className="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              {t('accion', { lng: lang })}
+            </button>
+            <div className="dropdown-menu">
+              <button className="dropdown-item" onClick={() => handleDesbloqueo(block.user)}>
+                {t('desbloquear', { lng: lang })}
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    ) : null
+  ))
+) : (
+  <tr>
+    <td colSpan="10">{t('noUsuariosBloqueados', { lng: lang })}</td>
+  </tr>
+)}
+
           </tbody>
         </table>
       </div>

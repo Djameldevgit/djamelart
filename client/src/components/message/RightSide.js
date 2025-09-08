@@ -237,7 +237,7 @@ const RightSide = () => {
 
     return (
         <div style={{
-            marginTop: 110, 
+           
             display: 'flex', 
             flexDirection: 'column', 
             height: 'calc(100vh - 170px)',

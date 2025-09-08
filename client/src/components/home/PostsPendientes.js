@@ -58,7 +58,7 @@ const PostsPendientes = () => {
   };
 
   return (
-    <div style={{marginTop:110}}  >
+    <div   >
       <h5 className="mb-3 text-center">
         {t('totalPending', { count: postsPendientes.length })}
       </h5>
