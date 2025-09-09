@@ -51,7 +51,10 @@ const Chekout = () => {
   };
 
   return (
-    <div className="checkout-container">
+    <div className="checkout-container"style={{
+      direction: lang === 'ar' ? 'rtl' : 'ltr',
+        textAlign: lang === 'ar' ? 'right' : 'left',
+      }}>
       <h2 className="checkout-title">{t('paymentForm', { lng: lang })}</h2>
 
       {/* Selector de País */}

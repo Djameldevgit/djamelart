@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-
+import i18n from './i18n';
 
 import PageRender from './customRouter/PageRender'
 import PrivateRouter from './customRouter/PrivateRouter'
@@ -51,9 +51,8 @@ import Bloqueos from './pages/bloqueos'
 
 function App() {
   const { auth, status, modal, languageReducer } = useSelector(state => state)
-
-  //const language = languageReducer?.language || localStorage.getItem("lang") || "en";
   const dispatch = useDispatch()
+  const language = languageReducer?.language || localStorage.getItem("lang") || "en";
   const [filters, setFilters] = useState({
     category: '',
     title: '',
@@ -71,7 +70,12 @@ function App() {
     return () => socket.close()
   }, [dispatch])
 
-
+  useEffect(() => {
+    if (language) {
+      i18n.changeLanguage(language); // ✅ sincroniza con i18n
+      localStorage.setItem('language', language); // ✅ persistencia
+    }
+  }, [language]);
   useEffect(() => {
 
     dispatch(getPosts())//EHECUTAR LAS ACCIONES GETUSER Y GETUSERSACTION EN SUS PROPIOS COMPONENTE
@@ -130,7 +134,7 @@ function App() {
           {auth.token && <SocketClient />}
 
           <Switch>
-            <Route exact path="/" component={Home} />
+          <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/bloginfo" component={Accordionn} />

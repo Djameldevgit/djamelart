@@ -11,7 +11,7 @@ let scroll = 0;
  
 const Postspendientes = () => {
     const { homePostsAprove,languageReducer ,auth} = useSelector(state => state)
-    const { t } = useTranslation('navbar');
+    const { t } = useTranslation('postspendientes');
     const lang = languageReducer.language || 'es';
 
     const dispatch = useDispatch()

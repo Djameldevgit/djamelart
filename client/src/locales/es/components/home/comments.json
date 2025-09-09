@@ -1,0 +1,12 @@
+{
+  "home": "Inicio",
+  "about": "Sobre nosotros",
+  "contact": "Contacto",
+  "login": "Iniciar sesión",
+  "logout": "Cerrar sesión",
+  "profile": "Perfil",
+  "search": "Buscar",
+  "settings": "Configuración",
+  "notifications": "Notificaciones",
+  "dashboard": "Panel de control"
+}

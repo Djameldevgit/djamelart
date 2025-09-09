@@ -409,7 +409,7 @@ const Navbar2 = ({ onFiltersChange }) => {
         }}
 
         style={{
-          zIndex: 2000,
+          zIndex: 5000,
 
         }}
 
@@ -425,7 +425,8 @@ const Navbar2 = ({ onFiltersChange }) => {
         <div style={{
           direction: lang === 'ar' ? 'rtl' : 'ltr',
           textAlign: lang === 'ar' ? 'right' : 'left',
-        }}>
+          zIndex: 5000,
+        }}          >
           <div className="filter-group">
             <input
               type="text"

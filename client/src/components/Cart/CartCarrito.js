@@ -153,7 +153,7 @@ const CartCarrito = () => {
                 <span className="total-price">${cart.totalPrice?.toFixed(2) || '0.00'}</span>
               </div>
               <Link
-                to="/cart/chekout"
+                to="/chekoutt"
                 className="btn-checkout"
                 disabled={cart.items.length === 0}
               >

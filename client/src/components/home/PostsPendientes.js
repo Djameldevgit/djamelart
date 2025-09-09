@@ -39,7 +39,7 @@ const PostsPendientes = () => {
 
   const handleAprovePost = (post) => {
     if (window.confirm(t('confirm.approve'))) {
-      dispatch(aprovarPostPendiente({ post, auth,socket }));
+      dispatch(aprovarPostPendiente({ post, auth, socket }));
       history.push("/postspendientes");
     }
   };
@@ -119,26 +119,38 @@ const PostsPendientes = () => {
                   </td>
 
                   <td>
-                    <Dropdown>
-                      <Dropdown.Toggle variant="primary" size="sm">
-                        {t('actionss.title')}
-                      </Dropdown.Toggle>
 
-                      <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => handleAprovePost(post)}>{t('actionss.approve')}</Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleDeletePost(post)}>{t('actionss.delete')}</Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleBlockUser(post.user)}>{t('actionss.blockUser')}</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
+                    <div>
+                      <Dropdown  >
+                        <Dropdown.Toggle variant="primary" size="sm">
+                          {t('actionss.title')}
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu style={{
+
+                          zIndex: 10000
+                        }} >
+                          <Dropdown.Item onClick={() => handleAprovePost(post)}>{t('actionss.approve')}</Dropdown.Item>
+                          <Dropdown.Item  >{t('actionss.sendMessage')}</Dropdown.Item>
+
+                          <Dropdown.Item onClick={() => handleDeletePost(post)}>{t('actionss.delete')}</Dropdown.Item>
+                          <Dropdown.Item onClick={() => handleBlockUser(post.user)}>{t('actionss.blockUser')}</Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
                   </td>
                 </tr>
+
               ))
+
+
             ) : (
               <tr>
                 <td colSpan="9" className="text-center">{t('noPending')}</td>
               </tr>
             )}
           </tbody>
+
         </table>
 
         {load && <img src={LoadIcon} alt="loading" className="d-block mx-auto" />}

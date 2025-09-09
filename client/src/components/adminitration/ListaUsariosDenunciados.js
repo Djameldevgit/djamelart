@@ -24,28 +24,47 @@ import {
   EyeFill,
   CheckCircleFill,
   XCircleFill,
-  ClockHistory
+  ClockHistory,
+  LockFill
 } from "react-bootstrap-icons";
+
+// Importamos el hook y los modales
+import { useUserActions } from "./useUserActions";
+import BloqueModalUser from "./BloqueModalUser";
 
 const ListaUsariosDenuciados = () => {
   const { auth, languageReducer } = useSelector((state) => state);
   const { reports, loading } = useSelector((state) => state.reportReducer);
   const dispatch = useDispatch();
  
-  const { t, i18n } = useTranslation('usariosdenunciados');
+  const { t, i18n } = useTranslation('listausariosdenunciados');
  
-
   // Cambiar el idioma activamente si es diferente
   const lang = languageReducer.language || 'es';
   if (i18n.language !== lang) i18n.changeLanguage(lang);
-  // Cambiar el idioma activamente si es diferente
- 
+  
   const isArabic = lang === "ar";
   const [error, setError] = useState(null);
   const [selectedReport, setSelectedReport] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [filterStatus, setFilterStatus] = useState("all");
+  const [localReports, setLocalReports] = useState([]);
+
+  // Usamos el hook de acciones de usuario
+  const {
+    showBlockModal,
+    showDeleteModal,
+    selectedUser,
+    setShowDeleteModal,
+    handleOpenBlockModal,
+    handleCloseBlockModal,
+    confirmDelete,
+    handleDeleteUser,
+    handleBlockUser,
+    handleUnblockUser,
+    handleToggleActiveStatus,
+  } = useUserActions();
 
   // Detectar cambios en el tamaño de la pantalla
   useEffect(() => {
@@ -68,22 +87,39 @@ const ListaUsariosDenuciados = () => {
     fetchReports();
   }, [dispatch, auth.token, t]);
 
+  // Sincronizar reports con estado local para reflejar cambios
+  useEffect(() => {
+    if (reports && Array.isArray(reports)) {
+      setLocalReports([...reports]);
+    }
+  }, [reports]);
+
+  // Función para actualizar el estado de un usuario en los reportes locales
+  const updateUserStatusInReports = (userId, updates) => {
+    setLocalReports(prevReports => 
+      prevReports.map(report => {
+        if (report.userId && report.userId._id === userId) {
+          return {
+            ...report,
+            userId: {
+              ...report.userId,
+              ...updates
+            }
+          };
+        }
+        return report;
+      })
+    );
+  };
+
   const handleShowDetails = (report) => {
     setSelectedReport(report);
-    setShowModal(true);
+    setShowDetailsModal(true);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleCloseDetailsModal = () => {
+    setShowDetailsModal(false);
     setSelectedReport(null);
-  };
-
-  const handleDelete = (userId) => {
-    console.log("Eliminar usuario:", userId);
-  };
-
-  const handleDeactivate = (userId) => {
-    console.log("Desactivar usuario:", userId);
   };
 
   const handleResolve = (reportId) => {
@@ -94,12 +130,58 @@ const ListaUsariosDenuciados = () => {
     console.log("Rechazar reporte:", reportId);
   };
 
+  // Versiones de las funciones que actualizan la UI
+  const handleToggleStatus = async (userId) => {
+    try {
+      await handleToggleActiveStatus(userId);
+      // Actualizar el estado local
+      updateUserStatusInReports(userId, { 
+        isActive: !localReports.find(r => r.userId?._id === userId)?.userId?.isActive 
+      });
+    } catch (error) {
+      console.error("Error al cambiar estado:", error);
+    }
+  };
+
+  const handleUnblock = async (user) => {
+    try {
+      await handleUnblockUser(user);
+      // Actualizar el estado local
+      updateUserStatusInReports(user._id, { esBloqueado: false });
+    } catch (error) {
+      console.error("Error al desbloquear:", error);
+    }
+  };
+
+  const handleBlock = async (user) => {
+    handleOpenBlockModal(user);
+  };
+
+  // Función que se ejecuta después de bloquear exitosamente
+  const onBlockSuccess = () => {
+    if (selectedUser) {
+      updateUserStatusInReports(selectedUser._id, { esBloqueado: true });
+    }
+  };
+
+  const handleDelete = async (userId) => {
+    try {
+      await handleDeleteUser();
+      // Eliminar el reporte de la lista local
+      setLocalReports(prevReports => 
+        prevReports.filter(report => report.userId?._id !== userId)
+      );
+    } catch (error) {
+      console.error("Error al eliminar:", error);
+    }
+  };
+
   const filteredReports =
     filterStatus === "all"
-      ? reports
-      : reports.filter((report) => report.status === filterStatus);
+      ? localReports
+      : localReports.filter((report) => report.status === filterStatus);
 
-  if (!Array.isArray(reports)) {
+  if (!Array.isArray(localReports)) {
     return <Alert variant="danger">{t("errors.invalidData")}</Alert>;
   }
 
@@ -114,6 +196,46 @@ const ListaUsariosDenuciados = () => {
       default:
         return "secondary";
     }
+  };
+
+  const UserInfo = ({ user, lang }) => {
+    const { t } = useTranslation("reporteusers");
+    return user ? (
+      <div
+        className="d-flex align-items-center"
+        lang={lang === "ar" ? "ar" : "es"}
+      >
+        <img
+          src={user.avatar}
+          alt={user.username}
+          className="rounded-circle me-2"
+          width="30"
+          height="30"
+          onError={(e) => {
+            e.target.src = "https://via.placeholder.com/30";
+          }}
+        />
+        <div>
+          <div>{user.username}</div>
+          <small className="text-muted">{user.email}</small>
+        </div>
+      </div>
+    ) : (
+      <span>{t("unknownUser")}</span>
+    );
+  };
+
+  const UserStatusBadges = ({ user }) => {
+    return (
+      <div className="d-flex flex-column gap-1">
+        <Badge bg={user.isActive ? "success" : "warning"}>
+          {user.isActive ? t("status.active") : t("status.inactive")}
+        </Badge>
+        <Badge bg={user.esBloqueado ? "danger" : "success"}>
+          {user.esBloqueado ? t("status.blocked") : t("status.notBlocked")}
+        </Badge>
+      </div>
+    );
   };
 
   const renderMobileView = () => {
@@ -165,6 +287,13 @@ const ListaUsariosDenuciados = () => {
                   <small className="text-muted">
                     {new Date(report.createdAt).toLocaleDateString()}
                   </small>
+                  
+                  {/* Mostrar estados del usuario */}
+                  {report.userId && (
+                    <div className="mt-2">
+                      <UserStatusBadges user={report.userId} />
+                    </div>
+                  )}
                 </Col>
                 <Col
                   xs={4}
@@ -206,22 +335,39 @@ const ListaUsariosDenuciados = () => {
                       </Dropdown.Item>
                       <Dropdown.Item
                         className="text-warning"
-                        onClick={() => handleDeactivate(report.userId?._id)}
+                        onClick={() => handleToggleStatus(report.userId?._id)}
                       >
                         <UnlockFill
                           className={`me-2 ${isArabic ? "ms-2" : ""}`}
                         />
-                        {t("actions.deactivate")}
+                        {report.userId?.isActive ? t("actions.deactivate") : t("actions.activate")}
                       </Dropdown.Item>
                       <Dropdown.Item
                         className="text-danger"
-                        onClick={() => handleDelete(report.userId?._id)}
+                        onClick={() => confirmDelete(report.userId?._id)}
                       >
                         <TrashFill
                           className={`me-2 ${isArabic ? "ms-2" : ""}`}
                         />
                         {t("actions.delete")}
                       </Dropdown.Item>
+                      {report.userId?.esBloqueado ? (
+                        <Dropdown.Item
+                          className="text-success"
+                          onClick={() => handleUnblock(report.userId)}
+                        >
+                          <UnlockFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                          {t("actions.unblock")}
+                        </Dropdown.Item>
+                      ) : (
+                        <Dropdown.Item
+                          className="text-danger"
+                          onClick={() => handleBlock(report.userId)}
+                        >
+                          <LockFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                          {t("actions.block")}
+                        </Dropdown.Item>
+                      )}
                     </Dropdown.Menu>
                   </Dropdown>
                   <Badge bg={getStatusVariant(report.status)} className="mt-2">
@@ -248,6 +394,7 @@ const ListaUsariosDenuciados = () => {
               <th>{t("tableHeaders.reason")}</th>
               <th>{t("tableHeaders.date")}</th>
               <th>{t("tableHeaders.status")}</th>
+              <th>{t("tableHeaders.userStatus")}</th>
               <th>{t("tableHeaders.actions")}</th>
             </tr>
           </thead>
@@ -267,6 +414,13 @@ const ListaUsariosDenuciados = () => {
                   <Badge bg={getStatusVariant(report.status)}>
                     {t(`status.${report.status}`)}
                   </Badge>
+                </td>
+                <td>
+                  {report.userId ? (
+                    <UserStatusBadges user={report.userId} />
+                  ) : (
+                    <span className="text-muted">N/A</span>
+                  )}
                 </td>
                 <td>
                   <div className="d-flex">
@@ -308,22 +462,39 @@ const ListaUsariosDenuciados = () => {
                         </Dropdown.Item>
                         <Dropdown.Item
                           className="text-warning"
-                          onClick={() => handleDeactivate(report.userId?._id)}
+                          onClick={() => handleToggleStatus(report.userId?._id)}
                         >
                           <UnlockFill
                             className={`me-2 ${isArabic ? "ms-2" : ""}`}
                           />
-                          {t("actions.deactivate")}
+                          {report.userId?.isActive ? t("actions.deactivate") : t("actions.activate")}
                         </Dropdown.Item>
                         <Dropdown.Item
                           className="text-danger"
-                          onClick={() => handleDelete(report.userId?._id)}
+                          onClick={() => confirmDelete(report.userId?._id)}
                         >
                           <TrashFill
                             className={`me-2 ${isArabic ? "ms-2" : ""}`}
                           />
                           {t("actions.delete")}
                         </Dropdown.Item>
+                        {report.userId?.esBloqueado ? (
+                          <Dropdown.Item
+                            className="text-success"
+                            onClick={() => handleUnblock(report.userId)}
+                          >
+                            <UnlockFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                            {t("actions.unblock")}
+                          </Dropdown.Item>
+                        ) : (
+                          <Dropdown.Item
+                            className="text-danger"
+                            onClick={() => handleBlock(report.userId)}
+                          >
+                            <LockFill className={`me-2 ${isArabic ? "ms-2" : ""}`} />
+                            {t("actions.block")}
+                          </Dropdown.Item>
+                        )}
                       </Dropdown.Menu>
                     </Dropdown>
                   </div>
@@ -374,7 +545,7 @@ const ListaUsariosDenuciados = () => {
           </Button>
         </ButtonGroup>
         <Badge bg="secondary" className="d-flex align-items-center">
-          {t("totalReports")}: {reports.length}
+          {t("totalReports")}: {localReports.length}
         </Badge>
       </div>
 
@@ -391,7 +562,8 @@ const ListaUsariosDenuciados = () => {
         <>{isMobile ? renderMobileView() : renderDesktopView()}</>
       )}
 
-      <Modal show={showModal} onHide={handleCloseModal} size="lg">
+      {/* Modal de detalles */}
+      <Modal show={showDetailsModal} onHide={handleCloseDetailsModal} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>{t("reportDetails")}</Modal.Title>
         </Modal.Header>
@@ -412,6 +584,13 @@ const ListaUsariosDenuciados = () => {
                 <Badge bg={getStatusVariant(selectedReport.status)}>
                   {t(`status.${selectedReport.status}`)}
                 </Badge>
+
+                <h6 className="mt-3">{t("tableHeaders.userStatus")}</h6>
+                {selectedReport.userId ? (
+                  <UserStatusBadges user={selectedReport.userId} />
+                ) : (
+                  <span className="text-muted">N/A</span>
+                )}
               </Col>
               <Col md={6}>
                 <h6>{t("tableHeaders.postTitle")}</h6>
@@ -427,7 +606,7 @@ const ListaUsariosDenuciados = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
+          <Button variant="secondary" onClick={handleCloseDetailsModal}>
             {t("close")}
           </Button>
           <Button
@@ -444,34 +623,38 @@ const ListaUsariosDenuciados = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </Container>
-  );
-};
 
-const UserInfo = ({ user, lang }) => {
-  const { t } = useTranslation("reporteusers");
-  return user ? (
-    <div
-      className="d-flex align-items-center"
-      lang={lang === "ar" ? "ar" : "es"}
-    >
-      <img
-        src={user.avatar}
-        alt={user.username}
-        className="rounded-circle me-2"
-        width="30"
-        height="30"
-        onError={(e) => {
-          e.target.src = "https://via.placeholder.com/30";
-        }}
-      />
-      <div>
-        <div>{user.username}</div>
-        <small className="text-muted">{user.email}</small>
-      </div>
-    </div>
-  ) : (
-    <span>{t("unknownUser")}</span>
+      {/* Modal de confirmación de eliminación */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{t('deleteModal.title', { ns: 'users' })}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {t('deleteModal.message', { ns: 'users' })}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            {t('deleteModal.cancel', { ns: 'users' })}
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            {t('deleteModal.confirm', { ns: 'users' })}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal de bloqueo */}
+      {showBlockModal && selectedUser && (
+        <BloqueModalUser
+          show={showBlockModal}
+          handleClose={handleCloseBlockModal}
+          handleBlock={async (datosBloqueo) => {
+            await handleBlockUser(datosBloqueo);
+            onBlockSuccess();
+          }}
+          user={selectedUser}
+        />
+      )}
+    </Container>
   );
 };
 

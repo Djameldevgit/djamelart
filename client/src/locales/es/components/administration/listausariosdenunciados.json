@@ -1,0 +1,50 @@
+{
+  "header": {
+    "title": "Usuarios Denunciados"
+  },
+  "tableHeaders": {
+    "reporter": "Denunciante",
+    "reportedUser": "Usuario Denunciado",
+    "postTitle": "Título de la Publicación",
+    "reason": "Motivo",
+    "date": "Fecha",
+    "status": "Estado del Reporte",
+    "userStatus": "Estado del Usuario",
+    "actions": "Acciones"
+  },
+  "status": {
+    "pending": "Pendiente",
+    "resolved": "Resuelto",
+    "rejected": "Rechazado"
+  },
+  "actions": {
+    "view": "Ver Detalles",
+    "resolve": "Resolver",
+    "reject": "Rechazar",
+    "deactivate": "Desactivar Usuario",
+    "activate": "Activar Usuario",
+    "delete": "Eliminar Usuario",
+    "block": "Bloquear Usuario",
+    "unblock": "Desbloquear Usuario"
+  },
+  "filters": {
+    "all": "Todos",
+    "pending": "Pendientes",
+    "resolved": "Resueltos",
+    "rejected": "Rechazados"
+  },
+  "reportDetails": "Detalles del Reporte",
+  "additionalInfo": "Información Adicional",
+  "loading": "Cargando...",
+  "noReports": "No hay reportes para mostrar",
+  "totalReports": "Total de Reportes",
+  "close": "Cerrar",
+  "errors": {
+    "fetchError": "Error al cargar los reportes",
+    "invalidData": "Datos inválidos"
+  },
+  "notAvailable": "No disponible",
+  "notSpecified": "No especificado",
+  "notProvided": "No proporcionado",
+  "unknownUser": "Usuario desconocido"
+}

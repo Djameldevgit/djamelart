@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { follow, unfollow } from '../redux/actions/profileAction'
-
+import { useTranslation } from 'react-i18next';
 const FollowBtn = ({user}) => {
     const [followed, setFollowed] = useState(false)
 
-    const { auth, profile, socket } = useSelector(state => state)
+    const { auth, profile, socket,languageReducer } = useSelector(state => state)
+
+    const { t, i18n } = useTranslation('follow');
+
+    // Cambiar el idioma activamente si es diferente
+    const lang = languageReducer.language || 'es';
+    if (i18n.language !== lang) i18n.changeLanguage(lang);
+   
     const dispatch = useDispatch()
 
     const [load, setLoad] = useState(false)
@@ -41,11 +48,11 @@ const FollowBtn = ({user}) => {
             followed
             ? <button className="btn btn-outline-danger"
             onClick={handleUnFollow}>
-                UnFollow
+                 {t('UnFollow')}
             </button>
             : <button className="btn btn-outline-info"
-            onClick={handleFollow}>
-                Follow
+            onClick={handleFollow}>{t('Follow')}
+                 
             </button>
         }
         </>

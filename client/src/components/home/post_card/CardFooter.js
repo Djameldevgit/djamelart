@@ -41,9 +41,7 @@ const CardFooter = ({ post }) => {
           direction: lang === 'ar' ? 'rtl' : 'ltr',
             textAlign: lang === 'ar' ? 'right' : 'left',
           }}>
-          <Card.Body>
-            <Card.Title>{t('title', { lng: lang })}: {t(post.title, { lng: lang })}</Card.Title>
-          </Card.Body>
+          
           <ListGroup className="list-group-flush">
          
           <ListGroup.Item> Artist:  {post.user.username} </ListGroup.Item>

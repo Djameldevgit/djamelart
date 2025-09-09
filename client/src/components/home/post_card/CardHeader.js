@@ -1,28 +1,69 @@
 import React, { useState } from 'react';
-import { Card, Dropdown, Modal, Form } from 'react-bootstrap';
+import { Card, Dropdown, Modal, Form, Alert } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import Avatar from '../../Avatar';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
+// React Share imports
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  TelegramShareButton,
+  EmailShareButton,
+  FacebookIcon,
+  TwitterIcon,
+  WhatsappIcon,
+  TelegramIcon,
+  EmailIcon,
+  PinterestShareButton,
+  PinterestIcon
+} from 'react-share';
 
 import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
 import { MESS_TYPES } from '../../../redux/actions/messageAction';
 import { deletePost } from '../../../redux/actions/postAction';
 import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
 import { createReport } from '../../../redux/actions/reportUserAction';
+import FollowBtn from '../../FollowBtn';
 
 const CardHeader = ({ post }) => {
-  const { auth, homeUsers, socket, languageReducer } = useSelector((state) => state);
+  const { auth, homeUsers, socket, languageReducer, profile } = useSelector((state) => state);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
+  const [copied, setCopied] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
   const { t, i18n } = useTranslation('cardheader');
+  
+  const findCompleteUser = () => {
+    const completeUser = profile.users.find(u => u._id === post.user._id);
+    return completeUser || post.user;
+  };
 
-  // Cambiar el idioma activamente si es diferente
+  const user = findCompleteUser();
   const lang = languageReducer.language || 'es';
   if (i18n.language !== lang) i18n.changeLanguage(lang);
+
+  // URL y texto para compartir
+  const shareUrl = `${window.location.origin}/post/${post._id}`;
+  const shareTitle = `🎨 Obra de arte por ${post.user.username}: "${post.content?.substring(0, 80)}..." - Mira más en Tassili Art`;
+  
+  // Texto específico para TikTok/Instagram
+  const socialMediaText = `🎨 ¡Mira esta obra de arte en Tassili Art! 
+Por: ${post.user.username}
+"${post.content?.substring(0, 100)}..."
+👉 ${shareUrl}
+
+#Arte #TassiliArt #${post.user.username.replace(/\s/g, '')}`;
+
+  // Para Pinterest
+  const imageUrl = post.images?.[0]?.url || post.user.avatar;
+
   const handleAprove = () => {
     if (window.confirm(t('confirmApprove'))) {
       dispatch(aprovarPostPendiente(post, 'aprovado', auth));
@@ -32,6 +73,7 @@ const CardHeader = ({ post }) => {
 
   // Buscar el primer usuario que tenga role === "admin"
   const adminUser = homeUsers.users.find(user => user.role === "admin");
+  
   const handleChatWithAdmin = () => {
     if (!adminUser) {
       return dispatch({
@@ -70,6 +112,10 @@ const CardHeader = ({ post }) => {
     dispatch(createReport({ auth, reportData }));
     setShowReportModal(false);
     setReportReason('');
+    dispatch({ 
+      type: GLOBALTYPES.ALERT, 
+      payload: { success: t('reportSubmitted') } 
+    });
   };
 
   const handleAddUser = (user) => {
@@ -78,14 +124,14 @@ const CardHeader = ({ post }) => {
   };
 
   return (
-    <Card.Header className="d-flex justify-content-between align-items-center p-3" >
+    <Card.Header className="d-flex justify-content-between align-items-center p-3">
       <div className="d-flex align-items-center">
-        <Avatar src={post.user.avatar} size="big-avatar" />
-        <div className="ml-3">
+        
+        <div className="ml-1">
           <Card.Title className="m-0">
-            <Link to={`/profile/${post.user._id}`} className="text-dark">
-              {post.user.username}
-            </Link>
+         
+        <strong>Title</strong>  {post.title} 
+          
           </Card.Title>
           <Card.Text className="text-muted small">
             {moment(post.createdAt).fromNow()}
@@ -134,6 +180,7 @@ const CardHeader = ({ post }) => {
             }}>
               💬 {t('contactSeller')}
             </Dropdown.Item>
+
             <Dropdown.Item
               onClick={handleChatWithAdmin}
               style={{
@@ -141,16 +188,31 @@ const CardHeader = ({ post }) => {
                 textAlign: lang === 'ar' ? 'right' : 'left',
               }}
             >
-              🛡️ contactar admin
+              🛡️ {t('contactAdmin')}
             </Dropdown.Item>
 
+            {auth.user._id !== user._id && (
+              <Dropdown.Item 
+                as="div" 
+                className="p-2" 
+                style={{ cursor: 'default' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="d-flex align-items-center">
+                  <span className="me-2">👤</span>
+                  <FollowBtn user={user} />
+                </div>
+              </Dropdown.Item>
+            )}
 
-            <Dropdown.Item>
-              👤 {t('followAuthor')}
+            <Dropdown.Item onClick={() => setShowShareModal(true)}>
+              📤 {t('share')}
             </Dropdown.Item>
+
             <Dropdown.Item onClick={() => setShowReportModal(true)}>
               🚩 {t('report')}
             </Dropdown.Item>
+
             <Dropdown.Item>
               🔖 {t('save')}
             </Dropdown.Item>
@@ -158,19 +220,197 @@ const CardHeader = ({ post }) => {
         </Dropdown>
       )}
 
-      {/* Modal de reporte */}
+      {/* Modal para Compartir */}
+      <Modal show={showShareModal} onHide={() => setShowShareModal(false)} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>🎨 {t('shareArt')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {copied && (
+            <Alert variant="success" className="py-2">
+              ✅ {t('copiedToClipboard')}
+            </Alert>
+          )}
+
+          <h6 className="mb-3">{t('shareOnSocial')}</h6>
+          <div className="d-flex justify-content-around flex-wrap mb-4">
+            <FacebookShareButton url={shareUrl} quote={shareTitle} className="mx-2 my-2">
+              <FacebookIcon size={45} round />
+              <div className="small mt-1">Facebook</div>
+            </FacebookShareButton>
+
+            <TwitterShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
+              <TwitterIcon size={45} round />
+              <div className="small mt-1">Twitter</div>
+            </TwitterShareButton>
+
+            <WhatsappShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
+              <WhatsappIcon size={45} round />
+              <div className="small mt-1">WhatsApp</div>
+            </WhatsappShareButton>
+
+            {imageUrl && (
+              <PinterestShareButton
+                url={shareUrl}
+                media={imageUrl}
+                description={shareTitle}
+                className="mx-2 my-2"
+              >
+                <PinterestIcon size={45} round />
+                <div className="small mt-1">Pinterest</div>
+              </PinterestShareButton>
+            )}
+
+            <CopyToClipboard 
+              text={socialMediaText}
+              onCopy={() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+                dispatch({ 
+                  type: GLOBALTYPES.ALERT, 
+                  payload: { success: t('copiedForTikTok') } 
+                });
+              }}
+            >
+              <div className="mx-2 my-2 text-center" style={{ cursor: 'pointer' }}>
+                <div style={{
+                  width: 45,
+                  height: 45,
+                  borderRadius: '50%',
+                  background: '#000',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto'
+                }}>
+                  <span style={{ color: '#fff', fontWeight: 'bold' }}>TK</span>
+                </div>
+                <div className="small mt-1">TikTok</div>
+              </div>
+            </CopyToClipboard>
+
+            <CopyToClipboard 
+              text={socialMediaText}
+              onCopy={() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+                dispatch({ 
+                  type: GLOBALTYPES.ALERT, 
+                  payload: { success: t('copiedForInstagram') } 
+                });
+              }}
+            >
+              <div className="mx-2 my-2 text-center" style={{ cursor: 'pointer' }}>
+                <div style={{
+                  width: 45,
+                  height: 45,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto'
+                }}>
+                  <span style={{ color: '#fff', fontWeight: 'bold' }}>IG</span>
+                </div>
+                <div className="small mt-1">Instagram</div>
+              </div>
+            </CopyToClipboard>
+
+            <TelegramShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
+              <TelegramIcon size={45} round />
+              <div className="small mt-1">Telegram</div>
+            </TelegramShareButton>
+
+            <EmailShareButton url={shareUrl} subject={t('artWork')} body={shareTitle} className="mx-2 my-2">
+              <EmailIcon size={45} round />
+              <div className="small mt-1">Email</div>
+            </EmailShareButton>
+          </div>
+
+          <h6 className="mb-3">{t('manualShare')}</h6>
+          <Form.Group>
+            <Form.Label>{t('copyTextForSocial')}</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={socialMediaText}
+              readOnly
+              style={{
+                direction: 'ltr',
+                textAlign: 'left',
+                fontSize: '14px'
+              }}
+              className="mb-2"
+            />
+            <CopyToClipboard 
+              text={socialMediaText}
+              onCopy={() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+                dispatch({ 
+                  type: GLOBALTYPES.ALERT, 
+                  payload: { success: t('textCopied') } 
+                });
+              }}
+            >
+              <button className="btn btn-outline-primary btn-sm">
+                📋 {t('copyText')}
+              </button>
+            </CopyToClipboard>
+          </Form.Group>
+
+          <Form.Group className="mt-3">
+            <Form.Label>{t('copyLink')}</Form.Label>
+            <div className="input-group">
+              <Form.Control
+                type="text"
+                value={shareUrl}
+                readOnly
+                style={{
+                  direction: 'ltr',
+                  textAlign: 'left',
+                  fontSize: '14px'
+                }}
+              />
+              <CopyToClipboard 
+                text={shareUrl}
+                onCopy={() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                  dispatch({ 
+                    type: GLOBALTYPES.ALERT, 
+                    payload: { success: t('linkCopied') } 
+                  });
+                }}
+              >
+                <button className="btn btn-outline-secondary" type="button">
+                  📋
+                </button>
+              </CopyToClipboard>
+            </div>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={() => setShowShareModal(false)}>
+            {t('close')}
+          </button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal de Reporte */}
       <Modal show={showReportModal} onHide={() => setShowReportModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>{t('reportTitle')}</Modal.Title>
         </Modal.Header>
-
         <Modal.Body>
           <Form.Group controlId="reportReason">
             <Form.Label>{t('reportLabel')}</Form.Label>
             <Form.Control
               as="select"
               value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)} style={{
+              onChange={(e) => setReportReason(e.target.value)}
+              style={{
                 direction: lang === 'ar' ? 'rtl' : 'ltr',
                 textAlign: lang === 'ar' ? 'right' : 'left',
               }}
@@ -190,10 +430,15 @@ const CardHeader = ({ post }) => {
             </Form.Control>
           </Form.Group>
         </Modal.Body>
-
         <Modal.Footer>
-          <button className="btn btn-secondary" onClick={() => setShowReportModal(false)}>
-            {t('common:cancel')}
+          <button 
+            className="btn btn-secondary" 
+            onClick={() => {
+              setShowReportModal(false);
+              setReportReason('');
+            }}
+          >
+            {t('cancel')}
           </button>
           <button
             className="btn btn-danger"
@@ -209,4 +454,3 @@ const CardHeader = ({ post }) => {
 };
 
 export default CardHeader;
-

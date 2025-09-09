@@ -1,0 +1,63 @@
+{
+  "header": {
+    "title": "المستخدمون المُبلّغ عنهم"
+  },
+  "tableHeaders": {
+    "reporter": "المُبلّغ",
+    "reportedUser": "المستخدم المُبلّغ عنه",
+    "postTitle": "عنوان المنشور",
+    "reason": "السبب",
+    "date": "التاريخ",
+    "status": "حالة التقرير",
+    "userStatus": "حالة المستخدم",
+    "accountStatus": "حالة الحساب",
+    "blockStatus": "حالة الحظر",
+    "actions": "الإجراءات"
+  },
+  "status": {
+    "pending": "قيد الانتظار",
+    "resolved": "تم الحل",
+    "rejected": "مرفوض",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "blocked": "محظور",
+    "notBlocked": "غير محظور"
+  },
+  "actions": {
+    "view": "عرض التفاصيل",
+    "resolve": "حل",
+    "reject": "رفض",
+    "deactivate": "تعطيل",
+    "activate": "تفعيل",
+    "delete": "حذف",
+    "block": "حظر",
+    "unblock": "رفع الحظر",
+    "managePermissions": "إدارة الصلاحيات"
+  },
+  "filters": {
+    "all": "الكل",
+    "pending": "قيد الانتظار",
+    "resolved": "تم الحل",
+    "rejected": "مرفوض"
+  },
+  "reportDetails": "تفاصيل التقرير",
+  "additionalInfo": "معلومات إضافية",
+  "totalReports": "إجمالي التقارير",
+  "loading": "جاري التحميل...",
+  "noReports": "لا توجد تقارير متاحة",
+  "notAvailable": "غير متاح",
+  "notSpecified": "غير محدد",
+  "notProvided": "غير مقدم",
+  "close": "إغلاق",
+  "unknownUser": "مستخدم غير معروف",
+  "errors": {
+    "fetchError": "خطأ في تحميل التقارير",
+    "invalidData": "بيانات غير صالحة"
+  },
+  "deleteModal": {
+    "title": "تأكيد الحذف",
+    "message": "هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.",
+    "cancel": "إلغاء",
+    "confirm": "حذف"
+  }
+}
