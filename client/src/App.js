@@ -93,7 +93,7 @@ dispatch(getSettings( ));
     }
   }, [dispatch, auth.token])
 
- /*
+ 
   
   useEffect(() => {
     if (!("Notification" in window)) {
@@ -106,7 +106,7 @@ dispatch(getSettings( ));
       });
     }
   }, [])
-*/
+ 
 
 
 

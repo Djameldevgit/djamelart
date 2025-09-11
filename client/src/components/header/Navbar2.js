@@ -179,43 +179,46 @@ const Navbar2 = ({ onFiltersChange }) => {
               <i className='fas fa-plus' onClick={openStatusModal}> </i>
             }
 
-{
-  auth.user && (
-    <NavDropdown
-      align="end"
-      title={
-        <div style={{ position: "relative" }}>
-          <FaBell size={20} color={notify.data.some(n => !n.isRead) ? "crimson" : "black"} />
-          {notify.data.some(n => !n.isRead) && (
-            <Badge
-              pill
-              bg="danger"
-              className="position-absolute top-0 start-100 translate-middle"
-              style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
-            >
-              {notify.data.filter(n => !n.isRead).length}
-            </Badge>
-          )}
-        </div>
-      }
-      id="nav-notify-dropdown"
-      drop="down"
-      className="notification-dropdown"
-    >
-      <NavDropdown.Header className="fw-bold">🔔 {t('notifications')}</NavDropdown.Header>
-      <NavDropdown.Divider />
+            {
+              auth.user && (
+                <NavDropdown
+                  align="end"
+                  title={
+                    <div>
+                      <FaBell size={20} color={notify.data.length > 0 ? "crimson" : "black"} />
+                      {notify.data.length > 0 && (
+                        <Badge
+                          pill
+                          bg="danger"
+                          className="position-absolute top-3 start-100 translate-middle"
+                          style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
+                        >
+                          {notify.data.length}
+                        </Badge>
+                      )}
+                    </div>
+                  }
+                  id="nav-notify-dropdown"
+                  drop="down"
+                  className="notification-dropdown"
+                >
+                  <NavDropdown.Header className="fw-bold">🔔 {t('notifications')}</NavDropdown.Header>
+                  <NavDropdown.Divider />
 
-      <div style={{
-        overflowY: 'auto',
-        padding: '0',
-        position: 'auto',
-      }}>
-        <NotifyModal />
-      </div>
-    </NavDropdown>
-  )
-}
+                  <div style={{
+                    overflowY: 'auto',
+                    padding: '0',
+                    position: 'auto',
+                  }}>
+                    <NotifyModal />
+                  </div>
+                </NavDropdown>
 
+              )
+
+
+
+            }
 
             {auth.user && (
               <Link to="/cart" className="position-relative text-decoration-none">
