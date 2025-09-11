@@ -141,7 +141,23 @@ const authCtrl = {
             return res.status(500).json({ msg: req.__('auth.server_error') });
         }
     },
-
+    toggleVerification : async (req, res) => {
+        try {
+          const { id } = req.params; // userId
+          const user = await Users.findById(id);
+          if (!user) return res.status(404).json({ msg: "Usuario no encontrado" });
+      
+          user.isVerified = !user.isVerified; // alternar true/false
+          await user.save();
+      
+          res.json({
+            msg: `El usuario ahora está ${user.isVerified ? "verificado ✅" : "no verificado ❌"}`,
+            user,
+          });
+        } catch (err) {
+          return res.status(500).json({ msg: "Error en el servidor" });
+        }
+      },
 
     forgotPassword: async (req, res) => {
         try {

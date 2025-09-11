@@ -33,9 +33,10 @@ import VerifyModal from '../authAndVerify/VerifyModal';
 import Acordion from '../Acordion';
 import Modalsearchhome from './Modalsearchhome';
 import DesactivateModal from '../authAndVerify/DesactivateModal';
+import MultiCheckboxModal from './MultiCheckboxModal.';
 
 const Navbar2 = ({ onFiltersChange }) => {
-  const { auth, theme, cart, notify } = useSelector((state) => state)
+  const { auth, theme, cart, notify, settings } = useSelector((state) => state)
   const dispatch = useDispatch()
   const { languageReducer } = useSelector(state => state)
   const { t, i18n } = useTranslation('navbar');
@@ -46,14 +47,23 @@ const Navbar2 = ({ onFiltersChange }) => {
     }
   }, [lang, i18n]);
 
-
+  if (!settings) {
+    return (
+      <nav className="navbar navbar-light bg-light">
+        <span className="navbar-brand">Cargando...</span>
+      </nav>
+    );
+  }
   const [showDrawer, setShowDrawer] = useState(false)
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const totalItems = cart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
   const [showModal, setShowModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
+  const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
 
+  const [showFeaturesModal, setShowFeaturesModal] = useState(false);
   const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true })
   const handleLogout = () => {
     dispatch(logout())
@@ -64,8 +74,7 @@ const Navbar2 = ({ onFiltersChange }) => {
   const handleShowDrawer = () => setShowDrawer(true)
 
   const history = useHistory();
-  const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
+
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 700);
@@ -130,14 +139,18 @@ const Navbar2 = ({ onFiltersChange }) => {
   //fixed-top
   return (
     <div>
-      <Navbar
-        expand="lg"
-        className="bg-body-tertiary"
-        style={{
-          zIndex: 1030,
-          marginTop: isMobile ? '55px' : '0'
-        }}
-      >
+    <Navbar
+  expand="lg"
+  style={{
+    zIndex: 1030,
+    marginTop: isMobile ? '55px' : '0',
+    backgroundColor: settings.style ? '#1e1e2f' : '#f8f9fa',
+  }}
+  className={settings.style ? "navbar-dark" : "navbar-light"} // para el color de textos
+>
+  
+ 
+
         <Container fluid className="align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <Button onClick={handleShowDrawer} variant="outline-primary" className="me-2">
@@ -166,46 +179,43 @@ const Navbar2 = ({ onFiltersChange }) => {
               <i className='fas fa-plus' onClick={openStatusModal}> </i>
             }
 
-            {
-              auth.user && (
-                <NavDropdown
-                  align="end"
-                  title={
-                    <div>
-                      <FaBell size={20} color={notify.data.length > 0 ? "crimson" : "black"} />
-                      {notify.data.length > 0 && (
-                        <Badge
-                          pill
-                          bg="danger"
-                          className="position-absolute top-3 start-100 translate-middle"
-                          style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
-                        >
-                          {notify.data.length}
-                        </Badge>
-                      )}
-                    </div>
-                  }
-                  id="nav-notify-dropdown"
-                  drop="down"
-                  className="notification-dropdown"
-                >
-                  <NavDropdown.Header className="fw-bold">🔔 {t('notifications')}</NavDropdown.Header>
-                  <NavDropdown.Divider />
+{
+  auth.user && (
+    <NavDropdown
+      align="end"
+      title={
+        <div style={{ position: "relative" }}>
+          <FaBell size={20} color={notify.data.some(n => !n.isRead) ? "crimson" : "black"} />
+          {notify.data.some(n => !n.isRead) && (
+            <Badge
+              pill
+              bg="danger"
+              className="position-absolute top-0 start-100 translate-middle"
+              style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
+            >
+              {notify.data.filter(n => !n.isRead).length}
+            </Badge>
+          )}
+        </div>
+      }
+      id="nav-notify-dropdown"
+      drop="down"
+      className="notification-dropdown"
+    >
+      <NavDropdown.Header className="fw-bold">🔔 {t('notifications')}</NavDropdown.Header>
+      <NavDropdown.Divider />
 
-                  <div style={{
-                    overflowY: 'auto',
-                    padding: '0',
-                    position: 'auto',
-                  }}>
-                    <NotifyModal />
-                  </div>
-                </NavDropdown>
+      <div style={{
+        overflowY: 'auto',
+        padding: '0',
+        position: 'auto',
+      }}>
+        <NotifyModal />
+      </div>
+    </NavDropdown>
+  )
+}
 
-              )
-
-
-
-            }
 
             {auth.user && (
               <Link to="/cart" className="position-relative text-decoration-none">
@@ -278,7 +288,9 @@ const Navbar2 = ({ onFiltersChange }) => {
                           <FaShieldAlt className="me-2" />
                           {t('adminPanel')}
                         </NavDropdown.Header>
-
+                        <NavDropdown.Item onClick={() => setShowFeaturesModal(true)}>
+                          ⚙️ Configuración global
+                        </NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/blog">
                           <FaBlog className="me-2" />
                           {t('blog')}
@@ -409,7 +421,7 @@ const Navbar2 = ({ onFiltersChange }) => {
         }}
 
         style={{
-          zIndex: 5000,
+          marginTop: '20',
 
         }}
 
@@ -425,7 +437,7 @@ const Navbar2 = ({ onFiltersChange }) => {
         <div style={{
           direction: lang === 'ar' ? 'rtl' : 'ltr',
           textAlign: lang === 'ar' ? 'right' : 'left',
-          zIndex: 5000,
+          marginTop: "20"
         }}          >
           <div className="filter-group">
             <input
@@ -708,7 +720,10 @@ const Navbar2 = ({ onFiltersChange }) => {
         actionText={t('auth.contactUs')}
         actionLink="/contact"
       />
-
+      <MultiCheckboxModal
+        show={showFeaturesModal}
+        onClose={() => setShowFeaturesModal(false)}
+      />
       {showAdminRedirectModal && (
         <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
           <div className="modal-dialog modal-dialog-centered">

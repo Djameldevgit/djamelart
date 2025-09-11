@@ -29,6 +29,8 @@ import publiBlogReducer from './publiBlogReducer'
  
 import form  from './formReducer';
 import { roleReducer } from './roleReducer'
+import settings  from './settingsReducer'
+ 
  
  
  
@@ -51,6 +53,6 @@ export default combineReducers({
    homePostsAprove ,cart,languageReducer,
    roleReducer,homeUsers,orders,userBlockReducer,
    usersActionReducer  ,ProvaReducer,
-   reportReducer ,publiBlogReducer ,blog,form 
+   reportReducer ,publiBlogReducer ,blog,form  ,settings
 
 }) 

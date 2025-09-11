@@ -19,7 +19,10 @@ app.use(cookieParser())
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-// --- Configuración de idiomas ---
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
 i18n.configure({
   locales: ['en', 'es', 'fr', 'ar', 'ru', 'kab', 'chino'],
   directory: path.join(__dirname, 'locales'),
@@ -66,7 +69,7 @@ app.use('/api', require('./routes/blockUserRouter'));
 app.use('/api', require('./routes/reportRouter'));
 app.use('/api/blog/comments', require('./routes/blogCommentRoutes'));
 app.use("/api/forms", require("./routes/formRouter"));
-
+app.use("/api", require("./routes/settingsRouter"));
 // --- Auto desbloqueo de usuarios cada 5 min ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 

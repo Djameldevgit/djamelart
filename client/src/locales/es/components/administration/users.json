@@ -30,6 +30,8 @@
   "action": {
     "edit": "Editar",
     "delete": "Eliminar",
+    "verify": "Verfificado",
+    "unverify": "No Verfificado",
     "managePermissions": "Gestionar permisos",
     "deactivate": "Desactivar",
     "activate": "Activar",
@@ -42,5 +44,18 @@
     "deleteUser": "Error al eliminar el usuario",
     "blockUser": "Error al bloquear el usuario",
     "unblockUser": "Error al desbloquear el usuario"
-  }
+  },
+
+  "verify": "Verificar",
+  "unverify": "Quitar verificación",
+  "block": "Bloquear",
+  "unblock": "Desbloquear",
+  "activate": "Activar",
+  "deactivate": "Desactivar",
+  "delete": "Eliminar",
+  "managePermissions": "Gestionar permisos",
+  "edit": "Editar"
+
+
+
 }

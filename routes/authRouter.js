@@ -12,7 +12,8 @@ router.post('/logout', authCtrl.logout)
 router.post('/refresh_token', authCtrl.generateAccessToken)
 router.post('/send_activation_email', auth, authCtrl.sendActivationEmail);
 router.post('/activate', authCtrl.activationAccount);
- 
+router.patch("/users/:id/toggle-verify", auth,   authCtrl.toggleVerification);
+
 router.post('/forgot', authCtrl.forgotPassword)
 
 router.post('/reset', auth, authCtrl.resetPassword)

@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
+
 const DescriptionPost = ({ post }) => {
   const { languageReducer } = useSelector(state => state);
   const { t } = useTranslation('postDetail'); // namespace correcto
@@ -9,11 +10,11 @@ const DescriptionPost = ({ post }) => {
   const lang = languageReducer.language || 'en'; // fallback por si acaso
 
   return (
- 
-    <div className="artwork-details-container"style={{
+
+    <div className="artwork-details-container" style={{
       direction: lang === 'ar' ? 'rtl' : 'ltr',
-        textAlign: lang === 'ar' ? 'right' : 'left',
-      }}>
+      textAlign: lang === 'ar' ? 'right' : 'left',
+    }}>
       <div className="artwork-metadata">
         {post.category && (
           <div className="metadata-item">
@@ -29,6 +30,31 @@ const DescriptionPost = ({ post }) => {
             <span className="metadata-value">{post.title}</span>
           </div>
         )}
+        {post.description && (
+          <div className="metadata-item">
+            <i className="fas fa-image"></i>
+            <span className="metadata-label">{t('description', { lng: lang })}:</span>
+            <span className="infovalue">
+              <div className="cardbodycontent"  >
+                <span>
+                  {
+                    post.description.length < 60
+                      ? post.description
+                      : readMore ? post.description + ' ' : post.description.slice(0, 60) + '.....'
+                  }
+                </span>
+                {
+                  post.description.length > 60 &&
+                  <span className="readMore color-red" onClick={() => setReadMore(!readMore)}>
+                    {readMore ? 'masque lo contenu' : 'Lire plus'}
+                  </span>
+                }
+              </div>
+            </span>
+          </div>
+        )}
+
+
         {post.theme && (
           <div className="metadata-item">
             <i className="fas fa-image"></i>
@@ -138,7 +164,7 @@ const DescriptionPost = ({ post }) => {
         )}
       </div>
     </div>
-      
+
   );
 };
 

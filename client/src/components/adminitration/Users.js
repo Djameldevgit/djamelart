@@ -33,11 +33,11 @@ import {
   deleteUser,
   toggleActiveStatus,
   USER_TYPES,
-} from "../../redux/actions/userAction";
-import {
+  toggleVerification,      // <-- la acción que añadiste para verificación
   bloquearUsuario,
   unBlockUser,
 } from "../../redux/actions/userAction";
+ 
 import {
   getBlockedUsers,
 } from "../../redux/actions/userBlockAction";
@@ -339,15 +339,22 @@ const Users = () => {
                           {t('tableHeaders.actions')}
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="w-100">
+                          {/* Edit (disabled) */}
                           <Dropdown.Item disabled>
                             <PencilFill className="me-2" /> {t('action.edit')}
                           </Dropdown.Item>
+
+                          {/* Delete -> abre modal de confirmación */}
                           <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
                             <TrashFill className="me-2" /> {t('action.delete')}
                           </Dropdown.Item>
+
+                          {/* Manage permissions */}
                           <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
                             🛡️ {t('action.managePermissions')}
                           </Dropdown.Item>
+
+                          {/* Activar / Desactivar (usa tu action toggleActiveStatus) */}
                           <Dropdown.Item
                             className={user.isActive ? "text-warning" : "text-success"}
                             onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
@@ -359,6 +366,8 @@ const Users = () => {
                             )}
                             {user.isActive ? t('action.deactivate') : t('action.activate')}
                           </Dropdown.Item>
+
+                          {/* Bloquear / Desbloquear -> usa tu modal / handler existente */}
                           <Dropdown.Item
                             className={user.esBloqueado ? "text-success" : "text-danger"}
                             onClick={() =>
@@ -372,7 +381,21 @@ const Users = () => {
                             )}
                             {user.esBloqueado ? t('action.unblock') : t('action.block')}
                           </Dropdown.Item>
+
+                          {/* Verificar / Quitar verificación (usa toggleVerification) */}
+                          <Dropdown.Item
+                            className={user.isVerified ? "text-danger" : "text-success"}
+                            onClick={() => dispatch(toggleVerification(user._id, auth.token))}
+                          >
+                            {user.isVerified ? (
+                              <XCircleFill className="me-2" />
+                            ) : (
+                              <CheckCircleFill className="me-2" />
+                            )}
+                            {user.isVerified ? t('action.unverify') : t('action.verify')}
+                          </Dropdown.Item>
                         </Dropdown.Menu>
+
                       </Dropdown>
                     </Accordion.Body>
                   </Accordion.Item>
@@ -453,12 +476,12 @@ const Users = () => {
                             <ThreeDotsVertical />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-
-
+                            {/* Delete */}
                             <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
                               <TrashFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.delete')}
                             </Dropdown.Item>
 
+                            {/* Activar / Desactivar */}
                             <Dropdown.Item
                               className={user.isActive ? "text-warning" : "text-success"}
                               onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
@@ -471,6 +494,7 @@ const Users = () => {
                               {user.isActive ? t('action.deactivate') : t('action.activate')}
                             </Dropdown.Item>
 
+                            {/* Bloquear / Desbloquear */}
                             <Dropdown.Item
                               className={user.esBloqueado ? "text-success" : "text-danger"}
                               onClick={() =>
@@ -485,26 +509,54 @@ const Users = () => {
                               {user.esBloqueado ? t('action.unblock') : t('action.block')}
                             </Dropdown.Item>
 
+                            {/* Verificar / Quitar verificación */}
+                            <Dropdown.Item
+                              className={user.isVerified ? "text-danger" : "text-success"}
+                              onClick={() => dispatch(toggleVerification(user._id, auth.token))}
+                            >
+                              {user.isVerified ? (
+                                <XCircleFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                              ) : (
+                                <CheckCircleFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                              )}
+                              {user.isVerified ? t('action.unverify') : t('action.verify')}
+                            </Dropdown.Item>
+
+                            {/* Edit (disabled) */}
                             <Dropdown.Item disabled>
                               <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.edit')}
                             </Dropdown.Item>
 
+                            {/* Manage permissions */}
                             <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
                               🛡️ {t('action.managePermissions')}
                             </Dropdown.Item>
-
-
                           </Dropdown.Menu>
+
+
                         </Dropdown>
                       </td>
                     </tr>
-                  ))}
+                  )
+
+
+
+
+                  )}
                 </tbody>
               </Table>
             </div>
           </Card.Body>
         </Card>
+
+
+
+
+
+
+
       )}
+
 
       {/* Botón Cargar más */}
       {load && (

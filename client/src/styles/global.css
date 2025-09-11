@@ -146,7 +146,7 @@ url("./header.css"); */
 @import url("./modals/modalfiltershome.css");
 @import url("./blogCommentIAdmin.css");
 @import url("./modals/modalmultiselect.css");
-
+@import url("./components/home/cardbodycarousel.css");
  
 
 .rtl {

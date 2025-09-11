@@ -4,6 +4,7 @@ export const GLOBALTYPES = {
     THEME: 'THEME',
     STATUS: 'STATUS',
     MODAL: 'MODAL',
+    SETTINGS:'SETTINGS',
     SOCKET: 'SOCKET',
     ONLINE: 'ONLINE',
     OFFLINE: 'OFFLINE',

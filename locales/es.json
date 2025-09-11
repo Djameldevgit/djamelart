@@ -19,7 +19,7 @@
 	},
 	"post": {
 		"POST": "POST",
-		"created_post": "Hemos recibido tu mensaje, nuestro equipo lo está revisando. Te notificaremos cuando sea aprobado.",
+		"created_post": "Hemos recibido tu obra con exito, el equipo lo está revisando. Te notificaremos cuando sea aprobado.",
 		"updated_post": "¡Publicación actualizada!",
 		"deleted_post": "¡Publicación eliminada!",
 		"liked_post": "¡Te gustó la publicación!",

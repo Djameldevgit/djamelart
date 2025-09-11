@@ -21,7 +21,13 @@ const userReducer = (state = initialState, action) => {
                 result: action.payload.result,
                 page: action.payload.page,
             };
-
+            case USER_TYPES.UPDATE_USER_VERIFICATION:
+                return {
+                  ...state,
+                  users: state.users.map(u =>
+                    u._id === action.payload._id ? { ...u, isVerified: action.payload.isVerified } : u
+                  ),
+                };
         case USER_TYPES.UPDATE_USER:
             return {
                 ...state,

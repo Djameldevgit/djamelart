@@ -46,6 +46,7 @@ import { getBlockedUsers } from './redux/actions/userBlockAction';
 import Navbar2 from './components/header/Navbar2'
 import Accordionn from './pages/Accordionn'
 import Bloqueos from './pages/bloqueos'
+import { getSettings } from './redux/actions/settingsAction';
 
 
 
@@ -77,13 +78,13 @@ function App() {
     }
   }, [language]);
   useEffect(() => {
-
+dispatch(getSettings( ));
     dispatch(getPosts())//EHECUTAR LAS ACCIONES GETUSER Y GETUSERSACTION EN SUS PROPIOS COMPONENTE
     if (auth.token) {
       dispatch(getCart((auth.token)))
       dispatch(getOrders((auth.token)))
       dispatch(getUsers(auth.token))
-
+ 
 
       dispatch(getPostsPendientes(auth.token))
       dispatch(getBlockedUsers(auth.token))
@@ -92,7 +93,8 @@ function App() {
     }
   }, [dispatch, auth.token])
 
-
+ /*
+  
   useEffect(() => {
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
@@ -104,7 +106,7 @@ function App() {
       });
     }
   }, [])
-
+*/
 
 
 

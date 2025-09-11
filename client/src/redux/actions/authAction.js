@@ -116,7 +116,7 @@ export const resetPassword = (password, token) => async (dispatch) => {
       });
     }
   };
-  
+   
   
 export const sendActivationEmail = (token) => async (dispatch) => {
     try {

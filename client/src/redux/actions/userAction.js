@@ -13,12 +13,68 @@ export const USER_TYPES = {
     UPDATE_PRIVILEGIOS: 'UPDATE_PRIVILEGIOS',
 CREATE_COMMENT:'CREATE_COMMENT',
 GET_ADMIN_COMMENTS:'GET_ADMIN_COMMENTS',
-DELETE_ADMIN_COMMENT:'DELETE_ADMIN_COMMENT'
-
+DELETE_ADMIN_COMMENT:'DELETE_ADMIN_COMMENT',
+UPDATE_USER_VERIFICATION:'UPDATE_USER_VERIFICATION'
 
     
 };
- 
+
+export const updateUserFeatures = ({ userId, features, token }) => async (dispatch) => {
+  try {
+    const res = await fetch(`/api/users/${userId}/features`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token
+      },
+      body: JSON.stringify(features)
+    });
+
+    const data = await res.json();
+    if (data.msg) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { success: data.msg }
+      });
+    }
+
+    dispatch({
+      type: "UPDATE_USER",
+      payload: { ...data.user }
+    });
+  } catch (err) {
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { error: err.message }
+    });
+  }
+};
+
+
+
+
+
+export const toggleVerification = (userId, token) => async (dispatch) => {
+  try {
+    const res = await patchDataAPI(`users/${userId}/toggle-verify`, {}, token);
+
+    // Actualiza el usuario en el store
+    dispatch({
+      type: USER_TYPES.UPDATE_USER_VERIFICATION,
+      payload: res.data.user, // { _id, isVerified, ... }
+    });
+
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { success: res.data.msg },
+    });
+  } catch (err) {
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { error: err.response?.data?.msg || "Error al cambiar verificación" },
+    });
+  }
+};
 
 export const getUsers = (token) => async (dispatch) => {
     try {

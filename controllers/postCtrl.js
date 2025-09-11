@@ -1,7 +1,8 @@
 const Posts = require('../models/postModel')
 const Comments = require('../models/commentModel')
 const Users = require('../models/userModel')
-
+ 
+  const mongoose = require('mongoose');
 class APIfeatures {
     constructor(query, queryString) {
         this.query = query;
@@ -236,25 +237,83 @@ const postCtrl = {
         }
     },
 
-    getPost: async (req, res) => {
-        try {
-            const post = await Posts.findById(req.params.id)
-                .populate("user likes", "avatar username followers")
-                .populate({
-                    path: "comments",
-                    populate: {
-                        path: "user likes",
-                        select: "-password"
-                    }
-                });
+// getPost: ya NO incrementa vistas
+getPost: async (req, res) => {
+    try {
+      const post = await Posts.findById(req.params.id)
+        .populate("user likes", "avatar username followers")
+        .populate({
+          path: "comments",
+          populate: {
+            path: "user likes",
+            select: "-password"
+          }
+        });
+  
+      if (!post) return res.status(400).json({ msg: req.__('post.post_not_exist') });
+  
+      res.json({ post });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  
+  // viewPost: nuevo endpoint para incrementar VISTAS (atomico)
+   
+  // getPost: ya NO incrementa vistas
+getPost: async (req, res) => {
+    try {
+      const post = await Posts.findById(req.params.id)
+        .populate("user likes", "avatar username followers")
+        .populate({
+          path: "comments",
+          populate: {
+            path: "user likes",
+            select: "-password"
+          }
+        });
+  
+      if (!post) return res.status(400).json({ msg: req.__('post.post_not_exist') });
+  
+      res.json({ post });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 
-            if (!post) return res.status(400).json({ msg: req.__('post.post_not_exist') });
 
-            res.json({ post });
-        } catch (err) {
-            return res.status(500).json({ msg: err.message });
+  viewPost: async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ msg: 'ID inválido' });
+      }
+  
+      const postUpdated = await Posts.findByIdAndUpdate(
+        id,
+        { $inc: { views: 1 } },
+        { new: true }
+      )
+      .populate("user likes", "avatar username followers")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "user likes",
+          select: "-password"
         }
-    },
+      });
+  
+      if (!postUpdated) return res.status(404).json({ msg: 'Post no encontrado' });
+  
+      res.json({ post: postUpdated }); // ✅ enviar post completo
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  
+  
+  
 
     getPostsDicover: async (req, res) => {
         try {
