@@ -11,26 +11,28 @@ const NotifyModal = () => {
   const dispatch = useDispatch()
 
   // ✅ Pedir permisos de notificación una sola vez
-  useEffect(() => {
-    if (!("Notification" in window)) return;
-    if (Notification.permission !== "denied" && Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
-  }, []);
+ 
 
   // ✅ Mostrar notificación nativa + vibración cuando llega una nueva
   useEffect(() => {
     if (notify.data.length > 0) {
       const ultima = notify.data[0];
+  
       if (!ultima.isRead && Notification.permission === "granted") {
         new Notification("Nueva notificación", {
           body: ultima.text,
           icon: ultima.user.avatar || "/icon.png",
-          vibrate: [200, 100, 200], // vibra - pausa - vibra
+          vibrate: [300, 100, 300, 100, 600], // 🔔 patrón más fuerte
         });
+  
+        // 🔥 extra: vibrar también con la API del navegador (más seguro en PWA)
+        if ("vibrate" in navigator) {
+          navigator.vibrate([300, 100, 300, 100, 600]);
+        }
       }
     }
   }, [notify.data]);
+  
 
   // ✅ Actualizar badge en el icono de la PWA
   useEffect(() => {
