@@ -12,7 +12,7 @@ import CardBodyCarouselimmo from './home/post_card/CardBodyCarouselimmo'
 import CardBodyCarouseltiktok from './home/post_card/CardBodyCarouseltiktok'
 import CardBodyCarousel from './home/post_card/CardBodyCarousel.';
 
-const PostCard = ({ post, theme }) => {
+const PostCard = ({ post, isDetail = false  }) => {
     const location = useLocation();
     const isPostDetailPage = location.pathname === `/post/${post._id}`;
     const { auth, settings } = useSelector(state => state);
@@ -53,3 +53,5 @@ const PostCard = ({ post, theme }) => {
 };
 
 export default PostCard;
+
+ 

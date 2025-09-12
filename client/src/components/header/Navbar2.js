@@ -139,17 +139,17 @@ const Navbar2 = ({ onFiltersChange }) => {
   //fixed-top
   return (
     <div>
-    <Navbar
-  expand="lg"
-  style={{
-    zIndex: 1030,
-    marginTop: isMobile ? '55px' : '0',
-    backgroundColor: settings.style ? '#1e1e2f' : '#f8f9fa',
-  }}
-  className={settings.style ? "navbar-dark" : "navbar-light"} // para el color de textos
->
-  
- 
+      <Navbar
+        expand="lg"
+        style={{
+          zIndex: 1030,
+          marginTop: isMobile ? '55px' : '0',
+          backgroundColor: settings.style ? '#1e1e2f' : '#f8f9fa',
+        }}
+        className={settings.style ? "navbar-dark" : "navbar-light"} // para el color de textos
+      >
+
+
 
         <Container fluid className="align-items-center justify-content-between">
           <div className="d-flex align-items-center">
@@ -179,42 +179,42 @@ const Navbar2 = ({ onFiltersChange }) => {
               <i className='fas fa-plus' onClick={openStatusModal}> </i>
             }
 
-{
-  auth.user && (
-    <NavDropdown
-      align="end"
-      title={
-        <div style={{ position: "relative" }}>
-          <FaBell size={20} color={notify.data.some(n => !n.isRead) ? "crimson" : "black"} />
-          {notify.data.some(n => !n.isRead) && (
-            <Badge
-              pill
-              bg="danger"
-              className="position-absolute top-0 start-100 translate-middle"
-              style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
-            >
-              {notify.data.filter(n => !n.isRead).length}
-            </Badge>
-          )}
-        </div>
-      }
-      id="nav-notify-dropdown"
-      drop="down"
-      className="notification-dropdown"
-    >
-      <NavDropdown.Header className="fw-bold">🔔 {t('notifications')}</NavDropdown.Header>
-      <NavDropdown.Divider />
+            {
+              auth.user && (
+                <NavDropdown
+                  align="end"
+                  title={
+                    <div style={{ position: "relative" }}>
+                      <FaBell size={20} color={notify.data.some(n => !n.isRead) ? "crimson" : "black"} />
+                      {notify.data.some(n => !n.isRead) && (
+                        <Badge
+                          pill
+                          bg="danger"
+                          className="position-absolute top-0 start-100 translate-middle"
+                          style={{ fontSize: '0.6rem', minWidth: '15px', height: '15px' }}
+                        >
+                          {notify.data.filter(n => !n.isRead).length}
+                        </Badge>
+                      )}
+                    </div>
+                  }
+                  id="nav-notify-dropdown"
+                  drop="down"
+                  className="notification-dropdown"
+                >
+                  <NavDropdown.Header className="fw-bold">🔔 {t('notifications')}</NavDropdown.Header>
+                  <NavDropdown.Divider />
 
-      <div style={{
-        overflowY: 'auto',
-        padding: '0',
-        position: 'auto',
-      }}>
-        <NotifyModal />
-      </div>
-    </NavDropdown>
-  )
-}
+                  <div style={{
+                    overflowY: 'auto',
+                    padding: '0',
+                    position: 'auto',
+                  }}>
+                    <NotifyModal />
+                  </div>
+                </NavDropdown>
+              )
+            }
 
 
             {auth.user && (
@@ -417,17 +417,9 @@ const Navbar2 = ({ onFiltersChange }) => {
         onClose={() => {
           closeModal();
           setShowAdvancedSearch(false);
-
+           
         }}
-
-        style={{
-          marginTop: '20',
-
-        }}
-
-
-
-
+        style={{ marginTop: '50' }}
       >
 
         <div className="filter-group">
@@ -449,7 +441,7 @@ const Navbar2 = ({ onFiltersChange }) => {
             />
           </div>
 
-          <div className="modalcontentsearch">
+          <div className="modalcontentsearch" style={{ marginTop: '50' }}  >
             <div className="titlebusqueda">
               <button
                 className="modalclosesearch"

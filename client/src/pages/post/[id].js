@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+
+import LoadIcon from '../../images/loading.gif';
+import PostCard from '../../components/PostCard';
+
 import { getPost, viewPost } from "../../redux/actions/postAction";
 
 const DetailPost = () => {
@@ -8,7 +12,7 @@ const DetailPost = () => {
   const dispatch = useDispatch();
 
   const auth = useSelector(state => state.auth);
-  const detailPost = useSelector(state => state.detailPost.detailPost); // 👈 array de posts
+  const detailPost = useSelector(state => state.detailPost.detailPost); // array de posts
 
   const [post, setPost] = useState(null);
 
@@ -20,35 +24,20 @@ const DetailPost = () => {
   }, [dispatch, id, auth, detailPost]);
 
   // aumentar views (solo una vez por sesión)
- // 🔹 aumentar views cuando se renderiza
- useEffect(() => {
-  console.log("🔥 useEffect ejecutado", { id, token: auth?.token });
+  useEffect(() => {
+    if (id && auth?.token) {
+      const viewed = localStorage.getItem("viewed_posts") || "[]";
+      const viewedPosts = JSON.parse(viewed);
 
-  if (id && auth?.token) {
-    const viewed = localStorage.getItem("viewed_posts") || "[]";
-    const viewedPosts = JSON.parse(viewed);
-
-    console.log("👀 viewedPosts:", viewedPosts);
-
-    if (!viewedPosts.includes(id)) {
-      console.log("📢 Disparando acción viewPost con id:", id);
-
-      dispatch(viewPost({ id, auth }));
-
-      localStorage.setItem(
-        "viewed_posts",
-        JSON.stringify([...viewedPosts, id])
-      );
-    } else {
-      console.log("⚠️ Ya está en viewedPosts, no sumo vista");
+      if (!viewedPosts.includes(id)) {
+        dispatch(viewPost({ id, auth }));
+        localStorage.setItem(
+          "viewed_posts",
+          JSON.stringify([...viewedPosts, id])
+        );
+      }
     }
-  } else {
-    console.log("❌ Falta id o token, no se dispara viewPost");
-  }
-}, [dispatch, id, auth]);
-
-
-
+  }, [dispatch, id, auth]);
 
   // seleccionar post del array
   useEffect(() => {
@@ -56,15 +45,15 @@ const DetailPost = () => {
     if (found) setPost(found);
   }, [detailPost, id]);
 
-  if (!post) return <h2>Cargando...</h2>;
+  if (!post) return (
+    <img src={LoadIcon} alt="loading" className="d-block mx-auto my-4" />
+  );
 
   return (
-    <div>
-      <h1>{post.title}</h1>
-      <p>👁️ {post.views}</p>
+    <div className="detail-post">
+      <PostCard key={post._id} post={post}   />
     </div>
   );
 };
-
 
 export default DetailPost;

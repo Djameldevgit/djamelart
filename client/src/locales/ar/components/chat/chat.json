@@ -15,22 +15,17 @@
     "superAdminInfo": "المستخدمون المتميزون والمسؤولون يمكنهم رفع حتى 4 ملفات.",
     "loading": "جاري التحميل...",
     "charCount": "{{count}}/1000",
-    "validationError": "⚠️ {{error}}",
-
- 
-      "message": {
-        "searchPlaceholder": "ابحث عن المستخدمين...",
-       
-        "searchButton": "بحث",
-        "loadMore2": "تحميل المزيد",
-        "online": "متصل",
-        "offline": "غير متصل",
-        "noUsersFound": "لم يتم العثور على مستخدمين",
-        "searchError": "خطأ في البحث"
-      }
+    "validationError": "⚠️ {{error}}"
     
-
-
-
+  },
+  "message": {
+    "searchPlaceholder": "ابحث عن المستخدمين...",
+    "searchButton": "بحث",
+    "loadMore2": "تحميل المزيد",
+    "online": "متصل",
+    "offline": "غير متصل",
+    "noUsersFound": "لم يتم العثور على مستخدمين",
+    "searchError": "خطأ في البحث"
   }
+
 }

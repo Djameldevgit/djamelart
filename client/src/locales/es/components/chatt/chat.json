@@ -1,6 +1,5 @@
 {
-  "rightside":"rightside",
-
+  "rightside": "rightside",
   "chat": {
     "placeholder": "Escribe tu mensaje...",
     "send": "Enviar",
@@ -17,24 +16,18 @@
     "superAdminInfo": "Super-usuarios y Admins pueden subir hasta 4 archivos.",
     "loading": "Cargando...",
     "charCount": "{{count}}/1000",
-    "validationError": "⚠️ {{error}}",
-
-    "leftside":"leftside",
-      "message": {
-        "searchPlaceholder": "Buscar usuarios...",
-        "searchButton": "Buscar",
-        "loadMore": "Cargar más",
-        "online": "En línea",
-        "offline": "Desconectado",
-        "noUsersFound": "No se encontraron usuarios",
-        "searchError": "Error en la búsqueda",
-        "noConversations": "No tienes conversaciones aún",
-        "searching": "Buscando..."
-
-      }
-    
-
-
-
+    "validationError": "⚠️ {{error}}"
+  },
+  "leftside": "leftside",
+  "message": {
+    "searchPlaceholder": "Buscar usuarios...",
+    "searchButton": "Buscar",
+    "loadMore": "Cargar más",
+    "online": "En línea",
+    "offline": "Desconectado",
+    "noUsersFound": "No se encontraron usuarios",
+    "searchError": "Error en la búsqueda",
+    "noConversations": "No tienes conversaciones aún",
+    "searching": "Buscando..."
   }
 }
