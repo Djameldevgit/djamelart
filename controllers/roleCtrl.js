@@ -1,6 +1,11 @@
 const Users = require("../models/userModel");
-
+ 
 const roleCtrl = {
+
+ 
+
+
+
     UserRoleNoIdentificado: async (req, res) => {
         const { role } = req.body;
         try {

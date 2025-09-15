@@ -170,7 +170,7 @@
   }
   
   .carousel-card :global(.carousel .slide) {
-    background: #f8f9fa;
+    background: #fafaf8;
   }
   
   .carousel-card :global(.carousel .carousel-image) {
@@ -178,7 +178,7 @@
     height: 100%;
     object-fit: cover;
 
- 
+ border-radius: 50px;
   }
   
   /* Estilos para los modales */

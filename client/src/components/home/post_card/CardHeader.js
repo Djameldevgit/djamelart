@@ -39,7 +39,7 @@ const CardHeader = ({ post }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { t, i18n } = useTranslation('cardheader');
-  
+
   const findCompleteUser = () => {
     const completeUser = profile.users.find(u => u._id === post.user._id);
     return completeUser || post.user;
@@ -52,7 +52,7 @@ const CardHeader = ({ post }) => {
   // URL y texto para compartir
   const shareUrl = `${window.location.origin}/post/${post._id}`;
   const shareTitle = `🎨 Obra de arte por ${post.user.username}: "${post.content?.substring(0, 80)}..." - Mira más en Tassili Art`;
-  
+
   // Texto específico para TikTok/Instagram
   const socialMediaText = `🎨 ¡Mira esta obra de arte en Tassili Art! 
 Por: ${post.user.username}
@@ -73,7 +73,7 @@ Por: ${post.user.username}
 
   // Buscar el primer usuario que tenga role === "admin"
   const adminUser = homeUsers.users.find(user => user.role === "admin");
-  
+
   const handleChatWithAdmin = () => {
     if (!adminUser) {
       return dispatch({
@@ -112,9 +112,9 @@ Por: ${post.user.username}
     dispatch(createReport({ auth, reportData }));
     setShowReportModal(false);
     setReportReason('');
-    dispatch({ 
-      type: GLOBALTYPES.ALERT, 
-      payload: { success: t('reportSubmitted') } 
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { success: t('reportSubmitted') }
     });
   };
 
@@ -125,15 +125,46 @@ Por: ${post.user.username}
 
   return (
     <Card.Header className="d-flex justify-content-between align-items-center p-3">
-      <div className="d-flex align-items-center">
-        
-        <div className="ml-1">
-          <Card.Title className="m-0">
-         
-        <strong>Title</strong>  {post.title} 
-          
+      <div className='mt-0' >
+       
+
+        <div className="ml-1" style={{ flex: 1 }}>
+          <Card.Title className="m-0" style={{
+            fontSize: '1.4rem',
+            fontWeight: '800',
+            color: '#2d3748',
+            
+            lineHeight: '1.3'
+          }}>
+            <strong>{post.title}</strong>
           </Card.Title>
-          <Card.Text className="text-muted small">
+
+          <Card.Text style={{
+            fontSize: '1rem',
+            fontWeight: '600',
+            color: '#4a6cf7',
+            marginBottom: '0px',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <span style={{
+              marginRight: '8px',
+              fontSize: '1.2rem'
+            }}>👤</span>
+            {post.user.username}
+          </Card.Text>
+
+          <Card.Text className="text-muted small" style={{
+            fontSize: '0.85rem',
+            color: '#718096 !important',
+            display: 'flex',
+            alignItems: 'center',
+            
+          }}>
+            <span style={{
+              marginRight: '6px',
+              fontSize: '0.9rem'
+            }}>🕒</span>
             {moment(post.createdAt).fromNow()}
           </Card.Text>
         </div>
@@ -192,9 +223,9 @@ Por: ${post.user.username}
             </Dropdown.Item>
 
             {auth.user._id !== user._id && (
-              <Dropdown.Item 
-                as="div" 
-                className="p-2" 
+              <Dropdown.Item
+                as="div"
+                className="p-2"
                 style={{ cursor: 'default' }}
                 onClick={(e) => e.stopPropagation()}
               >
@@ -261,14 +292,14 @@ Por: ${post.user.username}
               </PinterestShareButton>
             )}
 
-            <CopyToClipboard 
+            <CopyToClipboard
               text={socialMediaText}
               onCopy={() => {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
-                dispatch({ 
-                  type: GLOBALTYPES.ALERT, 
-                  payload: { success: t('copiedForTikTok') } 
+                dispatch({
+                  type: GLOBALTYPES.ALERT,
+                  payload: { success: t('copiedForTikTok') }
                 });
               }}
             >
@@ -289,14 +320,14 @@ Por: ${post.user.username}
               </div>
             </CopyToClipboard>
 
-            <CopyToClipboard 
+            <CopyToClipboard
               text={socialMediaText}
               onCopy={() => {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
-                dispatch({ 
-                  type: GLOBALTYPES.ALERT, 
-                  payload: { success: t('copiedForInstagram') } 
+                dispatch({
+                  type: GLOBALTYPES.ALERT,
+                  payload: { success: t('copiedForInstagram') }
                 });
               }}
             >
@@ -343,14 +374,14 @@ Por: ${post.user.username}
               }}
               className="mb-2"
             />
-            <CopyToClipboard 
+            <CopyToClipboard
               text={socialMediaText}
               onCopy={() => {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
-                dispatch({ 
-                  type: GLOBALTYPES.ALERT, 
-                  payload: { success: t('textCopied') } 
+                dispatch({
+                  type: GLOBALTYPES.ALERT,
+                  payload: { success: t('textCopied') }
                 });
               }}
             >
@@ -373,14 +404,14 @@ Por: ${post.user.username}
                   fontSize: '14px'
                 }}
               />
-              <CopyToClipboard 
+              <CopyToClipboard
                 text={shareUrl}
                 onCopy={() => {
                   setCopied(true);
                   setTimeout(() => setCopied(false), 2000);
-                  dispatch({ 
-                    type: GLOBALTYPES.ALERT, 
-                    payload: { success: t('linkCopied') } 
+                  dispatch({
+                    type: GLOBALTYPES.ALERT,
+                    payload: { success: t('linkCopied') }
                   });
                 }}
               >
@@ -431,8 +462,8 @@ Por: ${post.user.username}
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <button 
-            className="btn btn-secondary" 
+          <button
+            className="btn btn-secondary"
             onClick={() => {
               setShowReportModal(false);
               setReportReason('');

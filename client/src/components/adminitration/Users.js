@@ -557,8 +557,7 @@ const Users = () => {
 
       )}
 
-
-      {/* Botón Cargar más */}
+ 
       {load && (
         <div className="text-center my-3">
           <Spinner animation="border" variant="primary" />

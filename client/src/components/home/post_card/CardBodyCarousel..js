@@ -115,12 +115,12 @@ const CardBodyCarousel = ({ post }) => {
 
   return (
     <div className="card-container">
-      <div className="card-body">
+      <div className="card">
         {post.images.length > 0 && (
           <div className="carousel-wrapper">
-            {/* Contenedor de iconos superiores */}
+            
             <div className="icons-top-container">
-              {/* Contador de vistas */}
+            
               <div className="view-counter">
                 <div className="view-icon">
                   <span className="material-icons">visibility</span>
@@ -128,7 +128,7 @@ const CardBodyCarousel = ({ post }) => {
                 <span className="view-count">{post.views || 0}</span>
               </div>
               
-              {/* Botón de guardar */}
+        
               <div 
                 className={`icon-button save-button ${saveLoad ? 'loading' : ''}`}
                 onClick={saved ? handleUnSavePost : handleSavePost}
