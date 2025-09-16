@@ -10,8 +10,8 @@ import Location from './home/post_card/Location'
 
 import CardBodyCarouselimmo from './home/post_card/CardBodyCarouselimmo'
 import CardBodyCarouseltiktok from './home/post_card/CardBodyCarouseltiktok'
-import CardBodyCarousel from './home/post_card/CardBodyCarousel.';
-
+import CardBodyCarousel from './home/post_card/CardBodyCarousel';
+ 
 const PostCard = ({ post, isDetail = false  }) => {
     const location = useLocation();
     const isPostDetailPage = location.pathname === `/post/${post._id}`;
@@ -36,7 +36,7 @@ const PostCard = ({ post, isDetail = false  }) => {
             {
                 settings.style ? <CardBodyCarouseltiktok post={post} />
 
-                    : <CardBodyCarousel post={post} />
+                    : < CardBodyCarousel post={post} />
             }
 
             {isPostDetailPage && <DescriptionPost post={post} />}

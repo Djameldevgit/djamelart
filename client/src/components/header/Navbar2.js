@@ -373,51 +373,69 @@ const Navbar2 = ({ onFiltersChange }) => {
           </div>
         </Container>
       </Navbar>
-
       <Offcanvas
-        show={showDrawer}
-        onHide={handleCloseDrawer}
-        placement="start"
-        style={{ top: '56px', height: 'calc(100vh - 56px)', width: '270px' }}
-      >
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t('menu')}</Offcanvas.Title>
-        </Offcanvas.Header>
+  show={showDrawer}
+  onHide={handleCloseDrawer}
+  placement="start"
+  className="h-100 w-75"
+  style={{ maxWidth: '270px' }} // límite en pantallas grandes
+>
+  <Offcanvas.Header closeButton>
+    <Offcanvas.Title>{t('menu')}</Offcanvas.Title>
+  </Offcanvas.Header>
 
-        <Offcanvas.Body style={{ overflowY: 'auto', padding: '0.5rem' }}>
-          <div className="d-lg-none mb-3">
-            {!auth.user ? (
-              <div className="text-center">
-                <Link to="/login" onClick={handleCloseDrawer} className="btn btn-outline-primary w-100 mb-2">
-                  <FaSignInAlt className="me-2" /> {t('login')}
-                </Link>
-                <Link to="/register" onClick={handleCloseDrawer} className="btn btn-outline-secondary w-100">
-                  <FaUserPlus className="me-2" /> {t('register')}
-                </Link>
-              </div>
-            ) : (
-              <div className="">
-                <h6 className="text-center mb-3">{auth.user.username}</h6>
-                <Link to={`/profile/${auth.user._id}`} onClick={handleCloseDrawer} className="btn btn-outline-success w-100 my-2">
-                  <FaUserCircle className="me-2" /> {t('profile')}
-                </Link>
-                <Button variant="outline-danger" onClick={handleLogout} className="w-100">
-                  <FaSignOutAlt className="me-2" /> {t('logout')}
-                </Button>
-              </div>
-            )}
-          </div>
-          <ActivateButton />
-          <Acordion />
-        </Offcanvas.Body>
-      </Offcanvas>
+  <Offcanvas.Body className="overflow-auto p-2">
+    <div className="d-lg-none mb-3">
+      {!auth.user ? (
+        <div className="text-center">
+          <Link
+            to="/login"
+            onClick={handleCloseDrawer}
+            className="btn btn-outline-primary w-100 mb-2"
+          >
+            <FaSignInAlt className="me-2" /> {t('login')}
+          </Link>
+          <Link
+            to="/register"
+            onClick={handleCloseDrawer}
+            className="btn btn-outline-secondary w-100"
+          >
+            <FaUserPlus className="me-2" /> {t('register')}
+          </Link>
+        </div>
+      ) : (
+        <div>
+          <h6 className="text-center mb-3">{auth.user.username}</h6>
+          <Link
+            to={`/profile/${auth.user._id}`}
+            onClick={handleCloseDrawer}
+            className="btn btn-outline-success w-100 my-2"
+          >
+            <FaUserCircle className="me-2" /> {t('profile')}
+          </Link>
+          <Button
+            variant="outline-danger"
+            onClick={handleLogout}
+            className="w-100"
+          >
+            <FaSignOutAlt className="me-2" /> {t('logout')}
+          </Button>
+        </div>
+      )}
+    </div>
+
+    <ActivateButton />
+    <Acordion />
+  </Offcanvas.Body>
+</Offcanvas>
+
 
       <Modalsearchhome
         isOpen={isModalOpen}
         onClose={() => {
           closeModal();
           setShowAdvancedSearch(false);
-           
+
         }}
         style={{ marginTop: '50' }}
       >

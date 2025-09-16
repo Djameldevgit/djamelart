@@ -25,25 +25,30 @@ const CardBodyCarousel = ({ post }) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
+  const [verifyModalShown, setVerifyModalShown] = useState(false);
+
   const canProceed = () => {
     if (!auth.token || !auth.user) {
       setShowModal(true);
       return false;
     }
-
+  
     if (!auth.user.isVerified) {
-      setShowVerifyModal(true);
+      if (!verifyModalShown) {  // solo abrir la primera vez
+        setShowVerifyModal(true);
+        setVerifyModalShown(true);
+      }
       return false;
     }
-
+  
     if (auth.user.isActive === false) {
       setShowDeactivatedModal(true);
       return false;
     }
-
+  
     return true;
   };
-
+  
   useEffect(() => {
     if (auth.token) dispatch(loadCart(auth.token));
   }, [auth.token, dispatch]);
@@ -217,7 +222,14 @@ const CardBodyCarousel = ({ post }) => {
 
       {/* Modal verificación */}
       {showVerifyModal && (
-        <VerifyModal show={showVerifyModal} onClose={() => setShowVerifyModal(false)} />
+       <VerifyModal
+       show={showVerifyModal}
+       onClose={() => {
+         setShowVerifyModal(false);
+         setVerifyModalShown(false); // permitir que vuelva a abrir en el futuro
+       }}
+     />
+     
       )}
       <DesactivateModal show={showDeactivatedModal} onClose={() => setShowDeactivatedModal(false)} />
     </div>
