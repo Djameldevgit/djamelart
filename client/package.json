@@ -47,7 +47,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+   
   },
+ 
+  
+
   "browserslist": {
     "production": [
       ">0.5%",
@@ -58,5 +62,9 @@
       "last 1 chrome version",
       "last 1 firefox version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env": "^7.0.3"
   }
 }

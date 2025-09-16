@@ -109,7 +109,7 @@ dispatch(getSettings( ));
  
 
 
-
+/*
   if (auth.token && auth.user?.esBloqueado) {
     return (
       <Router>
@@ -118,7 +118,7 @@ dispatch(getSettings( ));
       </Router>
     )
   }
-
+*/
 
 
   return (
