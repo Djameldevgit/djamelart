@@ -51,7 +51,7 @@ import { getSettings } from './redux/actions/settingsAction';
 
 
 function App() {
-  const { auth, status, modal, languageReducer } = useSelector(state => state)
+  const { auth, status, modal, languageReducer,notify } = useSelector(state => state)
   const dispatch = useDispatch()
   const language = languageReducer?.language || localStorage.getItem("lang") || "en";
   const [filters, setFilters] = useState({
@@ -107,7 +107,26 @@ dispatch(getSettings( ));
     }
   }, [])
  
+  useEffect(() => {
+    if (notify.data.length > 0) {
+      const ultima = notify.data[0];
 
+      // 🔔 Sonido
+      try {
+        const audio = new Audio("/sounds/notify.mp3");
+        audio.play().catch(err => {
+          console.log("⚠️ El sonido requiere interacción del usuario", err);
+        });
+      } catch (error) {
+        console.warn("Sonido no soportado", error);
+      }
+
+      // 📳 Vibración
+      if ("vibrate" in navigator) {
+        navigator.vibrate([300, 100, 300, 100, 600]);
+      }
+    }
+  }, [notify.data]);
 
 /*
   if (auth.token && auth.user?.esBloqueado) {

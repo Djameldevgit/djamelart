@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import NoNotice from '../images/notice.png'
 import { Link } from 'react-router-dom'
@@ -27,27 +27,7 @@ const NotifyModal = () => {
     }
   }
 
-  useEffect(() => {
-    if (notify.data.length > 0) {
-      const ultima = notify.data[0]
-
-      // 🔔 Sonido de notificación
-      try {
-        const audio = new Audio("/sounds/notify.mp3")
-        audio.play().catch((err) => {
-          console.log("⚠️ El sonido requiere interacción del usuario en algunos navegadores", err)
-        })
-      } catch (error) {
-        console.warn("Sonido no soportado", error)
-      }
-
-      // 📳 Vibración segura
-      if ("vibrate" in navigator) {
-        navigator.vibrate([300, 100, 300, 100, 600])
-      }
-    }
-  }, [notify.data])
-
+ 
   return (
     <div style={{ minWidth: '300px' }}>
       <div className="d-flex justify-content-between align-items-center px-3">
