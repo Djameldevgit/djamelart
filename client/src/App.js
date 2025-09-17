@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState,useRef } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import i18n from './i18n';
 
@@ -107,26 +107,34 @@ dispatch(getSettings( ));
     }
   }, [])
  
+  const lastNotifyId = useRef(null);
+
   useEffect(() => {
     if (notify.data.length > 0) {
       const ultima = notify.data[0];
-
-      // 🔔 Sonido
-      try {
-        const audio = new Audio("/sounds/notify.mp3");
-        audio.play().catch(err => {
-          console.log("⚠️ El sonido requiere interacción del usuario", err);
-        });
-      } catch (error) {
-        console.warn("Sonido no soportado", error);
-      }
-
-      // 📳 Vibración
-      if ("vibrate" in navigator) {
-        navigator.vibrate([300, 100, 300, 100, 600]);
+  
+      // Solo ejecutar si es realmente una nueva notificación
+      if (ultima._id !== lastNotifyId.current) {
+        lastNotifyId.current = ultima._id;
+  
+        // 🔔 Sonido
+        try {
+          const audio = new Audio("/sounds/notify.mp3");
+          audio.play().catch(err => {
+            console.log("⚠️ El sonido requiere interacción del usuario", err);
+          });
+        } catch (error) {
+          console.warn("Sonido no soportado", error);
+        }
+  
+        // 📳 Vibración
+        if ("vibrate" in navigator) {
+          navigator.vibrate([300, 100, 300, 100, 600]);
+        }
       }
     }
   }, [notify.data]);
+  
 
 /*
   if (auth.token && auth.user?.esBloqueado) {

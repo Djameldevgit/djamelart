@@ -64,7 +64,7 @@ export const updatePost = ({content, images, auth, status}) => async (dispatch) 
 }
 
 // ✅ Acción Redux con soporte de traducción
-export const likePost = ({ post, auth, socket, t }) => async (dispatch) => {
+export const likePost = ({ post, auth, socket  }) => async (dispatch) => {
   const newPost = { ...post, likes: [...post.likes, auth.user] };
   dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
 
@@ -76,12 +76,15 @@ export const likePost = ({ post, auth, socket, t }) => async (dispatch) => {
     // ✅ Traducción de mensaje
     const msg = {
       id: auth.user._id,
-      text: t('notifications.likePost'), // 👈 Se traduce con i18next
+      text: 'likePost',     // 👈 aquí guardamos la clave, no el texto traducido
+      textNs: 'notify',     // opcional: namespace
       recipients: [post.user._id],
       url: `/post/${post._id}`,
       content: post.content,
       image: post.images[0]?.url || null,
     };
+    dispatch(createNotify({ msg, auth, socket }));
+    
 
     dispatch(createNotify({ msg, auth, socket }));
   } catch (err) {

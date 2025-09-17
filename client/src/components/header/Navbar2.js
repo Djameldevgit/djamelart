@@ -239,7 +239,7 @@ const Navbar2 = ({ onFiltersChange }) => {
                       marginRight: isMobile ? '0' : '-20px'
                     }}
                   >
-                    <NotifyModal />
+                     <NotifyModal onClose={() => setShowNotifyDropdown(false)} />
                     {isMobile && (
                       <div className="text-center p-2 border-top">
                         <button

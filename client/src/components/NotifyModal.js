@@ -7,7 +7,7 @@ import moment from 'moment'
 import { isReadNotify, NOTIFY_TYPES, deleteAllNotifies } from '../redux/actions/notifyAction'
 import { useTranslation } from 'react-i18next'
 
-const NotifyModal = () => {
+const NotifyModal = ({onClose }) => {
   const { auth, notify, languageReducer } = useSelector(state => state)
   const dispatch = useDispatch()
   const { t } = useTranslation('notify')   // 🔑 namespace de traducción
@@ -60,14 +60,24 @@ const NotifyModal = () => {
         {
           notify.data.map((msg, index) => (
             <div key={index} className="px-2 mb-3" >
-              <Link to={`${msg.url}`} className="d-flex text-dark align-items-center"
-                onClick={() => handleIsRead(msg)}>
+              <Link
+                to={msg.url}
+                className="d-flex text-dark align-items-center"
+                onClick={() => {
+                  handleIsRead(msg);
+                  onClose && onClose(); // 👈 cerrar dropdown si se pasó como prop
+                }}
+              >
                 <Avatar src={msg.user.avatar} size="big-avatar" />
 
                 <div className="mx-1 flex-fill">
                   <div>
                     <strong className="mr-1">{msg.user.username}</strong>
-                    <span>{msg.text}</span>
+                    <span>
+                      {msg.text
+                        ? t(msg.text, { ns: msg.textNs || 'notify', lng: lang })
+                        : ''}
+                    </span>
                   </div>
                   {msg.content && <small>{msg.content.slice(0, 20)}...</small>}
                 </div>
