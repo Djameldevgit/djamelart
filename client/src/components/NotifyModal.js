@@ -1,64 +1,122 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Modal } from "react-bootstrap";
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import NoNotice from '../images/notice.png'
+import { Link } from 'react-router-dom'
+import Avatar from './Avatar'
+import moment from 'moment'
+import { isReadNotify, NOTIFY_TYPES, deleteAllNotifies } from '../redux/actions/notifyAction'
 
-const NotifyModal = ({ show, handleClose }) => {
-  const notify = useSelector((state) => state.notify);
+const NotifyModal = () => {
+    const { auth, notify } = useSelector(state => state)
+    const dispatch = useDispatch()
 
-  useEffect(() => {
-    if (notify.data.length > 0) {
-      const ultima = notify.data[0];
-
-      // 📌 Notificación push si el navegador lo permite
-      if (
-        !ultima.isRead &&
-        typeof Notification !== "undefined" &&
-        Notification.permission === "granted"
-      ) {
-        try {
-          new Notification("Nueva notificación", {
-            body: ultima.text,
-            icon: ultima.user.avatar || "/icon.png",
-          });
-        } catch (error) {
-          console.warn("Notificación no soportada en este dispositivo", error);
-        }
-      }
-
-      // 📌 Vibración solo si está soportada
-      if ("vibrate" in navigator) {
-        navigator.vibrate([300, 100, 300, 100, 600]);
-      } else {
-        console.log("⚠️ Vibración no soportada en este dispositivo/navegador");
-      }
+    const handleIsRead = (msg) => {
+        dispatch(isReadNotify({msg, auth}))
     }
-  }, [notify.data]);
 
-  return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Notificaciones</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {notify.data.length === 0 ? (
-          <p>No tienes notificaciones</p>
-        ) : (
-          notify.data.map((n) => (
-            <div
-              key={n._id}
-              style={{
-                padding: "10px",
-                borderBottom: "1px solid #ddd",
-                backgroundColor: n.isRead ? "#fff" : "#eef6ff",
-              }}
-            >
-              <strong>{n.user.username}</strong>: {n.text}
+    const handleSound = () => {
+        dispatch({type: NOTIFY_TYPES.UPDATE_SOUND, payload: !notify.sound})
+    }
+
+    const handleDeleteAll = () => {
+        const newArr = notify.data.filter(item => item.isRead === false)
+        if(newArr.length === 0) return dispatch(deleteAllNotifies(auth.token))
+
+        if(window.confirm(`You have ${newArr.length} unread notices. Are you sure you want to delete all?`)){
+            return dispatch(deleteAllNotifies(auth.token))
+        }
+    }
+    useEffect(() => {
+        if (notify.data.length > 0) {
+          const ultima = notify.data[0];
+      
+          // 🔔 Sonido de notificación
+          try {
+            const audio = new Audio("/sounds/notify.mp3");
+            audio.play().catch((err) => {
+              console.log("⚠️ El sonido requiere interacción del usuario en algunos navegadores", err);
+            });
+          } catch (error) {
+            console.warn("Sonido no soportado", error);
+          }
+      
+          // 📳 Vibración segura
+          if ("vibrate" in navigator) {
+            navigator.vibrate([300, 100, 300, 100, 600]);
+          }
+        }
+      }, [notify.data]);
+      
+    return (
+        <div style={{minWidth: '300px'}}>
+            <div className="d-flex justify-content-between align-items-center px-3">
+                <h3>Notification</h3>
+                {
+                    notify.sound 
+                    ? <i className="fas fa-bell text-danger" 
+                    style={{fontSize: '1.2rem', cursor: 'pointer'}}
+                    onClick={handleSound} />
+
+                    : <i className="fas fa-bell-slash text-danger"
+                    style={{fontSize: '1.2rem', cursor: 'pointer'}}
+                    onClick={handleSound} />
+                }
             </div>
-          ))
-        )}
-      </Modal.Body>
-    </Modal>
-  );
-};
+            <hr className="mt-0" />
 
-export default NotifyModal;
+            {
+                notify.data.length === 0 &&
+                <img src={NoNotice} alt="NoNotice" className="w-100" />
+            }
+
+            <div style={{maxHeight: 'calc(100vh - 200px)', overflow: 'auto'}}>
+                {
+                    notify.data.map((msg, index) => (
+                        <div key={index} className="px-2 mb-3" >
+                            <Link to={`${msg.url}`} className="d-flex text-dark align-items-center"
+                            onClick={() => handleIsRead(msg)}>
+                                <Avatar src={msg.user.avatar} size="big-avatar" />
+
+                                <div className="mx-1 flex-fill">
+                                    <div>
+                                        <strong className="mr-1">{msg.user.username}</strong>
+                                        <span>{msg.text}</span>
+                                    </div>
+                                    {msg.content && <small>{msg.content.slice(0,20)}...</small>}
+                                </div>
+
+                                {
+                                    msg.image &&
+                                    <div style={{width: '30px'}}>
+                                        {
+                                            msg.image.match(/video/i)
+                                            ? <video src={msg.image} width="100%" />
+                                            : <Avatar src={msg.image} size="medium-avatar" />
+                                        }
+                                    </div>
+                                }
+                                
+                            </Link>
+                            <small className="text-muted d-flex justify-content-between px-2">
+                                {moment(msg.createdAt).fromNow()}
+                                {
+                                    !msg.isRead && <i className="fas fa-circle text-primary" />
+                                }
+                            </small>
+                        </div>
+                    ))
+                }
+
+            </div>
+
+            <hr className="my-1" />
+            <div className="text-right text-danger mr-2" style={{cursor: 'pointer'}}
+            onClick={handleDeleteAll}>
+                Delete All
+            </div>
+
+        </div>
+    )
+}
+
+export default NotifyModal
