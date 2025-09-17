@@ -63,37 +63,39 @@ export const updatePost = ({content, images, auth, status}) => async (dispatch) 
     }
 }
 
-export const likePost = ({post, auth, socket}) => async (dispatch) => {
-    const newPost = {...post, likes: [...post.likes, auth.user]}
-    dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
-  
-    socket.emit('likePost', newPost)
-  
-    try {
-      await patchDataAPI(`post/${post._id}/like`, null, auth.token)
-  
-      // Notify
-      const msg = {
-        id: auth.user._id,
-        text: 'like your post.',
-        recipients: [post.user._id],
-        url: `/post/${post._id}`,
-        content: post.content, 
-        image: post.images[0]?.url || null, // <-- asegúrate que no pete si no hay imagen
-      }
-  
-      dispatch(createNotify({msg, auth, socket}))
-  
-    } catch (err) {
-      console.error("❌ Error en likePost:", err) // log para debug
-      dispatch({
-        type: GLOBALTYPES.ALERT,
-        payload: { 
-          error: err.response?.data?.msg || err.message || "Error inesperado"
-        }
-      })
-    }
+// ✅ Acción Redux con soporte de traducción
+export const likePost = ({ post, auth, socket, t }) => async (dispatch) => {
+  const newPost = { ...post, likes: [...post.likes, auth.user] };
+  dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
+
+  socket.emit('likePost', newPost);
+
+  try {
+    await patchDataAPI(`post/${post._id}/like`, null, auth.token);
+
+    // ✅ Traducción de mensaje
+    const msg = {
+      id: auth.user._id,
+      text: t('notifications.likePost'), // 👈 Se traduce con i18next
+      recipients: [post.user._id],
+      url: `/post/${post._id}`,
+      content: post.content,
+      image: post.images[0]?.url || null,
+    };
+
+    dispatch(createNotify({ msg, auth, socket }));
+  } catch (err) {
+    console.error("❌ Error en likePost:", err);
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: {
+        error:
+          err.response?.data?.msg || err.message || t('errors.unexpectedError'),
+      },
+    });
   }
+};
+
   
 
 export const unLikePost = ({post, auth, socket}) => async (dispatch) => {

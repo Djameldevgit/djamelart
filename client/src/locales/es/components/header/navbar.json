@@ -6,6 +6,10 @@
   "appInfo": "Información de la App",
   "profile": "Perfil",
   "conversations": "Conversaciones",
+  "noVerificada": "cuenta no verificada",
+  "verified":"cuenta verificada",
+  "activar": "activar mi cuenta",
+
   "roles": "Roles",
   "adminPanel": "Panel Administrativo",
   "chatWithAdmins": "Chat con administradores",

@@ -5,10 +5,13 @@ import { Link } from 'react-router-dom'
 import Avatar from './Avatar'
 import moment from 'moment'
 import { isReadNotify, NOTIFY_TYPES, deleteAllNotifies } from '../redux/actions/notifyAction'
+import { useTranslation } from 'react-i18next'
 
 const NotifyModal = () => {
-  const { auth, notify } = useSelector(state => state)
+  const { auth, notify, languageReducer } = useSelector(state => state)
   const dispatch = useDispatch()
+  const { t } = useTranslation('notify')   // 🔑 namespace de traducción
+  const lang = languageReducer.language || 'en'
 
   const handleIsRead = (msg) => {
     dispatch(isReadNotify({ msg, auth }))
@@ -22,16 +25,17 @@ const NotifyModal = () => {
     const newArr = notify.data.filter(item => item.isRead === false)
     if (newArr.length === 0) return dispatch(deleteAllNotifies(auth.token))
 
-    if (window.confirm(`You have ${newArr.length} unread notices. Are you sure you want to delete all?`)) {
+    if (window.confirm(
+      t('confirmDelete', { count: newArr.length, lng: lang })
+    )) {
       return dispatch(deleteAllNotifies(auth.token))
     }
   }
 
- 
   return (
     <div style={{ minWidth: '300px' }}>
       <div className="d-flex justify-content-between align-items-center px-3">
-        <h3>Notification</h3>
+        <h3>{t('title', { lng: lang })}</h3>
         {
           notify.sound
             ? <i className="fas fa-bell text-danger"
@@ -46,7 +50,10 @@ const NotifyModal = () => {
 
       {
         notify.data.length === 0 &&
-        <img src={NoNotice} alt="NoNotice" className="w-100" />
+        <div className="text-center">
+          <img src={NoNotice} alt="NoNotice" className="w-50" />
+          <p className="text-muted">{t('noNotifications', { lng: lang })}</p>
+        </div>
       }
 
       <div style={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
@@ -91,7 +98,7 @@ const NotifyModal = () => {
       <hr className="my-1" />
       <div className="text-right text-danger mr-2" style={{ cursor: 'pointer' }}
         onClick={handleDeleteAll}>
-        Delete All
+        {t('deleteAll', { lng: lang })}
       </div>
     </div>
   )

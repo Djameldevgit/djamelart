@@ -2,7 +2,9 @@
   "art_painting": "الفن والرسم",
  
   "appName": "مبيعات اللوحات الفنية",
-  
+  "noVerificada": "حساب غير نشط",
+  "verified":"حساب محقق",
+  "activar": "تفعيل حسابي",
   "search": "بحث",
   "addPost": "إضافة منشور",
   "contact": "اتصال",

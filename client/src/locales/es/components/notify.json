@@ -1,0 +1,13 @@
+{
+  "notifications": {
+    "likePost": "le ha dado me gusta a tu publicación.",
+    "unlikePost": "ha quitado su me gusta en tu publicación."
+  },
+  "errors": {
+    "unexpectedError": "Ha ocurrido un error inesperado."
+  },
+  "title": "Notificaciones",
+  "noNotifications": "No hay notificaciones nuevas",
+  "deleteAll": "Eliminar todo",
+  "confirmDelete": "Tienes {{count}} notificaciones sin leer. ¿Seguro que quieres eliminarlas todas?"
+}

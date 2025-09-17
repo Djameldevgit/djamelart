@@ -223,37 +223,37 @@ const Navbar2 = ({ onFiltersChange }) => {
 
                 {/* Dropdown de notificaciones */}
                 {showNotifyDropdown && (
-  <div 
-    className="dropdown-menu show"
-    style={{
-      position: isMobile ? 'fixed' : 'absolute',
-      [isMobile ? 'left' : 'right']: isMobile ? '50%' : '0',
-      [isMobile ? 'top' : 'top']: isMobile ? '50%' : '100%',
-      transform: isMobile ? 'translate(-50%, -50%)' : 'translateX(-230px)', // ← AQUÍ ESTÁ EL CAMBIO
-      width: isMobile ? '90vw' : '400px',
-      maxWidth: '400px',
-      maxHeight: isMobile ? '80vh' : '400px',
-      overflowY: 'auto',
-      zIndex: 1050,
-      marginTop: isMobile ? '0' : '5px',
-      marginRight: isMobile ? '0' : '-20px'
-    }}
-  >
-    <NotifyModal />
-    {isMobile && (
-      <div className="text-center p-2 border-top">
-        <button 
-          className="btn btn-sm btn-outline-secondary"
-          onClick={() => setShowNotifyDropdown(false)}
-        >
-          Cerrar
-        </button>
-      </div>
-    )}
-  
- 
-  </div>
-)}
+                  <div
+                    className="dropdown-menu show"
+                    style={{
+                      position: isMobile ? 'fixed' : 'absolute',
+                      [isMobile ? 'left' : 'right']: isMobile ? '50%' : '0',
+                      [isMobile ? 'top' : 'top']: isMobile ? '50%' : '100%',
+                      transform: isMobile ? 'translate(-50%, -50%)' : 'translateX(-230px)', // ← AQUÍ ESTÁ EL CAMBIO
+                      width: isMobile ? '90vw' : '400px',
+                      maxWidth: '400px',
+                      maxHeight: isMobile ? '80vh' : '400px',
+                      overflowY: 'auto',
+                      zIndex: 1050,
+                      marginTop: isMobile ? '0' : '5px',
+                      marginRight: isMobile ? '0' : '-20px'
+                    }}
+                  >
+                    <NotifyModal />
+                    {isMobile && (
+                      <div className="text-center p-2 border-top">
+                        <button
+                          className="btn btn-sm btn-outline-secondary"
+                          onClick={() => setShowNotifyDropdown(false)}
+                        >
+                          Cerrar
+                        </button>
+                      </div>
+                    )}
+
+
+                  </div>
+                )}
               </div>
             )}
 
@@ -288,6 +288,20 @@ const Navbar2 = ({ onFiltersChange }) => {
                   <>
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span > <strong>{auth.user.username}</strong> </span> </NavDropdown.Header>
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span >{t('role')}: <strong>{auth.user.role}</strong> </span> </NavDropdown.Header>
+                    <NavDropdown.Header>
+  
+
+  {auth.user?.isVerified ? (
+    <span className="text-success font-semibold flex items-center">
+      <i className="fas fa-user-check mr-2"></i>
+      ✅ {t('verified')}
+    </span>
+  ) : (
+    <ActivateButton onClose={() => console.log("Dropdown cerrado")} />
+  )}
+</NavDropdown.Header>
+
+
 
                     {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
                       <NavDropdown.Item onClick={openStatusModal}>

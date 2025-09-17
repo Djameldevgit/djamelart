@@ -76,16 +76,17 @@ const CardBodyCarousel = ({ post }) => {
   const handleLike = async () => {
     if (!canProceed() || loadLike) return;
     setLoadLike(true);
-    await dispatch(likePost({ post, auth, socket  }));
+    await dispatch(likePost({ post, auth, socket, t })); // 👈 ahora pasamos t
     setLoadLike(false);
   };
-
+  
   const handleUnLike = async () => {
     if (!canProceed() || loadLike) return;
     setLoadLike(true);
-    await dispatch(unLikePost({ post, auth, socket }));
+    await dispatch(unLikePost({ post, auth, socket, t })); // 👈 igual aquí
     setLoadLike(false);
   };
+  
 
   const handleSavePost = async () => {
     if (!canProceed() || saveLoad) return;

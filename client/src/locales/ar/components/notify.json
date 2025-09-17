@@ -1,0 +1,13 @@
+{
+  "notifications": {
+    "likePost": "أعجب بمنشورك.",
+    "unlikePost": "أزال إعجابه من منشورك."
+  },
+  "errors": {
+    "unexpectedError": "حدث خطأ غير متوقع."
+  },
+  "title": "الإشعارات",
+  "noNotifications": "لا توجد إشعارات جديدة",
+  "deleteAll": "حذف الكل",
+  "confirmDelete": "لديك {{count}} إشعارات غير مقروءة. هل أنت متأكد أنك تريد حذفها جميعًا؟"
+}
