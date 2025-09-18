@@ -34,7 +34,7 @@ export const createPostAprove = ({ postData, images, auth, socket }) => async (d
         // Notificación
         const msg = {
             id: res.data.newPost._id,
-            text: 'addedanewpost.',
+            text: 'addedanewpost',
             textNs: 'notify', 
             recipients: res.data.newPost.user.followers,
             url: `/post/${res.data.newPost._id}`,
@@ -70,7 +70,7 @@ export const aprovarPostPendiente = ({ post, estado, auth, socket }) => async (d
         // 2. Notificación al usuario dueño del post
         const notifyMsg = {
             id: auth.user._id,
-            text: 'approvedyourpost.',
+            text: 'approvedyourpost',
             textNs: 'notify', 
             recipients: [post.user._id],
             url: `/post/${post._id}`,

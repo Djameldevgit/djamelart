@@ -86,7 +86,7 @@ export const likePost = ({ post, auth, socket  }) => async (dispatch) => {
     dispatch(createNotify({ msg, auth, socket }));
     
 
-    dispatch(createNotify({ msg, auth, socket }));
+ 
   } catch (err) {
     console.error("❌ Error en likePost:", err);
     dispatch({
@@ -177,7 +177,7 @@ export const deletePost = ({ post, auth, socket }) => async (dispatch) => {
   
       const msg = {
         id: post._id,
-        text: 'addedanewpost.',
+        text: 'addedanewpost',
         recipients,
         url: `/post/${post._id}`,
       };

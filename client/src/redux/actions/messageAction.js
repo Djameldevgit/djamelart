@@ -38,7 +38,7 @@ export const addMessage = ({ msg, auth, socket }) => async (dispatch) => {
         if (response && response.data) {
             const notifyMsg = {
                 id: _id,
-                text: 'sentyouamessage.',
+                text: 'sentyouamessage',
                 textNs: 'notify',
                 recipients: [msg.recipient],
                 url: `/message/${_id}`,

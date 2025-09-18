@@ -5,7 +5,7 @@ const Modalsearchhome = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null;
 
     return (
-        <div style={styles.overlay}>
+        <div style={styles.overlay} className="mt-4" >
             <div style={styles.modal}>
                 <button style={styles.closeButton} onClick={onClose}>
                     &times;
