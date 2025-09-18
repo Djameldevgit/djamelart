@@ -1,65 +1,43 @@
 {
-  "head": {
+  "header": {
     "title": "حظر المستخدم"
   },
-  "actions": {
-    "close": "إغلاق"
+  "userInfo": {
+    "title": "معلومات المستخدم",
+    "username": "المستخدم",
+    "email": "البريد الإلكتروني"
   },
   "form": {
     "reasonLabel": "سبب الحظر",
-    "selectReason": "اختر سببًا"
+    "selectReason": "اختر السبب",
+    "detailsLabel": "تفاصيل إضافية",
+    "detailsPlaceholder": "قدم تفاصيل محددة حول سبب الحظر...",
+    "detailsHelp": "هذه المعلومات ستكون مرئية للمستخدم والمسؤولين",
+    "blockDuration": "مدة الحظر",
+    "dateLabel": "تاريخ الإلغاء",
+    "timeLabel": "وقت الإلغاء",
+    "durationHelp": "حدد التاريخ والوقت الذي سيتم فيه إلغاء حظر المستخدم تلقائياً"
   },
-  "reason": {
+  "reasons": {
     "abusiveBehavior": "سلوك مسيء",
-    "spam": "رسائل مزعجة",
+    "spam": "بريد عشوائي",
     "termsViolation": "انتهاك شروط الاستخدام",
     "offensiveLanguage": "لغة مسيئة",
     "fraud": "احتيال",
     "identityTheft": "انتحال الهوية",
-    "inappropriateContent": "محتوى غير مناسب",
+    "inappropriateContent": "محتوى غير لائق",
     "privacyViolation": "انتهاك الخصوصية",
-    "serviceDisruption": "انقطاع الخدمة",
-    "suspiciousActivity": "نشاط مشبوه",
+    "serviceDisruption": "تعطيل الخدمة",
+    "suspiciousActivity": "نشاط مريب",
     "other": "أخرى"
   },
-  "formmm": {
-    "detailsLabel": "التفاصيل",
-    "detailsPlaceholder": "اكتب التفاصيل هنا..."
-  },
-  "formm": {
-    "blockDuration": "مدة الحظر",
-    "dateLabel": "التاريخ",
-    "timeLabel": "الوقت"
-  },
-  "errorsss": {
-    "missingFields": "جميع الحقول مطلوبة"
-  },
-  "actionse": {
-    "cancel": "إلغاء"
-  },
-  "actionnn": {
+  "actions": {
+    "close": "إغلاق",
+    "cancel": "إلغاء",
     "confirmBlock": "تأكيد الحظر"
   },
-
-
- 
-      "formm:": {
-        "reasonLabel": "سبب الحظر",
-        "selectReason": "اختر السبب",
-        "detailsLabel": "تفاصيل إضافية",
-        "detailsPlaceholder": "اكتب تفاصيل الحظر هنا...",
-        "blockDuration": "مدة الحظر",
-        "dateLabel": "التاريخ",
-        "timeLabel": "الوقت"
-      },
-     
-      "errorrr": {
-        "missingFields": "يرجى ملء جميع الحقول المطلوبة."
-      }
-
-
-
-
-
-
+  "errors": {
+    "missingFields": "يرجى ملء جميع الحقول الإلزامية",
+    "futureDate": "يجب أن يكون التاريخ والوقت في المستقبل"
+  }
 }

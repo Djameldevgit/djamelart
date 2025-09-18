@@ -9,5 +9,17 @@
   "title": "Notificaciones",
   "noNotifications": "No hay notificaciones nuevas",
   "deleteAll": "Eliminar todo",
-  "confirmDelete": "Tienes {{count}} notificaciones sin leer. ¿Seguro que quieres eliminarlas todas?"
+  "confirmDelete": "Tienes {{count}} notificaciones sin leer. ¿Seguro que quieres eliminarlas todas?",
+
+  "mentionedyouinacomment": "Te mencionaron en un comentario",
+  "hascommentedonyourpost": "Comentaron en tu publicación",
+  "sentyouamessage": "Te enviaron un mensaje",
+  "approvedyourpost": "Aprobaron tu publicación",
+  "addedanewpost": "Añadieron una nueva publicación",
+ 
+  "hasstartedtofollowyou": "Comenzaron a seguirte",
+  "likeyourpost": "Les gustó tu publicación",
+  "likePost": "Les gustó la publicación"
+
+
 }

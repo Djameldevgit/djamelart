@@ -1,73 +1,183 @@
-import React, { useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import React, { useRef, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import moment from 'moment';
-import 'moment/locale/fr'; // Importa el idioma francés
 
-const AuthModal = ({ post }) => {
+const AuthModal = ({ show, onClose, closeOnOverlayClick = true }) => {
     const history = useHistory();
-    const location = useLocation();
-    const isDetailPage = location.pathname === `/post/${post._id}`;
-    const { t } = useTranslation();
-    moment.locale('fr'); // Establece el idioma a francés
+    const { t } = useTranslation('authmodal');
+    const { languageReducer } = useSelector((state) => state);
+    const lang = languageReducer.language || 'en';
+    const modalRef = useRef(null);
 
-    const { auth, languageReducer } = useSelector((state) => state); // Obtiene auth y languageReducer del estado global
-    const [showModal, setShowModal] = useState(false);
-
-    const handleCommentClick = () => {
-        if (!auth.token) {
-            setShowModal(true);
-        } else {
-            history.push(`/post/${post._id}`);
+    // Función para cerrar al hacer clic fuera del modal
+    const handleOverlayClick = (e) => {
+        if (closeOnOverlayClick && modalRef.current && !modalRef.current.contains(e.target)) {
+            onClose();
         }
     };
 
-    if (isDetailPage) return null;
+    // Función para cerrar con la tecla Escape
+    const handleEscapeKey = (e) => {
+        if (e.key === 'Escape') {
+            onClose();
+        }
+    };
+
+    useEffect(() => {
+        if (show) {
+            // Agregar event listeners cuando el modal se muestra
+            document.addEventListener('mousedown', handleOverlayClick);
+            document.addEventListener('keydown', handleEscapeKey);
+            // Prevenir scroll del body cuando el modal está abierto
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Cleanup function
+        return () => {
+            document.removeEventListener('mousedown', handleOverlayClick);
+            document.removeEventListener('keydown', handleEscapeKey);
+            document.body.style.overflow = 'unset';
+        };
+    }, [show, closeOnOverlayClick]);
+
+    if (!show) return null;
+
+    const handleLogin = () => {
+        history.push("/login");
+        onClose();
+    };
+
+    const handleRegister = () => {
+        history.push("/register");
+        onClose();
+    };
 
     return (
-        <>
-            <div className="cardfootercomment">
-                <div className="footercommentcontent">
-                    
-                    <div className="carddate">
-                        <span className="mr-1"><i className='far fa-clock'></i>  </span>
-                    
-                    <small className="text-dat">
-                        {moment(post.createdAt).fromNow()}
-                    </small>
-                </div>
-
-                    
-                    <h6 className="mt-0" style={{ cursor: "pointer" }} onClick={handleCommentClick}>
-                  <span><i className='far fa-comment-alt'></i></span>    <span>commenter</span>  
-                    </h6>
-                </div>
-
+        <div className="modal-overlay" style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+            cursor: closeOnOverlayClick ? 'pointer' : 'default'
+        }}>
+            <div 
+                ref={modalRef}
+                className="modal-content" 
+                style={{
+                    backgroundColor: "white",
+                    padding: "20px",
+                    borderRadius: "8px",
+                    width: "300px",
+                    textAlign: "center",
+                    cursor: "default"
+                }}
+                onClick={(e) => e.stopPropagation()} // Prevenir que el clic se propague al overlay
+            >
+                <h4 style={{ margin: "0 0 15px 0", color: "#333" }}>
+                    {t("authenticationRequired", { lng: lang })}
+                </h4>
                 
-            </div>
-
-            {/* Modal de autenticación */}
-            {showModal && (
-                <div className="modalcontentcomment">
-                    <div className="modalcontent">
-                        <h4>{t("title", { lng: languageReducer.language })}</h4>
-                        <p>{t("message", { lng: languageReducer.language })}</p>
-                        <div className="modal-buttons">
-                            <button onClick={() => history.push("/login")}>
-                                {t("login", { lng: languageReducer.language })}
-                            </button>
-                            <button onClick={() => history.push("/register")}>
-                                {t("register", { lng: languageReducer.language })}
-                            </button>
-                            <button onClick={() => setShowModal(false)}>
-                                {t("close", { lng: languageReducer.language })}
-                            </button>
-                        </div>
-                    </div>
+                <p style={{ margin: "0 0 20px 0", color: "#666" }}>
+                    {t("pleaseLoginToContinue", { lng: lang })}
+                </p>
+                
+                <div className="modal-buttons" style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px"
+                }}>
+                    <button 
+                        onClick={handleLogin}
+                        style={{
+                            padding: "12px",
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            transition: "background-color 0.2s"
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
+                        onMouseOut={(e) => e.target.style.backgroundColor = "#007bff"}
+                    >
+                        {t("login", { lng: lang })}
+                    </button>
+                    
+                    <button 
+                        onClick={handleRegister}
+                        style={{
+                            padding: "12px",
+                            backgroundColor: "#28a745",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            transition: "background-color 0.2s"
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = "#1e7e34"}
+                        onMouseOut={(e) => e.target.style.backgroundColor = "#28a745"}
+                    >
+                        {t("register", { lng: lang })}
+                    </button>
+                    
+                    <button 
+                        onClick={onClose}
+                        style={{
+                            padding: "12px",
+                            backgroundColor: "#6c757d",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            transition: "background-color 0.2s"
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = "#545b62"}
+                        onMouseOut={(e) => e.target.style.backgroundColor = "#6c757d"}
+                    >
+                        {t("close", { lng: lang })}
+                    </button>
                 </div>
-            )}
-        </>
+
+                {/* Opcional: Botón de cerrar en la esquina superior derecha */}
+                {closeOnOverlayClick && (
+                    <button 
+                        onClick={onClose}
+                        style={{
+                            position: "absolute",
+                            top: "10px",
+                            right: "10px",
+                            background: "none",
+                            border: "none",
+                            fontSize: "20px",
+                            cursor: "pointer",
+                            color: "#999",
+                            padding: "5px",
+                            borderRadius: "50%",
+                            width: "30px",
+                            height: "30px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}
+                        onMouseOver={(e) => e.target.style.color = "#333"}
+                        onMouseOut={(e) => e.target.style.color = "#999"}
+                        title={t("close", { lng: lang })}
+                    >
+                        ×
+                    </button>
+                )}
+            </div>
+        </div>
     );
 };
 

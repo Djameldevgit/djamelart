@@ -6,9 +6,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
   
+import AuthModal from '../../authAndVerify/AuthModal'; // ✅ Añadir import
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
-
 
 const CardBodyCarousel = ({ post }) => {
   const [isLike, setIsLike] = useState(false);
@@ -17,7 +17,7 @@ const CardBodyCarousel = ({ post }) => {
   const [saveLoad, setSaveLoad] = useState(false);
   const [buyLoad, setBuyLoad] = useState(false);
   const [inCart, setInCart] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false); // ✅ Cambiado a showAuthModal
   const [showBuyMessage, setShowBuyMessage] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
@@ -26,10 +26,10 @@ const CardBodyCarousel = ({ post }) => {
   const lang = languageReducer.language || 'en';
   const history = useHistory();
   const dispatch = useDispatch();
-
+ 
   const canProceed = () => {
     if (!auth.token || !auth.user) {
-      setShowModal(true); // ✅ Mostrar “Conéctate o regístrate”
+      setShowAuthModal(true);
       return false;
     }
 
@@ -45,8 +45,6 @@ const CardBodyCarousel = ({ post }) => {
 
     return true;
   };
-
-
 
   useEffect(() => {
     if (auth.token) dispatch(loadCart(auth.token));
@@ -76,17 +74,16 @@ const CardBodyCarousel = ({ post }) => {
   const handleLike = async () => {
     if (!canProceed() || loadLike) return;
     setLoadLike(true);
-    await dispatch(likePost({ post, auth, socket, t })); // 👈 ahora pasamos t
+    await dispatch(likePost({ post, auth, socket, t }));
     setLoadLike(false);
   };
   
   const handleUnLike = async () => {
     if (!canProceed() || loadLike) return;
     setLoadLike(true);
-    await dispatch(unLikePost({ post, auth, socket, t })); // 👈 igual aquí
+    await dispatch(unLikePost({ post, auth, socket, t }));
     setLoadLike(false);
   };
-  
 
   const handleSavePost = async () => {
     if (!canProceed() || saveLoad) return;
@@ -197,17 +194,24 @@ const CardBodyCarousel = ({ post }) => {
         </div>
       )}
 
+      {/* ✅ Modal de autenticación */}
+      <AuthModal 
+        show={showAuthModal} 
+        post={post}
+        onClose={() => setShowAuthModal(false)} 
+      />
+      
       {/* Modal verificación */}
-      {showVerifyModal && (
-        <VerifyModal show={showVerifyModal} onClose={() => setShowVerifyModal(false)} />
-      )}
-      <DesactivateModal show={showDeactivatedModal} onClose={() => setShowDeactivatedModal(false)} />
-
+      <VerifyModal 
+        show={showVerifyModal} 
+        onClose={() => setShowVerifyModal(false)} 
+      />
+      
+      <DesactivateModal 
+        show={showDeactivatedModal} 
+        onClose={() => setShowDeactivatedModal(false)} 
+      />
     </div>
-
-
-    // En el return:
-
   );
 };
 

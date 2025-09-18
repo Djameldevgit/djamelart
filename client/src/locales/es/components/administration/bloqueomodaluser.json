@@ -1,44 +1,39 @@
 {
-    "head": {
-      "title": "Bloquear usuario"
-    },
-    "errorsss": {
-      "missingFields": "Por favor, complete todos los campos requeridos."
-    },
-    "form": {
-      "reasonLabel": "Motivo del bloqueo",
-      "selectReason": "Seleccione un motivo"
-    },
-    "formmm": {
-      "detailsLabel": "Detalles adicionales",
-      "detailsPlaceholder": "Escriba aquí los detalles del motivo..."
-    },
-    "formm": {
-      "blockDuration": "Duración del bloqueo",
-      "dateLabel": "Fecha límite",
-      "timeLabel": "Hora límite"
-    },
-    "reason": {
-      "abusiveBehavior": "Comportamiento abusivo",
-      "spam": "Spam",
-      "termsViolation": "Violación de las condiciones de uso",
-      "offensiveLanguage": "Lenguaje ofensivo",
-      "fraud": "Fraude",
-      "identityTheft": "Suplantación de identidad",
-      "inappropriateContent": "Contenido inapropiado",
-      "privacyViolation": "Violación de la privacidad",
-      "serviceDisruption": "Interrupción del servicio",
-      "suspiciousActivity": "Actividad sospechosa",
-      "other": "Otro"
-    },
-    "actions": {
-      "close": "Cerrar"
-    },
-    "actionse": {
-      "cancel": "Cancelar"
-    },
-    "actionnn": {
-      "confirmBlock": "Confirmar bloqueo"
-    }
+  "header": {
+    "title": "Bloquear Usuario"
+  },
+  "userInfo": "Usuario: {username} | Email: {email}",
+  "form": {
+    "reasonLabel": "Motivo de bloqueo",
+    "selectReason": "Seleccionar motivo",
+    "detailsLabel": "Detalles adicionales",
+    "detailsPlaceholder": "Proporciona detalles específicos sobre el motivo del bloqueo...",
+    "detailsHelp": "Esta información será visible para el usuario y los administradores",
+    "blockDuration": "Duración del bloqueo",
+    "dateLabel": "Fecha de desbloqueo",
+    "timeLabel": "Hora de desbloqueo",
+    "durationHelp": "Selecciona la fecha y hora en que el usuario será desbloqueado automáticamente"
+  },
+  "reasons": {
+    "abusiveBehavior": "Comportamiento abusivo",
+    "spam": "Spam",
+    "termsViolation": "Violación de términos de uso",
+    "offensiveLanguage": "Lenguaje ofensivo",
+    "fraud": "Fraude",
+    "identityTheft": "Suplantación de identidad",
+    "inappropriateContent": "Contenido inapropiado",
+    "privacyViolation": "Violación de privacidad",
+    "serviceDisruption": "Interrupción del servicio",
+    "suspiciousActivity": "Actividad sospechosa",
+    "other": "Otro"
+  },
+  "actions": {
+    "close": "Cerrar",
+    "cancel": "Cancelar",
+    "confirmBlock": "Confirmar Bloqueo"
+  },
+  "errors": {
+    "missingFields": "Por favor, complete todos los campos obligatorios",
+    "futureDate": "La fecha y hora deben ser futuras"
   }
-  
+}

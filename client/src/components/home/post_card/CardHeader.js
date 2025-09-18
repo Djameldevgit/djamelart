@@ -30,15 +30,46 @@ import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
 import { createReport } from '../../../redux/actions/reportUserAction';
 import FollowBtn from '../../FollowBtn';
 
+// ✅ Importar los modales
+import AuthModal from '../../authAndVerify/AuthModal';
+import VerifyModal from '../../authAndVerify/VerifyModal';
+import DesactivateModal from '../../authAndVerify/DesactivateModal';
+
 const CardHeader = ({ post }) => {
   const { auth, homeUsers, socket, languageReducer, profile } = useSelector((state) => state);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [copied, setCopied] = useState(false);
+  
+  // ✅ Estados para los modales de verificación
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
+  
   const dispatch = useDispatch();
   const history = useHistory();
   const { t, i18n } = useTranslation('cardheader');
+
+  // ✅ Función canProceed
+  const canProceed = () => {
+    if (!auth.token || !auth.user) {
+      setShowAuthModal(true);
+      return false;
+    }
+
+    if (!auth.user.isVerified) {
+      setShowVerifyModal(true);
+      return false;
+    }
+
+    if (auth.user.isActive === false) {
+      setShowDeactivatedModal(true);
+      return false;
+    }
+
+    return true;
+  };
 
   const findCompleteUser = () => {
     const completeUser = profile.users.find(u => u._id === post.user._id);
@@ -75,6 +106,9 @@ Por: ${post.user.username}
   const adminUser = homeUsers.users.find(user => user.role === "admin");
 
   const handleChatWithAdmin = () => {
+    // ✅ Verificar si puede proceder antes de chatear con admin
+    if (!canProceed()) return;
+    
     if (!adminUser) {
       return dispatch({
         type: GLOBALTYPES.ALERT,
@@ -85,10 +119,15 @@ Por: ${post.user.username}
   };
 
   const handleEditPost = () => {
+    // ✅ Verificar si puede proceder antes de editar
+    if (!canProceed()) return;
     dispatch({ type: GLOBALTYPES.STATUS, payload: { ...post, onEdit: true } });
   };
 
   const handleDeletePost = () => {
+    // ✅ Verificar si puede proceder antes de eliminar
+    if (!canProceed()) return;
+    
     if (window.confirm(t('confirmDelete'))) {
       dispatch(deletePost({ post, auth, socket }));
       history.push("/");
@@ -96,6 +135,9 @@ Por: ${post.user.username}
   };
 
   const handleSubmitReport = () => {
+    // ✅ Verificar si puede proceder antes de reportar
+    if (!canProceed()) return;
+    
     if (!reportReason.trim()) {
       return dispatch({
         type: GLOBALTYPES.ALERT,
@@ -119,8 +161,22 @@ Por: ${post.user.username}
   };
 
   const handleAddUser = (user) => {
+    // ✅ Verificar si puede proceder antes de agregar usuario
+    if (!canProceed()) return;
+    
     dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...user, text: '', media: [] } });
     return history.push(`/message/${user._id}`);
+  };
+
+  // ✅ Función para manejar compartir (no requiere verificación)
+  const handleShare = () => {
+    setShowShareModal(true);
+  };
+
+  // ✅ Función para manejar contacto con vendedor
+  const handleContactSeller = () => {
+    if (!canProceed()) return;
+    handleAddUser(post.user);
   };
 
   return (
@@ -205,7 +261,7 @@ Por: ${post.user.username}
               </>
             )}
 
-            <Dropdown.Item onClick={() => handleAddUser(post.user)} style={{
+            <Dropdown.Item onClick={handleContactSeller} style={{
               direction: lang === 'ar' ? 'rtl' : 'ltr',
               textAlign: lang === 'ar' ? 'right' : 'left',
             }}>
@@ -236,11 +292,16 @@ Por: ${post.user.username}
               </Dropdown.Item>
             )}
 
-            <Dropdown.Item onClick={() => setShowShareModal(true)}>
+            {/* ✅ Compartir no requiere verificación */}
+            <Dropdown.Item onClick={handleShare}>
               📤 {t('share')}
             </Dropdown.Item>
 
-            <Dropdown.Item onClick={() => setShowReportModal(true)}>
+            <Dropdown.Item onClick={() => {
+              // ✅ Verificar antes de abrir modal de reporte
+              if (!canProceed()) return;
+              setShowReportModal(true);
+            }}>
               🚩 {t('report')}
             </Dropdown.Item>
 
@@ -480,6 +541,20 @@ Por: ${post.user.username}
           </button>
         </Modal.Footer>
       </Modal>
+
+      {/* ✅ Agregar los modales de verificación */}
+      <AuthModal 
+        show={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
+      <VerifyModal 
+        show={showVerifyModal} 
+        onClose={() => setShowVerifyModal(false)} 
+      />
+      <DesactivateModal 
+        show={showDeactivatedModal} 
+        onClose={() => setShowDeactivatedModal(false)} 
+      />
     </Card.Header>
   );
 };

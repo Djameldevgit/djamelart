@@ -2,7 +2,7 @@ import { GLOBALTYPES } from './globalTypes'
 import { imageUpload } from '../../utils/imageUpload'
 import { postDataAPI,  getDataAPI, patchDataAPI, deleteDataAPI } from '../../utils/fetchData'
 import { createNotify, removeNotify } from './notifyAction'
-import axios from "axios";
+ 
  
 export const POST_TYPES = {
     CREATE_POST: 'CREATE_POST',
@@ -113,7 +113,9 @@ export const unLikePost = ({post, auth, socket}) => async (dispatch) => {
         // Notify
         const msg = {
             id: auth.user._id,
-            text: 'like your post.',
+            text: 'likeyourpost.',
+            textNs: 'notify', 
+
             recipients: [post.user._id],
             url: `/post/${post._id}`,
         }
@@ -175,7 +177,7 @@ export const deletePost = ({ post, auth, socket }) => async (dispatch) => {
   
       const msg = {
         id: post._id,
-        text: 'added a new post.',
+        text: 'addedanewpost.',
         recipients,
         url: `/post/${post._id}`,
       };

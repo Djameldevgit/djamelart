@@ -7,12 +7,18 @@ import Following from './Following'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import AuthModal from '../authAndVerify/AuthModal';
+import VerifyModal from '../authAndVerify/VerifyModal';
+import DesactivateModal from '../authAndVerify/DesactivateModal';
 
 const Info = ({id, auth, profile, dispatch}) => {
     const [userData, setUserData] = useState([])
     const [onEdit, setOnEdit] = useState(false)
     const [showFollowers, setShowFollowers] = useState(false)
     const [showFollowing, setShowFollowing] = useState(false)
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showVerifyModal, setShowVerifyModal] = useState(false);
+    const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
     
     const { languageReducer } = useSelector(state => state)
     const { t } = useTranslation('profile')
@@ -35,6 +41,40 @@ const Info = ({id, auth, profile, dispatch}) => {
         }
     },[showFollowers, showFollowing, onEdit, dispatch])
 
+    const canProceed = () => {
+        if (!auth.token || !auth.user) {
+            setShowAuthModal(true);
+            return false;
+        }
+
+        if (!auth.user.isVerified) {
+            setShowVerifyModal(true);
+            return false;
+        }
+
+        if (auth.user.isActive === false) {
+            setShowDeactivatedModal(true);
+            return false;
+        }
+
+        return true;
+    };
+
+    const handleEditProfile = () => {
+        if (!canProceed()) return;
+        setOnEdit(true);
+    };
+
+    const handleShowFollowers = () => {
+        if (!canProceed()) return;
+        setShowFollowers(true);
+    };
+
+    const handleShowFollowing = () => {
+        if (!canProceed()) return;
+        setShowFollowing(true);
+    };
+
     return (
         <div className="info"  >
             
@@ -48,7 +88,7 @@ const Info = ({id, auth, profile, dispatch}) => {
                             {
                                 user._id === auth.user._id
                                 ? <button className="btn btn-outline-info"
-                                    onClick={() => setOnEdit(true)}>
+                                    onClick={handleEditProfile}>
                                     {t('editProfile', { lng: lang })}
                                 </button>
                                 : <FollowBtn user={user} />
@@ -56,10 +96,10 @@ const Info = ({id, auth, profile, dispatch}) => {
                         </div>
 
                         <div className="follow_btn">
-                            <span className="mr-4" onClick={() => setShowFollowers(true)}>
+                            <span className="mr-4" onClick={handleShowFollowers}>
                                 {user.followers.length} {t('followers', { lng: lang })}
                             </span>
-                            <span className="ml-4" onClick={() => setShowFollowing(true)}>
+                            <span className="ml-4" onClick={handleShowFollowing}>
                                 {user.following.length} {t('following', { lng: lang })}
                             </span>
                         </div>
@@ -78,6 +118,19 @@ const Info = ({id, auth, profile, dispatch}) => {
                     {onEdit && <EditProfile setOnEdit={setOnEdit} />}
                     {showFollowers && <Followers users={user.followers} setShowFollowers={setShowFollowers} />}
                     {showFollowing && <Following users={user.following} setShowFollowing={setShowFollowing} />}
+
+                    <AuthModal 
+                        show={showAuthModal} 
+                        onClose={() => setShowAuthModal(false)} 
+                    />
+                    <VerifyModal 
+                        show={showVerifyModal} 
+                        onClose={() => setShowVerifyModal(false)} 
+                    />
+                    <DesactivateModal 
+                        show={showDeactivatedModal} 
+                        onClose={() => setShowDeactivatedModal(false)} 
+                    />
                 </div>
             ))}
         </div>
