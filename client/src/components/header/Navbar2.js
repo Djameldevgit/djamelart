@@ -27,7 +27,8 @@ import {
   FaSignInAlt,
   FaUserPlus,
   FaSearch,
-  FaBell
+  FaBell,
+  FaShareAlt
 } from 'react-icons/fa';
 import { Navbar, Container, NavDropdown, Offcanvas, Button, Badge } from 'react-bootstrap';
 import { BsCartFill } from 'react-icons/bs';
@@ -35,18 +36,19 @@ import NotifyModal from '../NotifyModal';
 import LanguageSelectorpc from '../LanguageSelectorpc';
 import ActivateButton from '../../auth/ActivateButton';
 import VerifyModal from '../authAndVerify/VerifyModal';
-import Acordion from '../Acordion';
+ 
 import Modalsearchhome from './Modalsearchhome';
 import DesactivateModal from '../authAndVerify/DesactivateModal';
 import MultiCheckboxModal from './MultiCheckboxModal.';
-
+import ShareAppModal from '../shareAppModal';
+ 
 const Navbar2 = ({ onFiltersChange }) => {
   const { auth, theme, cart, notify, settings } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
   const { t, i18n } = useTranslation('navbar');
   const lang = languageReducer.language || 'es';
-
+  const [showShareModal, setShowShareModal] = useState(false);
   useEffect(() => {
     if (lang && lang !== i18n.language) {
       i18n.changeLanguage(lang);
@@ -239,7 +241,7 @@ const Navbar2 = ({ onFiltersChange }) => {
                       marginRight: isMobile ? '0' : '-20px'
                     }}
                   >
-                     <NotifyModal onClose={() => setShowNotifyDropdown(false)} />
+                    <NotifyModal onClose={() => setShowNotifyDropdown(false)} />
                     {isMobile && (
                       <div className="text-center p-2 border-top">
                         <button
@@ -289,17 +291,17 @@ const Navbar2 = ({ onFiltersChange }) => {
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span > <strong>{auth.user.username}</strong> </span> </NavDropdown.Header>
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span >{t('role')}: <strong>{auth.user.role}</strong> </span> </NavDropdown.Header>
                     <NavDropdown.Header>
-  
 
-  {auth.user?.isVerified ? (
-    <span className="text-success font-semibold flex items-center">
-      <i className="fas fa-user-check mr-2"></i>
-      ✅ {t('verified')}
-    </span>
-  ) : (
-    <ActivateButton onClose={() => console.log("Dropdown cerrado")} />
-  )}
-</NavDropdown.Header>
+
+                      {auth.user?.isVerified ? (
+                        <span className="text-success font-semibold flex items-center">
+                          <i className="fas fa-user-check mr-2"></i>
+                          ✅ {t('verified')}
+                        </span>
+                      ) : (
+                        <ActivateButton onClose={() => console.log("Dropdown cerrado")} />
+                      )}
+                    </NavDropdown.Header>
 
 
 
@@ -329,7 +331,12 @@ const Navbar2 = ({ onFiltersChange }) => {
                       <FaComments className="me-2" />
                       {t('conversations')}
                     </NavDropdown.Item>
-
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item onClick={() => setShowShareModal(true)}>
+                      <FaShareAlt className="me-2" />
+                      Compartir Aplicación
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
                     <NavDropdown.Item as={Link} to="/roles">
                       <FaTools className="me-2" />
                       {t('roles')}
@@ -461,6 +468,12 @@ const Navbar2 = ({ onFiltersChange }) => {
                 >
                   {t("register")}
                 </a>
+                <NavDropdown.Item onClick={() => setShowShareModal(true)}>
+                  <FaShareAlt className="me-2" />
+                  Compartir Aplicación
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+
               </div>
             ) : (
               <div>
@@ -491,7 +504,7 @@ const Navbar2 = ({ onFiltersChange }) => {
         onClose={() => {
           closeModal();
           setShowAdvancedSearch(false);
-           
+
         }}
         style={{ marginTop: '50' }}
       >
@@ -750,7 +763,10 @@ const Navbar2 = ({ onFiltersChange }) => {
         show={showFeaturesModal}
         onClose={() => setShowFeaturesModal(false)}
       />
-
+      <ShareAppModal
+        show={showShareModal}
+        onClose={() => setShowShareModal(false)}
+      />
       {showAdminRedirectModal && (
         <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
           <div className="modal-dialog modal-dialog-centered">

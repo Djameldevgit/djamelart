@@ -6,11 +6,8 @@ import { updateSettings } from "../../redux/actions/settingsAction";
 const MultiCheckboxModal = ({ show, onClose }) => {
   const dispatch = useDispatch();
   const { settings, auth } = useSelector((state) => state);
-
-  // Estado local sincronizado con Redux
   const [features, setFeatures] = useState(settings);
 
-  // Cuando cambian settings globales → actualizamos el estado local
   useEffect(() => {
     setFeatures(settings);
   }, [settings]);
@@ -21,49 +18,64 @@ const MultiCheckboxModal = ({ show, onClose }) => {
   };
 
   const handleSave = () => {
-    dispatch(updateSettings(features, auth.token)); // 🔥 esto lanza el alert
+    dispatch(updateSettings(features, auth.token));
     onClose();
   };
 
+  // Todas las features en un array plano
+  const allFeatures = [
+    { name: "style", label: "Modo Oscuro", icon: "🌙" },
+    { name: "theme", label: "Tema Premium", icon: "🎨" },
+    { name: "images", label: "Soporte de Imágenes", icon: "🖼️" },
+    { name: "ecommerce", label: "E-commerce", icon: "🛒" },
+    { name: "notifications", label: "Notificaciones", icon: "🔔" },
+    { name: "cache", label: "Cache Avanzado", icon: "⚡" },
+    { name: "lazyLoad", label: "Carga Diferida", icon: "📱" },
+    { name: "analytics", label: "Analytics", icon: "📊" },
+    { name: "chat", label: "Chat en Vivo", icon: "💬" },
+    { name: "backup", label: "Backup Automático", icon: "💾" }
+  ];
+
   return (
-    <Modal show={show} onHide={onClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Actualizar Opciones</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Form.Check
-            type="checkbox"
-            label="Imágenes"
-            name="images"
-            checked={features.images || false}
-            onChange={handleChange}
-          />
-          <Form.Check
-            type="checkbox"
-            label="Estilo"
-            name="style"
-            checked={features.style || false}
-            onChange={handleChange}
-          />
-          <Form.Check
-            type="checkbox"
-            label="E-commerce"
-            name="ecommerce"
-            checked={features.ecommerce || false}
-            onChange={handleChange}
-          />
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
-          Cancelar
-        </Button>
-        <Button variant="primary" onClick={handleSave}>
-          Guardar cambios
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <Modal show={show} onHide={onClose}   size="md">
+    <div closeButton className="bg-primary text-white">
+      <Modal.Title className="text-center w-100">
+        ⚙️ Configuración
+      </Modal.Title>
+    </div>
+    
+    <Modal.Body style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+      {/* Checkboxes en filas limpias */}
+      <div className="d-flex flex-column">
+        {allFeatures.map((feature, index) => (
+          <Form.Check key={index} className="w-100 mb-2">
+            <div className="d-flex align-items-center p-2">
+              <Form.Check.Input
+                type="checkbox"
+                name={feature.name}
+                checked={features[feature.name] || false}
+                onChange={handleChange}
+                className="me-3"
+              />
+              <Form.Check.Label className="d-flex align-items-center">
+                <span className="fs-5 me-3">{feature.icon}</span>
+                <span>{feature.label}</span>
+              </Form.Check.Label>
+            </div>
+          </Form.Check>
+        ))}
+      </div>
+    </Modal.Body>
+
+    <Modal.Footer className="justify-content-center border-top">
+      <Button variant="outline-secondary" onClick={onClose} className="me-2">
+        Cancelar
+      </Button>
+      <Button variant="primary" onClick={handleSave}>
+        Guardar
+      </Button>
+    </Modal.Footer>
+  </Modal>
   );
 };
 

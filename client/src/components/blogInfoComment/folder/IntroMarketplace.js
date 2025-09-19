@@ -43,13 +43,11 @@ const IntroMarketplace = () => {
             <div className="p-1 text-center">
               {/* Título destacado */}
               <h1 className="fw-bold display-5 mb-3 text-gradient">
-                🎨 {t('tituloPrincipaleparte1' )}<span className="text-primary">{t('tassili')}</span>  <span className="text-primary">{t('tituloPrincipaleparte3')}</span>
+                 <span className="text-primary">{t('tassili')}</span>  <span className="text-primary">{t('tituloPrincipaleparte3')}</span>
               </h1>
 
               {/* Subtítulo breve */}
-              <p className="text-muted fs-5 mb-4">
-                {t('subtitulo')}
-              </p>
+           
 
               {/* Descripción por secciones */}
               <p className="fs-6">
@@ -69,9 +67,7 @@ const IntroMarketplace = () => {
               </p>
 
               {/* Cierre inspirador */}
-              <p className="fw-semibold fs-5 mt-4 text-dark">
-                🌍 {t('cierreInspirador')}
-              </p>
+           
             </div>
           </Card>
         </Col>
