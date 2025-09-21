@@ -1,15 +1,24 @@
-  {
-    "editProfile": "تعديل الملف الشخصي",
-    "followers": "متابعون",
-    "following": "يتابع",
-    "close": "إغلاق",
-    "change": "تغيير",
-    "mobile": "الهاتف المحمول",
-    "address": "العنوان",
-    "website": "الموقع الإلكتروني",
-    "story": "القصة",
-    "save": "حفظ",
-    "posts": "منشورات",
-    "saved": "محفوظات"
-    }
-    
+{
+  "posts": "منشورات",
+  "saved": "المحفوظات",
+  "info": "معلومات",
+  "followers": "متابعون",
+  "following": "يتابع",
+  "editProfile": "تعديل الملف الشخصي",
+  "about": "حول",
+  "userInfo": "معلومات المستخدم",
+  "username": "اسم المستخدم",
+  "email": "البريد الإلكتروني",
+  "totalPosts": "إجمالي المنشورات",
+  "totalLikes": "إجمالي الإعجابات",
+  "role": "الدور",
+  "verification": "التحقق",
+  "accountStatus": "حالة الحساب",
+  "verified": "تم التحقق",
+  "pending": "قيد الانتظار",
+  "active": "نشط",
+  "inactive": "غير نشط",
+  "memberSince": "عضو منذ",
+  "lastLogin": "آخر تسجيل دخول",
+  "close": "إغلاق"
+}

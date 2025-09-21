@@ -192,7 +192,9 @@ Por: ${post.user.username}
             
             lineHeight: '1.3'
           }}>
-            <strong>{post.title}</strong>
+ 
+
+            <strong>{post.venteOption} / {post.title}</strong>
           </Card.Title>
 
           <Card.Text style={{

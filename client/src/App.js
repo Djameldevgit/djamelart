@@ -1,4 +1,4 @@
-import { useEffect, useState,useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import i18n from './i18n';
 
@@ -51,7 +51,7 @@ import { getSettings } from './redux/actions/settingsAction';
 
 
 function App() {
-  const { auth, status, modal, languageReducer,notify } = useSelector(state => state)
+  const { auth, status, modal, languageReducer, notify } = useSelector(state => state)
   const dispatch = useDispatch()
   const language = languageReducer?.language || localStorage.getItem("lang") || "en";
   const [filters, setFilters] = useState({
@@ -61,7 +61,7 @@ function App() {
     style: '',
     minPrice: '',
     maxPrice: '',
-  });
+  });  
 
   useEffect(() => {
     dispatch(refreshToken())
@@ -77,14 +77,15 @@ function App() {
       localStorage.setItem('language', language); // ✅ persistencia
     }
   }, [language]);
+  
   useEffect(() => {
-dispatch(getSettings( ));
+    dispatch(getSettings());
     dispatch(getPosts())//EHECUTAR LAS ACCIONES GETUSER Y GETUSERSACTION EN SUS PROPIOS COMPONENTE
     if (auth.token) {
       dispatch(getCart((auth.token)))
       dispatch(getOrders((auth.token)))
       dispatch(getUsers(auth.token))
- 
+
 
       dispatch(getPostsPendientes(auth.token))
       dispatch(getBlockedUsers(auth.token))
@@ -93,8 +94,8 @@ dispatch(getSettings( ));
     }
   }, [dispatch, auth.token])
 
- 
-  
+
+
   useEffect(() => {
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
@@ -106,17 +107,17 @@ dispatch(getSettings( ));
       });
     }
   }, [])
- 
+
   const lastNotifyId = useRef(null);
 
   useEffect(() => {
     if (notify.data.length > 0) {
       const ultima = notify.data[0];
-  
+
       // Solo ejecutar si es realmente una nueva notificación
       if (ultima._id !== lastNotifyId.current) {
         lastNotifyId.current = ultima._id;
-  
+
         // 🔔 Sonido
         try {
           const audio = new Audio("/sounds/notify.mp3");
@@ -126,7 +127,7 @@ dispatch(getSettings( ));
         } catch (error) {
           console.warn("Sonido no soportado", error);
         }
-  
+
         // 📳 Vibración
         if ("vibrate" in navigator) {
           navigator.vibrate([300, 100, 300, 100, 600]);
@@ -134,9 +135,9 @@ dispatch(getSettings( ));
       }
     }
   }, [notify.data]);
-  
 
-/*
+
+
   if (auth.token && auth.user?.esBloqueado) {
     return (
       <Router>
@@ -145,7 +146,7 @@ dispatch(getSettings( ));
       </Router>
     )
   }
-*/
+
 
 
   return (
@@ -163,7 +164,7 @@ dispatch(getSettings( ));
           {auth.token && <SocketClient />}
 
           <Switch>
-          <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
+            <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/bloginfo" component={Accordionn} />

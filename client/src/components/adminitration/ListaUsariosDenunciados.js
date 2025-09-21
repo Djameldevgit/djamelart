@@ -17,7 +17,7 @@ import {
   Modal
 } from "react-bootstrap";
 import {
-  PencilFill,
+ 
   TrashFill,
   UnlockFill,
   ThreeDotsVertical,
@@ -32,7 +32,7 @@ import {
 import { useUserActions } from "./useUserActions";
 import BloqueModalUser from "./BloqueModalUser";
 
-const ListaUsariosDenuciados = () => {
+const ListaUsuariosDenunciados = () => {
   const { auth, languageReducer } = useSelector((state) => state);
   const { reports, loading } = useSelector((state) => state.reportReducer);
   const dispatch = useDispatch();
@@ -204,6 +204,7 @@ const ListaUsariosDenuciados = () => {
       <div
         className="d-flex align-items-center"
         lang={lang === "ar" ? "ar" : "es"}
+        dir={lang === "ar" ? "rtl" : "ltr"}
       >
         <img
           src={user.avatar}
@@ -227,11 +228,11 @@ const ListaUsariosDenuciados = () => {
 
   const UserStatusBadges = ({ user }) => {
     return (
-      <div className="d-flex flex-column gap-1">
-        <Badge bg={user.isActive ? "success" : "warning"}>
+      <div className="d-flex flex-wrap gap-1">
+        <Badge bg={user.isActive ? "success" : "warning"} className="mb-1">
           {user.isActive ? t("status.active") : t("status.inactive")}
         </Badge>
-        <Badge bg={user.esBloqueado ? "danger" : "success"}>
+        <Badge bg={user.esBloqueado ? "danger" : "success"} className="mb-1">
           {user.esBloqueado ? t("status.blocked") : t("status.notBlocked")}
         </Badge>
       </div>
@@ -515,17 +516,19 @@ const ListaUsariosDenuciados = () => {
     >
       <h2 className="mb-4">{t("header.title")}</h2>
 
-      <div className="d-flex justify-content-between mb-3">
-        <ButtonGroup>
+      <div className="d-flex justify-content-between mb-3 flex-wrap gap-2">
+        <ButtonGroup className="flex-wrap">
           <Button
             variant={filterStatus === "all" ? "primary" : "outline-primary"}
             onClick={() => setFilterStatus("all")}
+            className="mb-1"
           >
             {t("filters.all")}
           </Button>
           <Button
             variant={filterStatus === "pending" ? "warning" : "outline-warning"}
             onClick={() => setFilterStatus("pending")}
+            className="mb-1"
           >
             <ClockHistory className="me-1" /> {t("filters.pending")}
           </Button>
@@ -534,17 +537,19 @@ const ListaUsariosDenuciados = () => {
               filterStatus === "resolved" ? "success" : "outline-success"
             }
             onClick={() => setFilterStatus("resolved")}
+            className="mb-1"
           >
             <CheckCircleFill className="me-1" /> {t("filters.resolved")}
           </Button>
           <Button
             variant={filterStatus === "rejected" ? "danger" : "outline-danger"}
             onClick={() => setFilterStatus("rejected")}
+            className="mb-1"
           >
             <XCircleFill className="me-1" /> {t("filters.rejected")}
           </Button>
         </ButtonGroup>
-        <Badge bg="secondary" className="d-flex align-items-center">
+        <Badge bg="secondary" className="d-flex align-items-center mb-1">
           {t("totalReports")}: {localReports.length}
         </Badge>
       </div>
@@ -658,4 +663,4 @@ const ListaUsariosDenuciados = () => {
   );
 };
 
-export default ListaUsariosDenuciados;
+export default ListaUsuariosDenunciados;

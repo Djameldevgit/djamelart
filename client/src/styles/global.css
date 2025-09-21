@@ -147,7 +147,7 @@ url("./header.css"); */
 @import url("./blogCommentIAdmin.css");
 @import url("./modals/modalmultiselect.css");
 @import url("./components/home/cardbodycarousel.css");
- 
+@import url("./components/home/cardnodycarouselestilotikto02.css");
 
 .rtl {
   direction: rtl;

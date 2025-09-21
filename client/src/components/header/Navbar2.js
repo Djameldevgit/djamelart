@@ -427,6 +427,13 @@ const Navbar2 = ({ onFiltersChange }) => {
                     <NavDropdown.Item as={Link} to="/bloginfo">
                       ℹ️ {t('appInfo')}
                     </NavDropdown.Item>
+
+                    <NavDropdown.Item onClick={() => setShowShareModal(true)}>
+                  <FaShareAlt className="me-2" />
+                  Compartir Aplicación
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+
                   </>
                 )}
               </div>

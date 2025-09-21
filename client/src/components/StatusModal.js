@@ -150,166 +150,166 @@ const StatusModal = () => {
         });
     };
 
-/*
-    const handleChangeImages = e => {
-        const files = [...e.target.files]
-        let err = ""
-        let newImages = []
-    
-        // 🔥 Determinar límite según el rol del usuario
-        const maxImages = auth.user?.role === "Super-utilisateur" ? 4 : 2;
-        const totalAfterUpload = images.length + files.length;
-    
-        // Validar límite de imágenes
-        if (totalAfterUpload > maxImages) {
-            err = `Maximum ${maxImages} images allowed. ${maxImages === 2 ? 
-                   "Super-users can upload up to 4 images." : ""}`;
-            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
-            return;
+    /*
+        const handleChangeImages = e => {
+            const files = [...e.target.files]
+            let err = ""
+            let newImages = []
+        
+            // 🔥 Determinar límite según el rol del usuario
+            const maxImages = auth.user?.role === "Super-utilisateur" ? 4 : 2;
+            const totalAfterUpload = images.length + files.length;
+        
+            // Validar límite de imágenes
+            if (totalAfterUpload > maxImages) {
+                err = `Maximum ${maxImages} images allowed. ${maxImages === 2 ? 
+                       "Super-users can upload up to 4 images." : ""}`;
+                dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
+                return;
+            }
+        
+            files.forEach(file => {
+                if (!file) {
+                    err = "File does not exist.";
+                    return;
+                }
+        
+                // 🔥 Validar tipo de archivo - SOLO IMAGENES
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    err = "Only image files are allowed (JPEG, JPG, PNG, GIF).";
+                    return;
+                }
+        
+                // Validar tamaño
+                if (file.size > 1024 * 1024 * 5) {
+                    err = "The image largest is 5mb.";
+                    return;
+                }
+        
+                newImages.push(file)
+            })
+        
+            if (err) {
+                dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
+            } else {
+                setImages([...images, ...newImages])
+            }
         }
-    
-        files.forEach(file => {
-            if (!file) {
-                err = "File does not exist.";
-                return;
-            }
-    
-            // 🔥 Validar tipo de archivo - SOLO IMAGENES
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-            if (!allowedTypes.includes(file.type)) {
-                err = "Only image files are allowed (JPEG, JPG, PNG, GIF).";
-                return;
-            }
-    
-            // Validar tamaño
-            if (file.size > 1024 * 1024 * 5) {
-                err = "The image largest is 5mb.";
-                return;
-            }
-    
-            newImages.push(file)
-        })
-    
-        if (err) {
-            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
-        } else {
-            setImages([...images, ...newImages])
-        }
-    }
-*/
-  
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    */
 
-const validateImageDimensions = (file, t, lang) => {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
+    const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
 
-    img.onload = () => {
-      const { width, height } = img;
+    const validateImageDimensions = (file, t, lang) => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
 
-      // Validar dimensiones mínimas/máximas con traducción
-      if (width < 100 || height < 100) {
-        resolve(t('errors.minDimensions', { width: 100, height: 100, lng: lang }));
-      } else if (width > 4000 || height > 4000) {
-        resolve(t('errors.maxDimensions', { width: 4000, height: 4000, lng: lang }));
-      } else {
-        resolve(null);
-      }
+            img.onload = () => {
+                const { width, height } = img;
 
-      URL.revokeObjectURL(img.src);
+                // Validar dimensiones mínimas/máximas con traducción
+                if (width < 100 || height < 100) {
+                    resolve(t('errors.minDimensions', { width: 100, height: 100, lng: lang }));
+                } else if (width > 4000 || height > 4000) {
+                    resolve(t('errors.maxDimensions', { width: 4000, height: 4000, lng: lang }));
+                } else {
+                    resolve(null);
+                }
+
+                URL.revokeObjectURL(img.src);
+            };
+
+            img.onerror = () => resolve(t('errors.imageLoad', { lng: lang }));
+        });
     };
 
-    img.onerror = () => resolve(t('errors.imageLoad', { lng: lang }));
-  });
-};
 
- 
-const handleChangeImages = async (e) => {
-    let err = '';
-    const files = [...e.target.files];
-    const maxImages = 2;
-  
-    const totalAfterUpload = images.length + files.length;
-    if (totalAfterUpload > maxImages) {
-      err = t('errors.maxImages', { count: maxImages, lng: lang });
-      dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
-      return;
-    }
-  
-    for (const file of files) {
-      if (!file) {
-        err = t('errors.fileNotExist', { lng: lang });
-        break;
-      }
-  
-      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-        err = t('errors.invalidFileType', { lng: lang });
-        break;
-      }
-  
-      if (!/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name)) {
-        err = t('errors.invalidFileName', { file: file.name, lng: lang });
-        break;
-      }
-  
-      if (file.size > 5 * 1024 * 1024) {
-        err = t('errors.maxFileSize', { lng: lang });
-        break;
-      }
-  
-      const dimensionError = await validateImageDimensions(file);
-      if (dimensionError) {
-        err = t('errors.invalidDimensions', { lng: lang });
-        break;
-      }
-  
-      if (images.some(img => img.name === file.name)) {
-        err = t('errors.duplicateFile', { file: file.name, lng: lang });
-        break;
-      }
-    }
-  
-    if (err) {
-      dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
-    } else {
-      setImages([...images, ...files]);
-    }
-  };
-  
+    const handleChangeImages = async (e) => {
+        let err = '';
+        const files = [...e.target.files];
+        const maxImages = 2;
+
+        const totalAfterUpload = images.length + files.length;
+        if (totalAfterUpload > maxImages) {
+            err = t('errors.maxImages', { count: maxImages, lng: lang });
+            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
+            return;
+        }
+
+        for (const file of files) {
+            if (!file) {
+                err = t('errors.fileNotExist', { lng: lang });
+                break;
+            }
+
+            if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+                err = t('errors.invalidFileType', { lng: lang });
+                break;
+            }
+
+            if (!/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name)) {
+                err = t('errors.invalidFileName', { file: file.name, lng: lang });
+                break;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                err = t('errors.maxFileSize', { lng: lang });
+                break;
+            }
+
+            const dimensionError = await validateImageDimensions(file);
+            if (dimensionError) {
+                err = t('errors.invalidDimensions', { lng: lang });
+                break;
+            }
+
+            if (images.some(img => img.name === file.name)) {
+                err = t('errors.duplicateFile', { file: file.name, lng: lang });
+                break;
+            }
+        }
+
+        if (err) {
+            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
+        } else {
+            setImages([...images, ...files]);
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-  
+
         if (!postData.category) {
-          return dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: { error: t('errors.noCategory', { lng: lang }) },
-          });
+            return dispatch({
+                type: GLOBALTYPES.ALERT,
+                payload: { error: t('errors.noCategory', { lng: lang }) },
+            });
         }
-      
+
         if (images.length === 0) {
-          return dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: { error: t('errors.noImage', { lng: lang }) },
-          });
+            return dispatch({
+                type: GLOBALTYPES.ALERT,
+                payload: { error: t('errors.noImage', { lng: lang }) },
+            });
         }
-      
-       
+
+
         if (images.length > 2) {
-          return dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: { error: t('errors.maxImages', { count: 2, lng: lang }) },
-          });
+            return dispatch({
+                type: GLOBALTYPES.ALERT,
+                payload: { error: t('errors.maxImages', { count: 2, lng: lang }) },
+            });
         }
-       
-    
-        
+
+
+
         if (status.onEdit) {
             dispatch(updatePost({ postData, images, auth, status }));
         } else {
             dispatch(createPostAprove({ postData, images, auth, socket }));
         }
-    
+
         // Resetear el formulario
         setPostData(initialState);
         setImages([]);
@@ -317,7 +317,7 @@ const handleChangeImages = async (e) => {
     };
 
 
-   
+
 
     useEffect(() => {
 
@@ -575,14 +575,14 @@ const handleChangeImages = async (e) => {
             commune: selectedCommune,
         }));
     };
-
+/*
     const paisess = () => (
         <Paises
             handleChangeInput={handleChangeInput} postData={postData}
 
         />
     )
-
+*/
     const wilayascommunes = () => (
         <WilayaCommune
             postData={postData}
@@ -592,6 +592,7 @@ const handleChangeImages = async (e) => {
             communesOptions={communesOptions}
         />
     )
+    /*
     const ciudadInput = () => {
         if (selectedCountry === 'DZ') {
             return wilayascommunes();
@@ -608,6 +609,7 @@ const handleChangeImages = async (e) => {
             );
         }
     };
+    */
     return (
         <div className={`status_modal ${lang === 'ar' ? 'rtl' : ''}`}    >
 
@@ -686,53 +688,53 @@ const handleChangeImages = async (e) => {
 
                     <div className='form-group'>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.artisticDetails')}</h3>
-                  
-                    <div >
-                        {ItemsSubCategoryStylee()}
-                    </div>
-                    <div >
-                        {ItemsThemee()}
-                    </div>
-                    <div >
-                        {Derechosdelautorr()}
-                    </div>
+
+                        <div >
+                            {ItemsSubCategoryStylee()}
+                        </div>
+                        <div >
+                            {ItemsThemee()}
+                        </div>
+                        <div >
+                            {Derechosdelautorr()}
+                        </div>
                     </div>
 
 
                     <div className='form-group'>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.dimensions')}</h3>
-                   <div >
-                        {TalleSelectt()}
-                    </div>
-                    <div >
-                        {MesureInputt()}
-                    </div>
-                    <div >
-                        {UniteMesuree()}
-                    </div>
-                    <div >
-                        {SuporteDeLaObraa()}
-                    </div> </div>
+                        <div >
+                            {TalleSelectt()}
+                        </div>
+                        <div >
+                            {MesureInputt()}
+                        </div>
+                        <div >
+                            {UniteMesuree()}
+                        </div>
+                        <div >
+                            {SuporteDeLaObraa()}
+                        </div> </div>
 
 
 
 
                     <div className='form-group'>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.availabilityPrice')}</h3>
-    
-                    <div >
-                        {DisponibiliteOeuvree()}
-                    </div>
-                    <div >
-                        {PriceInputt()}
-                    </div>
 
-                    <div >
-                        {DeviseVentee()}
-                    </div>
-                    <div >
-                        {Negociarprecioo()}
-                    </div>
+                        <div >
+                            {DisponibiliteOeuvree()}
+                        </div>
+                        <div >
+                            {PriceInputt()}
+                        </div>
+
+                        <div >
+                            {DeviseVentee()}
+                        </div>
+                        <div >
+                            {Negociarprecioo()}
+                        </div>
                     </div>
 
 
@@ -741,18 +743,18 @@ const handleChangeImages = async (e) => {
 
                     <div className='form-group'>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.saleLogistics')}</h3>
-                      
-                    <div >
-                        {VenteOptionsSelectt()}
-                    </div>
-                    <div >
-                        {Envolverlaobraa()}
-                    </div>
+
+                        <div >
+                            {VenteOptionsSelectt()}
+                        </div>
+                        <div >
+                            {Envolverlaobraa()}
+                        </div>
                     </div>
 
 
 
- 
+
 
 
 
@@ -760,17 +762,19 @@ const handleChangeImages = async (e) => {
 
                     <div className='form-group'>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.artistInfo')}</h3>
-    
-                    <div >
-                        {wilayascommunes()}
-                    </div>
 
-                    <div >
+                        <div >
+                            {wilayascommunes()}
+                        </div>
+                        {/*  <div >
                         {paisess()}
                     </div>
                     <div >
                         {ciudadInput()}
-                    </div>
+                    </div>*/}
+
+
+
                     </div>
 
 
@@ -836,7 +840,7 @@ const handleChangeImages = async (e) => {
 
                         <div className="status_footer">
                             <button className="btn btn-secondary w-100" type="submit">
-                            {t('button.post')}
+                                {t('button.post')}
                             </button>
                         </div>
 

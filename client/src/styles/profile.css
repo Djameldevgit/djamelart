@@ -170,3 +170,176 @@
     border-bottom: 1px solid #000;
     opacity: 0.8;
 }
+
+/* Profile Tabs - Siempre en misma fila */
+.profile_tab {
+    margin: 20px 0;
+    width: 100%;
+    overflow-x: auto; /* Para scroll horizontal en móviles muy pequeños */
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+}
+
+.profile_tab .btn-group {
+    display: flex;
+    flex-wrap: nowrap; /* Evita que se rompa en varias líneas */
+    white-space: nowrap;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: fit-content; /* Se ajusta al contenido */
+    min-width: min-content; /* Mínimo ancho necesario */
+}
+
+.profile_tab .btn {
+    border-radius: 0;
+    padding: 12px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    flex-shrink: 0; /* Evita que los botones se encojan */
+    min-width: 100px; /* Ancho mínimo para cada botón */
+    text-align: center;
+}
+
+/* Estilos específicos para móviles */
+@media (max-width: 576px) {
+    .profile_tab {
+        margin: 15px 0;
+        padding-bottom: 5px; /* Espacio para el scroll */
+    }
+    
+    .profile_tab .btn-group {
+        border-radius: 8px;
+    }
+    
+    .profile_tab .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+        min-width: 80px; /* Menor ancho mínimo en móviles */
+    }
+    
+    .profile_tab .btn .me-1 {
+        margin-right: 4px !important;
+    }
+}
+
+/* Para dispositivos muy pequeños (menos de 340px) */
+@media (max-width: 340px) {
+    .profile_tab .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-width: 70px;
+    }
+    
+    .profile_tab .btn i {
+        font-size: 14px;
+    }
+}
+
+/* Scroll personalizado para los tabs */
+.profile_tab::-webkit-scrollbar {
+    height: 4px;
+}
+
+.profile_tab::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.profile_tab::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.profile_tab::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+.profile .post_thumb {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: 15px;
+}
+
+.profile .post_thumb_display {
+    min-width: 250px;
+    height: 250px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile .post_thumb_display:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.profile .post_thumb_display img,
+.profile .post_thumb_display video {
+    border-radius: 12px;
+}
+
+.profile .post_thumb_display .post_thumb_menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0008;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: 0.3s;
+    border-radius: 12px;
+}
+
+.profile .post_thumb_display:hover .post_thumb_menu {
+    opacity: 1;
+}
+
+.profile .post_thumb_display .post_thumb_menu i {
+    font-size: 1.8rem;
+    color: white;
+    margin: 0 15px;
+    transition: transform 0.3s ease;
+}
+
+.profile .post_thumb_display .post_thumb_menu i:hover {
+    transform: scale(1.2);
+}
+
+/* Responsive design PARA PROFILE */
+@media (max-width: 768px) {
+    .profile .post_thumb {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-gap: 10px;
+    }
+    
+    .profile .post_thumb_display {
+        min-width: 150px;
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile .post_thumb {
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 8px;
+    }
+    
+    .profile .post_thumb_display {
+        min-width: auto;
+        height: 140px;
+    }
+}
+
+/* Responsive design GENERAL */
+@media (max-width: 768px) {
+    .post_thumb {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-gap: 8px;
+    }
+    
+    .post_thumb_display {
+        min-width: 120px;
+        height: 120px;
+    }
+}
