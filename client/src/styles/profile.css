@@ -161,7 +161,7 @@
     text-transform: uppercase;
     font-weight: bold;
     font-size: 1.2rem;
-    padding: 5px 20px;
+    padding: 5px 10px;
     margin: 0 25px;
     opacity: 0.5;
 }
@@ -212,12 +212,12 @@
     }
     
     .profile_tab .btn {
-        padding: 10px 15px;
+        padding: 5px 5px;
         font-size: 14px;
         min-width: 80px; /* Menor ancho mínimo en móviles */
     }
     
-    .profile_tab .btn .me-1 {
+    .profile_tab .btn  {
         margin-right: 4px !important;
     }
 }

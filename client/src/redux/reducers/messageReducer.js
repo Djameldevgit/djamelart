@@ -19,13 +19,14 @@ const messageReducer = (state = initialState, action) => {
                             action.payload]
                 };
                 
-            case MESS_TYPES.TYPING_STOP:
-                return {
-                    ...state,
-                    typing: (state.typing || []).filter(item => 
-                        item.sender !== action.payload.sender || item.chatId !== action.payload.chatId
-                    )
-                };
+                case MESS_TYPES.TYPING_STOP:
+                    return {
+                        ...state,
+                        typing: (state.typing || []).filter(item =>
+                            !(item.sender === action.payload.sender && item.chatId === action.payload.chatId)
+                        )
+                    };
+                
                 
             case MESS_TYPES.SET_TYPING:
                 return {

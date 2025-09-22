@@ -296,7 +296,8 @@ const RightSide = () => {
                                     
                                     {/* 🔥 INDICADOR DE TYPING */}
                                     {message.typing && Array.isArray(message.typing) && 
-                                     message.typing.some(item => item.sender === id && item.chatId === id) && (
+  message.typing.some(item => item.chatId === id && item.sender !== auth.user._id)
+             && (
                                         <span className="typing-indicator" style={{
                                             marginLeft: '5px',
                                             display: 'inline-flex',
@@ -310,7 +311,7 @@ const RightSide = () => {
                                                 <span>.</span>
                                                 <span>.</span>
                                             </span>
-                                            {t('chat.typing')}
+                                            escribiendo
                                         </span>
                                     )}
                                 </small>
@@ -375,7 +376,26 @@ const RightSide = () => {
                     type="text"
                     placeholder={t('chat.placeholder')}
                     value={text}
-                    onChange={handleTextChange}
+                    onChange={(e) => {
+                        handleTextChange(e)
+                    
+                        socket.emit('typing-start', {
+                            sender: auth.user._id,
+                            recipient: id,
+                            chatId: id
+                        })
+                    
+                        clearTimeout(typingTimeout.current)
+                        typingTimeout.current = setTimeout(() => {
+                            socket.emit('typing-stop', {
+                                sender: auth.user._id,
+                                recipient: id,
+                                chatId: id
+                            })
+                        }, 1200)
+                    }}
+                    
+                    
                     style={{
                         filter: theme ? 'invert(1)' : 'invert(0)',
                         background: theme ? '#040404' : '',
@@ -432,40 +452,51 @@ const RightSide = () => {
             )}
 
             {/* 🔥 Estilos para la animación de typing */}
-            <style>
-                {`
-                    .typing-dots {
-                        display: inline-flex;
-                        margin-right: 5px;
-                    }
-    
-                    .typing-dots span {
-                        animation: typing-dot 1.5s infinite;
-                        margin: 0 1px;
-                        font-size: 16px;
-                        font-weight: bold;
-                    }
-    
-                    .typing-dots span:nth-child(2) {
-                        animation-delay: 0.2s;
-                    }
-    
-                    .typing-dots span:nth-child(3) {
-                        animation-delay: 0.4s;
-                    }
-    
-                    @keyframes typing-dot {
-                        0%, 60%, 100% {
-                            transform: translateY(0);
-                            opacity: 0.6;
-                        }
-                        30% {
-                            transform: translateY(-3px);
-                            opacity: 1;
-                        }
-                    }
-                `}
-            </style>
+           {/* 🔥 Estilos para la animación de typing */}
+<style>
+{`
+  .typing-indicator {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 5px;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .typing-dots {
+    display: flex;
+    margin-right: 4px;
+  }
+
+  .typing-dots span {
+    display: inline-block;
+    animation: typing-dot 1s infinite;
+    margin: 0 2px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes typing-dot {
+    0%, 80%, 100% { 
+      transform: translateY(0); 
+      opacity: 0.3; 
+    }
+    40% { 
+      transform: translateY(-5px); 
+      opacity: 1; 
+    }
+  }
+`}
+</style>
+
         </div>
     )
 }

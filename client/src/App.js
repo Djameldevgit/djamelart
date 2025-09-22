@@ -135,7 +135,7 @@ function App() {
       }
     }
   }, [notify.data]);
-
+/*
 
 
   if (auth.token && auth.user?.esBloqueado) {
@@ -146,7 +146,7 @@ function App() {
       </Router>
     )
   }
-
+*/
 
 
   return (

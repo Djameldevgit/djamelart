@@ -98,7 +98,7 @@ const Profile = () => {
 
             {
                 auth.user._id === id && (
-                    <div className="profile_tab mb-4">
+                    <div className="profile_tab mb-2">
                         <div className="btn-group" role="group">
                             <button 
                                 className={`btn ${activeTab === 'posts' ? 'btn-primary' : 'btn-outline-primary'}`}
@@ -167,132 +167,108 @@ const Profile = () => {
             }
 
             {/* Modal de Información del Usuario */}
-            <Modal show={showInfoModal} onHide={() => setShowInfoModal(false)} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        <Person className="me-2" />
-                        {t('userInfo', { lng: lang })}
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {userStats && (
-                        <div className="user-info-modal">
-                            <Row className="mb-3">
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong><Person className="me-2" />{t('username', { lng: lang })}:</strong>
-                                        <span>{userStats.username}</span>
-                                    </div>
-                                </Col>
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong><Envelope className="me-2" />{t('email', { lng: lang })}:</strong>
-                                        <span>{userStats.email}</span>
-                                    </div>
-                                </Col>
-                            </Row>
+            <Modal show={showInfoModal} onHide={() => setShowInfoModal(false)} >
+  <div closeButton>
+    <Modal.Title>
+      <Person   />
+      {t('userInfo', { lng: lang })}
+    </Modal.Title>
+  </div>
 
-                            <Row className="mb-3">
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong><People className="me-2" />{t('followers', { lng: lang })}:</strong>
-                                        <Badge bg="secondary">{userStats.followers}</Badge>
-                                    </div>
-                                </Col>
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong><PersonCheck className="me-2" />{t('following', { lng: lang })}:</strong>
-                                        <Badge bg="secondary">{userStats.following}</Badge>
-                                    </div>
-                                </Col>
-                            </Row>
+  <Modal.Body>
+    {userStats && (
+      <div
+        className={`user-info-modal ${lang === "ar" ? "text-end" : "text-start"}`}
+      >
+        <div className="info-item mb-3">
+          <strong><Person className="me-2" />{t('username', { lng: lang })}:</strong>
+          <span className="ms-2">{userStats.username}</span>
+        </div>
 
-                            <Row className="mb-3">
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong><FilePost className="me-2" />{t('totalPosts', { lng: lang })}:</strong>
-                                        <Badge bg="info">{userStats.totalPosts}</Badge>
-                                    </div>
-                                </Col>
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong><Heart className="me-2" />{t('totalLikes', { lng: lang })}:</strong>
-                                        <Badge bg="danger">{userStats.totalLikes}</Badge>
-                                    </div>
-                                </Col>
-                            </Row>
+        <div className="info-item mb-3">
+          <strong><Envelope className="me-2" />{t('email', { lng: lang })}:</strong>
+          <span className="ms-2">{userStats.email}</span>
+        </div>
 
-                            <Row className="mb-3">
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong><ShieldCheck className="me-2" />{t('role', { lng: lang })}:</strong>
-                                        <Badge bg="dark">{userStats.role}</Badge>
-                                    </div>
-                                </Col>
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong>ID:</strong>
-                                        <small className="text-muted d-block">{userStats.userId}</small>
-                                    </div>
-                                </Col>
-                            </Row>
+        <div className="info-item mb-3">
+          <strong><People className="me-2" />{t('followers', { lng: lang })}:</strong>
+          <Badge bg="secondary" className="ms-2">{userStats.followers}</Badge>
+        </div>
 
-                            <Row className="mb-3">
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong>{t('verification', { lng: lang })}:</strong>
-                                        {(() => {
-                                            const status = getVerificationStatus(userStats.isVerified);
-                                            return (
-                                                <Badge bg={status.variant}>
-                                                    {status.icon}
-                                                    {status.text}
-                                                </Badge>
-                                            );
-                                        })()}
-                                    </div>
-                                </Col>
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong>{t('accountStatus', { lng: lang })}:</strong>
-                                        {(() => {
-                                            const status = getAccountStatus(userStats.isActive);
-                                            return (
-                                                <Badge bg={status.variant}>
-                                                    {status.icon}
-                                                    {status.text}
-                                                </Badge>
-                                            );
-                                        })()}
-                                    </div>
-                                </Col>
-                            </Row>
+        <div className="info-item mb-3">
+          <strong><PersonCheck className="me-2" />{t('following', { lng: lang })}:</strong>
+          <Badge bg="secondary" className="ms-2">{userStats.following}</Badge>
+        </div>
 
-                            <Row>
-                                <Col md={6}>
-                                    <div className="info-item">
-                                        <strong><Clock className="me-2" />{t('memberSince', { lng: lang })}:</strong>
-                                        <span>{new Date(userStats.createdAt).toLocaleDateString(lang)}</span>
-                                    </div>
-                                </Col>
-                                {userStats.lastLogin && (
-                                    <Col md={6}>
-                                        <div className="info-item">
-                                            <strong><PersonCheck className="me-2" />{t('lastLogin', { lng: lang })}:</strong>
-                                            <span>{new Date(userStats.lastLogin).toLocaleDateString(lang)}</span>
-                                        </div>
-                                    </Col>
-                                )}
-                            </Row>
-                        </div>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowInfoModal(false)}>
-                        {t('close', { lng: lang })}
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+        <div className="info-item mb-3">
+          <strong><FilePost className="me-2" />{t('totalPosts', { lng: lang })}:</strong>
+          <Badge bg="info" className="ms-2">{userStats.totalPosts}</Badge>
+        </div>
+
+        <div className="info-item mb-3">
+          <strong><Heart className="me-2" />{t('totalLikes', { lng: lang })}:</strong>
+          <Badge bg="danger" className="ms-2">{userStats.totalLikes}</Badge>
+        </div>
+
+        <div className="info-item mb-3">
+          <strong><ShieldCheck className="me-2" />{t('role', { lng: lang })}:</strong>
+          <Badge bg="dark" className="ms-2">{userStats.role}</Badge>
+        </div>
+
+        <div className="info-item mb-3">
+          <strong>ID:</strong>
+          <small className="text-muted ms-2">{userStats.userId}</small>
+        </div>
+
+        <div className="info-item mb-3">
+          <strong>{t('verification', { lng: lang })}:</strong>
+          {(() => {
+            const status = getVerificationStatus(userStats.isVerified);
+            return (
+              <Badge bg={status.variant} className="ms-2">
+                {status.icon}
+                {status.text}
+              </Badge>
+            );
+          })()}
+        </div>
+
+        <div className="info-item mb-3">
+          <strong>{t('accountStatus', { lng: lang })}:</strong>
+          {(() => {
+            const status = getAccountStatus(userStats.isActive);
+            return (
+              <Badge bg={status.variant} className="ms-2">
+                {status.icon}
+                {status.text}
+              </Badge>
+            );
+          })()}
+        </div>
+
+        <div className="info-item mb-3">
+          <strong><Clock className="me-2" />{t('memberSince', { lng: lang })}:</strong>
+          <span className="ms-2">{new Date(userStats.createdAt).toLocaleDateString(lang)}</span>
+        </div>
+
+        {userStats.lastLogin && (
+          <div className="info-item mb-3">
+            <strong><PersonCheck className="me-2" />{t('lastLogin', { lng: lang })}:</strong>
+            <span className="ms-2">{new Date(userStats.lastLogin).toLocaleDateString(lang)}</span>
+          </div>
+        )}
+      </div>
+    )}
+  </Modal.Body>
+
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowInfoModal(false)}>
+      {t('close', { lng: lang })}
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+
             
         </div>
     )
