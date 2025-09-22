@@ -9,5 +9,5 @@ router.patch('/user/:id/rolesuperuser', auth, roleCtrl.assignSuperUserRole);
 router.patch('/user/:id/rolemoderador', auth, roleCtrl.assignModeratorRole);
 router.patch('/user/:id/roleadmin', auth, roleCtrl.assignAdminRole);
 router.patch('/update_role/:id', auth, roleCtrl.updateRole);
-
+router.get('/users/search',  auth, roleCtrl.searchUser)
 module.exports = router

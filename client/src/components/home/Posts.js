@@ -5,12 +5,15 @@ import LoadIcon from '../../images/loading.gif';
 import LoadMoreBtn from '../LoadMoreBtn';
 import { getDataAPI } from '../../utils/fetchData';
 import { POST_TYPES } from '../../redux/actions/postAction';
-
+import { useTranslation } from 'react-i18next';
 const Posts = ({ posts }) => {
-  const { homePosts, theme } = useSelector(state => state);
+  const { homePosts, theme ,languageReducer } = useSelector(state => state);
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
-
+ 
+    const { t } = useTranslation('jsonglobal');  
+    const lang = languageReducer.language || 'en'; 
+ 
   // Mostrar los posts recibidos (filtrados o no)
   const displayPosts = posts?.length ? posts : homePosts.posts;
 
@@ -29,7 +32,7 @@ const Posts = ({ posts }) => {
     <div>
       <div className="post_thumb">
         {displayPosts.length === 0 ? (
-          <h2 className="text-center mt-4">No se encontraron publicaciones.</h2>
+          <h2 className="text-center mt-4">   {t('No_Post', { lng: lang })}.</h2>
         ) : (
           displayPosts.map(post => (
             <PostCard key={post._id} post={post} theme={theme} />

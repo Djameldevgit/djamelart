@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ModalPrivilegios from "./ModalPrivilegios";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,8 @@ import {
   Row,
   Col,
   Card,
-  Accordion
+  Accordion,
+  Form
 } from "react-bootstrap";
 import {
   PencilFill,
@@ -27,13 +28,14 @@ import {
 import moment from "moment";
 import "moment/locale/ar";
 import "moment/locale/es";
+import { debounce } from 'lodash';
 
 import { getDataAPI } from "../../utils/fetchData";
 import {
   deleteUser,
   toggleActiveStatus,
   USER_TYPES,
-  toggleVerification,      // <-- la acción que añadiste para verificación
+  toggleVerification,
   bloquearUsuario,
   unBlockUser,
 } from "../../redux/actions/userAction";
@@ -65,12 +67,68 @@ const Users = () => {
   const [userForPermission, setUserForPermission] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
 
-  // Configurar moment.js según el idioma
+  // 🔹 Estados para búsqueda en servidor
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchPage, setSearchPage] = useState(1);
+  const [hasMoreSearch, setHasMoreSearch] = useState(false);
+
+  // 🔹 Función para buscar usuarios en el servidor
+  const searchUsers = useCallback(
+    debounce(async (searchTerm, page = 1) => {
+      if (!auth.token) return;
+      
+      try {
+        setIsSearching(true);
+        const query = `users/search?username=${encodeURIComponent(searchTerm)}&page=${page}&limit=9`;
+        const res = await getDataAPI(query, auth.token);
+        
+        if (page === 1) {
+          setSearchResults(res.data.users || []);
+        } else {
+          setSearchResults(prev => [...prev, ...(res.data.users || [])]);
+        }
+        
+        setSearchPage(page);
+        setHasMoreSearch(res.data.users && res.data.users.length === 9);
+      } catch (err) {
+        console.error("Error searching users:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 500),
+    [auth.token]
+  );
+
+  // 🔹 Efecto para realizar búsqueda cuando el término cambia
+  useEffect(() => {
+    if (search.trim() !== "") {
+      searchUsers(search, 1);
+    } else {
+      setSearchResults([]);
+      setIsSearching(false);
+    }
+  }, [search, searchUsers]);
+
+  // 🔹 Handler para cargar más resultados de búsqueda
+  const handleLoadMoreSearch = async () => {
+    if (!auth.token || search.trim() === "") return;
+    
+    try {
+      setLoad(true);
+      await searchUsers(search, searchPage + 1);
+    } catch (err) {
+      console.error("Error loading more search results:", err);
+    } finally {
+      setLoad(false);
+    }
+  };
+
   useEffect(() => {
     moment.locale(lang === 'ar' ? 'ar' : 'es');
   }, [lang]);
 
-  // Detectar tamaño de pantalla
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 992);
@@ -148,7 +206,7 @@ const Users = () => {
     setLoad(true);
     try {
       const res = await getDataAPI(
-        `users?limit=${homeUsers.page * 9}`,
+        `users?limit=9&page=${homeUsers.page + 1}`,
         auth.token
       );
       dispatch({
@@ -171,6 +229,11 @@ const Users = () => {
     try {
       await dispatch(deleteUser({ id: userToDelete, auth }));
       setShowDeleteModal(false);
+      
+      // Actualizar resultados de búsqueda si estamos en modo búsqueda
+      if (search.trim() !== "") {
+        setSearchResults(prev => prev.filter(user => user._id !== userToDelete));
+      }
     } catch (err) {
       console.error(t('errors.deleteUser'), err);
     }
@@ -199,6 +262,14 @@ const Users = () => {
         },
       });
       dispatch(getBlockedUsers(auth.token));
+      
+      // Actualizar resultados de búsqueda si estamos en modo búsqueda
+      if (search.trim() !== "") {
+        setSearchResults(prev => 
+          prev.map(u => u._id === selectedUser._id ? {...u, esBloqueado: true} : u)
+        );
+      }
+      
       handleCloseModal();
     } catch (err) {
       console.error(t('errors.blockUser'), err);
@@ -216,10 +287,55 @@ const Users = () => {
         },
       });
       dispatch(getBlockedUsers(auth.token));
+      
+      // Actualizar resultados de búsqueda si estamos en modo búsqueda
+      if (search.trim() !== "") {
+        setSearchResults(prev => 
+          prev.map(u => u._id === user._id ? {...u, esBloqueado: false} : u)
+        );
+      }
+      
+      forceRender(n => n + 1);
     } catch (err) {
       console.error(t('errors.unblockUser'), err);
     }
   };
+
+  // Función para manejar cambio de estado de activación
+  const handleToggleActiveStatus = async (userId) => {
+    try {
+      await dispatch(toggleActiveStatus(userId, auth.token));
+      
+      // Actualizar resultados de búsqueda si estamos en modo búsqueda
+      if (search.trim() !== "") {
+        setSearchResults(prev => 
+          prev.map(u => u._id === userId ? {...u, isActive: !u.isActive} : u)
+        );
+      }
+    } catch (err) {
+      console.error(t('errors.toggleStatus'), err);
+    }
+  };
+
+  // Función para manejar cambio de verificación
+  const handleToggleVerification = async (userId) => {
+    try {
+      await dispatch(toggleVerification(userId, auth.token));
+      
+      // Actualizar resultados de búsqueda si estamos en modo búsqueda
+      if (search.trim() !== "") {
+        setSearchResults(prev => 
+          prev.map(u => u._id === userId ? {...u, isVerified: !u.isVerified} : u)
+        );
+      }
+    } catch (err) {
+      console.error(t('errors.toggleVerification'), err);
+    }
+  };
+
+  // Determinar qué usuarios mostrar
+  const usersToShow = search.trim() !== "" ? searchResults : homeUsers.users;
+  const hasMore = search.trim() !== "" ? hasMoreSearch : homeUsers.result >= 9;
 
   if (initialLoad) {
     return (
@@ -230,8 +346,32 @@ const Users = () => {
   }
 
   return (
-    <Container fluid  >
-      {/* Modal Confirmación Eliminar */}
+    <Container fluid>
+      <Row className="justify-content-between align-items-center mb-4">
+        <Col md={6} className="mb-3 mb-md-0">
+          <Form.Group>
+            <Form.Control
+              type="text"
+              placeholder={t("searchUsers")}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="rounded-pill"
+            />
+          </Form.Group>
+        </Col>
+        {search.trim() !== "" && (
+          <Col md="auto">
+            <Button 
+              variant="outline-secondary" 
+              onClick={() => setSearch("")}
+              size="sm"
+            >
+              {t('clearSearch')}
+            </Button>
+          </Col>
+        )}
+      </Row>
+
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>{t('deleteModal.title')}</Modal.Title>
@@ -249,19 +389,27 @@ const Users = () => {
         </Modal.Footer>
       </Modal>
 
+      {isSearching && search.trim() !== "" && (
+        <div className="text-center my-3">
+          <Spinner animation="border" variant="primary" />
+          <p className="mt-2">{t('searching')}</p>
+        </div>
+      )}
+
       {isMobile ? (
-        // Vista para móviles con Accordion
         <Row>
           <Col>
-            {homeUsers.users.length === 0 ? (
+            {usersToShow.length === 0 ? (
               <Card className="text-center p-4">
                 <Card.Body>
-                  <p className="mb-0 text-muted">{t('noUsersFound')}</p>
+                  <p className="mb-0 text-muted">
+                    {search ? t('noUsersFoundSearch') : t('noUsersFound')}
+                  </p>
                 </Card.Body>
               </Card>
             ) : (
               <Accordion flush>
-                {homeUsers.users.map((user, index) => (
+                {usersToShow.map((user, index) => (
                   <Accordion.Item key={user._id} eventKey={user._id} className="mb-3 shadow-sm">
                     <Accordion.Header>
                       <div className="d-flex align-items-center w-100">
@@ -270,7 +418,6 @@ const Users = () => {
                       </div>
                     </Accordion.Header>
                     <Accordion.Body>
-                      {/* Información del usuario */}
                       <Row className="g-3 mb-3">
                         <Col xs={6}>
                           <strong>{t('tableHeader.status')}:</strong>
@@ -332,32 +479,27 @@ const Users = () => {
                         </Col>
                       </Row>
 
-                      {/* Acciones */}
                       <Dropdown>
                         <Dropdown.Toggle variant="outline-primary" size="sm" className="w-100 mb-2">
                           <ThreeDotsVertical className="me-2" />
                           {t('tableHeaders.actions')}
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="w-100">
-                          {/* Edit (disabled) */}
                           <Dropdown.Item disabled>
                             <PencilFill className="me-2" /> {t('action.edit')}
                           </Dropdown.Item>
 
-                          {/* Delete -> abre modal de confirmación */}
                           <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
                             <TrashFill className="me-2" /> {t('action.delete')}
                           </Dropdown.Item>
 
-                          {/* Manage permissions */}
                           <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
                             🛡️ {t('action.managePermissions')}
                           </Dropdown.Item>
 
-                          {/* Activar / Desactivar (usa tu action toggleActiveStatus) */}
                           <Dropdown.Item
                             className={user.isActive ? "text-warning" : "text-success"}
-                            onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
+                            onClick={() => handleToggleActiveStatus(user._id)}
                           >
                             {user.isActive ? (
                               <LockFill className="me-2" />
@@ -367,7 +509,6 @@ const Users = () => {
                             {user.isActive ? t('action.deactivate') : t('action.activate')}
                           </Dropdown.Item>
 
-                          {/* Bloquear / Desbloquear -> usa tu modal / handler existente */}
                           <Dropdown.Item
                             className={user.esBloqueado ? "text-success" : "text-danger"}
                             onClick={() =>
@@ -382,10 +523,9 @@ const Users = () => {
                             {user.esBloqueado ? t('action.unblock') : t('action.block')}
                           </Dropdown.Item>
 
-                          {/* Verificar / Quitar verificación (usa toggleVerification) */}
                           <Dropdown.Item
                             className={user.isVerified ? "text-danger" : "text-success"}
-                            onClick={() => dispatch(toggleVerification(user._id, auth.token))}
+                            onClick={() => handleToggleVerification(user._id)}
                           >
                             {user.isVerified ? (
                               <XCircleFill className="me-2" />
@@ -395,7 +535,6 @@ const Users = () => {
                             {user.isVerified ? t('action.unverify') : t('action.verify')}
                           </Dropdown.Item>
                         </Dropdown.Menu>
-
                       </Dropdown>
                     </Accordion.Body>
                   </Accordion.Item>
@@ -405,7 +544,6 @@ const Users = () => {
           </Col>
         </Row>
       ) : (
-        // Vista para desktop con Table
         <Card className="shadow-sm">
           <Card.Body className="p-0">
             <div className="table-responsive">
@@ -424,153 +562,142 @@ const Users = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {homeUsers.users.map((user, index) => (
-                    <tr key={user._id}>
-                      <td>{index + 1}</td>
-                      <td><UserCard user={user} /></td>
-                      <td>
-                        {online.some((u) => u._id === user._id) ? (
-                          <Badge bg="success">{t('status.online')}</Badge>
-                        ) : user.lastDisconnectedAt ? (
-                          <Badge bg="secondary">
-                            {t('status.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
-                          </Badge>
-                        ) : (
-                          <Badge bg="secondary">{t('status.offline')}</Badge>
-                        )}
-                      </td>
-                      <td>
-                        {user.lastDisconnectedAt ? (
-                          <small className="text-muted" title={new Date(user.lastDisconnectedAt).toLocaleString()}>
-                            {moment(user.lastDisconnectedAt).fromNow()}
-                          </small>
-                        ) : (
-                          <span className="text-muted">--</span>
-                        )}
-                      </td>
-                      <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                      <td>
-                        {user.isVerified ? (
-                          <Badge bg="success"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.verified')}</Badge>
-                        ) : (
-                          <Badge bg="danger"><XCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.notVerified')}</Badge>
-                        )}
-                      </td>
-                      <td>
-                        {user.isActive ? (
-                          <Badge bg="success">{t('status.active')}</Badge>
-                        ) : (
-                          <Badge bg="warning" text="dark">{t('status.inactive')}</Badge>
-                        )}
-                      </td>
-                      <td>
-                        {user.esBloqueado ? (
-                          <Badge bg="danger">{t('status.blocked')}</Badge>
-                        ) : (
-                          <Badge bg="success">{t('status.notBlocked')}</Badge>
-                        )}
-                      </td>
-                      <td>
-                        <Dropdown drop={lang === 'ar' ? 'start' : 'end'}>
-                          <Dropdown.Toggle variant="outline-secondary" size="sm" id="dropdown-actions">
-                            <ThreeDotsVertical />
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            {/* Delete */}
-                            <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
-                              <TrashFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.delete')}
-                            </Dropdown.Item>
-
-                            {/* Activar / Desactivar */}
-                            <Dropdown.Item
-                              className={user.isActive ? "text-warning" : "text-success"}
-                              onClick={() => dispatch(toggleActiveStatus(user._id, auth.token))}
-                            >
-                              {user.isActive ? (
-                                <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
-                              ) : (
-                                <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
-                              )}
-                              {user.isActive ? t('action.deactivate') : t('action.activate')}
-                            </Dropdown.Item>
-
-                            {/* Bloquear / Desbloquear */}
-                            <Dropdown.Item
-                              className={user.esBloqueado ? "text-success" : "text-danger"}
-                              onClick={() =>
-                                user.esBloqueado ? handleUnblockUser(user) : handleOpenModal(user)
-                              }
-                            >
-                              {user.esBloqueado ? (
-                                <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
-                              ) : (
-                                <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
-                              )}
-                              {user.esBloqueado ? t('action.unblock') : t('action.block')}
-                            </Dropdown.Item>
-
-                            {/* Verificar / Quitar verificación */}
-                            <Dropdown.Item
-                              className={user.isVerified ? "text-danger" : "text-success"}
-                              onClick={() => dispatch(toggleVerification(user._id, auth.token))}
-                            >
-                              {user.isVerified ? (
-                                <XCircleFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
-                              ) : (
-                                <CheckCircleFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
-                              )}
-                              {user.isVerified ? t('action.unverify') : t('action.verify')}
-                            </Dropdown.Item>
-
-                            {/* Edit (disabled) */}
-                            <Dropdown.Item disabled>
-                              <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.edit')}
-                            </Dropdown.Item>
-
-                            {/* Manage permissions */}
-                            <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
-                              🛡️ {t('action.managePermissions')}
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-
-
-                        </Dropdown>
+                  {usersToShow.length === 0 ? (
+                    <tr>
+                      <td colSpan="9" className="text-center py-4">
+                        <span className="text-muted">
+                          {search ? t('noUsersFoundSearch') : t('noUsersFound')}
+                        </span>
                       </td>
                     </tr>
-                  )
+                  ) : (
+                    usersToShow.map((user, index) => (
+                      <tr key={user._id}>
+                        <td>{index + 1}</td>
+                        <td><UserCard user={user} /></td>
+                        <td>
+                          {online.some((u) => u._id === user._id) ? (
+                            <Badge bg="success">{t('status.online')}</Badge>
+                          ) : user.lastDisconnectedAt ? (
+                            <Badge bg="secondary">
+                              {t('status.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
+                            </Badge>
+                          ) : (
+                            <Badge bg="secondary">{t('status.offline')}</Badge>
+                          )}
+                        </td>
+                        <td>
+                          {user.lastDisconnectedAt ? (
+                            <small className="text-muted" title={new Date(user.lastDisconnectedAt).toLocaleString()}>
+                              {moment(user.lastDisconnectedAt).fromNow()}
+                            </small>
+                          ) : (
+                            <span className="text-muted">--</span>
+                          )}
+                        </td>
+                        <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                        <td>
+                          {user.isVerified ? (
+                            <Badge bg="success"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.verified')}</Badge>
+                          ) : (
+                            <Badge bg="danger"><XCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.notVerified')}</Badge>
+                          )}
+                        </td>
+                        <td>
+                          {user.isActive ? (
+                            <Badge bg="success">{t('status.active')}</Badge>
+                          ) : (
+                            <Badge bg="warning" text="dark">{t('status.inactive')}</Badge>
+                          )}
+                        </td>
+                        <td>
+                          {user.esBloqueado ? (
+                            <Badge bg="danger">{t('status.blocked')}</Badge>
+                          ) : (
+                            <Badge bg="success">{t('status.notBlocked')}</Badge>
+                          )}
+                        </td>
+                        <td>
+                          <Dropdown drop={lang === 'ar' ? 'start' : 'end'}>
+                            <Dropdown.Toggle variant="outline-secondary" size="sm" id="dropdown-actions">
+                              <ThreeDotsVertical />
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
+                                <TrashFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.delete')}
+                              </Dropdown.Item>
 
+                              <Dropdown.Item
+                                className={user.isActive ? "text-warning" : "text-success"}
+                                onClick={() => handleToggleActiveStatus(user._id)}
+                              >
+                                {user.isActive ? (
+                                  <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                                ) : (
+                                  <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                                )}
+                                {user.isActive ? t('action.deactivate') : t('action.activate')}
+                              </Dropdown.Item>
 
+                              <Dropdown.Item
+                                className={user.esBloqueado ? "text-success" : "text-danger"}
+                                onClick={() =>
+                                  user.esBloqueado ? handleUnblockUser(user) : handleOpenModal(user)
+                                }
+                              >
+                                {user.esBloqueado ? (
+                                  <UnlockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                                ) : (
+                                  <LockFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                                )}
+                                {user.esBloqueado ? t('action.unblock') : t('action.block')}
+                              </Dropdown.Item>
 
+                              <Dropdown.Item
+                                className={user.isVerified ? "text-danger" : "text-success"}
+                                onClick={() => handleToggleVerification(user._id)}
+                              >
+                                {user.isVerified ? (
+                                  <XCircleFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                                ) : (
+                                  <CheckCircleFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} />
+                                )}
+                                {user.isVerified ? t('action.unverify') : t('action.verify')}
+                              </Dropdown.Item>
 
+                              <Dropdown.Item disabled>
+                                <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.edit')}
+                              </Dropdown.Item>
+
+                              <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
+                                🛡️ {t('action.managePermissions')}
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </td>
+                      </tr>
+                    ))
                   )}
                 </tbody>
               </Table>
             </div>
           </Card.Body>
         </Card>
-
-
-
-
-
-
-
       )}
 
- 
       {load && (
         <div className="text-center my-3">
           <Spinner animation="border" variant="primary" />
         </div>
       )}
 
-      {homeUsers.users.length > 0 && (
+      {hasMore && usersToShow.length > 0 && (
         <div className="d-flex justify-content-center my-3">
           <LoadMoreBtn
-            result={homeUsers.result}
-            page={homeUsers.page}
+            result={9} // Siempre mostramos el botón si hay más resultados
+            page={search.trim() !== "" ? searchPage : homeUsers.page}
             load={load}
-            handleLoadMore={handleLoadMore}
+            handleLoadMore={search.trim() !== "" ? handleLoadMoreSearch : handleLoadMore}
           />
         </div>
       )}

@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import UserCard from '../UserCard';
 import { roleuserautenticado, rolemoderador, rolesuperuser, roleadmin } from '../../redux/actions/roleAction';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Table,
@@ -10,12 +10,16 @@ import {
   Card,
   Badge,
   Spinner,
-  Alert
+  Alert,
+  Row,
+  Col,
+  Button
 } from 'react-bootstrap';
 
 import { getDataAPI } from '../../utils/fetchData';
 import { USER_TYPES } from '../../redux/actions/userAction';
 import LoadMoreBtn from "../LoadMoreBtn";
+import { debounce } from 'lodash';
 
 const Roless = () => {
   const { homeUsers, auth, alert, languageReducer } = useSelector(state => state);
@@ -26,9 +30,65 @@ const Roless = () => {
   const [selectedRoles, setSelectedRoles] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Estados para paginación (copiados de Users)
+  // 🔹 Estados para paginación y búsqueda
   const [load, setLoad] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchPage, setSearchPage] = useState(1);
+  const [hasMoreSearch, setHasMoreSearch] = useState(false);
+
+  // 🔹 Función para buscar usuarios en el servidor
+  const searchUsers = useCallback(
+    debounce(async (searchTerm, page = 1) => {
+      if (!auth.token) return;
+      
+      try {
+        setIsSearching(true);
+        const query = `users/search?username=${encodeURIComponent(searchTerm)}&page=${page}&limit=9`;
+        const res = await getDataAPI(query, auth.token);
+        
+        if (page === 1) {
+          setSearchResults(res.data.users || []);
+        } else {
+          setSearchResults(prev => [...prev, ...(res.data.users || [])]);
+        }
+        
+        setSearchPage(page);
+        setHasMoreSearch(res.data.users && res.data.users.length === 9);
+      } catch (err) {
+        console.error("Error searching users:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 500),
+    [auth.token]
+  );
+
+  // 🔹 Efecto para realizar búsqueda cuando el término cambia
+  useEffect(() => {
+    if (search.trim() !== "") {
+      searchUsers(search, 1);
+    } else {
+      setSearchResults([]);
+      setIsSearching(false);
+    }
+  }, [search, searchUsers]);
+
+  // 🔹 Handler para cargar más resultados de búsqueda
+  const handleLoadMoreSearch = async () => {
+    if (!auth.token || search.trim() === "") return;
+    
+    try {
+      setLoad(true);
+      await searchUsers(search, searchPage + 1);
+    } catch (err) {
+      console.error("Error loading more search results:", err);
+    } finally {
+      setLoad(false);
+    }
+  };
 
   // Fetch inicial de usuarios con paginación
   useEffect(() => {
@@ -53,12 +113,12 @@ const Roless = () => {
     }
   }, [auth.token, dispatch, initialLoad]);
 
-  // Handler para cargar más usuarios
+  // Handler para cargar más usuarios (cuando no hay búsqueda)
   const handleLoadMore = async () => {
     setLoad(true);
     try {
       const res = await getDataAPI(
-        `users?limit=${homeUsers.page * 9}`,
+        `users?limit=9&page=${homeUsers.page + 1}`,
         auth.token
       );
       dispatch({
@@ -90,6 +150,13 @@ const Roless = () => {
           break;
         default:
           break;
+      }
+      
+      // Actualizar resultados de búsqueda si estamos en modo búsqueda
+      if (search.trim() !== "") {
+        setSearchResults(prev => 
+          prev.map(u => u._id === user._id ? {...u, role: selectedRole} : u)
+        );
       }
     } catch (error) {
       console.error("Error changing role:", error);
@@ -126,6 +193,10 @@ const Roless = () => {
     );
   };
 
+  // Determinar qué usuarios mostrar
+  const usersToShow = search.trim() !== "" ? searchResults : homeUsers.users;
+  const hasMore = search.trim() !== "" ? hasMoreSearch : homeUsers.result >= 9;
+
   if (initialLoad) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
@@ -136,6 +207,32 @@ const Roless = () => {
 
   return (
     <Container className="py-4" dir={lang === 'ar' ? 'rtl' : 'ltr'} >
+      {/* 🔹 Barra de búsqueda */}
+      <Row className="justify-content-between align-items-center mb-4">
+        <Col md={6} className="mb-3 mb-md-0">
+          <Form.Group>
+            <Form.Control
+              type="text"
+              placeholder={t("searchUsers")}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="rounded-pill"
+            />
+          </Form.Group>
+        </Col>
+        {search.trim() !== "" && (
+          <Col md="auto">
+            <Button 
+              variant="outline-secondary" 
+              onClick={() => setSearch("")}
+              size="sm"
+            >
+              {t('clearSearch')}
+            </Button>
+          </Col>
+        )}
+      </Row>
+
       <Card className="shadow-sm">
         <Card.Header className="bg-primary text-white" style={{
           direction: lang === 'ar' ? 'rtl' : 'ltr',
@@ -147,7 +244,12 @@ const Roless = () => {
           </h5>
         </Card.Header>
         <Card.Header>
-          <strong>{t('headers.totalUsers', { count: homeUsers.users.length })}</strong>   
+          <strong>
+            {search.trim() !== "" 
+              ? t('headers.searchResults', { count: searchResults.length, term: search })
+              : t('headers.totalUsers', { count: homeUsers.users.length })
+            }
+          </strong>   
         </Card.Header>
 
         <Card.Body>
@@ -155,6 +257,13 @@ const Roless = () => {
             <Alert variant="danger" dismissible>
               {alert.error}
             </Alert>
+          )}
+
+          {isSearching && search.trim() !== "" && (
+            <div className="text-center my-3">
+              <Spinner animation="border" variant="primary" />
+              <p className="mt-2">{t('searching')}</p>
+            </div>
           )}
 
           <div className="table-responsive">
@@ -170,18 +279,14 @@ const Roless = () => {
                 </tr>
               </thead>
               <tbody>
-                {homeUsers.users.length === 0 ? (
+                {usersToShow.length === 0 ? (
                   <tr>
                     <td colSpan="3" className="text-center py-4">
-                      {loading ? (
-                        <Spinner animation="border" variant="primary" />
-                      ) : (
-                        t('noUsersAvailable')
-                      )}
+                      {search ? t('noUsersFoundSearch') : t('noUsersAvailable')}
                     </td>
                   </tr>
                 ) : (
-                  homeUsers.users.map((user, index) => (
+                  usersToShow.map((user, index) => (
                     <tr key={user._id || index}>
                       <td>
                         <UserCard user={user} />
@@ -225,13 +330,13 @@ const Roless = () => {
       )}
 
       {/* 🔹 Botón para cargar más */}
-      {homeUsers.users.length > 0 && (
+      {hasMore && usersToShow.length > 0 && (
         <div className="d-flex justify-content-center my-3">
           <LoadMoreBtn
-            result={homeUsers.result}
-            page={homeUsers.page}
+            result={9} // Siempre mostramos el botón si hay más resultados
+            page={search.trim() !== "" ? searchPage : homeUsers.page}
             load={load}
-            handleLoadMore={handleLoadMore}
+            handleLoadMore={search.trim() !== "" ? handleLoadMoreSearch : handleLoadMore}
           />
         </div>
       )}

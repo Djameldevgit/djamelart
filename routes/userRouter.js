@@ -4,7 +4,7 @@ const carritoCtrl = require("../controllers/carritoCtrl")
 const userCtrl = require('../controllers/userCtrl')
 router.get('/users/admins', auth, userCtrl.getAdmins);
 router.post('/contact-support-block', auth, userCtrl.contactBlockedSupport);
-router.get('/search', auth, userCtrl.searchUser)
+router.get('/users/search', auth, userCtrl.searchUser)
 router.post('/contact-support', auth, userCtrl.contactMailSupport)
 // Rutas existentes...ToCart)
 router.delete('/remove/:id', auth, carritoCtrl.removeFromCart)

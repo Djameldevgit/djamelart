@@ -12,9 +12,30 @@ export const MESS_TYPES = {
     UPDATE_MESSAGES: 'UPDATE_MESSAGES',
     DELETE_MESSAGES: 'DELETE_MESSAGES',
     DELETE_CONVERSATION: 'DELETE_CONVERSATION',
-    CHECK_ONLINE_OFFLINE: 'CHECK_ONLINE_OFFLINE'
-}
+    CHECK_ONLINE_OFFLINE: 'CHECK_ONLINE_OFFLINE',
 
+    TYPING_START: 'TYPING_START',
+    TYPING_STOP: 'TYPING_STOP',
+    SET_TYPING: 'SET_TYPING'
+
+
+
+}
+// En tu messageAction.js (agrega estas functions)
+export const startTyping = ({ sender, recipient, chatId }) => ({
+    type: MESS_TYPES.TYPING_START,
+    payload: { sender, recipient, chatId }
+});
+
+export const stopTyping = ({ sender, recipient, chatId }) => ({
+    type: MESS_TYPES.TYPING_STOP,
+    payload: { sender, recipient, chatId }
+});
+
+export const setTyping = (typingData) => ({
+    type: MESS_TYPES.SET_TYPING,
+    payload: typingData
+});
 
 
 export const addMessage = ({ msg, auth, socket }) => async (dispatch) => {

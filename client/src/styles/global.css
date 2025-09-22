@@ -148,7 +148,7 @@ url("./header.css"); */
 @import url("./modals/modalmultiselect.css");
 @import url("./components/home/cardbodycarousel.css");
 @import url("./components/home/cardnodycarouselestilotikto02.css");
-
+@import url("./typing.css");
 .rtl {
   direction: rtl;
   text-align: right;

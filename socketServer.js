@@ -39,6 +39,24 @@ const SocketServer = (socket) => {
     })
 
 
+
+// En tu SocketServer.js (agrega estos eventos)
+socket.on('typing-start', (data) => {
+    const user = users.find(user => user.id === data.recipient)
+    user && socket.to(`${user.socketId}`).emit('typing-start-to-client', {
+        sender: data.sender,
+        chatId: data.chatId
+    })
+})
+
+socket.on('typing-stop', (data) => {
+    const user = users.find(user => user.id === data.recipient)
+    user && socket.to(`${user.socketId}`).emit('typing-stop-to-client', {
+        sender: data.sender,
+        chatId: data.chatId
+    })
+})
+
     // Likes
     socket.on('likePost', newPost => {
         const ids = [...newPost.user.followers, newPost.user._id]

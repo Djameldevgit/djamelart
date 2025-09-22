@@ -1,5 +1,6 @@
 {
   "deleteModal": {
+    "searchUsers":  "Buscar usuarios",
     "title": "Eliminar usuario",
     "message": "¿Estás seguro de que quieres eliminar este usuario?",
     "cancel": "Cancelar",

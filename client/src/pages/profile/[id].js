@@ -132,21 +132,21 @@ const Profile = () => {
                     <img className="d-block mx-auto" src={LoadIcon} alt="loading" />
                 ) : (
                     <div className="profile-content">
-                        {/* Mostrar ambos tabs en columnas paralelas */}
+                   
                         {auth.user._id === id ? (
                             <div className="row">
-                                {/* Columna de Posts */}
+                           
                                 <div className={`col-md-6 ${activeTab !== 'posts' ? 'd-none d-md-block' : ''}`}>
                                     <div className="tab-content-section">
-                                        <h5 className="mb-3">{t('posts', { lng: lang })}</h5>
+                                  
                                         <Posts auth={auth} profile={profile} dispatch={dispatch} id={id} />
                                     </div>
                                 </div>
                                 
-                                {/* Columna de Saved */}
+                             
                                 <div className={`col-md-6 ${activeTab !== 'saved' ? 'd-none d-md-block' : ''}`}>
                                     <div className="tab-content-section">
-                                        <h5 className="mb-3">{t('saved', { lng: lang })}</h5>
+                                       
                                         <Saved auth={auth} dispatch={dispatch} />
                                     </div>
                                 </div>

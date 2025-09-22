@@ -31,7 +31,28 @@ const SocketClient = () => {
         socket.emit('joinUser', auth.user)
     },[socket, auth.user])
 
-    // Likes
+    useEffect(() => {
+        socket.on('typing-start-to-client', (data) => {
+            console.log('TYPING START RECIBIDO:', data)
+            dispatch({ type: MESS_TYPES.TYPING_START, payload: data })
+        })
+    
+        return () => socket.off('typing-start-to-client')
+    }, [socket, dispatch])
+    
+    useEffect(() => {
+        socket.on('typing-stop-to-client', (data) => {
+            console.log('TYPING STOP RECIBIDO:', data)
+            dispatch({ type: MESS_TYPES.TYPING_STOP, payload: data })
+        })
+    
+        return () => socket.off('typing-stop-to-client')
+    }, [socket, dispatch])
+ 
+
+
+
+
     useEffect(() => {
         socket.on('likeToClient', newPost =>{
             dispatch({type: POST_TYPES.UPDATE_POST, payload: newPost})

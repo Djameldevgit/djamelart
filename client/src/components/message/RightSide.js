@@ -9,7 +9,8 @@ import { imageShow, videoShow } from '../../utils/mediaShow'
 import { imageUpload } from '../../utils/imageUpload'
 import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '../../redux/actions/messageAction'
 import LoadIcon from '../../images/loading.gif'
- import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'
+import Avatar from '../Avatar'
 
 const RightSide = () => {
     const { auth, message, theme, socket, languageReducer } = useSelector(state => state)
@@ -30,8 +31,46 @@ const RightSide = () => {
     const [result, setResult] = useState(9)
     const [page, setPage] = useState(0)
     const [isLoadMore, setIsLoadMore] = useState(0)
-   
+
     const history = useHistory()
+    const [isTyping, setIsTyping] = useState(false)
+    const typingTimeout = useRef()
+
+    // 🔥 Efecto para detectar typing
+    useEffect(() => {
+        const handleTyping = () => {
+            if (!isTyping) {
+                setIsTyping(true)
+                socket.emit('typing-start', {
+                    sender: auth.user._id,
+                    recipient: id,
+                    chatId: id
+                })
+            }
+
+            clearTimeout(typingTimeout.current)
+            typingTimeout.current = setTimeout(() => {
+                setIsTyping(false)
+                socket.emit('typing-stop', {
+                    sender: auth.user._id,
+                    recipient: id,
+                    chatId: id
+                })
+            }, 1000)
+        }
+
+        const input = document.querySelector('.chat_input input')
+        if (input) {
+            input.addEventListener('input', handleTyping)
+        }
+
+        return () => {
+            if (input) {
+                input.removeEventListener('input', handleTyping)
+            }
+            clearTimeout(typingTimeout.current)
+        }
+    }, [id, auth.user._id, socket, isTyping])
 
     // 🔥 Cambiar idioma activamente
     const lang = languageReducer.language || 'es'
@@ -85,7 +124,9 @@ const RightSide = () => {
     useEffect(() => {
         if (id && message.users.length > 0) {
             setTimeout(() => {
-                refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+                if (refDisplay.current) {
+                    refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+                }
             }, 50)
 
             const newUser = message.users.find(user => user._id === id)
@@ -173,7 +214,7 @@ const RightSide = () => {
         const msg = {
             sender: auth.user._id,
             recipient: id,
-            text: sanitizedText, // 🔥 Texto sanitizado
+            text: sanitizedText,
             media: newArr,
             createdAt: new Date().toISOString()
         }
@@ -190,7 +231,9 @@ const RightSide = () => {
             if (message.data.every(item => item._id !== id)) {
                 await dispatch(getMessages({ auth, id }))
                 setTimeout(() => {
-                    refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+                    if (refDisplay.current) {
+                        refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+                    }
                 }, 50)
             }
         }
@@ -232,25 +275,52 @@ const RightSide = () => {
 
     const handleTextChange = (e) => {
         const value = e.target.value;
-        setText(value.slice(0, 1000)); // 🔥 Limitar longitud
+        setText(value.slice(0, 1000));
     };
 
     return (
         <div style={{
-           
-            display: 'flex', 
-            flexDirection: 'column', 
+            display: 'flex',
+            flexDirection: 'column',
             height: 'calc(100vh - 170px)',
-           
         }}>
             <div className="message_header" style={{ cursor: 'pointer' }} >
                 {user.length !== 0 &&
-                    <UserCard user={user}>
-                        <div>
+                    <div className="d-flex p-2 align-items-center justify-content-between w-100">
+                        <div className="d-flex align-items-center">
+                            <Avatar src={user.avatar || "/default-avatar.png"} size="big-avatar" />
+                            <div className="ml-1" style={{ transform: 'translateY(-2px)' }}>
+                                <span className="d-block">{user.username || "Usuario desconocido"}</span>
+                                <small style={{ opacity: 0.7 }}>
+                                    {user.fullname || user.username || ""}
+                                    
+                                    {/* 🔥 INDICADOR DE TYPING */}
+                                    {message.typing && Array.isArray(message.typing) && 
+                                     message.typing.some(item => item.sender === id && item.chatId === id) && (
+                                        <span className="typing-indicator" style={{
+                                            marginLeft: '5px',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            color: theme ? '#aaa' : '#666',
+                                            fontSize: '12px',
+                                            fontStyle: 'italic'
+                                        }}>
+                                            <span className="typing-dots">
+                                                <span>.</span>
+                                                <span>.</span>
+                                                <span>.</span>
+                                            </span>
+                                            {t('chat.typing')}
+                                        </span>
+                                    )}
+                                </small>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                             <i className="fas fa-arrow-left mr-4" onClick={handleGoBack} />
                             <i className="fas fa-trash text-danger" onClick={handleDeleteConversation} />
                         </div>
-                    </UserCard>
+                    </div>
                 }
             </div>
 
@@ -301,10 +371,10 @@ const RightSide = () => {
                 alignItems: 'center',
                 padding: '0 15px'
             }}>
-                <input 
-                    type="text" 
+                <input
+                    type="text"
                     placeholder={t('chat.placeholder')}
-                    value={text} 
+                    value={text}
                     onChange={handleTextChange}
                     style={{
                         filter: theme ? 'invert(1)' : 'invert(0)',
@@ -312,13 +382,13 @@ const RightSide = () => {
                         color: theme ? 'white' : '',
                         border: textError ? '1px solid #dc3545' : '',
                         direction: lang === 'ar' ? 'rtl' : 'ltr'
-                    }} 
+                    }}
                 />
 
                 {text.length > 0 && (
-                    <div className="small text-muted" style={{ 
-                        position: 'absolute', 
-                        bottom: '-20px', 
+                    <div className="small text-muted" style={{
+                        position: 'absolute',
+                        bottom: '-20px',
                         right: lang === 'ar' ? 'auto' : '10px',
                         left: lang === 'ar' ? '10px' : 'auto',
                         fontSize: '10px',
@@ -344,8 +414,8 @@ const RightSide = () => {
                     </div>
                 )}
 
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     className="material-icons"
                     disabled={(text.trim() || media.length > 0) && !textError ? false : true}
                     style={{ opacity: (text.trim() || media.length > 0) && !textError ? 1 : 0.5 }}
@@ -360,6 +430,42 @@ const RightSide = () => {
                     {t('chat.validationError', { error: textError })}
                 </div>
             )}
+
+            {/* 🔥 Estilos para la animación de typing */}
+            <style>
+                {`
+                    .typing-dots {
+                        display: inline-flex;
+                        margin-right: 5px;
+                    }
+    
+                    .typing-dots span {
+                        animation: typing-dot 1.5s infinite;
+                        margin: 0 1px;
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+    
+                    .typing-dots span:nth-child(2) {
+                        animation-delay: 0.2s;
+                    }
+    
+                    .typing-dots span:nth-child(3) {
+                        animation-delay: 0.4s;
+                    }
+    
+                    @keyframes typing-dot {
+                        0%, 60%, 100% {
+                            transform: translateY(0);
+                            opacity: 0.6;
+                        }
+                        30% {
+                            transform: translateY(-3px);
+                            opacity: 1;
+                        }
+                    }
+                `}
+            </style>
         </div>
     )
 }

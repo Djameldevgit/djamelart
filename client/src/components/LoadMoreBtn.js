@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 const LoadMoreBtn = ({result, page, load, handleLoadMore}) => {
 
     const { languageReducer } = useSelector(state => state);
-    const { t } = useTranslation('home');  
+    const { t } = useTranslation('jsonglobal');  
     const lang = languageReducer.language || 'en'; 
 
     return (
@@ -14,7 +14,7 @@ const LoadMoreBtn = ({result, page, load, handleLoadMore}) => {
 
                 !load && <button className="btn btn-dark mx-auto d-block"
                 onClick={handleLoadMore}>
-                   {t('loadmore', { lng: lang })}
+                   {t('load_more', { lng: lang })}
                 </button>
             }
             
