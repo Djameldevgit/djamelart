@@ -145,7 +145,7 @@ export const updatePost = ({ postData, images,  auth, status }) => async (dispat
         && status.price === postData.price
         && status.devisvente === postData.devisvente
         && status.style === postData.style
-        && status.disponibilidad === postData.disponibilidad
+      
         && status.devisvente === postData.devisvente
         && status.talle === postData.talle
         && status.theme === postData.theme

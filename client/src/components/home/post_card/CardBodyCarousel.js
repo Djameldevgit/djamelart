@@ -5,11 +5,18 @@ import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-  
+
 import AuthModal from '../../authAndVerify/AuthModal';
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
-
+import moment from 'moment';
+// Importa todos los locales necesarios
+import 'moment/locale/es'; // Español
+import 'moment/locale/en-gb'; // Inglés
+import 'moment/locale/fr'; // Francés
+import 'moment/locale/ru'; // Ruso
+import 'moment/locale/zh-cn'; // Chino
+import 'moment/locale/ar'; // Árabe
 const CardBodyCarousel = ({ post }) => {
   const [isLike, setIsLike] = useState(false);
   const [loadLike, setLoadLike] = useState(false);
@@ -26,7 +33,18 @@ const CardBodyCarousel = ({ post }) => {
   const lang = languageReducer.language || 'en';
   const history = useHistory();
   const dispatch = useDispatch();
- 
+  useEffect(() => {
+    const momentLangMap = {
+      es: 'es',
+      en: 'en-gb',
+      fr: 'fr',
+      ru: 'ru',
+      zh: 'zh-cn',
+      ar: 'ar'
+    };
+    const momentLang = momentLangMap[lang] || 'en-gb'; // Default: inglés
+    moment.locale(momentLang);
+  }, [lang]);
   const canProceed = () => {
     if (!auth.token || !auth.user) {
       setShowAuthModal(true);
@@ -77,7 +95,7 @@ const CardBodyCarousel = ({ post }) => {
     await dispatch(likePost({ post, auth, socket, t }));
     setLoadLike(false);
   };
-  
+
   const handleUnLike = async () => {
     if (!canProceed() || loadLike) return;
     setLoadLike(true);
@@ -122,13 +140,13 @@ const CardBodyCarousel = ({ post }) => {
         text: post.content || 'Echa un vistazo a esta publicación',
         url: `${window.location.origin}/post/${post._id}`
       })
-      .catch((error) => console.log('Error sharing:', error));
+        .catch((error) => console.log('Error sharing:', error));
     } else {
       navigator.clipboard.writeText(`${window.location.origin}/post/${post._id}`)
-      .then(() => {
-        alert('Enlace copiado al portapapeles');
-      })
-      .catch((error) => console.log('Error copying:', error));
+        .then(() => {
+          alert('Enlace copiado al portapapeles');
+        })
+        .catch((error) => console.log('Error copying:', error));
     }
   };
 
@@ -136,29 +154,37 @@ const CardBodyCarousel = ({ post }) => {
     <div>
       <div className="card-container">
         {post.images.length > 0 && (
-          <div className="carousel-wrapper">
+          <div className="carousel-wrapper  ">
             {/* Contenedor del carrusel con iconos superpuestos */}
             <div className="carousel-with-icons">
               <div className="carousel-card" onClick={() => history.push(`/post/${post._id}`)}>
                 <Carousel images={post.images} id={post._id} />
               </div>
-              
+
               {/* Iconos superpuestos en la parte inferior de la imagen */}
               <div className="overlay-icons-container">
                 {/* Información del usuario a la izquierda */}
                 <div className="user-info-section">
-                  <div className="username">@{post.user?.username}</div>
+                  <div >  {post.theme}</div>
+
+                  <div className="username">Autor: {post.user?.username}</div>
                   <div className="post-description">{post.content?.substring(0, 100)}</div>
+                  <div>
+                    <i className='far fa-clock'></i>
+                    <small className="text mr-2 ml-2">{moment(post.createdAt).fromNow()}</small>
+
+                  </div>
+
                 </div>
-                
+
                 {/* Iconos a la derecha (estilo TikTok) */}
                 <div className="icons-overlay-container">
                   {/* Avatar del usuario */}
-                  
-                  
+
+
                   {/* Botón de like */}
                   <div className="icon-section">
-                    <div 
+                    <div
                       className={`icon-button like-button ${loadLike ? 'loading' : ''} ${isLike ? 'liked' : ''}`}
                       onClick={isLike ? handleUnLike : handleLike}
                     >
@@ -166,23 +192,23 @@ const CardBodyCarousel = ({ post }) => {
                         {loadLike ? "hourglass_empty" : "favorite"}
                       </span>
                     </div>
-                    <span className="icon-count">{post.likes.length}</span>
+                    <span className="icon-count mt-0" >{post.likes.length}</span>
                   </div>
-                  
+
                   {/* Botón de comentarios */}
                   <div className="icon-section">
-                    <div 
+                    <div
                       className="icon-button comment-button"
                       onClick={() => history.push(`/post/${post._id}`)}
                     >
                       <span className="material-icons">chat_bubble_outline</span>
                     </div>
-                    <span className="icon-count">{post.comments?.length || 0}</span>
+                    <span className="icon-count mt-0">{post.comments?.length || 0}</span>
                   </div>
-                  
+
                   {/* Botón de guardar */}
                   <div className="icon-section">
-                    <div 
+                    <div
                       className={`icon-button save-button ${saveLoad ? 'loading' : ''}`}
                       onClick={saved ? handleUnSavePost : handleSavePost}
                       title={saved ? t("unsave", { lng: lang }) : t("save", { lng: lang })}
@@ -192,10 +218,10 @@ const CardBodyCarousel = ({ post }) => {
                       </span>
                     </div>
                   </div>
-                  
+
                   {/* Botón de compartir (nuevo) */}
                   <div className="icon-section">
-                    <div 
+                    <div
                       className="icon-button share-button"
                       onClick={handleShare}
                       title={t("share", { lng: lang })}
@@ -203,21 +229,24 @@ const CardBodyCarousel = ({ post }) => {
                       <span className="material-icons">share</span>
                     </div>
                   </div>
-                  
+
                   {/* Botón de comprar (condicional basado en post.price) */}
-                  {post.price && (
-                    <div className="icon-section">
-                      <div 
-                        className={`icon-button cart-button ${buyLoad ? 'loading' : ''} ${inCart ? 'in-cart' : ''}`}
-                        onClick={handleBuyProduct}
-                        title={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
-                      >
-                        <span className="material-icons">
-                          {buyLoad ? "hourglass_empty" : inCart ? "shopping_cart" : "add_shopping_cart"}
-                        </span>
-                      </div>
+                  {/* Botón de comprar - siempre visible pero deshabilitado si no hay price */}
+                  <div className="icon-section">
+                    <div
+                      className={`icon-button cart-button   ${buyLoad ? 'loading' : ''} ${inCart ? 'in-cart' : ''} ${!post.price ? 'disabled' : ''}`}
+                      onClick={post.price ? handleBuyProduct : undefined}
+                      title={!post.price ? t("unavailable", { lng: lang }) : (inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang }))}
+                    >
+                      <span className="material-icons">
+                        {buyLoad ? "hourglass_empty" :
+                          !post.price ? "remove_shopping_cart" :
+                            inCart ? "shopping_cart" : "add_shopping_cart"}
+                      </span>
                     </div>
-                  )}
+                    {/* Opcional: mostrar el precio si existe */}
+
+                  </div>
                 </div>
               </div>
             </div>
@@ -243,21 +272,21 @@ const CardBodyCarousel = ({ post }) => {
       )}
 
       {/* Modal de autenticación */}
-      <AuthModal 
-        show={showAuthModal} 
+      <AuthModal
+        show={showAuthModal}
         post={post}
-        onClose={() => setShowAuthModal(false)} 
+        onClose={() => setShowAuthModal(false)}
       />
-      
+
       {/* Modal verificación */}
-      <VerifyModal 
-        show={showVerifyModal} 
-        onClose={() => setShowVerifyModal(false)} 
+      <VerifyModal
+        show={showVerifyModal}
+        onClose={() => setShowVerifyModal(false)}
       />
-      
-      <DesactivateModal 
-        show={showDeactivatedModal} 
-        onClose={() => setShowDeactivatedModal(false)} 
+
+      <DesactivateModal
+        show={showDeactivatedModal}
+        onClose={() => setShowDeactivatedModal(false)}
       />
     </div>
   );

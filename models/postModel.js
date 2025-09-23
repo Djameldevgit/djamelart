@@ -4,8 +4,8 @@ const postSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true
-  }, 
-  
+  },
+
   devisvente: {
     type: String,
   },
@@ -16,16 +16,14 @@ const postSchema = new mongoose.Schema({
     type: String,
   },
 
-  disponibilidad: {
-    type: String,
-  },
+
   title: {
     type: String,
     required: true, // 👈 Ahora es obligatorio
     trim: true,
     maxlength: 100,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\.,!?()]+$/.test(v); // 👈 Caracteres permitidos
       },
       message: 'El título contiene caracteres no permitidos.'
@@ -44,30 +42,31 @@ const postSchema = new mongoose.Schema({
     type: String,
     trim: true,
     maxlength: 20,
-  /*  validate: {
-      validator: function(v) {
-        return /^[0-9.,]+$/.test(v); // 👈 Solo números y decimales
-      },
-      message: 'El valor de medida solo puede contener números y decimales.'
-    }*/
+    /*  validate: {
+        validator: function(v) {
+          return /^[0-9.,]+$/.test(v); // 👈 Solo números y decimales
+        },
+        message: 'El valor de medida solo puede contener números y decimales.'
+      }*/
   },
   venteOption: {
     type: String,
 
   },
- 
+
   price: {
     type: String,
     trim: true,
     maxlength: 20,
-  /*  validate: {
-      validator: function(v) {
-        return /^[0-9.,]+$/.test(v); // 👈 Solo números y decimales
-      },
-      message: 'El precio solo puede contener números y decimales.'
-    }*/
+    required: true
+    /*  validate: {
+        validator: function(v) {
+          return /^[0-9.,]+$/.test(v); // 👈 Solo números y decimales
+        },
+        message: 'El precio solo puede contener números y decimales.'
+      }*/
   },
-  
+
   negociable: {
     type: String,
 
@@ -88,7 +87,7 @@ const postSchema = new mongoose.Schema({
   },
   theme: {
     type: String,
-
+    required: true
   },
   measurementUnit: {
     type: String,
@@ -99,14 +98,14 @@ const postSchema = new mongoose.Schema({
     trim: true,
     maxlength: 1000, // 👈 Límite de caracteres
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\.,!?()@#\$%&*+='":;]+$/.test(v); // 👈 Caracteres permitidos
       },
       message: 'La descripción contiene caracteres no permitidos.'
     }
   },
 
- wilaya: {
+  wilaya: {
     type: String,
 
   },
@@ -128,7 +127,7 @@ const postSchema = new mongoose.Schema({
   views: { type: Number, default: 0 },
   likes: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
   comments: [{ type: mongoose.Types.ObjectId, ref: 'comment' }],
- 
+
 
   user: { type: mongoose.Types.ObjectId, ref: 'user' }
 }, {

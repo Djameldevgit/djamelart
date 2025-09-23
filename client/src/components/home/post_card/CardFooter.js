@@ -42,15 +42,8 @@ const CardFooter = ({ post }) => {
             textAlign: lang === 'ar' ? 'right' : 'left',
           }}>
           
-          <ListGroup className="list-group-flush">
-         
-          <ListGroup.Item> Artist:  {post.user.username} </ListGroup.Item>
-     
-            <ListGroup.Item>{t('category', { lng: lang })}: {t(post.category, { lng: lang })}</ListGroup.Item>
-            <ListGroup.Item>{t('subcategory', { lng: lang })}: {t(post.subcategory, { lng: lang })}</ListGroup.Item>
-            <ListGroup.Item>{t('support', { lng: lang })}: {t(post.support, { lng: lang })}</ListGroup.Item>
-          </ListGroup>
-          <Card.Footer>
+        
+               <Card.Footer>
             <i className='far fa-clock'></i> 
             <small className="text-muted mr-2 ml-2">{moment(post.createdAt).fromNow()}</small>
           </Card.Footer>

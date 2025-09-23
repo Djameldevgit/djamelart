@@ -127,13 +127,7 @@ const DescriptionPost = ({ post }) => {
             </span>
           </div>
         )}
-        {post.disponibilidad && (
-          <div className="metadata-item">
-            <i className="fas fa-check-circle"></i>
-            <span className="metadata-label">{t('availability', { lng: lang })}:</span>
-            <span className="metadata-value">{post.disponibilidad}</span>
-          </div>
-        )}
+       
         {post.talle && (
           <div className="metadata-item">
             <i className="fas fa-expand-arrows-alt"></i>

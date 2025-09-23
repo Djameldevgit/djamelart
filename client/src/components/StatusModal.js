@@ -17,8 +17,7 @@ import { ItemsSubCategoryPhotographie } from './categorias/Potography';
 import { ItemsSubCategoryDesign } from './categorias/Dessin'
 import { ItemsSubCategoryGravures } from './categorias/GravuresEstampes';
 import { ItemsSubCategoryArtsNumeriques } from './categorias/ArtNumirique';
-import { DisponibiliteOeuvre } from './categorias/Disponibilidad';
-
+ 
 import { DescriptionInput } from './categorias/Descriptionn';
 
 
@@ -68,7 +67,7 @@ const StatusModal = () => {
         style: '',
         negociable: "",
         devisvente: '',
-        disponibilidad: '',
+    
         talle: '',
 
         theme: '',
@@ -339,7 +338,7 @@ const StatusModal = () => {
                 style: status.style || "",
                 theme: status.theme || "",
                 devisvente: status.devisvente || "",
-                disponibilidad: status.disponibilidad || "",
+        
                 talle: status.talle || "",
                 measurementUnit: status.measurementUnit || "",
                 description: status.description || "",
@@ -445,12 +444,7 @@ const StatusModal = () => {
 
         </div>
     )
-    const DisponibiliteOeuvree = () => (
-        <div>
-            <DisponibiliteOeuvre handleChangeInput={handleChangeInput} postData={postData} />
-
-        </div>
-    )
+   
 
     const Envolverlaobraa = () => (
         <div>
@@ -722,9 +716,7 @@ const StatusModal = () => {
                     <div className='form-group'>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.availabilityPrice')}</h3>
 
-                        <div >
-                            {DisponibiliteOeuvree()}
-                        </div>
+                      
                         <div >
                             {PriceInputt()}
                         </div>

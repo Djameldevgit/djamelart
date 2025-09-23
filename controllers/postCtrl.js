@@ -24,7 +24,7 @@ const postCtrl = {
             const { postData, images } = req.body;
             const {
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
+                devisvente,  measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit
             } = postData || {};
     
@@ -33,7 +33,7 @@ const postCtrl = {
     
             const newPost = new Posts({
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
+                devisvente,  measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit, images,
                 user: req.user._id
             });
@@ -158,13 +158,13 @@ const postCtrl = {
         try {
             const {
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
+                devisvente,  measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit, images
             } = req.body;
 
             const post = await Posts.findOneAndUpdate({ _id: req.params.id }, {
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
+                devisvente,  measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit, images
             }).populate("user likes", "avatar username")
               .populate({
@@ -180,7 +180,7 @@ const postCtrl = {
                 newPost: {
                     ...post._doc,
                     category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                    devisvente, disponibilidad, measurementValue, venteOption, price, negociable,
+                    devisvente,   measurementValue, venteOption, price, negociable,
                     style, talle, theme, measurementUnit, images
                 }
             });

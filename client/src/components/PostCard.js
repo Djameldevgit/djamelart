@@ -30,8 +30,7 @@ const PostCard = ({ post, isDetail = false  }) => {
 
     return (
         <div className="card my-3">
-            <CardHeader post={post} />
-        
+          
 
             {
                 settings.style ? <CardBodyCarouseltiktok post={post} />
