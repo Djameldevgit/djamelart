@@ -1,53 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Card } from 'react-bootstrap';
 import Carousel from '../../Carousel';
 import { likePost, unLikePost, savePost, unSavePost } from '../../../redux/actions/postAction';
 import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-
-import AuthModal from '../../authAndVerify/AuthModal';
+import ShareModal from '../../ShareModal';
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
 import moment from 'moment';
-// Importa todos los locales necesarios
-import 'moment/locale/es'; // Español
-import 'moment/locale/en-gb'; // Inglés
-import 'moment/locale/fr'; // Francés
-import 'moment/locale/ru'; // Ruso
-import 'moment/locale/zh-cn'; // Chino
-import 'moment/locale/ar'; // Árabe
 const CardBodyCarousel = ({ post }) => {
+  const { languageReducer, auth, socket } = useSelector((state) => state);
   const [isLike, setIsLike] = useState(false);
   const [loadLike, setLoadLike] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveLoad, setSaveLoad] = useState(false);
   const [buyLoad, setBuyLoad] = useState(false);
   const [inCart, setInCart] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [showBuyMessage, setShowBuyMessage] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
-  const { languageReducer, auth, socket } = useSelector((state) => state);
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [isShare, setIsShare] = useState(false);
+  const shareModalRef = useRef(null);
+
   const { t } = useTranslation('cardbodycarousel');
   const lang = languageReducer.language || 'en';
   const history = useHistory();
   const dispatch = useDispatch();
-  useEffect(() => {
-    const momentLangMap = {
-      es: 'es',
-      en: 'en-gb',
-      fr: 'fr',
-      ru: 'ru',
-      zh: 'zh-cn',
-      ar: 'ar'
-    };
-    const momentLang = momentLangMap[lang] || 'en-gb'; // Default: inglés
-    moment.locale(momentLang);
-  }, [lang]);
+
   const canProceed = () => {
     if (!auth.token || !auth.user) {
-      setShowAuthModal(true);
+      setShowModal(true);
       return false;
     }
 
@@ -92,14 +78,14 @@ const CardBodyCarousel = ({ post }) => {
   const handleLike = async () => {
     if (!canProceed() || loadLike) return;
     setLoadLike(true);
-    await dispatch(likePost({ post, auth, socket, t }));
+    await dispatch(likePost({ post, auth, socket, t, languageReducer }));
     setLoadLike(false);
   };
 
   const handleUnLike = async () => {
     if (!canProceed() || loadLike) return;
     setLoadLike(true);
-    await dispatch(unLikePost({ post, auth, socket, t }));
+    await dispatch(unLikePost({ post, auth, socket, t, languageReducer }));
     setLoadLike(false);
   };
 
@@ -138,121 +124,335 @@ const CardBodyCarousel = ({ post }) => {
       navigator.share({
         title: post.title || 'Mira esta publicación',
         text: post.content || 'Echa un vistazo a esta publicación',
-        url: `${window.location.origin}/post/${post._id}`
+        url: window.location.href,
       })
-        .catch((error) => console.log('Error sharing:', error));
+        .catch((error) => console.log('Error sharing', error));
     } else {
-      navigator.clipboard.writeText(`${window.location.origin}/post/${post._id}`)
-        .then(() => {
-          alert('Enlace copiado al portapapeles');
-        })
-        .catch((error) => console.log('Error copying:', error));
+      setShowShareOptions(true);
     }
+  };
+
+  const formatDate = (dateString) => {
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    return new Date(dateString).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', options);
   };
 
   return (
     <div>
-      <div className="card-container">
+      <div className="card_body">
         {post.images.length > 0 && (
-          <div className="carousel-wrapper">
-            <div className="carousel-with-icons">
-              <div className="carousel-card" onClick={() => history.push(`/post/${post._id}`)}>
-                <Carousel images={post.images} id={post._id} />
+          <div className="carousel-container" style={{ position: "relative" }}>
+            {/* Fecha de publicación (parte superior) */}
+            <div style={{
+              position: "absolute",
+              top: "10px",
+              left: "10px",
+              zIndex: 2,
+              backgroundColor: "rgba(0, 0, 0, 0.6)",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "12px",
+              fontSize: "12px",
+              fontWeight: "500"
+            }}>
+              <small className="textmuted">
+                <span className="mr-1"><i className='far fa-clock'></i>  </span>
+                {moment(post.createdAt).fromNow()}
+              </small>
+
+            </div>
+
+            {/* Información del artista y título (parte inferior) */}
+            <div style={{
+              position: "absolute",
+              bottom: "0",  // Cambiado a 0 para que llegue hasta el borde inferior
+              left: "0",    // Cambiado a 0 para que empiece desde el borde izquierdo
+              right: "0",   // Añadido para que llegue hasta el borde derecho
+              zIndex: 2,
+              color: "white",
+              backgroundColor: "rgba(0, 0, 0, 0.6)",  // Fondo más oscuro para mejor contraste
+              padding: "4px",  // Aumentado el padding
+              backdropFilter: "blur(5px)",  // Efecto de desenfoque
+            }}>
+              <div className='card-title' style={{
+                fontSize: "16px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis"
+              }}>
+                {post.user?.username || "Artista"}
+              </div>
+              {post.theme && (
+                <div style={{
+                  fontSize: "14px",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis"
+                }}>
+                  {post.theme}
+                </div>
+              )}
+            </div>
+
+            {/* Contenedor de iconos al estilo TikTok (derecha) */}
+            <div style={{
+              position: "absolute",
+              right: "10px",
+              bottom: "60px",
+              zIndex: 2,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "15px"
+            }}>
+              {/* Botón de like */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    borderRadius: "50%",
+                    padding: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: loadLike ? 0.7 : 1,
+                    width: "40px",
+                    height: "40px"
+                  }}
+                  onClick={isLike ? handleUnLike : handleLike}
+                >
+                  <span
+                    className="material-icons"
+                    style={{
+                      fontSize: "24px",
+                      color: isLike ? "#F91880" : "white"
+                    }}
+                  >
+                    {loadLike ? "hourglass_empty" : "favorite"}
+                  </span>
+                </div>
+                <span style={{
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  color: "white",
+                  marginTop: "4px",
+                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
+                }}>
+                  {post.likes.length}
+                </span>
               </div>
 
-              {/* Overlay con información e iconos - ESTRUCTURA CORREGIDA */}
-              <div className="overlay-icons-container">
-                {/* Información del usuario a la izquierda */}
-                <div className="user-info-section">
-                  <div className="theme-tag">{post.theme}</div>
-                  <div className="username">Autor: {post.user?.username}</div>
-                  <div className="post-description">{post.content?.substring(0, 100)}</div>
-                  <div className="post-time">
-                    <i className='far fa-clock'></i>
-                    <small>{moment(post.createdAt).fromNow()}</small>
-                  </div>
+              {/* Botón de guardar */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    borderRadius: "50%",
+                    padding: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "40px",
+                    height: "40px"
+                  }}
+                  onClick={saved ? handleUnSavePost : handleSavePost}
+                >
+                  <span
+                    className="material-icons"
+                    style={{
+                      fontSize: "24px",
+                      color: saved ? "#ff8c00" : "white",
+                      opacity: saveLoad ? 0.5 : 1
+                    }}
+                  >
+                    {saveLoad ? "hourglass_empty" : "bookmark"}
+                  </span>
                 </div>
+              </div>
 
-                {/* CONTENEDOR DE TODOS LOS ICONOS JUNTOS */}
-                <div className="all-icons-container">
-                  {/* Icono de vistas */}
-                  <div className="icon-section">
-                    <div className="view-icon">
-                      <span className="material-icons">visibility</span>
-                    </div>
-                    <span className="icon-count">{post.views || 0}</span>
-                  </div>
-
-                  {/* Icono de likes */}
-                  <div className="icon-section">
-                    <div
-                      className={`icon-button like-button ${loadLike ? 'loading' : ''} ${isLike ? 'liked' : ''}`}
-                      onClick={isLike ? handleUnLike : handleLike}
-                    >
-                      <span className="material-icons">
-                        {loadLike ? "hourglass_empty" : "favorite"}
-                      </span>
-                    </div>
-                    <span className="icon-count">{post.likes.length}</span>
-                  </div>
-
-                  {/* Botón de comentarios */}
-                  <div className="icon-section">
-                    <div
-                      className="icon-button comment-button"
-                      onClick={() => history.push(`/post/${post._id}`)}
-                    >
-                      <span className="material-icons">chat_bubble_outline</span>
-                    </div>
-                    <span className="icon-count">{post.comments?.length || 0}</span>
-                  </div>
-
-                  {/* Botón de guardar */}
-                  <div className="icon-section">
-                    <div
-                      className={`icon-button save-button ${saveLoad ? 'loading' : ''}`}
-                      onClick={saved ? handleUnSavePost : handleSavePost}
-                      title={saved ? t("unsave", { lng: lang }) : t("save", { lng: lang })}
-                    >
-                      <span className="material-icons">
-                        {saveLoad ? "hourglass_empty" : saved ? "bookmark" : "bookmark_border"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Botón de compartir */}
-                  <div className="icon-section">
-                    <div
-                      className="icon-button share-button"
-                      onClick={handleShare}
-                      title={t("share", { lng: lang })}
-                    >
-                      <span className="material-icons">share</span>
-                    </div>
-                  </div>
-
-                  {/* Botón de comprar */}
-                  <div className="icon-section">
-                    <div
-                      className={`icon-button cart-button ${buyLoad ? 'loading' : ''} ${inCart ? 'in-cart' : ''} ${!post.price ? 'disabled' : ''}`}
-                      onClick={post.price ? handleBuyProduct : undefined}
-                      title={!post.price ? t("unavailable", { lng: lang }) : (inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang }))}
-                    >
-                      <span className="material-icons">
-                        {buyLoad ? "hourglass_empty" :
-                          !post.price ? "remove_shopping_cart" :
-                            inCart ? "shopping_cart" : "add_shopping_cart"}
-                      </span>
-                    </div>
-                  </div>
+              {/* Botón de comprar */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    borderRadius: "50%",
+                    padding: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: `2px solid ${inCart ? "#F44336" : "#4CAF50"}`,
+                    opacity: buyLoad ? 0.7 : 1,
+                    width: "40px",
+                    height: "40px"
+                  }}
+                  onClick={handleBuyProduct}
+                  title={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
+                >
+                  <span className="material-icons" style={{
+                    fontSize: "24px",
+                    color: inCart ? "#F44336" : "#4CAF50"
+                  }}>
+                    {buyLoad ? "hourglass_empty" : "shopping_cart"}
+                  </span>
                 </div>
+              </div>
+
+              {/* Contador de vistas */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div style={{
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  borderRadius: "50%",
+                  padding: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "40px",
+                  height: "40px"
+                }}>
+                  <span className="material-icons" style={{ fontSize: "24px", color: "white" }}>
+                    visibility
+                  </span>
+                </div>
+                <span style={{
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  color: "white",
+                  marginTop: "4px",
+                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
+                }}>
+                  {post.views || 0}
+                </span>
+              </div>
+
+
+              {isShare && (
+                <div className="share-modal-container" ref={shareModalRef}>
+                  <ShareModal
+                    url={`${BASE_URL}/post/${post._id}`}
+                    onClose={() => setIsShare(false)}
+                  />
+                </div>
+              )}
+
+
+
+              {/* Botón de compartir (nuevo) */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    borderRadius: "50%",
+                    padding: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "40px",
+                    height: "40px"
+                  }}
+                  onClick={handleShare}
+                >
+                  <span className="material-icons" style={{ fontSize: "24px", color: "white" }}>
+                    share
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Carousel */}
+            <div className="card">
+              <div className="card__image" onClick={() => history.push(`/post/${post._id}`)}>
+                <Carousel images={post.images} id={post._id} />
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Mensaje de compra */}
+      {/* Modal de opciones de compartir */}
+      {showShareOptions && (
+        <div className="modal" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="modal-content" style={{ width: '300px', borderRadius: '12px' }}>
+            <h3>Compartir publicación</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-around', margin: '20px 0' }}>
+              <div style={{ textAlign: 'center', cursor: 'pointer' }}>
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+                  <span className="material-icons" style={{ color: 'white' }}>chat</span>
+                </div>
+                <p>WhatsApp</p>
+              </div>
+              <div style={{ textAlign: 'center', cursor: 'pointer' }}>
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#1877F2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+                  <span className="material-icons" style={{ color: 'white' }}>facebook</span>
+                </div>
+                <p>Facebook</p>
+              </div>
+              <div style={{ textAlign: 'center', cursor: 'pointer' }}>
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#1DA1F2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+                  <span className="material-icons" style={{ color: 'white' }}>flutter_dash</span>
+                </div>
+                <p>Twitter</p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <button
+                onClick={() => setShowShareOptions(false)}
+                style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', border: 'none', borderRadius: '20px', cursor: 'pointer' }}
+              >
+                Cancelar
+              </button>
+            </div>
+
+
+
+          </div>
+        </div>
+      )}
+
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content" style={{ position: 'relative' }}>
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                background: 'none',
+                border: 'none',
+                fontSize: '1.8rem',
+                color: '#333',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                lineHeight: '1',
+              }}
+              aria-label="Cerrar"
+            >
+              ×
+            </button>
+
+            <h4>{t("title2", { lng: languageReducer.language })}</h4>
+            <p>{t("message2", { lng: languageReducer.language })}</p>
+            <div className="modal-buttons">
+              <button onClick={() => history.push("/login")}>
+                {t("login2", { lng: languageReducer.language })}
+              </button>
+              <button onClick={() => history.push("/register")}>
+                {t("register2", { lng: languageReducer.language })}
+              </button>
+              <button onClick={() => setShowModal(false)}>
+                {t("close2", { lng: languageReducer.language })}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showBuyMessage && (
         <div className="buy-message" style={{
           position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
@@ -269,23 +469,10 @@ const CardBodyCarousel = ({ post }) => {
         </div>
       )}
 
-      {/* Modal de autenticación */}
-      <AuthModal
-        show={showAuthModal}
-        post={post}
-        onClose={() => setShowAuthModal(false)}
-      />
-
-      {/* Modal verificación */}
-      <VerifyModal
-        show={showVerifyModal}
-        onClose={() => setShowVerifyModal(false)}
-      />
-
-      <DesactivateModal
-        show={showDeactivatedModal}
-        onClose={() => setShowDeactivatedModal(false)}
-      />
+      {showVerifyModal && (
+        <VerifyModal show={showVerifyModal} onClose={() => setShowVerifyModal(false)} />
+      )}
+      <DesactivateModal show={showDeactivatedModal} onClose={() => setShowDeactivatedModal(false)} />
     </div>
   );
 };
