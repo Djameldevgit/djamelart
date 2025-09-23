@@ -47,7 +47,7 @@ const EditProfile = ({setOnEdit}) => {
     }
 
     return (
-        <div className="edit_profile">
+        <div className="edit_profile" style={{marginTop:"112px"}}>
             <button className="btn btn-danger btn_close"
             onClick={() => setOnEdit(false)}>
                 {t('close', { lng: lang })}

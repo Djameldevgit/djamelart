@@ -169,6 +169,7 @@ const CardBodyCarousel = ({ post }) => {
               left: "0",    // Cambiado a 0 para que empiece desde el borde izquierdo
               right: "0",   // Añadido para que llegue hasta el borde derecho
               zIndex: 2,
+              
               color: "white",
               backgroundColor: "rgba(0, 0, 0, 0.6)",  // Fondo más oscuro para mejor contraste
               padding: "4px",  // Aumentado el padding

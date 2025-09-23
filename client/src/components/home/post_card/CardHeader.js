@@ -41,12 +41,12 @@ const CardHeader = ({ post }) => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [copied, setCopied] = useState(false);
-  
+
   // ✅ Estados para los modales de verificación
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
-  
+
   const dispatch = useDispatch();
   const history = useHistory();
   const { t, i18n } = useTranslation('cardheader');
@@ -108,7 +108,7 @@ Por: ${post.user.username}
   const handleChatWithAdmin = () => {
     // ✅ Verificar si puede proceder antes de chatear con admin
     if (!canProceed()) return;
-    
+
     if (!adminUser) {
       return dispatch({
         type: GLOBALTYPES.ALERT,
@@ -127,7 +127,7 @@ Por: ${post.user.username}
   const handleDeletePost = () => {
     // ✅ Verificar si puede proceder antes de eliminar
     if (!canProceed()) return;
-    
+
     if (window.confirm(t('confirmDelete'))) {
       dispatch(deletePost({ post, auth, socket }));
       history.push("/");
@@ -137,7 +137,7 @@ Por: ${post.user.username}
   const handleSubmitReport = () => {
     // ✅ Verificar si puede proceder antes de reportar
     if (!canProceed()) return;
-    
+
     if (!reportReason.trim()) {
       return dispatch({
         type: GLOBALTYPES.ALERT,
@@ -163,7 +163,7 @@ Por: ${post.user.username}
   const handleAddUser = (user) => {
     // ✅ Verificar si puede proceder antes de agregar usuario
     if (!canProceed()) return;
-    
+
     dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...user, text: '', media: [] } });
     return history.push(`/message/${user._id}`);
   };
@@ -182,51 +182,9 @@ Por: ${post.user.username}
   return (
     <Card.Header className="d-flex justify-content-between align-items-center p-3">
       <div className='mt-0' >
-       
 
-        <div className="ml-1" style={{ flex: 1 }}>
-          <Card.Title className="m-0" style={{
-            fontSize: '1.4rem',
-            fontWeight: '800',
-            color: '#2d3748',
-            
-            lineHeight: '1.3'
-          }}>
- 
-
-            <strong>{post.venteOption} / {post.title}</strong>
-          </Card.Title>
-
-          <Card.Text style={{
-            fontSize: '1rem',
-            fontWeight: '600',
-            color: '#4a6cf7',
-            marginBottom: '0px',
-            display: 'flex',
-            alignItems: 'center'
-          }}>
-            <span style={{
-              marginRight: '8px',
-              fontSize: '1.2rem'
-            }}>👤</span>
-            {post.user.username}
-          </Card.Text>
-
-          <Card.Text className="text-muted small" style={{
-            fontSize: '0.85rem',
-            color: '#718096 !important',
-            display: 'flex',
-            alignItems: 'center',
-            
-          }}>
-            <span style={{
-              marginRight: '6px',
-              fontSize: '0.9rem'
-            }}>🕒</span>
-            {moment(post.createdAt).fromNow()}
-          </Card.Text>
-        </div>
       </div>
+
 
       {auth.user && (
         <Dropdown>
@@ -545,17 +503,17 @@ Por: ${post.user.username}
       </Modal>
 
       {/* ✅ Agregar los modales de verificación */}
-      <AuthModal 
-        show={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
+      <AuthModal
+        show={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
       />
-      <VerifyModal 
-        show={showVerifyModal} 
-        onClose={() => setShowVerifyModal(false)} 
+      <VerifyModal
+        show={showVerifyModal}
+        onClose={() => setShowVerifyModal(false)}
       />
-      <DesactivateModal 
-        show={showDeactivatedModal} 
-        onClose={() => setShowDeactivatedModal(false)} 
+      <DesactivateModal
+        show={showDeactivatedModal}
+        onClose={() => setShowDeactivatedModal(false)}
       />
     </Card.Header>
   );
