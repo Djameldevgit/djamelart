@@ -154,35 +154,36 @@ const CardBodyCarousel = ({ post }) => {
     <div>
       <div className="card-container">
         {post.images.length > 0 && (
-          <div className="carousel-wrapper  ">
-            {/* Contenedor del carrusel con iconos superpuestos */}
+          <div className="carousel-wrapper">
             <div className="carousel-with-icons">
               <div className="carousel-card" onClick={() => history.push(`/post/${post._id}`)}>
                 <Carousel images={post.images} id={post._id} />
               </div>
 
-              {/* Iconos superpuestos en la parte inferior de la imagen */}
+              {/* Overlay con información e iconos - ESTRUCTURA CORREGIDA */}
               <div className="overlay-icons-container">
                 {/* Información del usuario a la izquierda */}
                 <div className="user-info-section">
-                  <div >  {post.theme}</div>
-
+                  <div className="theme-tag">{post.theme}</div>
                   <div className="username">Autor: {post.user?.username}</div>
                   <div className="post-description">{post.content?.substring(0, 100)}</div>
-                  <div>
+                  <div className="post-time">
                     <i className='far fa-clock'></i>
-                    <small className="text mr-2 ml-2">{moment(post.createdAt).fromNow()}</small>
-
+                    <small>{moment(post.createdAt).fromNow()}</small>
                   </div>
-
                 </div>
 
-                {/* Iconos a la derecha (estilo TikTok) */}
-                <div className="icons-overlay-container">
-                  {/* Avatar del usuario */}
+                {/* CONTENEDOR DE TODOS LOS ICONOS JUNTOS */}
+                <div className="all-icons-container">
+                  {/* Icono de vistas */}
+                  <div className="icon-section">
+                    <div className="view-icon">
+                      <span className="material-icons">visibility</span>
+                    </div>
+                    <span className="icon-count">{post.views || 0}</span>
+                  </div>
 
-
-                  {/* Botón de like */}
+                  {/* Icono de likes */}
                   <div className="icon-section">
                     <div
                       className={`icon-button like-button ${loadLike ? 'loading' : ''} ${isLike ? 'liked' : ''}`}
@@ -192,7 +193,7 @@ const CardBodyCarousel = ({ post }) => {
                         {loadLike ? "hourglass_empty" : "favorite"}
                       </span>
                     </div>
-                    <span className="icon-count mt-0" >{post.likes.length}</span>
+                    <span className="icon-count">{post.likes.length}</span>
                   </div>
 
                   {/* Botón de comentarios */}
@@ -203,7 +204,7 @@ const CardBodyCarousel = ({ post }) => {
                     >
                       <span className="material-icons">chat_bubble_outline</span>
                     </div>
-                    <span className="icon-count mt-0">{post.comments?.length || 0}</span>
+                    <span className="icon-count">{post.comments?.length || 0}</span>
                   </div>
 
                   {/* Botón de guardar */}
@@ -219,7 +220,7 @@ const CardBodyCarousel = ({ post }) => {
                     </div>
                   </div>
 
-                  {/* Botón de compartir (nuevo) */}
+                  {/* Botón de compartir */}
                   <div className="icon-section">
                     <div
                       className="icon-button share-button"
@@ -230,11 +231,10 @@ const CardBodyCarousel = ({ post }) => {
                     </div>
                   </div>
 
-                  {/* Botón de comprar (condicional basado en post.price) */}
-                  {/* Botón de comprar - siempre visible pero deshabilitado si no hay price */}
+                  {/* Botón de comprar */}
                   <div className="icon-section">
                     <div
-                      className={`icon-button cart-button   ${buyLoad ? 'loading' : ''} ${inCart ? 'in-cart' : ''} ${!post.price ? 'disabled' : ''}`}
+                      className={`icon-button cart-button ${buyLoad ? 'loading' : ''} ${inCart ? 'in-cart' : ''} ${!post.price ? 'disabled' : ''}`}
                       onClick={post.price ? handleBuyProduct : undefined}
                       title={!post.price ? t("unavailable", { lng: lang }) : (inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang }))}
                     >
@@ -244,8 +244,6 @@ const CardBodyCarousel = ({ post }) => {
                             inCart ? "shopping_cart" : "add_shopping_cart"}
                       </span>
                     </div>
-                    {/* Opcional: mostrar el precio si existe */}
-
                   </div>
                 </div>
               </div>
