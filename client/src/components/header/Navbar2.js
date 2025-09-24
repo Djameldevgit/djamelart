@@ -312,10 +312,12 @@ const Navbar2 = ({ onFiltersChange }) => {
                       </NavDropdown.Item>
                     )}
 
-                    <NavDropdown.Item as={Link} to="/contactt">
+                  
+<NavDropdown.Item as={Link} to="/encargos">
                       <FaEnvelope className="me-2" />
-                      {t('contact')}
+                     encargos
                     </NavDropdown.Item>
+
 
                     <NavDropdown.Item as={Link} to="/bloginfo">
                       <FaInfoCircle className="me-2" />
@@ -513,7 +515,13 @@ const Navbar2 = ({ onFiltersChange }) => {
           setShowAdvancedSearch(false);
 
         }}
-        style={{ marginTop: '50' }}
+        style={{ 
+          position: 'fixed', 
+          top: '0', 
+          left: '0', 
+          zIndex: 9999,
+          marginTop: '50px'
+        }}
       >
 
         <div className="filter-group">

@@ -35,7 +35,7 @@ const Posts = ({ posts }) => {
           <h2 className="text-center mt-4">   {t('No_Post', { lng: lang })}.</h2>
         ) : (
           displayPosts.map(post => (
-            <PostCard key={post._id} post={post} theme={theme} />
+            <PostCard key={post._id} post={post}   theme={theme} />
           ))
         )}
 

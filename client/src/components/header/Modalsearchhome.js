@@ -5,7 +5,7 @@ const Modalsearchhome = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null;
 
     return (
-        <div style={styles.overlay} className="mt-4" >
+        <div style={styles.overlay}   >
             <div style={styles.modal}>
                 <button style={styles.closeButton} onClick={onClose}>
                     &times;
@@ -31,24 +31,26 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 1000,
+        zIndex: 9999,
     },
     modal: {
         backgroundColor: '#fff',
-        padding: '20px',
+       
+        padding: '10px',
         borderRadius: '8px',
         width: '90%',
         maxWidth: '500px',
         position: 'relative',
+        
     },
     closeButton: {
         position: 'absolute',
-        top: '10px',
+        top: '10',
         right: '10px',
         background: 'none',
         color: 'red',
         border: 'none',
-        fontSize: '1.5rem',
+        fontSize: '1.7rem',
         cursor: 'pointer',
     },
 };
