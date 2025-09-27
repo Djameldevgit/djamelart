@@ -1,10 +1,23 @@
 {
+  "privacySettings": "Privacidad del perfil",
+  "privateProfile": "Perfil privado, solo yo",
+  "shareWithFollowers": "Compartir con seguidores",
+  "sharePublicly": "Compartir públicamente",
+  "privateProfileDesc": "Solo tú puedes ver tu perfil",
+  "shareWithFollowersDesc": "Tus seguidores pueden ver tu perfil",
+  "sharePubliclyDesc": "Cualquier persona puede ver tu perfil",
+  "currentSetting": "Configuración actual",
+
+  "userNotFound":"لم يتم العثور على المستخدم",
+  "numerodeposts":"منشورات",
+    "numerodelikes":"إعجابات",
+    "back":"خلف",
   "posts": "منشورات",
   "saved": "المحفوظات",
   "info": "معلومات",
   "followers": "متابعون",
   "following": "يتابع",
-  "editProfile": "تعديل الملف الشخصي",
+  "editProfile": "تعديل الملف",
   "about": "حول",
   "userInfo": "معلومات المستخدم",
   "username": "اسم المستخدم",
@@ -20,5 +33,36 @@
   "inactive": "غير نشط",
   "memberSince": "عضو منذ",
   "lastLogin": "آخر تسجيل دخول",
-  "close": "إغلاق"
-}
+  "close": "إغلاق",
+  "backToProfile":"العودة إلى الملف",
+ 
+ 
+      "title": "معلومات المستخدم",
+      "fullname": "الاسم الكامل",
+      "story": "قصتي",
+      "gender": "الجنس",
+      "male": "ذكر",
+      "female": "أنثى",
+      "other": "آخر",
+      "dob": "تاريخ الميلاد",
+      "phone": "الهاتف",
+      "address": "العنوان",
+      "website": "الموقع الإلكتروني",
+ 
+      "status": "الحالة",
+    
+      "joined": "تاريخ الانضمام",
+      "edit": "تعديل المعلومات",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "updateSuccess": "تم تحديث المعلومات بنجاح",
+      "updateError": "فشل تحديث المعلومات",
+      "noInfo": "لا توجد معلومات متاحة"
+    }
+ 
+
+
+
+
+
+ 

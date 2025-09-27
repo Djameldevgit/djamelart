@@ -13,8 +13,9 @@
     "title": "Cuenta desactivada",
     "message": "Tu cuenta ha sido desactivada por los administradores. Si crees que es un error, contáctanos.",
     "title2": "¡Atención!",
-    "message2": "Por favor inicia sesión o regístrate para continuar."
+    "message2": "Por favor inicia sesión o regístrate para continuar.",
    
-
+    "watchVideo": "Ver Video",
+    "videoAvailable": "Video disponible"
 
   }

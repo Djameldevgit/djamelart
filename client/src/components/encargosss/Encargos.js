@@ -27,7 +27,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const Encargos = () => {
-  const { t, i18n } = useTranslation('encargos');
+  const { t, i18n } = useTranslation('galeriaencargos');
   const { auth, languageReducer } = useSelector(state => state);
  
   // Cambiar el idioma activamente si es diferente
@@ -53,8 +53,19 @@ const Encargos = () => {
     { step: 7, title: t('process.shipping.title'), description: t('process.shipping.description') }
   ];
 
+  // Textos dinámicos para el prefill del formulario de contacto
+  const getCommissionPrefillData = () => {
+    return {
+      title: t('commissionPrefill.title'),
+      message: t('commissionPrefill.message')
+    };
+  };
+
   return (
-    <Container className="py-5">
+    <Container className="py-5" style={{
+      direction: lang === 'ar' ? 'rtl' : 'ltr',
+      textAlign: lang === 'ar' ? 'right' : 'left'
+    }}>
       {/* Header Section */}
       <Row className="text-center mb-5">
         <Col>
@@ -248,15 +259,15 @@ const Encargos = () => {
               <p className="fs-5 mb-4">{t('cta.description')}</p>
 
               <div className="d-flex flex-wrap justify-content-center gap-3">
-                {/* Botón Contacto */}
+                {/* Botón Contacto - CORREGIDO */}
                 <Button 
                   as={Link} 
                   to={{
-                    pathname: "/contactt",
+                    pathname: "/users/contactt",
                     state: {
                       fromEncargos: true,
-                      prefillTitle: "Solicitud de Presupuesto para Obra Personalizada",
-                      prefillMessage: `Hola, estoy interesado/a en solicitar un presupuesto para una obra personalizada. He revisado la página de encargos y me gustaría discutir los siguientes detalles:\n\n• Tipo de obra que deseo:\n• Medidas aproximadas: \n• Estilo artístico preferido:\n• Tema o idea principal:\n• Presupuesto estimado que tengo en mente:\n• Plazo de entrega deseado:\n\n¿Podrían ayudarme con más información y un presupuesto detallado?`
+                      prefillTitle: t('commissionPrefill.title'),
+                      prefillMessage: t('commissionPrefill.message')
                     }
                   }}
                   variant="light" 
@@ -264,7 +275,7 @@ const Encargos = () => {
                   className="d-flex align-items-center"
                 >
                   <FaPaperPlane className="me-2" />
-                  Solicitar Presupuesto por Email
+                  {t('cta.emailButton')}
                 </Button>
 
                 {/* Botón Chat Directo */}
@@ -277,7 +288,7 @@ const Encargos = () => {
                     className="d-flex align-items-center"
                   >
                     <FaComments className="me-2" />
-                    Chat Directo con el Artista
+                    {t('cta.chatButton')}
                   </Button>
                 ) : (
                   <Button 
@@ -291,7 +302,7 @@ const Encargos = () => {
                     }}
                   >
                     <FaUserCircle className="me-2" />
-                    Iniciar Sesión para Chat
+                    {t('cta.loginButton')}
                   </Button>
                 )}
 
@@ -300,20 +311,20 @@ const Encargos = () => {
                   variant="outline-light" 
                   size="lg"
                   as={Link}
-                  to="/encargosgaleria"
+                  to="/djamelartgaleria"
                   className="d-flex align-items-center"
                 >
                   <FaPalette className="me-2" />
-                  Ver Galería de Inspiración
+                  {t('cta.galleryButton')}
                 </Button>
               </div>
 
               <div className="mt-4 text-center">
                 <small>
                   <FaClock className="me-1" />
-                  <strong>Respuesta en 24h</strong> • 
+                  <strong>{t('cta.responseTime')}</strong> • 
                   <FaEuroSign className="ms-2 me-1" />
-                  <strong>Presupuesto sin compromiso</strong>
+                  <strong>{t('cta.freeQuote')}</strong>
                 </small>
               </div>
             </Card.Body>

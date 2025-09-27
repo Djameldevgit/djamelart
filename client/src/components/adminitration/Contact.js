@@ -10,23 +10,47 @@ const Contact = () => {
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [isTranslationsReady, setIsTranslationsReady] = useState(false);
 
   const { auth, languageReducer } = useSelector(state => state);
-  const { t, i18n } = useTranslation('contact');
+  const { t, i18n, ready } = useTranslation('contact');
   const location = useLocation();
-
-  // Efecto para pre-llenar cuando viene de encargos
-  useEffect(() => {
-    if (location.state?.fromEncargos) {
-      setTitle(location.state.prefillTitle || t('commissionDefaultTitle'));
-      setMessage(location.state.prefillMessage || t('commissionDefaultMessage'));
-    }
-  }, [location.state, t]);
 
   // Cambiar el idioma activamente si es diferente
   const lang = languageReducer.language || 'es';
-  if (i18n.language !== lang) i18n.changeLanguage(lang);
- 
+  
+  useEffect(() => {
+    const changeLanguage = async () => {
+      if (i18n.language !== lang) {
+        await i18n.changeLanguage(lang);
+      }
+      setIsTranslationsReady(true);
+    };
+    
+    changeLanguage();
+  }, [lang, i18n]);
+
+  // Efecto para pre-llenar cuando viene de encargos - SOLUCIÓN CLAVE
+  useEffect(() => {
+    if (location.state?.fromEncargos && isTranslationsReady) {
+      const defaultTitle = t('commissionDefaultTitle');
+      const defaultMessage = t('commissionDefaultMessage');
+      
+      setTitle(location.state.prefillTitle || defaultTitle);
+      setMessage(location.state.prefillMessage || defaultMessage);
+    }
+  }, [location.state, isTranslationsReady, t]);
+
+  // Función para renderizar texto con saltos de línea
+  const renderMultilineText = (text) => {
+    return text.split('\n').map((line, index) => (
+      <span key={index}>
+        {line}
+        {index < text.split('\n').length - 1 && <br />}
+      </span>
+    ));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFeedback(null);
@@ -75,6 +99,16 @@ const Contact = () => {
   };
 
   const isCommissionRequest = location.state?.fromEncargos;
+
+  // Si las traducciones no están listas, mostrar spinner
+  if (!isTranslationsReady) {
+    return (
+      <Container className="py-5 text-center">
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-2">Cargando traducciones...</p>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-5" style={{
@@ -128,7 +162,7 @@ const Contact = () => {
           />
         </Form.Group>
 
-        {/* Mensaje */}
+        {/* Mensaje - USAR textarea para mostrar saltos de línea */}
         <Form.Group className="mb-3">
           <Form.Label><strong>{t('messagee')}</strong></Form.Label>
           <Form.Control
@@ -138,6 +172,10 @@ const Contact = () => {
             onChange={(e) => setMessage(e.target.value)}
             placeholder={isCommissionRequest ? t('commissionPlaceholder') : t('write_message')}
             required
+            style={{ 
+              whiteSpace: 'pre-wrap',
+              lineHeight: '1.5'
+            }}
           />
           {isCommissionRequest && (
             <Form.Text className="text-muted">
@@ -169,11 +207,11 @@ const Contact = () => {
         <Alert variant="light" className="mt-4">
           <h6>📋 {t('commissionIncludesTitle')}</h6>
           <ul className="mb-0">
-            <li>{t('commissionIncludes.price')}</li>
-            <li>{t('commissionIncludes.materials')}</li>
-            <li>{t('commissionIncludes.delivery')}</li>
-            <li>{t('commissionIncludes.shipping')}</li>
-            <li>{t('commissionIncludes.modifications')}</li>
+            <li>{t('commissionIncludesPrice')}</li>
+            <li>{t('commissionIncludesMaterials')}</li>
+            <li>{t('commissionIncludesDelivery')}</li>
+            <li>{t('commissionIncludesShipping')}</li>
+            <li>{t('commissionIncludesModifications')}</li>
           </ul>
         </Alert>
       )}

@@ -19,6 +19,15 @@ UPDATE_USER_VERIFICATION:'UPDATE_USER_VERIFICATION'
     
 };
 
+
+
+
+
+
+
+
+
+
 export const updateUserFeatures = ({ userId, features, token }) => async (dispatch) => {
   try {
     const res = await fetch(`/api/users/${userId}/features`, {

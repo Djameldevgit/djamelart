@@ -1,17 +1,31 @@
 const mongoose = require('mongoose');
-const Posts = require('./postModel'); // Asegúrate que la ruta es correcta
+const Posts = require('./postModel'); // Asegúrate de que la ruta es correcta
+
+const privacyEnum = ['public', 'followers', 'private'];
 
 const userSchema = new mongoose.Schema({
+  // --- PRIVACY SETTINGS ---
+   
+    profile: { type: String, enum: privacyEnum, default: 'public' },
+    posts: { type: String, enum: privacyEnum, default: 'public' },
+    followers: { type: String, enum: privacyEnum, default: 'public' },
+    following: { type: String, enum: privacyEnum, default: 'public' },
+    likes: { type: String, enum: privacyEnum, default: 'public' },
+    email: { type: String, enum: privacyEnum, default: 'private' },
+    address: { type: String, enum: privacyEnum, default: 'private' },
+    mobile: { type: String, enum: privacyEnum, default: 'private' },
+ 
+
+  // --- DATOS BÁSICOS ---
   username: {
     type: String,
     required: false,
     trim: true,
-    minlength: 3, // 👈 Mínimo 3 caracteres
+    minlength: 3,
     maxlength: 25,
     unique: true,
     validate: {
       validator: function (v) {
-        // 👇 Solo permite letras, números y guiones bajos
         return /^[a-zA-Z0-9_]+$/.test(v);
       },
       message: props => `${props.value} no es un username válido. Solo se permiten letras, números y guiones bajos.`
@@ -22,20 +36,15 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
     unique: true,
-    lowercase: true, // 👈 Convierte a minúsculas
+    lowercase: true,
     validate: {
       validator: function (v) {
-        // 👇 Validación robusta de email
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
       },
       message: props => `${props.value} no es un email válido.`
     }
   },
-  password: {
-    type: String,
-    required: true,
-    minlength: 6 // 👈 Mínimo 6 caracteres
-  },
+  password: { type: String, required: true, minlength: 6 },
   avatar: {
     type: String,
     default: 'https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png'
@@ -45,35 +54,20 @@ const userSchema = new mongoose.Schema({
     enum: ['Utilisateur-No-authentifié', 'user', 'Super-utilisateur', 'moderador', 'admin'],
     default: 'user'
   },
-  mobile: {
-    type: String,
-    default: ''
-  },
-  address: {
-    type: String,
-    default: ''
-  },
-  story: {
-    type: String,
-    default: '',
-    maxlength: 200
-  },
-  website: {
-    type: String,
-    default: ''
-  },
-  followers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user'
-  }],
-  following: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user'
-  }],
-  saved: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'post' // Cambiado a 'post' si guardas posts, o mantener 'user' si son usuarios
-  }],
+  mobile: { type: String, default: '' },
+  address: { type: String, default: '' },
+  story: { type: String, default: '', maxlength: 200 },
+  website: { type: String, default: '' },
+
+  // --- RELACIONES ---
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+  saved: [{ type: mongoose.Schema.Types.ObjectId, ref: 'post' }],
+  post: [{ type: mongoose.Types.ObjectId, ref: 'post' }],
+  comments: [{ type: mongoose.Types.ObjectId, ref: 'comment' }],
+  report: [{ type: mongoose.Types.ObjectId, ref: 'report' }],
+
+  // --- PREFERENCIAS ---
   language: {
     type: String,
     enum: ['en', 'fr', 'ar', 'es', 'ru', 'chino', 'kab'],
@@ -84,57 +78,35 @@ const userSchema = new mongoose.Schema({
     enum: ['archivos', 'lenguaje', 'chat', 'interfaz'],
     default: []
   },
- 
-  isVerified: {
-    type: Boolean,
-    default: false
-  },
 
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  post: [{ type: mongoose.Types.ObjectId, ref: 'post' }],
+  // --- ESTADO DE LA CUENTA ---
+  isVerified: { type: Boolean, default: false },
+  isActive: { type: Boolean, default: true },
   loginType: { type: String, enum: ['local', 'google', 'facebook'], default: 'local' },
 
+  // --- FECHAS ---
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date, default: null },
-  lastActivity: {
-    type: Date,
-    default: null
-  },
-  comments: [{ type: mongoose.Types.ObjectId, ref: 'comment' }],
+  lastActivity: { type: Date, default: null },
+  lastConnectedAt: { type: Date, default: null },
+  lastDisconnectedAt: { type: Date, default: null },
+  lastOnline: { type: Date },
+  isOnline: { type: Boolean, default: false },
 
-  report: [{ type: mongoose.Types.ObjectId, ref: 'report' }],
+  // --- ESTADÍSTICAS ---
   totalReportGiven: { type: Number, default: 0 },
   likesGiven: { type: Number, default: 0 },
   likesReceived: { type: Number, default: 0 },
   commentsMade: { type: Number, default: 0 },
   commentsReceived: { type: Number, default: 0 },
-
   esBloqueado: { type: Boolean, default: false },
 
- 
-  lastConnectedAt: { type: Date, default: null },
-  lastDisconnectedAt: { type: Date, default: null },
-  lastOnline: { type: Date },
-  isOnline: { type: Boolean, default: false },
+  // --- CARRITO ---
   cart: {
     items: [{
-      postId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'post',
-        required: true
-      },
-      quantity: {
-        type: Number,
-        default: 1,
-        min: 1
-      },
-      price: {
-        type: Number,
-        required: true
-      },
+      postId: { type: mongoose.Schema.Types.ObjectId, ref: 'post', required: true },
+      quantity: { type: Number, default: 1, min: 1 },
+      price: { type: Number, required: true },
       title: String,
       images: Array
     }],
@@ -144,24 +116,18 @@ const userSchema = new mongoose.Schema({
       set: function (value) {
         return isNaN(value) ? 0 : parseFloat(value.toFixed(2));
       }
-    },
-
+    }
   }
-}, {
-  timestamps: true // Correctamente definido
-});
+}, { timestamps: true });
 
-// Middleware pre-remove mejorado
+// --- Middleware pre-remove ---
 userSchema.pre('remove', async function (next) {
   try {
     const userId = this._id;
-
-    // Actualizar posts que este usuario haya liked
     await Posts.updateMany(
       { likes: userId },
       { $pull: { likes: userId } }
     ).exec();
-
     next();
   } catch (err) {
     next(err);

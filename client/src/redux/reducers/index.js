@@ -15,6 +15,8 @@ import message from './messageReducer'
 import online from './onlineReducer'
 import call from './callReducer'
  
+ 
+ 
 import homePostsAprove from './posAprovetReducer'
 import cart from './cartReducer'
 import languageReducer from './languageReducer';
@@ -30,6 +32,7 @@ import publiBlogReducer from './publiBlogReducer'
 import form  from './formReducer';
 import { roleReducer } from './roleReducer'
 import settings  from './settingsReducer'
+import privacy from './privacyReducer';
  
  
  
@@ -53,6 +56,6 @@ export default combineReducers({
    homePostsAprove ,cart,languageReducer,
    roleReducer,homeUsers,orders,userBlockReducer,
    usersActionReducer  ,ProvaReducer,
-   reportReducer ,publiBlogReducer ,blog,form  ,settings
+   reportReducer ,publiBlogReducer ,blog,form  ,settings,privacy
 
 }) 

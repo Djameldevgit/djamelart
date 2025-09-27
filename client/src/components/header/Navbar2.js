@@ -36,12 +36,13 @@ import NotifyModal from '../NotifyModal';
 import LanguageSelectorpc from '../LanguageSelectorpc';
 import ActivateButton from '../../auth/ActivateButton';
 import VerifyModal from '../authAndVerify/VerifyModal';
- 
+
 import Modalsearchhome from './Modalsearchhome';
 import DesactivateModal from '../authAndVerify/DesactivateModal';
 import MultiCheckboxModal from './MultiCheckboxModal.';
-import ShareAppModal from '../shareAppModal';
  
+import ShareAppModal from '../shareAppModal';
+
 const Navbar2 = ({ onFiltersChange }) => {
   const { auth, theme, cart, notify, settings } = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -72,6 +73,7 @@ const Navbar2 = ({ onFiltersChange }) => {
   const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
   const [showFeaturesModal, setShowFeaturesModal] = useState(false);
+ 
   const [showNotifyDropdown, setShowNotifyDropdown] = useState(false);
 
   const notifyDropdownRef = useRef(null);
@@ -312,10 +314,10 @@ const Navbar2 = ({ onFiltersChange }) => {
                       </NavDropdown.Item>
                     )}
 
-                  
-<NavDropdown.Item as={Link} to="/encargos">
+
+                    <NavDropdown.Item as={Link} to="/encargos">
                       <FaEnvelope className="me-2" />
-                     encargos
+                      encargos
                     </NavDropdown.Item>
 
 
@@ -339,7 +341,7 @@ const Navbar2 = ({ onFiltersChange }) => {
                       Compartir Aplicación
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item as={Link} to="/roles">
+                    <NavDropdown.Item as={Link} to="/users/roles">
                       <FaTools className="me-2" />
                       {t('roles')}
                     </NavDropdown.Item>
@@ -351,9 +353,16 @@ const Navbar2 = ({ onFiltersChange }) => {
                           <FaShieldAlt className="me-2" />
                           {t('adminPanel')}
                         </NavDropdown.Header>
-                        <NavDropdown.Item onClick={() => setShowFeaturesModal(true)}>
+
+                        <NavDropdown.Item as={Link} to="/users/privacidad">
+                          ⚙️  Ajestes de privacidad 
+                        </NavDropdown.Item>
+                        
+                         <NavDropdown.Item onClick={() => setShowFeaturesModal(true)}>
                           ⚙️ Configuración global
                         </NavDropdown.Item>
+
+
                         <NavDropdown.Item as={Link} to="/blog">
                           <FaBlog className="me-2" />
                           {t('blog')}
@@ -431,10 +440,10 @@ const Navbar2 = ({ onFiltersChange }) => {
                     </NavDropdown.Item>
 
                     <NavDropdown.Item onClick={() => setShowShareModal(true)}>
-                  <FaShareAlt className="me-2" />
-                  Compartir Aplicación
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
+                      <FaShareAlt className="me-2" />
+                      Compartir Aplicación
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
 
                   </>
                 )}
@@ -515,10 +524,10 @@ const Navbar2 = ({ onFiltersChange }) => {
           setShowAdvancedSearch(false);
 
         }}
-        style={{ 
-          position: 'fixed', 
-          top: '0', 
-          left: '0', 
+        style={{
+          position: 'fixed',
+          top: '0',
+          left: '0',
           zIndex: 9999,
           marginTop: '50px'
         }}
@@ -771,9 +780,9 @@ const Navbar2 = ({ onFiltersChange }) => {
         title={t('auth.accountDeactivated')}
         message={t('auth.contactAdmin')}
         actionText={t('auth.contactUs')}
-        actionLink="/contact"
+        actionLink="/users/contactt"
       />
-
+ 
       <MultiCheckboxModal
         show={showFeaturesModal}
         onClose={() => setShowFeaturesModal(false)}

@@ -31,6 +31,13 @@ class APIfeatures {
   }
 }
 const userCtrl = {
+
+
+  
+
+
+
+
   contactForActivation: async (req, res) => {
     try {
       const { message, lang } = req.body;
@@ -761,10 +768,9 @@ deleteUser: async (req, res) => {
     } finally {
       session.endSession();
     }
-  }
+  },
 
-
-
+  
 
 
 }

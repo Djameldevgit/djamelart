@@ -1,0 +1,26 @@
+{
+  "works": {
+    "retratos": {
+      "retrato01": {
+        "title": "Retrato Clásico",
+        "description": "Retrato realista con técnica clásica de óleo",
+        "image": "/images/galeria/retratos/retrato01.jpg",
+        "videoUrl": "https://www.youtube.com/embed/ejemplo1"
+      },
+      "retrato02": {
+        "title": "Retrato de una Mujer",
+        "description": "Retrato realista con técnica óleo sobre lienzo",
+        "image": "/images/galeria/retratos/retrato02.jpg",
+        "videoUrl": "https://www.youtube.com/embed/ejemplo2"
+      }
+    },
+    "paisajes": {
+      "paisaje01": {
+        "title": "Paisaje Montañoso",
+        "description": "Paisaje natural con efectos de luz matutina",
+        "image": "/images/galeria/paisajes/paisaje01.jpg",
+        "videoUrl": "https://www.youtube.com/embed/ejemplo3"
+      }
+    }
+  }
+}

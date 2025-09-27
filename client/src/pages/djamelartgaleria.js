@@ -1,7 +1,7 @@
 import React from 'react'
 import Galeriaaa from '../components/encargosss/Galeriaaa'
 
-const encargosgaleria = () => {
+const djamelartgaleria = () => {
   return (
     <div>
       <Galeriaaa/>
@@ -9,4 +9,4 @@ const encargosgaleria = () => {
   )
 }
 
-export default encargosgaleria
+export default djamelartgaleria

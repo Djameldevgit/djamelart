@@ -47,6 +47,8 @@ import Navbar2 from './components/header/Navbar2'
 import Accordionn from './pages/Accordionn'
 import Bloqueos from './pages/bloqueos'
 import { getSettings } from './redux/actions/settingsAction';
+import video from './pages/video';
+import { getPrivacySettings } from './redux/actions/privacyAction';
 
 
 
@@ -77,11 +79,12 @@ function App() {
       localStorage.setItem('language', language); // ✅ persistencia
     }
   }, [language]);
-  
+ 
   useEffect(() => {
     dispatch(getSettings());
     dispatch(getPosts())//EHECUTAR LAS ACCIONES GETUSER Y GETUSERSACTION EN SUS PROPIOS COMPONENTE
     if (auth.token) {
+      dispatch(getPrivacySettings((auth.token)))
       dispatch(getCart((auth.token)))
       dispatch(getOrders((auth.token)))
       dispatch(getUsers(auth.token))
@@ -164,18 +167,31 @@ function App() {
           {auth.token && <SocketClient />}
 
           <Switch>
-            <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/bloginfo" component={Accordionn} />
+  {/* públicas */}
+  <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
+  <Route exact path="/register" component={Register} />
+  <Route exact path="/login" component={Login} />
+  <Route exact path="/bloginfo" component={Accordionn} />
+  <Route exact path="/video/:obraId" component={video} />
+  <Route exact path="/forgot_password" component={ForgotPassword} />
+  <Route path="/user/reset/:token" component={ResetPassword} exact />
+  <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />
 
-            <Route exact path="/forgot_password" component={ForgotPassword} />
-            <Route path="/user/reset/:token" component={ResetPassword} exact />
+  {/* privadas específicas */}
+  <PrivateRouter exact path="/users/roles" component={PageRender} />
+  <PrivateRouter exact path="/users/contactt" component={PageRender} />
+  <PrivateRouter exact path="/users/bloqueados" component={PageRender} />
+  
 
-            <Route path="/user/activate/:activation_token" component={auth.token ? ActivatePage : Login} exact />*/
+  {/* privadas genéricas */}
+  <PrivateRouter exact path="/:page/:id/:tab" component={PageRender} />
+  <PrivateRouter exact path="/:page/:id" component={PageRender} />
+  <PrivateRouter exact path="/:page" component={PageRender} />
+ 
 
-            <PrivateRouter exact path="/:page" component={PageRender} />
-            <PrivateRouter exact path="/:page/:id" component={PageRender} />
+
+
+
           </Switch>
         </div>
       </div>

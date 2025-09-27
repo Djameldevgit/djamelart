@@ -1,7 +1,7 @@
 import React from 'react'
 import DetailVideo from '../components/encargosss/DetailVideo'
 
-const detailvideos = () => {
+const video = () => {
   return (
     <div>
       <DetailVideo/>
@@ -9,4 +9,4 @@ const detailvideos = () => {
   )
 }
 
-export default detailvideos
+export default video

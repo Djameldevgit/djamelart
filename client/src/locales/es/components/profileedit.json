@@ -1,0 +1,23 @@
+{
+    "editProfile": "Editar Perfil",
+    "updatePersonalInfo": "Actualiza tu información personal",
+    "backToProfile": "Volver al Perfil",
+    "changeAvatarHint": "Haz clic en la cámara para cambiar tu foto de perfil",
+    "mobile": "Teléfono Móvil",
+    "mobilePlaceholder": "Ingresa tu número de teléfono",
+    "address": "Dirección",
+    "addressPlaceholder": "Ingresa tu dirección",
+    "website": "Sitio Web",
+    "websitePlaceholder": "Ingresa tu sitio web",
+    "bio": "Biografía",
+    "bioPlaceholder": "Cuéntanos algo sobre ti...",
+    "gender": "Género",
+    "male": "Masculino",
+    "female": "Femenino",
+    "other": "Otro",
+    "characters": "caracteres",
+    "saveChanges": "Guardar Cambios",
+    "saving": "Guardando...",
+    "cancel": "Cancelar",
+    "accessDenied": "No tienes permisos para editar este perfil"
+  }

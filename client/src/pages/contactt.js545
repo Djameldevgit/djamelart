@@ -4,7 +4,7 @@ import Contact from '../components/adminitration/Contact'
 const contactt = () => {
   return (
     <div> 
-<Contact/>
+<Contact />
 
     </div>
   )

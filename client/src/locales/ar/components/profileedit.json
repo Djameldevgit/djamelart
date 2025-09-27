@@ -1,0 +1,23 @@
+{
+    "editProfile": "تعديل الملف الشخصي",
+    "updatePersonalInfo": "قم بتحديث معلوماتك الشخصية",
+    "backToProfile": "العودة إلى الملف الشخصي",
+    "changeAvatarHint": "انقر على الكاميرا لتغيير صورة ملفك الشخصي",
+    "mobile": "الهاتف المحمول",
+    "mobilePlaceholder": "أدخل رقم هاتفك",
+    "address": "العنوان",
+    "addressPlaceholder": "أدخل عنوانك",
+    "website": "الموقع الإلكتروني",
+    "websitePlaceholder": "أدخل موقعك الإلكتروني",
+    "bio": "السيرة الذاتية",
+    "bioPlaceholder": "أخبرنا شيئاً عن نفسك...",
+    "gender": "الجنس",
+    "male": "ذكر",
+    "female": "أنثى",
+    "other": "آخر",
+    "characters": "حرف",
+    "saveChanges": "حفظ التغييرات",
+    "saving": "جاري الحفظ...",
+    "cancel": "إلغاء",
+    "accessDenied": "ليس لديك صلاحية لتعديل هذا الملف الشخصي"
+  }

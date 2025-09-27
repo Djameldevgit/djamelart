@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Badge, Form, Modal } from 'react-bootstrap';
-import { FaSearch, FaPalette, FaEye, FaCopy } from 'react-icons/fa';
+import { FaSearch, FaPalette, FaEye, FaCopy, FaPlayCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
- 
-// Importar el JSON de obras - RUTA RELATIVA desde la misma carpeta
+
+// Importar el JSON de obras
 import obrasData from './obrasData.json';
- 
+
 const Galeriaaa = () => {
   const [selectedTheme, setSelectedTheme] = useState('todos');
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,7 +19,6 @@ const Galeriaaa = () => {
   const { t, i18n } = useTranslation('galeria');
   const { languageReducer } = useSelector(state => state);
   
-  // Cambiar el idioma activamente si es diferente
   const lang = languageReducer?.language || 'es';
   
   useEffect(() => {
@@ -27,32 +27,36 @@ const Galeriaaa = () => {
     }
   }, [lang, i18n]);
 
-  // Procesar las obras con las traducciones
-  // Procesar las obras con las traducciones
-useEffect(() => {
-  // Convertir el objeto de obras en un array
-  const obrasArray = [];
-  
-  if (obrasData.works) {
-    Object.keys(obrasData.works).forEach(theme => {
-      Object.keys(obrasData.works[theme]).forEach(obraKey => {
-        const obra = obrasData.works[theme][obraKey];
-        obrasArray.push({
-          id: `${theme}-${obraKey}`,
-          title: t(`works.${theme}.${obraKey}.title`, { defaultValue: obra.title }),
-          theme: theme,
-          technique: t('techniques.oil', { defaultValue: "Óleo sobre lienzo" }),
-          image: obra.image || `/images/${obraKey}.jpg`, // Ajusta según tus imágenes
-          description: t(`works.${theme}.${obraKey}.description`, { defaultValue: obra.description })
+  // Procesar las obras con las traducciones - CORREGIDO
+  useEffect(() => {
+    const obrasArray = [];
+    
+    if (obrasData.works) {
+      Object.keys(obrasData.works).forEach(theme => {
+        Object.keys(obrasData.works[theme]).forEach(obraKey => {
+          const obra = obrasData.works[theme][obraKey];
+          obrasArray.push({
+            id: `${theme}-${obraKey}`,
+            title: t(`works.${theme}.${obraKey}.title`, { defaultValue: obra.title }),
+            theme: theme,
+            technique: t('techniques.oil', { defaultValue: "Óleo sobre lienzo" }),
+            image: obra.image || `/images/${obraKey}.jpg`,
+            videoUrl: obra.videoUrl, // Añadir videoUrl
+            description: t(`works.${theme}.${obraKey}.description`, { defaultValue: obra.description })
+          });
         });
       });
-    });
-  }
-  
-  setObras(obrasArray);
-}, [t, lang]);
+    }
+    
+    setObras(obrasArray);
+  }, [t, lang]);
 
-  // Temas disponibles para filtro - Traducidos
+  // Función para verificar si tiene video
+  const hasVideo = (obra) => {
+    return obra && obra.videoUrl;
+  };
+
+  // Temas disponibles para filtro
   const temas = [
     { value: 'todos', label: t('filters.all', { defaultValue: '🎨 Todos los Temas' }) },
     { value: 'retratos', label: t('filters.retratos', { defaultValue: '👤 Retratos' }) },
@@ -65,13 +69,12 @@ useEffect(() => {
     { value: 'oriental', label: t('filters.oriental', { defaultValue: '🎎 Pintura Oriental' }) }
   ];
 
-  // Filtrar obras - CORREGIDO el error de toLowerCase()
+  // Filtrar obras
   const filteredObras = obras.filter(obra => {
     if (!obra) return false;
     
     const matchesTheme = selectedTheme === 'todos' || obra.theme === selectedTheme;
     
-    // Verificar que las propiedades existan antes de usar toLowerCase()
     const title = obra.title || '';
     const technique = obra.technique || '';
     const description = obra.description || '';
@@ -84,7 +87,7 @@ useEffect(() => {
     return matchesTheme && matchesSearch;
   });
 
-  // Copiar referencia de obra al portapapeles - Traducido
+  // Copiar referencia
   const copyReference = (obra) => {
     if (!obra) return;
     
@@ -105,7 +108,7 @@ useEffect(() => {
       });
   };
 
-  // Abrir modal con imagen grande
+  // Abrir modal con imagen
   const openImageModal = (obra) => {
     setSelectedImage(obra);
     setShowModal(true);
@@ -187,6 +190,11 @@ useEffect(() => {
           <div className="d-flex justify-content-between align-items-center">
             <span className="text-muted">
               {t('resultsCount', { count: filteredObras.length })}
+              {filteredObras.filter(hasVideo).length > 0 && (
+                <span className="text-info ms-2">
+                  • {filteredObras.filter(hasVideo).length} con video
+                </span>
+              )}
             </span>
             {selectedTheme !== 'todos' && (
               <Button 
@@ -230,11 +238,23 @@ useEffect(() => {
                   />
                   <div className="image-overlay">
                     <FaEye size={30} className="text-white" />
+                    {hasVideo(obra) && (
+                      <div className="video-badge">
+                        <FaPlayCircle size={20} className="text-warning" />
+                      </div>
+                    )}
                   </div>
                 </div>
                 
                 <Card.Body className="d-flex flex-column">
-                  <Card.Title className="h6">{obra.title}</Card.Title>
+                  <Card.Title className="h6">
+                    {obra.title}
+                    {hasVideo(obra) && (
+                      <Badge bg="warning" text="dark" className="ms-2">
+                        🎬
+                      </Badge>
+                    )}
+                  </Card.Title>
                   
                   <div className="mb-2">
                     <Badge bg="primary" className="me-1">
@@ -243,6 +263,11 @@ useEffect(() => {
                     <Badge bg="secondary">
                       {obra.technique}
                     </Badge>
+                    {hasVideo(obra) && (
+                      <Badge bg="success" className="ms-1">
+                        Video
+                      </Badge>
+                    )}
                   </div>
                   
                   <Card.Text className="small text-muted flex-grow-1">
@@ -250,14 +275,30 @@ useEffect(() => {
                   </Card.Text>
                   
                   <div className="d-grid gap-2">
-                    <Button 
-                      variant="outline-primary" 
-                      size="sm"
-                      onClick={() => openImageModal(obra)}
-                    >
-                      <FaEye className="me-1" />
-                      {t('viewDetails')}
-                    </Button>
+                    <div className="d-flex gap-2">
+                      <Button 
+                        variant="outline-primary" 
+                        size="sm"
+                        onClick={() => openImageModal(obra)}
+                        className="flex-fill"
+                      >
+                        <FaEye className="me-1" />
+                        {t('viewDetails')}
+                      </Button>
+                      
+                      {hasVideo(obra) && (
+                        <Button 
+                          variant="outline-info" 
+                          size="sm"
+                          as={Link}
+                          to={`/video/${obra.id}`}
+                          className="flex-fill"
+                        >
+                          <FaPlayCircle className="me-1" />
+                          Ver Video
+                        </Button>
+                      )}
+                    </div>
                     
                     <Button 
                       variant="success" 
@@ -289,10 +330,17 @@ useEffect(() => {
         )}
       </Row>
 
-      {/* Modal para imagen ampliada - Traducido */}
+      {/* Modal para imagen ampliada */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>{selectedImage?.title}</Modal.Title>
+          <Modal.Title>
+            {selectedImage?.title}
+            {selectedImage && hasVideo(selectedImage) && (
+              <Badge bg="info" className="ms-2">
+                🎬 Video Disponible
+              </Badge>
+            )}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body className="text-center">
           <img 
@@ -305,6 +353,22 @@ useEffect(() => {
             <p><strong>{t('theme')}:</strong> {t(`themes.${selectedImage?.theme}`, { defaultValue: selectedImage?.theme })}</p>
             <p><strong>{t('technique')}:</strong> {selectedImage?.technique}</p>
             <p><strong>{t('description')}:</strong> {selectedImage?.description}</p>
+            
+            {selectedImage && hasVideo(selectedImage) && (
+              <div className="mt-3 p-3 bg-light rounded">
+                <h6>🎬 Video Demostrativo Disponible</h6>
+                <Button 
+                  as={Link} 
+                  to={`/video/${selectedImage.id}`}
+                  variant="info" 
+                  size="sm"
+                  onClick={() => setShowModal(false)}
+                >
+                  <FaPlayCircle className="me-1" />
+                  Ver Video Demo
+                </Button>
+              </div>
+            )}
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -360,6 +424,19 @@ useEffect(() => {
           
           .card-image-container:hover .image-overlay {
             opacity: 1;
+          }
+          
+          .video-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
         `}
       </style>
