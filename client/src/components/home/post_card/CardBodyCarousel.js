@@ -5,11 +5,13 @@ import { likePost, unLikePost, savePost, unSavePost } from '../../../redux/actio
 import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import ShareModal from '../../ShareModal';
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
 import moment from 'moment';
+import Avatar from '../../Avatar';
+ 
 const CardBodyCarousel = ({ post }) => {
   const { languageReducer, auth, socket } = useSelector((state) => state);
   const [isLike, setIsLike] = useState(false);
@@ -208,6 +210,20 @@ const CardBodyCarousel = ({ post }) => {
               alignItems: "center",
               gap: "15px"
             }}>
+<div className="d-flex">
+               
+
+                <div className="card_name">
+                    <h6 className="m-0">
+                        <Link to={`/profile/${post.user._id}`} className="text-dark">
+                            <Avatar src={post.user.avatar} size="big-avatar" />
+                        </Link>
+                    </h6>
+                    {post.user.username}
+                </div>
+            </div>
+
+
               {/* Botón de like */}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <div

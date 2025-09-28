@@ -6,15 +6,7 @@ const privacyEnum = ['public', 'followers', 'private'];
 const userSchema = new mongoose.Schema({
   // --- PRIVACY SETTINGS ---
    
-    profile: { type: String, enum: privacyEnum, default: 'public' },
-    posts: { type: String, enum: privacyEnum, default: 'public' },
-    followers: { type: String, enum: privacyEnum, default: 'public' },
-    following: { type: String, enum: privacyEnum, default: 'public' },
-    likes: { type: String, enum: privacyEnum, default: 'public' },
-    email: { type: String, enum: privacyEnum, default: 'private' },
-    address: { type: String, enum: privacyEnum, default: 'private' },
-    mobile: { type: String, enum: privacyEnum, default: 'private' },
- 
+   
 
   // --- DATOS BÁSICOS ---
   username: {
@@ -54,6 +46,7 @@ const userSchema = new mongoose.Schema({
     enum: ['Utilisateur-No-authentifié', 'user', 'Super-utilisateur', 'moderador', 'admin'],
     default: 'user'
   },
+ presentacion: { type: String, default: '', maxlength: 130 },
   mobile: { type: String, default: '' },
   address: { type: String, default: '' },
   story: { type: String, default: '', maxlength: 200 },

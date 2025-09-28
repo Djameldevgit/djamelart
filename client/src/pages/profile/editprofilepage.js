@@ -10,10 +10,10 @@ import { ArrowLeft } from 'react-bootstrap-icons'
 
 const EditProfilePage = () => {
     const initState = {
-        mobile: '', address: '', website: '', story: '', gender: ''
+        presentacion: '',  mobile: '', address: '', website: '', story: '' 
     }
     const [userData, setUserData] = useState(initState)
-    const { mobile, address, website, story, gender } = userData
+    const {presentacion, mobile, address, website, story  } = userData
 
     const [avatar, setAvatar] = useState('')
     const [loading, setLoading] = useState(false)
@@ -63,9 +63,9 @@ const EditProfilePage = () => {
     const handleSubmit = async e => {
         e.preventDefault()
         setLoading(true)
-        
+
         await dispatch(updateProfileUser({ userData, avatar, auth }))
-        
+
         setLoading(false)
         // Redirigir al perfil después de guardar
         history.push(`/profile/${id}`)
@@ -84,8 +84,8 @@ const EditProfilePage = () => {
 
     if (auth.user._id !== id) {
         return (
-            <Container 
-                className="d-flex justify-content-center align-items-center" 
+            <Container
+                className="d-flex justify-content-center align-items-center"
                 style={{ minHeight: '60vh', ...containerStyle }}
             >
                 <div className="text-center">
@@ -103,8 +103,8 @@ const EditProfilePage = () => {
             {/* Header */}
             <Row className="mb-4">
                 <Col>
-                    <Button 
-                        variant="outline-secondary" 
+                    <Button
+                        variant="outline-secondary"
                         onClick={handleBack}
                         className="d-flex align-items-center"
                     >
@@ -125,28 +125,28 @@ const EditProfilePage = () => {
                                 {/* Avatar */}
                                 <div className="text-center mb-4">
                                     <div className="position-relative d-inline-block">
-                                        <img 
-                                            src={avatar ? URL.createObjectURL(avatar) : auth.user.avatar} 
-                                            alt="avatar" 
+                                        <img
+                                            src={avatar ? URL.createObjectURL(avatar) : auth.user.avatar}
+                                            alt="avatar"
                                             className="rounded-circle"
-                                            style={{ 
-                                                width: '150px', 
-                                                height: '150px', 
+                                            style={{
+                                                width: '150px',
+                                                height: '150px',
                                                 objectFit: 'cover',
                                                 filter: theme ? 'invert(1)' : 'invert(0)'
-                                            }} 
+                                            }}
                                         />
-                                        <label 
+                                        <label
                                             htmlFor="avatar-upload"
                                             className="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 cursor-pointer"
                                             style={{ cursor: 'pointer' }}
                                         >
                                             <i className="fas fa-camera" />
                                         </label>
-                                        <input 
-                                            type="file" 
+                                        <input
+                                            type="file"
                                             id="avatar-upload"
-                                            accept="image/*" 
+                                            accept="image/*"
                                             onChange={changeAvatar}
                                             style={{ display: 'none' }}
                                         />
@@ -156,36 +156,53 @@ const EditProfilePage = () => {
                                     </div>
                                 </div>
 
-                                {/* Campos del formulario */}
+
                                 <Form.Group className="mb-3">
-                                    <Form.Label>{t('mobile')}</Form.Label>
-                                    <Form.Control 
-                                        type="text" 
-                                        name="mobile" 
-                                        value={mobile || ''}
+                                    <Form.Label>{t('presentacion')}</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={2}
+                                        name="presentacion"
+                                        value={presentacion || ''}
                                         onChange={handleInput}
-                                        placeholder={t('mobilePlaceholder')}
+                                        placeholder={t('presentacion')}
+                                        maxLength={200}
                                         dir={isRTL ? "rtl" : "ltr"}
+                                        style={{ textAlign: isRTL ? 'right' : 'left' }}
                                     />
+                                    <Form.Text className="text-muted">
+                                        {presentacion?.length || 0}/150 {t('characters')}
+                                    </Form.Text>
                                 </Form.Group>
 
                                 <Form.Group className="mb-3">
                                     <Form.Label>{t('address')}</Form.Label>
-                                    <Form.Control 
-                                        type="text" 
-                                        name="address" 
+                                    <Form.Control
+                                        type="text"
+                                        name="address"
                                         value={address || ''}
                                         onChange={handleInput}
                                         placeholder={t('addressPlaceholder')}
                                         dir={isRTL ? "rtl" : "ltr"}
                                     />
                                 </Form.Group>
-
+                                {/* Campos del formulario */}
+                                <Form.Group className="mb-3">
+                                    <Form.Label>{t('mobile')}</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="mobile"
+                                        value={mobile || ''}
+                                        onChange={handleInput}
+                                        placeholder={t('mobilePlaceholder')}
+                                        dir={isRTL ? "rtl" : "ltr"}
+                                    />
+                                </Form.Group>
                                 <Form.Group className="mb-3">
                                     <Form.Label>{t('website')}</Form.Label>
-                                    <Form.Control 
-                                        type="text" 
-                                        name="website" 
+                                    <Form.Control
+                                        type="text"
+                                        name="website"
                                         value={website || ''}
                                         onChange={handleInput}
                                         placeholder={t('websitePlaceholder')}
@@ -195,10 +212,10 @@ const EditProfilePage = () => {
 
                                 <Form.Group className="mb-3">
                                     <Form.Label>{t('bio')}</Form.Label>
-                                    <Form.Control 
-                                        as="textarea" 
+                                    <Form.Control
+                                        as="textarea"
                                         rows={4}
-                                        name="story" 
+                                        name="story"
                                         value={story || ''}
                                         onChange={handleInput}
                                         placeholder={t('bioPlaceholder')}
@@ -211,31 +228,18 @@ const EditProfilePage = () => {
                                     </Form.Text>
                                 </Form.Group>
 
-                                <Form.Group className="mb-4">
-                                    <Form.Label>{t('gender')}</Form.Label>
-                                    <Form.Select 
-                                        name="gender" 
-                                        value={gender || ''}
-                                        onChange={handleInput}
-                                        style={{ textAlign: isRTL ? 'right' : 'left' }}
-                                    >
-                                        <option value="male">{t('male')}</option>
-                                        <option value="female">{t('female')}</option>
-                                        <option value="other">{t('other')}</option>
-                                    </Form.Select>
-                                </Form.Group>
 
                                 <div className="d-grid gap-2">
-                                    <Button 
-                                        variant="primary" 
-                                        type="submit" 
+                                    <Button
+                                        variant="primary"
+                                        type="submit"
                                         size="lg"
                                         disabled={loading}
                                     >
                                         {loading ? t('saving') : t('saveChanges')}
                                     </Button>
-                                    <Button 
-                                        variant="outline-secondary" 
+                                    <Button
+                                        variant="outline-secondary"
                                         onClick={handleBack}
                                     >
                                         {t('cancel')}
