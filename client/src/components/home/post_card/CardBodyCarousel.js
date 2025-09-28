@@ -11,7 +11,7 @@ import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
 import moment from 'moment';
 import Avatar from '../../Avatar';
- 
+
 const CardBodyCarousel = ({ post }) => {
   const { languageReducer, auth, socket } = useSelector((state) => state);
   const [isLike, setIsLike] = useState(false);
@@ -148,14 +148,14 @@ const CardBodyCarousel = ({ post }) => {
             <div style={{
               position: "absolute",
               top: "10px",
-              left: "10px",
+              left: "3px",
               zIndex: 2,
-              backgroundColor: "rgba(0, 0, 0, 0.6)",
+            
               color: "white",
               padding: "4px 8px",
               borderRadius: "12px",
-              fontSize: "12px",
-              fontWeight: "500"
+              fontSize: "10px",
+              fontWeight: "50"
             }}>
               <small className="textmuted">
                 <span className="mr-1"><i className='far fa-clock'></i>  </span>
@@ -171,9 +171,9 @@ const CardBodyCarousel = ({ post }) => {
               left: "0",    // Cambiado a 0 para que empiece desde el borde izquierdo
               right: "0",   // Añadido para que llegue hasta el borde derecho
               zIndex: 2,
-              
+
               color: "white",
-              backgroundColor: "rgba(0, 0, 0, 0.6)",  // Fondo más oscuro para mejor contraste
+              backgroundColor: "rgba(0, 0, 0, 0.2)",  // Fondo más oscuro para mejor contraste
               padding: "4px",  // Aumentado el padding
               backdropFilter: "blur(5px)",  // Efecto de desenfoque
             }}>
@@ -203,25 +203,25 @@ const CardBodyCarousel = ({ post }) => {
             <div style={{
               position: "absolute",
               right: "10px",
-              bottom: "60px",
+              bottom: "50px",
               zIndex: 2,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: "15px"
+              gap: "10px"
             }}>
-<div className="d-flex">
-               
+              <div className="d-flex">
+
 
                 <div className="card_name">
-                    <h6 className="m-0">
-                        <Link to={`/profile/${post.user._id}`} className="text-dark">
-                            <Avatar src={post.user.avatar} size="big-avatar" />
-                        </Link>
-                    </h6>
-                    {post.user.username}
+                  <h6 className="m-0">
+                    <Link to={`/profile/${post.user._id}`} className="text-dark">
+                      <Avatar src={post.user.avatar} size="big-avatar" />
+                    </Link>
+                  </h6>
+
                 </div>
-            </div>
+              </div>
 
 
               {/* Botón de like */}
@@ -233,6 +233,7 @@ const CardBodyCarousel = ({ post }) => {
                     borderRadius: "50%",
                     padding: "8px",
                     display: "flex",
+                   
                     alignItems: "center",
                     justifyContent: "center",
                     opacity: loadLike ? 0.7 : 1,
@@ -255,7 +256,7 @@ const CardBodyCarousel = ({ post }) => {
                   fontSize: "12px",
                   fontWeight: "bold",
                   color: "white",
-                  marginTop: "4px",
+                  marginTop: "0px",
                   textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
                 }}>
                   {post.likes.length}
@@ -339,7 +340,7 @@ const CardBodyCarousel = ({ post }) => {
                   fontSize: "12px",
                   fontWeight: "bold",
                   color: "white",
-                  marginTop: "4px",
+                  marginTop: "0px",
                   textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
                 }}>
                   {post.views || 0}

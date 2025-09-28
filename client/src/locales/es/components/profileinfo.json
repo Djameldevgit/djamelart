@@ -1,10 +1,24 @@
 {
-    "profilePrivate": "Perfil Privado",
-    "profileNotAccessible": "Este perfil no está disponible para su visualización",
-    "loginToView": "Iniciar sesión para ver",
-    "followersPrivate": "Los seguidores son privados",
-    "followingPrivate": "Los seguidos son privados", 
-    "postsPrivate": "Las publicaciones son privadas",
-    "likesPrivate": "Los likes son privados",
-    "privacyControlled": "Controlado por privacidad"
+    
+   
+      "loadingProfile": "Cargando perfil...",
+      "profilePrivate": "Perfil privado",
+      "profileNotAccessible": "Este perfil no está disponible debido a la configuración de privacidad.",
+      "loginToView": "Inicia sesión para ver el perfil",
+      "editProfile": "Editar perfil",
+      "followers": "Seguidores",
+      "followersPrivate": "Los seguidores son privados",
+      "following": "Siguiendo",
+      "followingPrivate": "La lista de seguidos es privada",
+      "posts": "Publicaciones",
+      "postsPrivate": "Las publicaciones son privadas",
+      "likes": "Me gusta",
+      "likesPrivate": "Los me gusta son privados",
+      "biography": "Biografía",
+      "contactInfo": "Información de contacto",
+      "privacyControlled": "Controlado por privacidad",
+      "links": "Enlaces"
+    
+    
+
   }

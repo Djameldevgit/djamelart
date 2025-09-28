@@ -75,13 +75,16 @@
           "title": "Retrato de una Mujer", 
         "description": "Retrato realista con técnica óleo sobre lienzo",
         "image": "/images/galeria/retratos/retrato02.jpg",
-        "videoUrl": "/videos/retrato02.mp4",
+        "videoUrl": "/videos/retratos-retrato02.mp4",
         "videoDescription": "Técnicas avanzadas de retrato realista"
         },
         "retrato03": {
           "title": "Retrato Feminino",
           "description": "Retrato realista con técnica óleo sobre lienzo",
-          "image": "/images/galeria/retratos/retrato03.jpg"
+          "image": "/images/galeria/retratos/retrato03.jpg",
+          "videoUrl": "/videos/retratos-retrato03.mp4",
+          "videoDescription": "Técnicas avanzadas de retrato realista"
+
         },
         "retrato04": {
           "title": "Retrato de Bailarinas",
