@@ -85,14 +85,7 @@ const CardHeader = ({ post }) => {
   const shareTitle = `🎨 Obra de arte por ${post.user.username}: "${post.content?.substring(0, 80)}..." - Mira más en Tassili Art`;
 
   // Texto específico para TikTok/Instagram
-  const socialMediaText = `🎨 ¡Mira esta obra de arte en Tassili Art! 
-Por: ${post.user.username}
-"${post.content?.substring(0, 100)}..."
-👉 ${shareUrl}
-
-#Arte #TassiliArt #${post.user.username.replace(/\s/g, '')}`;
-
-  // Para Pinterest
+ 
   const imageUrl = post.images?.[0]?.url || post.user.avatar;
 
   const handleAprove = () => {
@@ -314,7 +307,7 @@ Por: ${post.user.username}
             )}
 
             <CopyToClipboard
-              text={socialMediaText}
+             
               onCopy={() => {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
@@ -342,7 +335,7 @@ Por: ${post.user.username}
             </CopyToClipboard>
 
             <CopyToClipboard
-              text={socialMediaText}
+           
               onCopy={() => {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
@@ -386,7 +379,7 @@ Por: ${post.user.username}
             <Form.Control
               as="textarea"
               rows={3}
-              value={socialMediaText}
+        
               readOnly
               style={{
                 direction: 'ltr',
@@ -396,7 +389,7 @@ Por: ${post.user.username}
               className="mb-2"
             />
             <CopyToClipboard
-              text={socialMediaText}
+          
               onCopy={() => {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);

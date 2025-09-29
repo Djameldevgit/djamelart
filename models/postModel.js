@@ -53,9 +53,10 @@ const postSchema = new mongoose.Schema({
     type: String,
 
   },
-
+ 
+  
   price: {
-    type: String,
+    type: Number,
     trim: true,
     maxlength: 20,
     required: true

@@ -1,0 +1,290 @@
+// SearchPage.jsx
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getDataAPI } from "../utils/fetchData";
+import { GLOBALTYPES } from "../redux/actions/globalTypes";
+import UserCard from "../components/UserCard";
+import Posts from "../components/home/Posts";
+
+import {
+  Container,
+  Form,
+  Button,
+  Spinner,
+  Alert,
+  ListGroup,
+  InputGroup,
+  Row,
+  Col,
+} from "react-bootstrap";
+
+import LoadIcon from "../images/loading.gif";
+
+export default function SearchPage() {
+  const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState({
+    painting: false,
+    sculpture: false,
+    photography: false,
+    drawing: false,
+    engraving: false,
+    digital_art: false,
+    collage: false,
+    textile_art: false,
+  });
+
+  const [theme, setTheme] = useState("");
+  const [style, setStyle] = useState("");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [wilaya, setWilaya] = useState("");
+
+  // 🔹 toggles para mostrar/ocultar secciones
+  const [showCategories, setShowCategories] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [error, setError] = useState(null);
+
+  const [users, setUsers] = useState([]);
+  const [userLoading, setUserLoading] = useState(false);
+
+  const { auth } = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+  // 🔹 Buscar posts
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const query = {
+        title: search || "",
+        theme,
+        style,
+        priceMin,
+        priceMax,
+        wilaya,
+        ...Object.fromEntries(
+          Object.entries(categories).map(([key, value]) => [key, value])
+        ),
+        page: 1,
+      };
+
+      const res = await getDataAPI("posts", auth.token, query);
+      setFilteredPosts(res.data.posts || []);
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message || err.message || "Error en la búsqueda"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔹 Buscar usuarios en vivo
+  const handleUserSearch = async (value) => {
+    setSearch(value);
+    if (!value) {
+      setUsers([]);
+      return;
+    }
+
+    try {
+      setUserLoading(true);
+      const res = await getDataAPI(`search?username=${value}`, auth.token);
+      setUsers(res.data.users);
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: err.response?.data?.msg || "Error al buscar usuarios" },
+      });
+    } finally {
+      setUserLoading(false);
+    }
+  };
+
+  const handleCloseUsers = () => {
+    setUsers([]);
+  };
+
+  return (
+    <Container className="py-4">
+      <h3>Buscar</h3>
+
+      {/* Search Form */}
+      <Form onSubmit={handleSearch} className="position-relative">
+        {/* 🔹 Título */}
+        <Form.Group className="mb-3" controlId="search">
+          <Form.Label>Buscar por título o palabra clave</Form.Label>
+          <InputGroup>
+            <Form.Control
+              type="text"
+              placeholder="Ej: paisaje / retrato"
+              value={search}
+              onChange={(e) => handleUserSearch(e.target.value)}
+            />
+            {search && (
+              <Button variant="outline-secondary" onClick={handleCloseUsers}>
+                ×
+              </Button>
+            )}
+          </InputGroup>
+        </Form.Group>
+
+        {/* 🔹 Dropdown usuarios */}
+        {search && users.length > 0 && (
+          <ListGroup
+            className="position-absolute w-100 shadow mt-1"
+            style={{
+              zIndex: 1000,
+              borderRadius: "0.5rem",
+              maxHeight: "250px",
+              overflowY: "auto",
+            }}
+          >
+            {userLoading && (
+              <ListGroup.Item className="text-center">
+                <Spinner animation="border" size="sm" /> Buscando...
+              </ListGroup.Item>
+            )}
+            {users.map((user) => (
+              <ListGroup.Item key={user._id} action className="p-2">
+                <UserCard
+                  user={user}
+                  border="border-0"
+                  handleClose={handleCloseUsers}
+                />
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        )}
+
+        {/* 🔹 Toggle categorías */}
+        <Form.Group className="mb-3">
+          <Form.Label onClick={() => setShowCategories(!showCategories)} style={{ cursor: "pointer" }}>
+            Categorías {showCategories ? "▲" : "▼"}
+          </Form.Label>
+          {showCategories && (
+            <div className="row border rounded p-2">
+              {Object.keys(categories).map((cat) => (
+                <div className="col-6 col-md-4" key={cat}>
+                  <Form.Check
+                    type="checkbox"
+                    id={cat}
+                    name={cat}
+                    label={cat.replace("_", " ")}
+                    checked={categories[cat]}
+                    onChange={(e) =>
+                      setCategories((prev) => ({
+                        ...prev,
+                        [e.target.name]: e.target.checked,
+                      }))
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </Form.Group>
+
+        {/* 🔹 Toggle búsqueda avanzada */}
+        <Form.Group className="mb-3">
+          <Form.Label onClick={() => setShowAdvanced(!showAdvanced)} style={{ cursor: "pointer" }}>
+            Búsqueda avanzada {showAdvanced ? "▲" : "▼"}
+          </Form.Label>
+          {showAdvanced && (
+            <div className="border rounded p-3">
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Tema</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Ej: naturaleza, abstracto"
+                      value={theme}
+                      onChange={(e) => setTheme(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Estilo</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Ej: realismo, moderno"
+                      value={style}
+                      onChange={(e) => setStyle(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Precio mínimo</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="Ej: 50"
+                      value={priceMin}
+                      onChange={(e) => setPriceMin(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Precio máximo</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="Ej: 500"
+                      value={priceMax}
+                      onChange={(e) => setPriceMax(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Form.Group className="mb-3">
+                <Form.Label>Wilaya</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ej: Alger, Oran..."
+                  value={wilaya}
+                  onChange={(e) => setWilaya(e.target.value)}
+                />
+              </Form.Group>
+            </div>
+          )}
+        </Form.Group>
+
+        <Button type="submit" disabled={loading}>
+          {loading ? (
+            <>
+              <Spinner animation="border" size="sm" /> Buscando...
+            </>
+          ) : (
+            "Buscar"
+          )}
+        </Button>
+      </Form>
+
+      <hr />
+
+      {error && <Alert variant="danger">{error}</Alert>}
+
+      {/* Posts List */}
+      <div className="mt-4">
+        {loading ? (
+          <div className="text-center search-loading">
+            <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
+            <p className="mt-2">Cargando...</p>
+          </div>
+        ) : (
+          <Posts posts={filteredPosts} />
+        )}
+      </div>
+    </Container>
+  );
+}

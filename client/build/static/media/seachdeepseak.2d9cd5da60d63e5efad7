@@ -1,0 +1,373 @@
+// SearchPage.jsx
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getDataAPI } from "../utils/fetchData";
+import { GLOBALTYPES } from "../redux/actions/globalTypes";
+import UserCard from "../components/UserCard";
+import Posts from "../components/home/Posts";
+import { useTranslation } from "react-i18next";
+import {
+  Container,
+  Form,
+  Button,
+  Spinner,
+  Alert,
+  Row,
+  Col,
+  Card,
+  Accordion
+} from "react-bootstrap";
+
+import LoadIcon from "../images/loading.gif";
+
+export default function search() {
+  const { auth, languageReducer } = useSelector(state => state);
+  const { t } = useTranslation('navbar');
+  const dispatch = useDispatch();
+
+  const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState({
+    painting: false,
+    sculpture: false,
+    photography: false,
+    drawing: false,
+    engraving: false,
+    digital_art: false,
+    collage: false,
+    textile_art: false,
+  });
+  const [theme, setTheme] = useState("");
+  const [style, setStyle] = useState("");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [wilaya, setWilaya] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [error, setError] = useState(null);
+
+  const [users, setUsers] = useState([]);
+  const [userLoading, setUserLoading] = useState(false);
+
+  // 🔹 Manejar cambio de categorías
+  const handleCategoryChange = (category) => {
+    setCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+
+  // 🔹 Buscar posts
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      // Construir query según lo que espera el backend
+      const query = {
+        title: search || "",
+        theme: theme || "",
+        style: style || "",
+        wilaya: wilaya || "",
+        page: 1,
+      };
+
+      // Agregar precio si existe
+      if (priceMin) query.priceMin = priceMin;
+      if (priceMax) query.priceMax = priceMax;
+
+      // Agregar categorías seleccionadas como true
+      Object.keys(categories).forEach(category => {
+        if (categories[category]) {
+          query[category] = "true";
+        }
+      });
+
+      // ✅ Convertimos objeto en query string
+      const params = new URLSearchParams();
+      Object.entries(query).forEach(([key, value]) => {
+        if (value !== "" && value !== undefined && value !== false) {
+          params.append(key, value);
+        }
+      });
+
+      console.log("Search query:", query); // Para debug
+      const res = await getDataAPI(`posts?${params.toString()}`, auth.token);
+      setFilteredPosts(res.data.posts || []);
+    } catch (err) {
+      console.error("Search error:", err);
+      setError(
+        err.response?.data?.message || err.message || "Error en la búsqueda"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔹 Buscar usuarios en vivo
+  const handleUserSearch = async (value) => {
+    setSearch(value);
+    if (!value) {
+      setUsers([]);
+      return;
+    }
+
+    try {
+      setUserLoading(true);
+      const res = await getDataAPI(`search?username=${value}`, auth.token);
+      setUsers(res.data.users || []);
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: err.response?.data?.msg || "Error al buscar usuarios" },
+      });
+    } finally {
+      setUserLoading(false);
+    }
+  };
+
+  // 🔹 Resetear filtros
+  const handleReset = () => {
+    setSearch("");
+    setCategories({
+      painting: false,
+      sculpture: false,
+      photography: false,
+      drawing: false,
+      engraving: false,
+      digital_art: false,
+      collage: false,
+      textile_art: false,
+    });
+    setTheme("");
+    setStyle("");
+    setPriceMin("");
+    setPriceMax("");
+    setWilaya("");
+    setFilteredPosts([]);
+    setUsers([]);
+    setError(null);
+  };
+
+  return (
+    <Container className="py-4">
+      <h3 className="mb-4">{t("search", "Buscar")}</h3>
+
+      {/* Formulario de Búsqueda Principal */}
+      <Card className="mb-4">
+        <Card.Body>
+          <Form onSubmit={handleSearch}>
+            <Row className="gy-3">
+              {/* 🔹 Búsqueda de Usuarios */}
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>{t("searchUsers", "Buscar Usuarios")}</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder={t("searchUserPlaceholder", "Buscar usuarios...")}
+                    value={search}
+                    onChange={(e) => handleUserSearch(e.target.value)}
+                  />
+                </Form.Group>
+                
+                {/* Resultados de búsqueda de usuarios */}
+                {userLoading && (
+                  <div className="text-center mt-2">
+                    <Spinner animation="border" size="sm" />
+                  </div>
+                )}
+                
+                {users.length > 0 && (
+                  <Card className="mt-2">
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <span>{t("usersFound", "Usuarios encontrados")}</span>
+                        <Button variant="link" size="sm" onClick={() => setUsers([])}>
+                          ×
+                        </Button>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      {users.map(user => (
+                        <UserCard key={user._id} user={user} />
+                      ))}
+                    </Card.Body>
+                  </Card>
+                )}
+              </Col>
+            </Row>
+
+            <Accordion className="mt-3">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  {t("advancedFilters", "Filtros Avanzados para Posts")}
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Row className="gy-3">
+                    {/* 🔹 Categorías como Checkboxes */}
+                    <Col md={12}>
+                      <Form.Label className="fw-bold">{t("categories", "Categorías")}</Form.Label>
+                      <Row>
+                        {Object.keys(categories).map(category => (
+                          <Col md={4} key={category}>
+                            <Form.Check
+                              type="checkbox"
+                              id={`category-${category}`}
+                              label={t(`categories.${category}`, category)}
+                              checked={categories[category]}
+                              onChange={() => handleCategoryChange(category)}
+                            />
+                          </Col>
+                        ))}
+                      </Row>
+                    </Col>
+
+                    {/* 🔹 Tema */}
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>{t("selectTheme", "Tema")}</Form.Label>
+                        <Form.Select
+                          value={theme}
+                          onChange={(e) => setTheme(e.target.value)}
+                        >
+                          <option value="">{t("selectTheme", "Seleccionar tema")}</option>
+                          <optgroup label={t("themeGroups.styles", "Estilos")}>
+                            <option value="abstrait">{t("themes.abstrait", "Abstracto")}</option>
+                            <option value="colore">{t("themes.colore", "Color")}</option>
+                            <option value="graffiti">{t("themes.graffiti", "Graffiti")}</option>
+                          </optgroup>
+                          <optgroup label={t("themeGroups.animals", "Animales")}>
+                            <option value="animal">{t("themes.animal", "Animal")}</option>
+                            <option value="chat">{t("themes.chat", "Gato")}</option>
+                            <option value="chien">{t("themes.chien", "Perro")}</option>
+                          </optgroup>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    {/* 🔹 Estilo */}
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>{t("selectStyle", "Estilo")}</Form.Label>
+                        <Form.Select
+                          value={style}
+                          onChange={(e) => setStyle(e.target.value)}
+                        >
+                          <option value="">{t("selectStyle", "Seleccionar estilo")}</option>
+                          <optgroup label={t("styleGroups.modern", "Moderno")}>
+                            <option value="abstrait">{t("styles.abstrait", "Abstracto")}</option>
+                            <option value="cubisme">{t("styles.cubisme", "Cubismo")}</option>
+                          </optgroup>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    {/* 🔹 Rango de Precio */}
+                    <Col md={3}>
+                      <Form.Group>
+                        <Form.Label>{t("minPrice", "Precio Mínimo")}</Form.Label>
+                        <Form.Control
+                          type="number"
+                          placeholder="0"
+                          value={priceMin}
+                          onChange={(e) => setPriceMin(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={3}>
+                      <Form.Group>
+                        <Form.Label>{t("maxPrice", "Precio Máximo")}</Form.Label>
+                        <Form.Control
+                          type="number"
+                          placeholder="10000"
+                          value={priceMax}
+                          onChange={(e) => setPriceMax(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    {/* 🔹 Wilaya */}
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>{t("wilaya", "Wilaya")}</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder={t("wilayaPlaceholder", "Ej: Alger, Oran...")}
+                          value={wilaya}
+                          onChange={(e) => setWilaya(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+
+            {/* Botones de Acción */}
+            <Row className="mt-4">
+              <Col md={6}>
+                <Button 
+                  type="submit" 
+                  disabled={loading} 
+                  className="w-100"
+                  variant="primary"
+                >
+                  {loading ? (
+                    <>
+                      <Spinner animation="border" size="sm" className="me-2" />
+                      {t("searching", "Buscando...")}
+                    </>
+                  ) : (
+                    t("searchPosts", "Buscar Posts")
+                  )}
+                </Button>
+              </Col>
+              <Col md={6}>
+                <Button
+                  variant="secondary"
+                  onClick={handleReset}
+                  disabled={loading}
+                  className="w-100"
+                >
+                  {t("resetFilters", "Restablecer Filtros")}
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Card.Body>
+      </Card>
+
+      {/* Mensajes de Error */}
+      {error && (
+        <Alert variant="danger" className="mb-4">
+          {error}
+        </Alert>
+      )}
+
+      {/* Resultados de Búsqueda */}
+      <div className="profile mt-4">
+        {loading ? (
+          <div className="text-center search-loading">
+            <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
+            <p className="mt-2">{t("loading", "Cargando...")}</p>
+          </div>
+        ) : filteredPosts.length > 0 ? (
+          <>
+            <h5 className="mb-3">
+              {t("resultsFound", "Resultados encontrados")}: {filteredPosts.length}
+            </h5>
+            <Posts filteredPosts={filteredPosts} />
+          </>
+        ) : (
+          !loading && search && (
+            <Alert variant="info" className="text-center">
+              {t("noResults", "No se encontraron resultados. Intenta con otros filtros.")}
+            </Alert>
+          )
+        )}
+      </div>
+    </Container>
+  );
+}

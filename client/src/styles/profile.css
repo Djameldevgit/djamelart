@@ -343,3 +343,69 @@
         height: 120px;
     }
 }
+
+
+
+
+
+
+
+
+
+/* ------ Search Posts ---------- */
+.postsSearch .profile {
+    position: relative;
+    z-index: 9999;
+}
+
+.postsSearch .post_thumb {
+    position: relative;
+ 
+}
+
+.postsSearch .post_thumb_display {
+    position: relative;
+  
+}
+
+/* Asegurar que los posts del search tengan z-index bajo */
+.postsSearch .profile .post_thumb,
+.postsSearch .profile .post_thumb_display,
+.postsSearch .profile .post_thumb_menu {
+    position: relative;
+  
+}
+
+/* Dropdown del search debe tener z-index muy alto */
+.dropdown-menu {
+    z-index: 9999 !important;
+}
+
+/* Input group del search con z-index alto */
+.search-input-container {
+    position: relative;
+    z-index: 1000 !important;
+}
+
+/* Card del formulario de búsqueda */
+.card.mb-4 {
+    position: relative;
+    z-index: 1000 !important;
+}
+
+/* Override específico para el dropdown del search */
+#dropdown-filters + .dropdown-menu {
+    z-index: 10000 !important;
+    position: fixed !important;
+}
+
+/* Para móviles - asegurar que el dropdown esté por encima */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        z-index: 10000 !important;
+    }
+    
+    .postsSearch   {
+        z-index: 1 !important;
+    }
+}

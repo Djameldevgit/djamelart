@@ -1,57 +1,41 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+// Posts.jsx - Versión simplificada para debugging
+import React from 'react';
+import { useSelector } from 'react-redux';
 import PostCard from '../PostCard';
-import LoadIcon from '../../images/loading.gif';
-import LoadMoreBtn from '../LoadMoreBtn';
-import { getDataAPI } from '../../utils/fetchData';
-import { POST_TYPES } from '../../redux/actions/postAction';
 import { useTranslation } from 'react-i18next';
-const Posts = ({ posts }) => {
-  const { homePosts, theme ,languageReducer } = useSelector(state => state);
-  const dispatch = useDispatch();
-  const [load, setLoad] = useState(false);
- 
-    const { t } = useTranslation('jsonglobal');  
-    const lang = languageReducer.language || 'en'; 
- 
-  // Mostrar los posts recibidos (filtrados o no)
-  const displayPosts = posts?.length ? posts : homePosts.posts;
+import { Alert, Row, Col } from 'react-bootstrap';
 
-  // Cargar más publicaciones
-  const handleLoadMore = async () => {
-    setLoad(true);
-    const res = await getDataAPI(`posts?limit=${homePosts.page * 9}`);
-    dispatch({
-      type: POST_TYPES.GET_POSTS,
-      payload: { ...res.data, page: homePosts.page + 1 },
-    });
-    setLoad(false);
-  };
+const Posts = ({ filteredPosts }) => {
+  const { homePosts, theme, languageReducer } = useSelector((state) => state);
+  const { t } = useTranslation("jsonglobal");
+  const lang = languageReducer.language || "en";
+
+  console.log("🔹 Posts component - filteredPosts:", filteredPosts);
+  console.log("🔹 Posts component - homePosts:", homePosts.posts);
+
+  // 🔹 DECISIÓN CRÍTICA: Qué posts mostrar
+  const displayPosts = filteredPosts !== undefined && filteredPosts !== null 
+    ? filteredPosts 
+    : homePosts.posts;
+
+  console.log("🔹 Posts component - displayPosts:", displayPosts);
+
+  if (displayPosts.length === 0) {
+    return (
+      <Alert variant="info" className="text-center">
+        {t("No_Post", { lng: lang })}
+      </Alert>
+    );
+  }
 
   return (
-    <div>
-      <div className="post_thumb">
-        {displayPosts.length === 0 ? (
-          <h2 className="text-center mt-4">   {t('No_Post', { lng: lang })}.</h2>
-        ) : (
-          displayPosts.map(post => (
-            <PostCard key={post._id} post={post}   theme={theme} />
-          ))
-        )}
-
-        {load && <img src={LoadIcon} alt="loading" className="d-block mx-auto" />}
-      </div>
-
-      {/* Mostrar "Cargar más" solo si no hay filtros activos */}
-      {!posts && (
-        <LoadMoreBtn
-          result={homePosts.result}
-          page={homePosts.page}
-          load={load}
-          handleLoadMore={handleLoadMore}
-        />
-      )}
-    </div>
+    <Row>
+      {displayPosts.map((post) => (
+        <Col key={post._id} xs={12} sm={6} lg={4} className="mb-4">
+          <PostCard post={post} theme={theme} />
+        </Col>
+      ))}
+    </Row>
   );
 };
 

@@ -95,65 +95,59 @@ const postCtrl = {
         }
     },
     
-    getPosts: async (req, res) => {
-        try {
-            // Extraer los parámetros de filtro desde req.query
-            const { category, theme,style, minPrice, maxPrice } = req.query;
+   
+  getPosts: async (req, res) => {
+    try {
+      const { title, theme, style, priceMin, priceMax, wilaya, page = 1, ...categories } = req.query;
 
-            // Definir la consulta básica para los posts aprobados
-            const query = { estado: "aprobado" };
+      let query = {};
 
-            // Aplicar filtros si están presentes en la solicitud
-            if (category) {
-                query.category = category;
-            }
+      // 🔹 Buscar por título
+      if (title) {
+        query.title = { $regex: title, $options: "i" };
+      }
 
-            if (theme) {
-                query.theme = theme;
-            }
-            if (style) {
-                query.style = style;
-            }
-         
-            if (minPrice || maxPrice) {
-                query.price = {}; // Campo de precio en tu modelo
-                if (minPrice) {
-                    query.price.$gte = Number(minPrice); // Precio mínimo
-                }
-                if (maxPrice) {
-                    query.price.$lte = Number(maxPrice); // Precio máximo
-                }
-            }
+      // 🔹 Filtros directos
+      if (theme) query.theme = { $regex: theme, $options: "i" };
+      if (style) query.style = { $regex: style, $options: "i" };
+      if (wilaya) query.wilaya = { $regex: wilaya, $options: "i" };
 
-            // Obtener los posts filtrados y paginados
-            const features = new APIfeatures(Posts.find(query), req.query).paginating();
+      // 🔹 Precio
+      if (priceMin || priceMax) {
+        query.price = {};
+        if (priceMin) query.price.$gte = Number(priceMin);
+        if (priceMax) query.price.$lte = Number(priceMax);
+      }
 
-            const posts = await features.query.sort('-createdAt')
-                .populate("user likes", "avatar username followers") // Populate user y likes
-                .populate({
-                    path: "comments",
-                    populate: {
-                        path: "user likes",
-                        select: "-password" // Excluir la contraseña del usuario
-                    }
-                });
+      // 🔹 Categorías dinámicas (ej: painting=true)
+      const selectedCategories = Object.keys(categories).filter((key) => categories[key] === "true");
+      if (selectedCategories.length > 0) {
+        query.category = { $in: selectedCategories };
+      }
 
-            // Obtener el total de posts que coinciden con la consulta (sin paginación)
-            const totalPosts = await Posts.countDocuments(query);
+      // 🚨 Control clave:
+      // Si el usuario pasa una categoría que NO existe en tu app → no devolver nada
+      if (Object.keys(categories).length > 0 && selectedCategories.length === 0) {
+        return res.json({ posts: [] });
+      }
 
-            // Responder con los posts encontrados y la información de paginación
-            res.json({
-                msg: 'Success!',
-                result: posts.length,
-                posts
-            });
+      const limit = 6;
+      const skip = (page - 1) * limit;
 
-        } catch (err) {
-            // Manejar errores
-            return res.status(500).json({ msg: err.message });
-        }
-    },
+      const posts = await Posts.find(query)
+        .sort("-createdAt")
+        .skip(skip)
+        .limit(limit);
+
+      res.json({ posts });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
  
+
+ 
+
     updatePost: async (req, res) => {
         try {
             const {

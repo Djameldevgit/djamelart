@@ -21,35 +21,36 @@ import {
   FaFlag,
   FaBan,
   FaShoppingCart,
-  FaBars,
+  FaHome,
   FaSignOutAlt,
   FaUserCircle,
   FaSignInAlt,
   FaUserPlus,
   FaSearch,
   FaBell,
-  FaShareAlt
+  FaShareAlt,
+  FaGlobe,
+  
 } from 'react-icons/fa';
-import { Navbar, Container, NavDropdown, Offcanvas, Button, Badge } from 'react-bootstrap';
+import { Navbar, Container, NavDropdown,  Badge } from 'react-bootstrap';
 import { BsCartFill } from 'react-icons/bs';
 import NotifyModal from '../NotifyModal';
 import LanguageSelectorpc from '../LanguageSelectorpc';
+import LanguageSelectorandroid from '../LanguageSelectorandroid'; // Asegúrate de importar este componente
 import ActivateButton from '../../auth/ActivateButton';
 import VerifyModal from '../authAndVerify/VerifyModal';
-
-import Modalsearchhome from './Modalsearchhome';
 import DesactivateModal from '../authAndVerify/DesactivateModal';
 import MultiCheckboxModal from './MultiCheckboxModal.';
- 
 import ShareAppModal from '../shareAppModal';
 
-const Navbar2 = ({ onFiltersChange }) => {
+const Navbar2 = () => {
   const { auth, theme, cart, notify, settings } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
   const { t, i18n } = useTranslation('navbar');
   const lang = languageReducer.language || 'es';
   const [showShareModal, setShowShareModal] = useState(false);
+
   useEffect(() => {
     if (lang && lang !== i18n.language) {
       i18n.changeLanguage(lang);
@@ -64,8 +65,9 @@ const Navbar2 = ({ onFiltersChange }) => {
     );
   }
 
-  const [showDrawer, setShowDrawer] = useState(false);
-  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+ 
+  const [showLanguageModal, setShowLanguageModal] = useState(false); // 🔹 NUEVO ESTADO
+
   const totalItems = cart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
   const [showModal, setShowModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
@@ -73,7 +75,7 @@ const Navbar2 = ({ onFiltersChange }) => {
   const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
   const [showFeaturesModal, setShowFeaturesModal] = useState(false);
- 
+
   const [showNotifyDropdown, setShowNotifyDropdown] = useState(false);
 
   const notifyDropdownRef = useRef(null);
@@ -85,9 +87,7 @@ const Navbar2 = ({ onFiltersChange }) => {
   };
 
   const toggleTheme = () => dispatch({ type: GLOBALTYPES.THEME, payload: !theme });
-  const handleCloseDrawer = () => setShowDrawer(false);
-  const handleShowDrawer = () => setShowDrawer(true);
-
+ 
   const history = useHistory();
 
   useEffect(() => {
@@ -109,37 +109,9 @@ const Navbar2 = ({ onFiltersChange }) => {
   }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    category: '',
-    title: '',
-    theme: '',
-    style: '',
-    minPrice: '',
-    maxPrice: '',
-  });
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    const newFilters = { ...filters, [name]: value };
-    setFilters(newFilters);
-    if (onFiltersChange) onFiltersChange(newFilters);
-  };
-
-  const resetFilters = () => {
-    const newFilters = {
-      category: '',
-      title: '',
-      theme: '',
-      style: '',
-      minPrice: '',
-      maxPrice: '',
-    };
-    setFilters(newFilters);
-    if (onFiltersChange) onFiltersChange(newFilters);
-  };
 
   const canProceed = () => {
     if (!auth.token || !auth.user) {
@@ -179,9 +151,22 @@ const Navbar2 = ({ onFiltersChange }) => {
       >
         <Container fluid className="align-items-center justify-content-between">
           <div className="d-flex align-items-center">
-            <Button onClick={handleShowDrawer} variant="outline-primary" className="me-2">
-              {showDrawer ? '✖' : <FaBars size={20} />}
-            </Button>
+            <div className="d-flex align-items-center">
+              
+              <Link
+                to="/"
+                className="btn btn-outline-primary me-2"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '55px',
+                  height: '55px'
+                }}
+              >
+                <FaHome size={32} />
+              </Link>
+            </div>
 
             <Navbar.Brand href="/" className="py-2 d-none d-lg-block">
               <Card.Title>{t('appName')}</Card.Title>
@@ -193,13 +178,15 @@ const Navbar2 = ({ onFiltersChange }) => {
               <LanguageSelectorpc />
             </div>
 
-            <FaSearch
-              size={18}
-              className="text-secondary cursor-pointer mr-2"
-              onClick={openModal}
-              title={t('search')}
-              style={{ cursor: 'pointer' }}
-            />
+            {/* Icono de búsqueda con Link */}
+            <Link to="/search" className="text-decoration-none">
+              <FaSearch
+                size={18}
+                className="text-secondary cursor-pointer mr-2"
+                title={t('search')}
+                style={{ cursor: 'pointer' }}
+              />
+            </Link>
 
             {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") &&
               <i className='fas fa-plus' onClick={openStatusModal}> </i>
@@ -233,7 +220,7 @@ const Navbar2 = ({ onFiltersChange }) => {
                       position: isMobile ? 'fixed' : 'absolute',
                       [isMobile ? 'left' : 'right']: isMobile ? '50%' : '0',
                       [isMobile ? 'top' : 'top']: isMobile ? '50%' : '100%',
-                      transform: isMobile ? 'translate(-50%, -50%)' : 'translateX(-230px)', // ← AQUÍ ESTÁ EL CAMBIO
+                      transform: isMobile ? 'translate(-50%, -50%)' : 'translateX(-230px)',
                       width: isMobile ? '90vw' : '400px',
                       maxWidth: '400px',
                       maxHeight: isMobile ? '80vh' : '400px',
@@ -254,8 +241,6 @@ const Navbar2 = ({ onFiltersChange }) => {
                         </button>
                       </div>
                     )}
-
-
                   </div>
                 )}
               </div>
@@ -293,8 +278,6 @@ const Navbar2 = ({ onFiltersChange }) => {
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span > <strong>{auth.user.username}</strong> </span> </NavDropdown.Header>
                     <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span >{t('role')}: <strong>{auth.user.role}</strong> </span> </NavDropdown.Header>
                     <NavDropdown.Header>
-
-
                       {auth.user?.isVerified ? (
                         <span className="text-success font-semibold flex items-center">
                           <i className="fas fa-user-check mr-2"></i>
@@ -305,7 +288,14 @@ const Navbar2 = ({ onFiltersChange }) => {
                       )}
                     </NavDropdown.Header>
 
-
+                    {/* 🔹 ICONO DE IDIOMA PARA PANTALLAS PEQUEÑAS EN EL DROPDOWN */}
+                    <div className="d-lg-none">
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item onClick={() => setShowLanguageModal(true)}>
+                        <FaGlobe className="me-2" />
+                        {t('changeLanguage')}
+                      </NavDropdown.Item>
+                    </div>
 
                     {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
                       <NavDropdown.Item onClick={openStatusModal}>
@@ -314,12 +304,10 @@ const Navbar2 = ({ onFiltersChange }) => {
                       </NavDropdown.Item>
                     )}
 
-
                     <NavDropdown.Item as={Link} to="/encargos">
                       <FaEnvelope className="me-2" />
                       encargos
                     </NavDropdown.Item>
-
 
                     <NavDropdown.Item as={Link} to="/bloginfo">
                       <FaInfoCircle className="me-2" />
@@ -355,13 +343,12 @@ const Navbar2 = ({ onFiltersChange }) => {
                         </NavDropdown.Header>
 
                         <NavDropdown.Item as={Link} to="/users/privacidad">
-                          ⚙️  Ajestes de privacidad 
-                        </NavDropdown.Item>
-                        
-                         <NavDropdown.Item onClick={() => setShowFeaturesModal(true)}>
-                          ⚙️ Configuración global
+                          ⚙️  Ajestes de privacidad
                         </NavDropdown.Item>
 
+                        <NavDropdown.Item onClick={() => setShowFeaturesModal(true)}>
+                          ⚙️ Configuración global
+                        </NavDropdown.Item>
 
                         <NavDropdown.Item as={Link} to="/blog">
                           <FaBlog className="me-2" />
@@ -444,7 +431,6 @@ const Navbar2 = ({ onFiltersChange }) => {
                       Compartir Aplicación
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
-
                   </>
                 )}
               </div>
@@ -453,308 +439,31 @@ const Navbar2 = ({ onFiltersChange }) => {
         </Container>
       </Navbar>
 
-      <Offcanvas
-        show={showDrawer}
-        onHide={handleCloseDrawer}
-        placement="start"
-        style={{
-          top: "56px",
-          height: "calc(100vh - 56px)",
-          width: "270px",
-          overflow: "hidden",
-        }}
-      >
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t("menu")}</Offcanvas.Title>
-        </Offcanvas.Header>
-
-        <Offcanvas.Body style={{ overflowY: "auto", padding: "0.5rem" }}>
-          <div className="d-lg-none mb-3">
-            {!auth.user ? (
-              <div className="text-center">
-                <a
-                  href="/login"
-                  onClick={handleCloseDrawer}
-                  className="btn btn-outline-primary w-100 mb-2"
-                >
-                  {t("login")}
-                </a>
-                <a
-                  href="/register"
-                  onClick={handleCloseDrawer}
-                  className="btn btn-outline-secondary w-100"
-                >
-                  {t("register")}
-                </a>
-                <NavDropdown.Item onClick={() => setShowShareModal(true)}>
-                  <FaShareAlt className="me-2" />
-                  Compartir Aplicación
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-
+      {/* 🔹 MODAL DE IDIOMA PARA PANTALLAS PEQUEÑAS */}
+      {showLanguageModal && (
+        <div 
+          className="modal show d-block" 
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1060 }}
+          onClick={() => setShowLanguageModal(false)}
+        >
+          <div 
+            className="modal-dialog modal-dialog-centered" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">🌍 {t('selectLanguage', 'Seleccionar Idioma')}</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  onClick={() => setShowLanguageModal(false)}
+                ></button>
               </div>
-            ) : (
-              <div>
-                <h6 className="text-center mb-3">{auth.user.username}</h6>
-                <a
-                  href={`/profile/${auth.user._id}`}
-                  onClick={handleCloseDrawer}
-                  className="btn btn-outline-success w-100 my-2"
-                >
-                  {t("profile")}
-                </a>
-                <Button
-                  variant="outline-danger"
-                  onClick={handleLogout}
-                  className="w-100"
-                >
-                  {t("logout")}
-                </Button>
+              <div className="modal-body">
+                <LanguageSelectorandroid />
               </div>
-            )}
-          </div>
-        </Offcanvas.Body>
-      </Offcanvas>
-
-      {/* Resto del código permanece igual */}
-      <Modalsearchhome
-        isOpen={isModalOpen}
-        onClose={() => {
-          closeModal();
-          setShowAdvancedSearch(false);
-
-        }}
-        style={{
-          position: 'fixed',
-          top: '0',
-          left: '0',
-          zIndex: 9999,
-          marginTop: '50px'
-        }}
-      >
-
-        <div className="filter-group">
-          <h5 className='mx-auto'>{t('artworkSearch')}</h5>
-        </div>
-
-        <div style={{
-          direction: lang === 'ar' ? 'rtl' : 'ltr',
-          textAlign: lang === 'ar' ? 'right' : 'left',
-          marginTop: "20"
-        }}          >
-          <div className="filter-group">
-            <input
-              type="text"
-              name="search"
-              placeholder={t('searchTitlePlaceholder')}
-              onChange={handleFilterChange}
-              value={filters.search}
-            />
-          </div>
-
-          <div className="modalcontentsearch" style={{ marginTop: '50' }}  >
-            <div className="titlebusqueda">
-              <button
-                className="modalclosesearch"
-                onClick={() => {
-                  closeModal();
-                  setShowAdvancedSearch(false);
-                }}
-                style={{
-                  position: 'absolute',
-                  top: '10px',
-                  right: '10px',
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '1.8rem',
-                  color: '#333',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  lineHeight: '1',
-                }}
-              >
-                &times;
-              </button>
             </div>
-            <div className="titlebusqueda">
-              <Button
-                variant="link"
-                onClick={() => {
-                  if (canProceed()) {
-                    setShowAdvancedSearch(!showAdvancedSearch);
-                  }
-                }}
-                className="p-0 text-decoration-none"
-              >
-                {showAdvancedSearch ?
-                  t('hideAdvancedSearch') :
-                  t('showAdvancedSearch')}
-              </Button>
-            </div>
-            {showAdvancedSearch && (
-              <div className="filters-container">
-                <div className="filter-group">
-                  <select
-                    name="category"
-                    value={filters.category}
-                    onChange={handleFilterChange}
-                    required
-                  >
-                    <option value="">{t('selectCategory')}</option>
-                    <option value="painting">{t('categories.painting')}</option>
-                    <option value="sculpture">{t('categories.sculpture')}</option>
-                    <option value="photography">{t('categories.photography')}</option>
-                    <option value="drawing">{t('categories.drawing')}</option>
-                    <option value="engraving">{t('categories.engraving')}</option>
-                    <option value="digital_art">{t('categories.digital_art')}</option>
-                    <option value="collage">{t('categories.collage')}</option>
-                    <option value="textile_art">{t('categories.textile_art')}</option>
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <select
-                    name="theme"
-                    value={filters.theme}
-                    onChange={handleFilterChange}
-                    required
-                  >
-                    <option value="">{t('selectTheme')}</option>
-                    <optgroup label={t('themeGroups.styles')}>
-                      <option value="abstrait">{t('themes.abstrait')}</option>
-                      <option value="colore">{t('themes.colore')}</option>
-                      <option value="graffiti">{t('themes.graffiti')}</option>
-                      <option value="geometrique">{t('themes.geometrique')}</option>
-                      <option value="surrealisme">{t('themes.surrealisme')}</option>
-                      <option value="conceptuel">{t('themes.conceptuel')}</option>
-                      <option value="replica">{t('themes.replica')}</option>
-                      <option value="reproduction">{t('themes.reproduction')}</option>
-                    </optgroup>
-
-                    <optgroup label={t('themeGroups.animals')}>
-                      <option value="animal">{t('themes.animal')}</option>
-                      <option value="chat">{t('themes.chat')}</option>
-                      <option value="chien">{t('themes.chien')}</option>
-                      <option value="cheval">{t('themes.cheval')}</option>
-                      <option value="oiseau">{t('themes.oiseau')}</option>
-                      <option value="poisson">{t('themes.poisson')}</option>
-                    </optgroup>
-
-                    <optgroup label={t('themeGroups.nature')}>
-                      <option value="paysage">{t('themes.paysage')}</option>
-                      <option value="foret">{t('themes.foret')}</option>
-                      <option value="montagne">{t('themes.montagne')}</option>
-                      <option value="fleurs">{t('themes.fleurs')}</option>
-                      <option value="mer">{t('themes.mer')}</option>
-                      <option value="ciel">{t('themes.ciel')}</option>
-                    </optgroup>
-
-                    <optgroup label={t('themeGroups.human')}>
-                      <option value="portrait">{t('themes.portrait')}</option>
-                      <option value="corps_humain">{t('themes.corps_humain')}</option>
-                      <option value="famille">{t('themes.famille')}</option>
-                    </optgroup>
-
-                    <optgroup label={t('themeGroups.culture')}>
-                      <option value="culture_populaire">{t('themes.culture_populaire')}</option>
-                      <option value="bandes_dessinees">{t('themes.bandes_dessinees')}</option>
-                      <option value="cinema">{t('themes.cinema')}</option>
-                      <option value="dessin_anime">{t('themes.dessin_anime')}</option>
-                      <option value="jeu_video">{t('themes.jeu_video')}</option>
-                      <option value="mode">{t('themes.mode')}</option>
-                      <option value="mythologie">{t('themes.mythologie')}</option>
-                      <option value="religion">{t('themes.religion')}</option>
-                      <option value="histoire">{t('themes.histoire')}</option>
-                    </optgroup>
-
-                    <optgroup label={t('themeGroups.imagination')}>
-                      <option value="fantastique">{t('themes.fantastique')}</option>
-                      <option value="science_fiction">{t('themes.science_fiction')}</option>
-                      <option value="onirique">{t('themes.onirique')}</option>
-                    </optgroup>
-
-                    <optgroup label={t('themeGroups.society')}>
-                      <option value="ville">{t('themes.ville')}</option>
-                      <option value="architecture">{t('themes.architecture')}</option>
-                      <option value="societe">{t('themes.societe')}</option>
-                      <option value="technologie">{t('themes.technologie')}</option>
-                    </optgroup>
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <select
-                    name="style"
-                    value={filters.style}
-                    onChange={handleFilterChange}
-                    required
-                  >
-                    <option value="">{t('selectStyle')}</option>
-                    <optgroup label={t('styleGroups.modern')}>
-                      <option value="abstrait">{t('styles.abstrait')}</option>
-                      <option value="impressionnisme">{t('styles.impressionnisme')}</option>
-                      <option value="expressionnisme">{t('styles.expressionnisme')}</option>
-                      <option value="cubisme">{t('styles.cubisme')}</option>
-                      <option value="pop_art">{t('styles.pop_art')}</option>
-                    </optgroup>
-
-                    <optgroup label={t('styleGroups.contemporary')}>
-                      <option value="art_conceptuel">{t('styles.art_conceptuel')}</option>
-                      <option value="street_art">{t('styles.street_art')}</option>
-                      <option value="pixel_art">{t('styles.pixel_art')}</option>
-                      <option value="nft">{t('styles.nft')}</option>
-                      <option value="generatif">{t('styles.generatif')}</option>
-                    </optgroup>
-
-                    <optgroup label={t('styleGroups.classic_traditional')}>
-                      <option value="figuratif">{t('styles.figuratif')}</option>
-                      <option value="classicisme">{t('styles.classicisme')}</option>
-                      <option value="baroque">{t('styles.baroque')}</option>
-                      <option value="croquis">{t('styles.croquis')}</option>
-                    </optgroup>
-
-                    <optgroup label={t('styleGroups.other_styles')}>
-                      <option value="documentaire">{t('styles.documentaire')}</option>
-                      <option value="noir_et_blanc">{t('styles.noir_et_blanc')}</option>
-                      <option value="tissagee">{t('textile_arttt.tissagee')}</option>
-                      <option value="mixte">{t('styles.mixte')}</option>
-                    </optgroup>
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <small>{t('minPrice')}</small>
-                  <input
-                    type="number"
-                    name="minPrice"
-                    placeholder={t('minPricePlaceholder')}
-                    onChange={handleFilterChange}
-                    value={filters.minPrice}
-                  />
-                  <small>{t('maxPrice')}</small>
-                  <input
-                    type="number"
-                    name="maxPrice"
-                    placeholder={t('maxPricePlaceholder')}
-                    onChange={handleFilterChange}
-                    value={filters.maxPrice}
-                  />
-                </div>
-
-                <div className="filter-group" style={{ gridColumn: '1 / -1' }}>
-                  <button onClick={resetFilters} className="reset-button">
-                    {t('resetFilters')}
-                  </button>
-                </div>
-              </div>)}
           </div>
-        </div>
-      </Modalsearchhome>
-
-      {/* Modales adicionales */}
-      {showModal && (
-        <div className="modal">
-          {/* ... contenido del modal ... */}
         </div>
       )}
 
@@ -782,7 +491,7 @@ const Navbar2 = ({ onFiltersChange }) => {
         actionText={t('auth.contactUs')}
         actionLink="/users/contactt"
       />
- 
+
       <MultiCheckboxModal
         show={showFeaturesModal}
         onClose={() => setShowFeaturesModal(false)}
