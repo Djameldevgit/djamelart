@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 const Posts = require('./postModel'); // Asegúrate de que la ruta es correcta
 
-const privacyEnum = ['public', 'followers', 'private'];
-
+ 
 const userSchema = new mongoose.Schema({
   // --- PRIVACY SETTINGS ---
-   
+  fullname: { type: String, default: '' },
    
 
   // --- DATOS BÁSICOS ---

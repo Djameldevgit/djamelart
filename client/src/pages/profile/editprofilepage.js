@@ -5,20 +5,28 @@ import { useTranslation } from 'react-i18next'
 import { checkImage } from '../../utils/imageUpload'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import { updateProfileUser, getProfileUsers } from '../../redux/actions/profileAction'
-import { Button, Container, Row, Col, Card, Form } from 'react-bootstrap'
+import { Button, Container, Row, Col, Card, Form, Alert } from 'react-bootstrap'
 import { ArrowLeft } from 'react-bootstrap-icons'
 
 const EditProfilePage = () => {
     const initState = {
-        presentacion: '',  mobile: '', address: '', website: '', story: '' 
+        presentacion: '', 
+        fullname: '', 
+        mobile: '', 
+        address: '', 
+        email: '', 
+        website: '', 
+        story: '' 
     }
     const [userData, setUserData] = useState(initState)
-    const {presentacion, mobile, address, website, story  } = userData
+    const { presentacion, mobile, email, fullname, address, website, story } = userData
 
     const [avatar, setAvatar] = useState('')
     const [loading, setLoading] = useState(false)
+    const [emailError, setEmailError] = useState('')
+    const [formErrors, setFormErrors] = useState({})
 
-    const { auth, theme, profile, languageReducer } = useSelector(state => state)
+    const { auth, theme, profile, languageReducer, alert } = useSelector(state => state)
     const dispatch = useDispatch()
     const history = useHistory()
     const { id } = useParams()
@@ -27,19 +35,22 @@ const EditProfilePage = () => {
 
     // Verificar que el usuario solo pueda editar su propio perfil
     useEffect(() => {
-        if (auth.user._id !== id) {
-            history.push(`/profile/${auth.user._id}/edit`)
+        if (auth.user?._id && auth.user?._id !== id) {
+            history.push(`/profile/${auth.user?._id}/edit`)
         }
-    }, [auth.user._id, id, history])
+    }, [auth.user?._id, id, history])
 
     useEffect(() => {
         if (auth.user) {
-            setUserData(auth.user)
+            setUserData(prevState => ({
+                ...initState,
+                ...auth.user
+            }))
         }
     }, [auth.user])
 
     useEffect(() => {
-        if (profile.ids.every(item => item !== id)) {
+        if (id && profile.ids?.every(item => item !== id)) {
             dispatch(getProfileUsers({ id, auth }))
         }
     }, [id, auth, dispatch, profile.ids])
@@ -58,17 +69,95 @@ const EditProfilePage = () => {
     const handleInput = e => {
         const { name, value } = e.target
         setUserData({ ...userData, [name]: value })
+        
+        // Limpiar errores cuando el usuario escribe
+        if (name === 'email') {
+            setEmailError('')
+        }
+        if (formErrors[name]) {
+            setFormErrors(prev => ({ ...prev, [name]: '' }))
+        }
+    }
+
+    // Validación del formulario
+    const validateForm = () => {
+        const errors = {}
+        
+        // Validar email
+        if (email && !/\S+@\S+\.\S+/.test(email)) {
+            errors.email = t('invalidEmail')
+        }
+        
+        // Validar fullname (requerido)
+        if (!fullname?.trim()) {
+            errors.fullname = t('fullnameRequired')
+        }
+        
+        // Validar website si existe
+        if (website && !/^https?:\/\/.+\..+/.test(website)) {
+            errors.website = t('invalidWebsite')
+        }
+        
+        setFormErrors(errors)
+        return Object.keys(errors).length === 0
     }
 
     const handleSubmit = async e => {
         e.preventDefault()
         setLoading(true)
+        setEmailError('')
+        setFormErrors({})
 
-        await dispatch(updateProfileUser({ userData, avatar, auth }))
+        // Validar formulario
+        if (!validateForm()) {
+            setLoading(false)
+            return
+        }
 
-        setLoading(false)
-        // Redirigir al perfil después de guardar
-        history.push(`/profile/${id}`)
+        try {
+            const result = await dispatch(updateProfileUser({ 
+                userData: {
+                    ...userData,
+                    // Asegurar que los campos vacíos se envíen como string vacío
+                    presentacion: presentacion || '',
+                    mobile: mobile || '',
+                    address: address || '',
+                    website: website || '',
+                    story: story || ''
+                }, 
+                avatar, 
+                auth 
+            }))
+
+            // Verificar si la acción fue exitosa
+            if (result && result.type === GLOBALTYPES.ALERT) {
+                // Si hay un error de email duplicado
+                if (result.payload?.error?.toLowerCase().includes('email')) {
+                    setEmailError(t('emailAlreadyExists'))
+                    setLoading(false)
+                    return
+                }
+            }
+
+            // Si todo sale bien, redirigir después de un breve delay
+            setTimeout(() => {
+                history.push(`/profile/${id}`)
+            }, 1000)
+
+        } catch (error) {
+            console.error('Error updating profile:', error)
+            
+            // Manejar errores específicos
+            if (error?.response?.data?.error?.toLowerCase().includes('email')) {
+                setEmailError(t('emailAlreadyExists'))
+            } else {
+                dispatch({
+                    type: GLOBALTYPES.ALERT,
+                    payload: { error: t('updateError') }
+                })
+            }
+            setLoading(false)
+        }
     }
 
     const handleBack = () => {
@@ -82,7 +171,8 @@ const EditProfilePage = () => {
         textAlign: isRTL ? 'right' : 'left'
     }
 
-    if (auth.user._id !== id) {
+    // Verificación segura del usuario
+    if (!auth.user || !auth.user._id || auth.user._id !== id) {
         return (
             <Container
                 className="d-flex justify-content-center align-items-center"
@@ -96,6 +186,15 @@ const EditProfilePage = () => {
                 </div>
             </Container>
         )
+    }
+
+    // Funciones seguras para obtener la longitud
+    const getPresentacionLength = () => {
+        return presentacion ? presentacion.length : 0
+    }
+
+    const getStoryLength = () => {
+        return story ? story.length : 0
     }
 
     return (
@@ -119,6 +218,19 @@ const EditProfilePage = () => {
             {/* Formulario */}
             <Row className="justify-content-center">
                 <Col md={8} lg={6}>
+                    {/* Mostrar alertas globales */}
+                    {alert.error && (
+                        <Alert variant="danger" className="mb-3">
+                            {alert.error}
+                        </Alert>
+                    )}
+                    
+                    {alert.success && (
+                        <Alert variant="success" className="mb-3">
+                            {alert.success}
+                        </Alert>
+                    )}
+
                     <Card>
                         <Card.Body>
                             <Form onSubmit={handleSubmit}>
@@ -126,7 +238,7 @@ const EditProfilePage = () => {
                                 <div className="text-center mb-4">
                                     <div className="position-relative d-inline-block">
                                         <img
-                                            src={avatar ? URL.createObjectURL(avatar) : auth.user.avatar}
+                                            src={avatar ? URL.createObjectURL(avatar) : auth.user?.avatar || ''}
                                             alt="avatar"
                                             className="rounded-circle"
                                             style={{
@@ -156,7 +268,6 @@ const EditProfilePage = () => {
                                     </div>
                                 </div>
 
-
                                 <Form.Group className="mb-3">
                                     <Form.Label>{t('presentacion')}</Form.Label>
                                     <Form.Control
@@ -166,13 +277,47 @@ const EditProfilePage = () => {
                                         value={presentacion || ''}
                                         onChange={handleInput}
                                         placeholder={t('presentacion')}
-                                        maxLength={200}
+                                        maxLength={150}
                                         dir={isRTL ? "rtl" : "ltr"}
                                         style={{ textAlign: isRTL ? 'right' : 'left' }}
+                                        isInvalid={!!formErrors.presentacion}
                                     />
                                     <Form.Text className="text-muted">
-                                        {presentacion?.length || 0}/150 {t('characters')}
+                                        {getPresentacionLength()}/150 {t('characters')}
                                     </Form.Text>
+                                </Form.Group>
+
+                                <Form.Group className="mb-3">
+                                    <Form.Label>{t('fullname')} *</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="fullname"
+                                        value={fullname || ''}
+                                        onChange={handleInput}
+                                        placeholder={t('fullnamePlaceholder')}
+                                        dir={isRTL ? "rtl" : "ltr"}
+                                        isInvalid={!!formErrors.fullname}
+                                        required
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {formErrors.fullname}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group className="mb-3">
+                                    <Form.Label>{t('email')}</Form.Label>
+                                    <Form.Control
+                                        type="email"
+                                        name="email"
+                                        value={email || ''}
+                                        onChange={handleInput}
+                                        placeholder={t('emailPlaceholder')}
+                                        dir={isRTL ? "rtl" : "ltr"}
+                                        isInvalid={!!emailError || !!formErrors.email}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {emailError || formErrors.email}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
 
                                 <Form.Group className="mb-3">
@@ -184,9 +329,10 @@ const EditProfilePage = () => {
                                         onChange={handleInput}
                                         placeholder={t('addressPlaceholder')}
                                         dir={isRTL ? "rtl" : "ltr"}
+                                        isInvalid={!!formErrors.address}
                                     />
                                 </Form.Group>
-                                {/* Campos del formulario */}
+
                                 <Form.Group className="mb-3">
                                     <Form.Label>{t('mobile')}</Form.Label>
                                     <Form.Control
@@ -196,8 +342,10 @@ const EditProfilePage = () => {
                                         onChange={handleInput}
                                         placeholder={t('mobilePlaceholder')}
                                         dir={isRTL ? "rtl" : "ltr"}
+                                        isInvalid={!!formErrors.mobile}
                                     />
                                 </Form.Group>
+
                                 <Form.Group className="mb-3">
                                     <Form.Label>{t('website')}</Form.Label>
                                     <Form.Control
@@ -206,8 +354,12 @@ const EditProfilePage = () => {
                                         value={website || ''}
                                         onChange={handleInput}
                                         placeholder={t('websitePlaceholder')}
-                                        dir="ltr" // Siempre LTR para URLs
+                                        dir="ltr"
+                                        isInvalid={!!formErrors.website}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {formErrors.website}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
 
                                 <Form.Group className="mb-3">
@@ -222,12 +374,12 @@ const EditProfilePage = () => {
                                         maxLength={200}
                                         dir={isRTL ? "rtl" : "ltr"}
                                         style={{ textAlign: isRTL ? 'right' : 'left' }}
+                                        isInvalid={!!formErrors.story}
                                     />
                                     <Form.Text className="text-muted">
-                                        {story?.length || 0}/200 {t('characters')}
+                                        {getStoryLength()}/200 {t('characters')}
                                     </Form.Text>
                                 </Form.Group>
-
 
                                 <div className="d-grid gap-2">
                                     <Button
@@ -236,11 +388,19 @@ const EditProfilePage = () => {
                                         size="lg"
                                         disabled={loading}
                                     >
-                                        {loading ? t('saving') : t('saveChanges')}
+                                        {loading ? (
+                                            <>
+                                                <span className="spinner-border spinner-border-sm me-2" />
+                                                {t('saving')}
+                                            </>
+                                        ) : (
+                                            t('saveChanges')
+                                        )}
                                     </Button>
                                     <Button
                                         variant="outline-secondary"
                                         onClick={handleBack}
+                                        disabled={loading}
                                     >
                                         {t('cancel')}
                                     </Button>

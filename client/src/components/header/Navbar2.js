@@ -30,13 +30,12 @@ import {
   FaBell,
   FaShareAlt,
   FaGlobe,
-  
 } from 'react-icons/fa';
-import { Navbar, Container, NavDropdown,  Badge } from 'react-bootstrap';
+import { Navbar, Container, NavDropdown, Badge } from 'react-bootstrap';
 import { BsCartFill } from 'react-icons/bs';
 import NotifyModal from '../NotifyModal';
 import LanguageSelectorpc from '../LanguageSelectorpc';
-import LanguageSelectorandroid from '../LanguageSelectorandroid'; // Asegúrate de importar este componente
+import LanguageSelectorandroid from '../LanguageSelectorandroid';
 import ActivateButton from '../../auth/ActivateButton';
 import VerifyModal from '../authAndVerify/VerifyModal';
 import DesactivateModal from '../authAndVerify/DesactivateModal';
@@ -51,11 +50,21 @@ const Navbar2 = () => {
   const lang = languageReducer.language || 'es';
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // 🔥 CRÍTICO: Estado local para forzar re-render cuando cambia el rol
+  const [userRole, setUserRole] = useState(auth.user?.role);
+
   useEffect(() => {
     if (lang && lang !== i18n.language) {
       i18n.changeLanguage(lang);
     }
   }, [lang, i18n]);
+
+  // 🔥 SOLUCIÓN: Detectar cambios en el rol del usuario
+  useEffect(() => {
+    if (auth.user?.role && auth.user.role !== userRole) {
+      setUserRole(auth.user.role);
+    }
+  }, [auth.user?.role, userRole]);
 
   if (!settings) {
     return (
@@ -65,17 +74,13 @@ const Navbar2 = () => {
     );
   }
 
- 
-  const [showLanguageModal, setShowLanguageModal] = useState(false); // 🔹 NUEVO ESTADO
-
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const totalItems = cart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
-  const [showModal, setShowModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
   const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
   const [showFeaturesModal, setShowFeaturesModal] = useState(false);
-
   const [showNotifyDropdown, setShowNotifyDropdown] = useState(false);
 
   const notifyDropdownRef = useRef(null);
@@ -83,11 +88,9 @@ const Navbar2 = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    handleCloseDrawer();
   };
 
   const toggleTheme = () => dispatch({ type: GLOBALTYPES.THEME, payload: !theme });
- 
   const history = useHistory();
 
   useEffect(() => {
@@ -96,7 +99,6 @@ const Navbar2 = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Cerrar dropdown de notificaciones al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notifyDropdownRef.current && !notifyDropdownRef.current.contains(event.target)) {
@@ -108,34 +110,6 @@ const Navbar2 = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  const canProceed = () => {
-    if (!auth.token || !auth.user) {
-      closeModal();
-      setShowModal(true);
-      return false;
-    }
-
-    if (!auth.user.isVerified) {
-      closeModal();
-      setShowVerifyModal(true);
-      return false;
-    }
-
-    if (auth.user.isActive === false) {
-      closeModal();
-      setShowDeactivatedModal(true);
-      return false;
-    }
-
-    return true;
-  };
-
-  // Calcular notificaciones no leídas
   const unreadNotifications = notify.data.filter(n => !n.isRead).length;
 
   return (
@@ -146,58 +120,89 @@ const Navbar2 = () => {
           zIndex: 1030,
           marginTop: isMobile ? '55px' : '0',
           backgroundColor: settings.style ? '#1e1e2f' : '#f8f9fa',
+          padding: isMobile ? '8px 0' : '12px 0'
         }}
         className={settings.style ? "navbar-dark" : "navbar-light"}
       >
         <Container fluid className="align-items-center justify-content-between">
           <div className="d-flex align-items-center">
-            <div className="d-flex align-items-center">
-              
-              <Link
-                to="/"
-                className="btn btn-outline-primary me-2"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '55px',
-                  height: '55px'
-                }}
-              >
-                <FaHome size={32} />
-              </Link>
-            </div>
+            <Link
+              to="/"
+              className="btn btn-outline-primary"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: isMobile ? '45px' : '55px',
+                height: isMobile ? '45px' : '55px',
+                padding: '0',
+                marginRight: isMobile ? '8px' : '12px'
+              }}
+            >
+              <FaHome size={isMobile ? 24 : 32} />
+            </Link>
 
-            <Navbar.Brand href="/" className="py-2 d-none d-lg-block">
-              <Card.Title>{t('appName')}</Card.Title>
+            <Navbar.Brand href="/" className="py-2 d-none d-lg-block mb-0">
+              <Card.Title className="mb-0">{t('appName')}</Card.Title>
             </Navbar.Brand>
           </div>
 
-          <div className="d-flex align-items-center gap-3">
+          <div className="d-flex align-items-center" style={{ gap: isMobile ? '12px' : '16px' }}>
+            {/* Selector de idioma para desktop */}
             <div className="d-none d-lg-block">
               <LanguageSelectorpc />
             </div>
 
-            {/* Icono de búsqueda con Link */}
-            <Link to="/search" className="text-decoration-none">
+            {/* Búsqueda - Mejorado para móvil */}
+            <Link 
+              to="/search" 
+              className="text-decoration-none d-flex align-items-center justify-content-center"
+              style={{
+                width: isMobile ? '40px' : 'auto',
+                height: isMobile ? '40px' : 'auto'
+              }}
+            >
               <FaSearch
-                size={18}
-                className="text-secondary cursor-pointer mr-2"
+                size={isMobile ? 20 : 18}
+                className="text-secondary"
                 title={t('search')}
                 style={{ cursor: 'pointer' }}
               />
             </Link>
 
-            {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") &&
-              <i className='fas fa-plus' onClick={openStatusModal}> </i>
-            }
+            {/* Botón Agregar Post - Mejorado */}
+            {(userRole === "Super-utilisateur" || userRole === "admin") && (
+              <div
+                onClick={openStatusModal}
+                className="d-flex align-items-center justify-content-center"
+                style={{
+                  cursor: 'pointer',
+                  width: isMobile ? '40px' : 'auto',
+                  height: isMobile ? '40px' : 'auto',
+                  padding: isMobile ? '0' : '8px'
+                }}
+              >
+                <FaPlus 
+                  size={isMobile ? 20 : 18} 
+                  className="text-primary"
+                  title={t('addPost')}
+                />
+              </div>
+            )}
 
-            {/* Dropdown de notificaciones */}
+            {/* Notificaciones - Mejorado para móvil */}
             {auth.user && (
-              <div className="position-relative" ref={notifyDropdownRef}>
+              <div 
+                className="position-relative d-flex align-items-center justify-content-center" 
+                ref={notifyDropdownRef}
+                style={{
+                  width: isMobile ? '40px' : 'auto',
+                  height: isMobile ? '40px' : 'auto'
+                }}
+              >
                 <FaBell
-                  size={20}
-                  className="text-dark cursor-pointer mx-2"
+                  size={isMobile ? 22 : 20}
+                  className="text-dark cursor-pointer"
                   onClick={() => setShowNotifyDropdown(!showNotifyDropdown)}
                   style={{ cursor: 'pointer' }}
                 />
@@ -205,17 +210,21 @@ const Navbar2 = () => {
                   <Badge
                     pill
                     bg="danger"
-                    className="position-absolute top-0 start-100 translate-middle"
-                    style={{ fontSize: '0.6rem' }}
+                    className="position-absolute"
+                    style={{ 
+                      fontSize: '0.6rem',
+                      top: isMobile ? '-2px' : '0',
+                      right: isMobile ? '-2px' : '0',
+                      padding: '3px 6px'
+                    }}
                   >
-                    {unreadNotifications}
+                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
                   </Badge>
                 )}
 
-                {/* Dropdown de notificaciones */}
                 {showNotifyDropdown && (
                   <div
-                    className="dropdown-menu show"
+                    className="dropdown-menu show shadow-lg"
                     style={{
                       position: isMobile ? 'fixed' : 'absolute',
                       [isMobile ? 'left' : 'right']: isMobile ? '50%' : '0',
@@ -223,18 +232,18 @@ const Navbar2 = () => {
                       transform: isMobile ? 'translate(-50%, -50%)' : 'translateX(-230px)',
                       width: isMobile ? '90vw' : '400px',
                       maxWidth: '400px',
-                      maxHeight: isMobile ? '80vh' : '400px',
+                      maxHeight: isMobile ? '80vh' : '500px',
                       overflowY: 'auto',
                       zIndex: 1050,
-                      marginTop: isMobile ? '0' : '5px',
-                      marginRight: isMobile ? '0' : '-20px'
+                      marginTop: isMobile ? '0' : '8px',
+                      borderRadius: '12px'
                     }}
                   >
                     <NotifyModal onClose={() => setShowNotifyDropdown(false)} />
                     {isMobile && (
                       <div className="text-center p-2 border-top">
                         <button
-                          className="btn btn-sm btn-outline-secondary"
+                          className="btn btn-sm btn-outline-secondary rounded-pill px-4"
                           onClick={() => setShowNotifyDropdown(false)}
                         >
                           Cerrar
@@ -246,41 +255,96 @@ const Navbar2 = () => {
               </div>
             )}
 
+            {/* Carrito - Mejorado para móvil */}
             {auth.user && (
-              <Link to="/cart" className="position-relative text-decoration-none">
-                <BsCartFill size={20} className="text-dark" />
+              <Link 
+                to="/cart" 
+                className="position-relative text-decoration-none d-flex align-items-center justify-content-center"
+                style={{
+                  width: isMobile ? '40px' : 'auto',
+                  height: isMobile ? '40px' : 'auto'
+                }}
+              >
+                <BsCartFill size={isMobile ? 22 : 20} className="text-dark" />
                 {totalItems > 0 && (
-                  <Badge pill bg="danger" className="position-absolute top-0 start-100 translate-middle" style={{ fontSize: '0.6rem' }}>
-                    {cart.items?.length || 0}
+                  <Badge 
+                    pill 
+                    bg="danger" 
+                    className="position-absolute"
+                    style={{ 
+                      fontSize: '0.6rem',
+                      top: isMobile ? '-2px' : '0',
+                      right: isMobile ? '-2px' : '0',
+                      padding: '3px 6px'
+                    }}
+                  >
+                    {cart.items?.length > 9 ? '9+' : cart.items?.length || 0}
                   </Badge>
                 )}
               </Link>
             )}
 
+            {/* Dropdown de usuario - Mejorado */}
             <NavDropdown
               align="end"
               title={
                 auth.user ? (
-                  <div className="d-flex dropdown-avatar">
-                    <Avatar src={auth.user.avatar} size="medium-avatar" />
+                  <div 
+                    className="d-flex dropdown-avatar" 
+                    style={{
+                      width: isMobile ? '40px' : '45px',
+                      height: isMobile ? '40px' : '45px'
+                    }}
+                  >
+                    <Avatar 
+                      src={auth.user.avatar} 
+                      size="medium-avatar"
+                      style={{
+                        border: '2px solid #667eea',
+                        boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)'
+                      }}
+                    />
                   </div>
                 ) : (
-                  <FaUserCircle size={25} />
+                  <FaUserCircle size={isMobile ? 28 : 25} />
                 )
               }
               id="nav-user-dropdown"
               className="custom-dropdown"
-              key={`nav-role-${auth.user?.role}`}
+              key={`nav-role-${userRole}`}
             >
-              <div className="dropdown-scroll-wrapper">
+              <div className="dropdown-scroll-wrapper" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
                 {auth.user ? (
                   <>
-                    <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span > <strong>{auth.user.username}</strong> </span> </NavDropdown.Header>
-                    <NavDropdown.Header> <span className='text-success'><i className='fas fa-user mr-1' ></i> </span> <span >{t('role')}: <strong>{auth.user.role}</strong> </span> </NavDropdown.Header>
+                    <NavDropdown.Header className="bg-light">
+                      <div className="d-flex align-items-center gap-2">
+                        <div 
+                          style={{
+                            width: '45px',
+                            height: '45px',
+                            borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            padding: '2px'
+                          }}
+                        >
+                          <Avatar src={auth.user.avatar} size="medium-avatar" />
+                        </div>
+                        <div>
+                          <div className="fw-bold">{auth.user.username}</div>
+                          <small className="text-muted">
+                            {userRole === 'admin' ? '👑 Admin' :
+                             userRole === 'Moderateur' ? '🛡️ Moderador' :
+                             userRole === 'Super-utilisateur' ? '⭐ Super User' :
+                             '👤 Usuario'}
+                          </small>
+                        </div>
+                      </div>
+                    </NavDropdown.Header>
+
                     <NavDropdown.Header>
                       {auth.user?.isVerified ? (
-                        <span className="text-success font-semibold flex items-center">
-                          <i className="fas fa-user-check mr-2"></i>
+                        <span className="text-success fw-semibold d-flex align-items-center">
+                          <i className="fas fa-user-check me-2"></i>
                           ✅ {t('verified')}
                         </span>
                       ) : (
@@ -288,7 +352,6 @@ const Navbar2 = () => {
                       )}
                     </NavDropdown.Header>
 
-                    {/* 🔹 ICONO DE IDIOMA PARA PANTALLAS PEQUEÑAS EN EL DROPDOWN */}
                     <div className="d-lg-none">
                       <NavDropdown.Divider />
                       <NavDropdown.Item onClick={() => setShowLanguageModal(true)}>
@@ -297,53 +360,59 @@ const Navbar2 = () => {
                       </NavDropdown.Item>
                     </div>
 
-                    {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
-                      <NavDropdown.Item onClick={openStatusModal}>
-                        <FaPlus className="me-2" />
-                        {t('addPost')}
-                      </NavDropdown.Item>
+                    {(userRole === "Super-utilisateur" || userRole === "admin") && (
+                      <>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item onClick={openStatusModal}>
+                          <FaPlus className="me-2 text-primary" />
+                          {t('addPost')}
+                        </NavDropdown.Item>
+                      </>
                     )}
 
+                    <NavDropdown.Divider />
                     <NavDropdown.Item as={Link} to="/encargos">
-                      <FaEnvelope className="me-2" />
-                      encargos
+                      <FaEnvelope className="me-2 text-info" />
+                      Encargos
                     </NavDropdown.Item>
 
                     <NavDropdown.Item as={Link} to="/bloginfo">
-                      <FaInfoCircle className="me-2" />
+                      <FaInfoCircle className="me-2 text-secondary" />
                       {t('appInfo')}
                     </NavDropdown.Item>
 
                     <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
-                      <FaUserCircle className="me-2" />
+                      <FaUserCircle className="me-2 text-primary" />
                       {t('profile')}
                     </NavDropdown.Item>
 
                     <NavDropdown.Item as={Link} to="/message">
-                      <FaComments className="me-2" />
+                      <FaComments className="me-2 text-success" />
                       {t('conversations')}
                     </NavDropdown.Item>
+
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={() => setShowShareModal(true)}>
-                      <FaShareAlt className="me-2" />
+                      <FaShareAlt className="me-2 text-warning" />
                       Compartir Aplicación
                     </NavDropdown.Item>
+
                     <NavDropdown.Divider />
                     <NavDropdown.Item as={Link} to="/users/roles">
                       <FaTools className="me-2" />
                       {t('roles')}
                     </NavDropdown.Item>
 
-                    {auth.user?.role === "admin" && (
+                    {userRole === "admin" && (
                       <>
                         <NavDropdown.Divider />
-                        <NavDropdown.Header>
+                        <NavDropdown.Header className="bg-danger text-white">
                           <FaShieldAlt className="me-2" />
                           {t('adminPanel')}
                         </NavDropdown.Header>
 
                         <NavDropdown.Item as={Link} to="/users/privacidad">
-                          ⚙️  Ajestes de privacidad
+                          ⚙️ Ajustes de privacidad
                         </NavDropdown.Item>
 
                         <NavDropdown.Item onClick={() => setShowFeaturesModal(true)}>
@@ -353,11 +422,6 @@ const Navbar2 = () => {
                         <NavDropdown.Item as={Link} to="/blog">
                           <FaBlog className="me-2" />
                           {t('blog')}
-                        </NavDropdown.Item>
-
-                        <NavDropdown.Item as={Link} to="/message">
-                          <FaComments className="me-2" />
-                          {t('chatWithAdmins')}
                         </NavDropdown.Item>
 
                         <NavDropdown.Item as={Link} to="/mails">
@@ -407,8 +471,8 @@ const Navbar2 = () => {
                       {theme ? '🌞 ' + t('lightMode') : '🌙 ' + t('darkMode')}
                     </NavDropdown.Item>
 
-                    <NavDropdown.Item onClick={handleLogout}>
-                      <FaSignOutAlt className="me-1 text-danger" />
+                    <NavDropdown.Item onClick={handleLogout} className="text-danger fw-semibold">
+                      <FaSignOutAlt className="me-2" />
                       {t('logout')}
                     </NavDropdown.Item>
                   </>
@@ -423,14 +487,13 @@ const Navbar2 = () => {
                       {t('register')}
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/bloginfo">
-                      ℹ️ {t('appInfo')}
+                      <FaInfoCircle className="me-2" />
+                      {t('appInfo')}
                     </NavDropdown.Item>
-
                     <NavDropdown.Item onClick={() => setShowShareModal(true)}>
                       <FaShareAlt className="me-2" />
                       Compartir Aplicación
                     </NavDropdown.Item>
-                    <NavDropdown.Divider />
                   </>
                 )}
               </div>
@@ -439,7 +502,6 @@ const Navbar2 = () => {
         </Container>
       </Navbar>
 
-      {/* 🔹 MODAL DE IDIOMA PARA PANTALLAS PEQUEÑAS */}
       {showLanguageModal && (
         <div 
           className="modal show d-block" 
@@ -469,70 +531,23 @@ const Navbar2 = () => {
 
       <VerifyModal
         show={showVerifyModal}
-        onClose={() => {
-          setShowVerifyModal(false);
-          closeModal();
-        }}
-        title={t('auth.verifyAccount')}
-        message={t('auth.verifyRequired')}
-        actionText={t('auth.resendVerification')}
-        actionLink="/resend-verification"
-        onActionSuccess={() => {
-          setShowVerifyModal(false);
-          closeModal();
-        }}
+        onClose={() => setShowVerifyModal(false)}
       />
 
       <DesactivateModal
         show={showDeactivatedModal}
         onClose={() => setShowDeactivatedModal(false)}
-        title={t('auth.accountDeactivated')}
-        message={t('auth.contactAdmin')}
-        actionText={t('auth.contactUs')}
-        actionLink="/users/contactt"
       />
 
       <MultiCheckboxModal
         show={showFeaturesModal}
         onClose={() => setShowFeaturesModal(false)}
       />
+
       <ShareAppModal
         show={showShareModal}
         onClose={() => setShowShareModal(false)}
       />
-      {showAdminRedirectModal && (
-        <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header bg-primary text-white">
-                <h5 className="modal-title">🎉 {t('adminCongratulations')}</h5>
-              </div>
-              <div className="modal-body">
-                <p>{t('adminMessage')}</p>
-                <p className="text-muted small">{t('adminRedirect')}: {ADMIN_CLIENT_URL}</p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowAdminRedirectModal(false)}
-                >
-                  {t('stayHere')}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => {
-                    window.location.href = ADMIN_CLIENT_URL;
-                  }}
-                >
-                  {t('goToAdminPanel')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

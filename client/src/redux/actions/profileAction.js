@@ -48,10 +48,10 @@ export const getProfileUsers = ({id, auth}) => async (dispatch) => {
 
 
 export const updateProfileUser = ({userData, avatar, auth}) => async (dispatch) => {
-    if(!userData.username)
+    if(!userData.fullname)
     return dispatch({type: GLOBALTYPES.ALERT, payload: {error: "Please add your full name."}})
 
-    if(userData.username.length > 25)
+    if(userData.fullname.length > 25)
     return dispatch({type: GLOBALTYPES.ALERT, payload: {error: "Your full name too long."}})
 
     if(userData.story.length > 200)
@@ -119,8 +119,7 @@ export const follow = ({users, user, auth, socket}) => async (dispatch) => {
         // Notify
         const msg = {
             id: auth.user._id,
-            text: 'hasstartedtofollowyou.',
-            textNs: 'notify', 
+            text: 'has started to follow you.',
             recipients: [newUser._id],
             url: `/profile/${auth.user._id}`,
         }
@@ -170,8 +169,7 @@ export const unfollow = ({users, user, auth, socket}) => async (dispatch) => {
         // Notify
         const msg = {
             id: auth.user._id,
-            text: 'hasstartedtofollowyou.',
-            textNs: 'notify', 
+            text: 'has started to follow you.',
             recipients: [newUser._id],
             url: `/profile/${auth.user._id}`,
         }

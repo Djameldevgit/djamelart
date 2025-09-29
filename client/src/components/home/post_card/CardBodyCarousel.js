@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Carousel from '../../Carousel';
 import { likePost, unLikePost, savePost, unSavePost } from '../../../redux/actions/postAction';
 import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
@@ -145,208 +145,254 @@ const CardBodyCarousel = ({ post }) => {
         {post.images.length > 0 && (
           <div className="carousel-container" style={{ position: "relative" }}>
             {/* Fecha de publicación (parte superior) */}
-            <div style={{
-              position: "absolute",
-              top: "10px",
-              left: "3px",
-              zIndex: 2,
-            
-              color: "white",
-              padding: "4px 8px",
-              borderRadius: "12px",
-              fontSize: "10px",
-              fontWeight: "50"
-            }}>
-              <small className="textmuted">
-                <span className="mr-1"><i className='far fa-clock'></i>  </span>
-                {moment(post.createdAt).fromNow()}
-              </small>
-
-            </div>
+            <Badge 
+              bg="dark"
+              style={{
+                position: "absolute",
+                top: "12px",
+                left: "12px",
+                zIndex: 2,
+                padding: "6px 12px",
+                borderRadius: "20px",
+                fontSize: "11px",
+                fontWeight: "500",
+                backdropFilter: "blur(10px)",
+                backgroundColor: "rgba(0, 0, 0, 0.6)",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.3)"
+              }}
+            >
+              <i className='far fa-clock me-1'></i>
+              {moment(post.createdAt).fromNow()}
+            </Badge>
 
             {/* Información del artista y título (parte inferior) */}
             <div style={{
               position: "absolute",
-              bottom: "0",  // Cambiado a 0 para que llegue hasta el borde inferior
-              left: "0",    // Cambiado a 0 para que empiece desde el borde izquierdo
-              right: "0",   // Añadido para que llegue hasta el borde derecho
+              bottom: "0",
+              left: "0",
+              right: "0",
               zIndex: 2,
-
               color: "white",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",  // Fondo más oscuro para mejor contraste
-              padding: "4px",  // Aumentado el padding
-              backdropFilter: "blur(5px)",  // Efecto de desenfoque
+              background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+              padding: "20px 12px 12px",
+              backdropFilter: "blur(8px)"
             }}>
-              <div className='card-title' style={{
-                fontSize: "16px",
-                fontWeight: "bold",
+              <div style={{
+                fontSize: "17px",
+                fontWeight: "600",
                 marginBottom: "4px",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
-                textOverflow: "ellipsis"
+                textOverflow: "ellipsis",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.8)"
               }}>
                 {post.user?.username || "Artista"}
               </div>
               {post.theme && (
-                <div style={{
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis"
-                }}>
+                <Badge 
+                  bg="light" 
+                  text="dark"
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: "500",
+                    padding: "4px 10px",
+                    borderRadius: "12px"
+                  }}
+                >
                   {post.theme}
-                </div>
+                </Badge>
               )}
             </div>
 
             {/* Contenedor de iconos al estilo TikTok (derecha) */}
             <div style={{
               position: "absolute",
-              right: "10px",
-              bottom: "50px",
+              right: "12px",
+              bottom: "60px",
               zIndex: 2,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: "10px"
+              gap: "15px"
             }}>
-              <div className="d-flex">
-
-
-                <div className="card_name">
-                  <h6 className="m-0">
-                    <Link to={`/profile/${post.user._id}`} className="text-dark">
-                      <Avatar src={post.user.avatar} size="big-avatar" />
-                    </Link>
-                  </h6>
-
-                </div>
+              {/* Avatar del usuario */}
+              <div style={{
+                boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                borderRadius: "50%",
+                border: "3px solid white",
+                background: "white"
+              }}>
+                <Link to={`/profile/${post.user._id}`}>
+                  <Avatar src={post.user.avatar} size="big-avatar" />
+                </Link>
               </div>
-
 
               {/* Botón de like */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    borderRadius: "50%",
-                    padding: "8px",
-                    display: "flex",
-                   
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: loadLike ? 0.7 : 1,
-                    width: "40px",
-                    height: "40px"
-                  }}
-                  onClick={isLike ? handleUnLike : handleLike}
-                >
-                  <span
-                    className="material-icons"
+              <OverlayTrigger
+                placement="left"
+                overlay={<Tooltip>{isLike ? 'Quitar me gusta' : 'Me gusta'}</Tooltip>}
+              >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div
                     style={{
-                      fontSize: "24px",
-                      color: isLike ? "#F91880" : "white"
+                      cursor: "pointer",
+                      background: "linear-gradient(135deg, rgba(249, 24, 128, 0.9) 0%, rgba(255, 0, 110, 0.9) 100%)",
+                      borderRadius: "50%",
+                      padding: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      opacity: loadLike ? 0.6 : 1,
+                      width: "48px",
+                      height: "48px",
+                      boxShadow: "0 4px 12px rgba(249, 24, 128, 0.4)",
+                      transition: "all 0.3s ease",
+                      border: isLike ? "2px solid white" : "none"
+                    }}
+                    onClick={isLike ? handleUnLike : handleLike}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                  >
+                    <span
+                      className="material-icons"
+                      style={{
+                        fontSize: "26px",
+                        color: "white"
+                      }}
+                    >
+                      {loadLike ? "hourglass_empty" : "favorite"}
+                    </span>
+                  </div>
+                  <Badge 
+                    bg="dark"
+                    style={{
+                      marginTop: "4px",
+                      fontSize: "11px",
+                      fontWeight: "600",
+                      padding: "4px 8px",
+                      borderRadius: "10px",
+                      backdropFilter: "blur(10px)",
+                      backgroundColor: "rgba(0, 0, 0, 0.7)"
                     }}
                   >
-                    {loadLike ? "hourglass_empty" : "favorite"}
-                  </span>
+                    {post.likes.length}
+                  </Badge>
                 </div>
-                <span style={{
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  color: "white",
-                  marginTop: "0px",
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
-                }}>
-                  {post.likes.length}
-                </span>
-              </div>
+              </OverlayTrigger>
 
               {/* Botón de guardar */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    borderRadius: "50%",
-                    padding: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "40px",
-                    height: "40px"
-                  }}
-                  onClick={saved ? handleUnSavePost : handleSavePost}
-                >
-                  <span
-                    className="material-icons"
+              <OverlayTrigger
+                placement="left"
+                overlay={<Tooltip>{saved ? 'Quitar de guardados' : 'Guardar'}</Tooltip>}
+              >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div
                     style={{
-                      fontSize: "24px",
-                      color: saved ? "#ff8c00" : "white",
-                      opacity: saveLoad ? 0.5 : 1
+                      cursor: "pointer",
+                      background: saved 
+                        ? "linear-gradient(135deg, rgba(255, 140, 0, 0.9) 0%, rgba(255, 165, 0, 0.9) 100%)"
+                        : "rgba(0, 0, 0, 0.6)",
+                      borderRadius: "50%",
+                      padding: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "48px",
+                      height: "48px",
+                      boxShadow: saved ? "0 4px 12px rgba(255, 140, 0, 0.4)" : "0 4px 12px rgba(0,0,0,0.3)",
+                      transition: "all 0.3s ease",
+                      border: saved ? "2px solid white" : "none"
                     }}
+                    onClick={saved ? handleUnSavePost : handleSavePost}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
                   >
-                    {saveLoad ? "hourglass_empty" : "bookmark"}
-                  </span>
+                    <span
+                      className="material-icons"
+                      style={{
+                        fontSize: "26px",
+                        color: "white",
+                        opacity: saveLoad ? 0.6 : 1
+                      }}
+                    >
+                      {saveLoad ? "hourglass_empty" : "bookmark"}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </OverlayTrigger>
 
               {/* Botón de comprar */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    borderRadius: "50%",
-                    padding: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: `2px solid ${inCart ? "#F44336" : "#4CAF50"}`,
-                    opacity: buyLoad ? 0.7 : 1,
-                    width: "40px",
-                    height: "40px"
-                  }}
-                  onClick={handleBuyProduct}
-                  title={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
-                >
-                  <span className="material-icons" style={{
-                    fontSize: "24px",
-                    color: inCart ? "#F44336" : "#4CAF50"
-                  }}>
-                    {buyLoad ? "hourglass_empty" : "shopping_cart"}
-                  </span>
+              <OverlayTrigger
+                placement="left"
+                overlay={<Tooltip>{inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}</Tooltip>}
+              >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      background: inCart 
+                        ? "linear-gradient(135deg, rgba(244, 67, 54, 0.9) 0%, rgba(229, 57, 53, 0.9) 100%)"
+                        : "linear-gradient(135deg, rgba(76, 175, 80, 0.9) 0%, rgba(67, 160, 71, 0.9) 100%)",
+                      borderRadius: "50%",
+                      padding: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      opacity: buyLoad ? 0.6 : 1,
+                      width: "48px",
+                      height: "48px",
+                      boxShadow: inCart 
+                        ? "0 4px 12px rgba(244, 67, 54, 0.4)" 
+                        : "0 4px 12px rgba(76, 175, 80, 0.4)",
+                      transition: "all 0.3s ease",
+                      border: "2px solid white"
+                    }}
+                    onClick={handleBuyProduct}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                  >
+                    <span className="material-icons" style={{
+                      fontSize: "26px",
+                      color: "white"
+                    }}>
+                      {buyLoad ? "hourglass_empty" : "shopping_cart"}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </OverlayTrigger>
 
               {/* Contador de vistas */}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <div style={{
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  backgroundColor: "rgba(0, 0, 0, 0.6)",
                   borderRadius: "50%",
-                  padding: "8px",
+                  padding: "10px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  width: "40px",
-                  height: "40px"
+                  width: "48px",
+                  height: "48px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
                 }}>
-                  <span className="material-icons" style={{ fontSize: "24px", color: "white" }}>
+                  <span className="material-icons" style={{ fontSize: "26px", color: "white" }}>
                     visibility
                   </span>
                 </div>
-                <span style={{
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  color: "white",
-                  marginTop: "0px",
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
-                }}>
+                <Badge 
+                  bg="dark"
+                  style={{
+                    marginTop: "4px",
+                    fontSize: "11px",
+                    fontWeight: "600",
+                    padding: "4px 8px",
+                    borderRadius: "10px",
+                    backdropFilter: "blur(10px)",
+                    backgroundColor: "rgba(0, 0, 0, 0.7)"
+                  }}
+                >
                   {post.views || 0}
-                </span>
+                </Badge>
               </div>
-
 
               {isShare && (
                 <div className="share-modal-container" ref={shareModalRef}>
@@ -357,29 +403,36 @@ const CardBodyCarousel = ({ post }) => {
                 </div>
               )}
 
-
-
-              {/* Botón de compartir (nuevo) */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    borderRadius: "50%",
-                    padding: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "40px",
-                    height: "40px"
-                  }}
-                  onClick={handleShare}
-                >
-                  <span className="material-icons" style={{ fontSize: "24px", color: "white" }}>
-                    share
-                  </span>
+              {/* Botón de compartir */}
+              <OverlayTrigger
+                placement="left"
+                overlay={<Tooltip>Compartir</Tooltip>}
+              >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      background: "linear-gradient(135deg, rgba(33, 150, 243, 0.9) 0%, rgba(25, 118, 210, 0.9) 100%)",
+                      borderRadius: "50%",
+                      padding: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "48px",
+                      height: "48px",
+                      boxShadow: "0 4px 12px rgba(33, 150, 243, 0.4)",
+                      transition: "all 0.3s ease"
+                    }}
+                    onClick={handleShare}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                  >
+                    <span className="material-icons" style={{ fontSize: "26px", color: "white" }}>
+                      share
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </OverlayTrigger>
             </div>
 
             {/* Carousel */}
@@ -394,91 +447,184 @@ const CardBodyCarousel = ({ post }) => {
 
       {/* Modal de opciones de compartir */}
       {showShareOptions && (
-        <div className="modal" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="modal-content" style={{ width: '300px', borderRadius: '12px' }}>
-            <h3>Compartir publicación</h3>
-            <div style={{ display: 'flex', justifyContent: 'space-around', margin: '20px 0' }}>
-              <div style={{ textAlign: 'center', cursor: 'pointer' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-                  <span className="material-icons" style={{ color: 'white' }}>chat</span>
+        <div className="modal" style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          backgroundColor: 'rgba(0,0,0,0.7)'
+        }}>
+          <Card style={{ 
+            width: '340px', 
+            borderRadius: '20px',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+            border: 'none'
+          }}>
+            <Card.Body className="p-4">
+              <h5 className="text-center mb-4 fw-bold">Compartir publicación</h5>
+              <div style={{ display: 'flex', justifyContent: 'space-around', margin: '20px 0' }}>
+                <div style={{ textAlign: 'center', cursor: 'pointer' }}>
+                  <div style={{ 
+                    width: '60px', 
+                    height: '60px', 
+                    borderRadius: '50%', 
+                    background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    margin: '0 auto',
+                    boxShadow: '0 4px 12px rgba(37, 211, 102, 0.4)',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                  >
+                    <span className="material-icons" style={{ color: 'white', fontSize: '28px' }}>chat</span>
+                  </div>
+                  <p className="mt-2 mb-0" style={{ fontSize: '13px', fontWeight: '500' }}>WhatsApp</p>
                 </div>
-                <p>WhatsApp</p>
-              </div>
-              <div style={{ textAlign: 'center', cursor: 'pointer' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#1877F2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-                  <span className="material-icons" style={{ color: 'white' }}>facebook</span>
+                <div style={{ textAlign: 'center', cursor: 'pointer' }}>
+                  <div style={{ 
+                    width: '60px', 
+                    height: '60px', 
+                    borderRadius: '50%', 
+                    background: 'linear-gradient(135deg, #1877F2 0%, #0d5dbd 100%)',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    margin: '0 auto',
+                    boxShadow: '0 4px 12px rgba(24, 119, 242, 0.4)',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                  >
+                    <span className="material-icons" style={{ color: 'white', fontSize: '28px' }}>facebook</span>
+                  </div>
+                  <p className="mt-2 mb-0" style={{ fontSize: '13px', fontWeight: '500' }}>Facebook</p>
                 </div>
-                <p>Facebook</p>
-              </div>
-              <div style={{ textAlign: 'center', cursor: 'pointer' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#1DA1F2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-                  <span className="material-icons" style={{ color: 'white' }}>flutter_dash</span>
+                <div style={{ textAlign: 'center', cursor: 'pointer' }}>
+                  <div style={{ 
+                    width: '60px', 
+                    height: '60px', 
+                    borderRadius: '50%', 
+                    background: 'linear-gradient(135deg, #1DA1F2 0%, #0d8ecf 100%)',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    margin: '0 auto',
+                    boxShadow: '0 4px 12px rgba(29, 161, 242, 0.4)',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                  >
+                    <span className="material-icons" style={{ color: 'white', fontSize: '28px' }}>flutter_dash</span>
+                  </div>
+                  <p className="mt-2 mb-0" style={{ fontSize: '13px', fontWeight: '500' }}>Twitter</p>
                 </div>
-                <p>Twitter</p>
               </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <button
-                onClick={() => setShowShareOptions(false)}
-                style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', border: 'none', borderRadius: '20px', cursor: 'pointer' }}
-              >
-                Cancelar
-              </button>
-            </div>
-
-
-
-          </div>
+              <div className="d-flex justify-content-center mt-3">
+                <button
+                  className="btn btn-light"
+                  onClick={() => setShowShareOptions(false)}
+                  style={{ 
+                    padding: '10px 30px', 
+                    borderRadius: '25px',
+                    fontWeight: '500',
+                    border: '1px solid #ddd'
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </Card.Body>
+          </Card>
         </div>
       )}
 
       {showModal && (
-        <div className="modal">
-          <div className="modal-content" style={{ position: 'relative' }}>
-            <button
-              onClick={() => setShowModal(false)}
-              style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                background: 'none',
-                border: 'none',
-                fontSize: '1.8rem',
-                color: '#333',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                lineHeight: '1',
-              }}
-              aria-label="Cerrar"
-            >
-              ×
-            </button>
+        <div className="modal" style={{ 
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <Card style={{ 
+            width: '400px', 
+            borderRadius: '20px',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+            border: 'none',
+            position: 'relative'
+          }}>
+            <Card.Body className="p-4">
+              <button
+                onClick={() => setShowModal(false)}
+                style={{
+                  position: 'absolute',
+                  top: '15px',
+                  right: '15px',
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.8rem',
+                  color: '#999',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  lineHeight: '1',
+                }}
+                aria-label="Cerrar"
+              >
+                ×
+              </button>
 
-            <h4>{t("title2", { lng: languageReducer.language })}</h4>
-            <p>{t("message2", { lng: languageReducer.language })}</p>
-            <div className="modal-buttons">
-              <button onClick={() => history.push("/login")}>
-                {t("login2", { lng: languageReducer.language })}
-              </button>
-              <button onClick={() => history.push("/register")}>
-                {t("register2", { lng: languageReducer.language })}
-              </button>
-              <button onClick={() => setShowModal(false)}>
-                {t("close2", { lng: languageReducer.language })}
-              </button>
-            </div>
-          </div>
+              <h4 className="mb-3">{t("title2", { lng: languageReducer.language })}</h4>
+              <p className="text-muted">{t("message2", { lng: languageReducer.language })}</p>
+              <div className="d-flex flex-column gap-2 mt-4">
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => history.push("/login")}
+                  style={{ borderRadius: '10px', padding: '12px' }}
+                >
+                  {t("login2", { lng: languageReducer.language })}
+                </button>
+                <button 
+                  className="btn btn-outline-primary"
+                  onClick={() => history.push("/register")}
+                  style={{ borderRadius: '10px', padding: '12px' }}
+                >
+                  {t("register2", { lng: languageReducer.language })}
+                </button>
+                <button 
+                  className="btn btn-light"
+                  onClick={() => setShowModal(false)}
+                  style={{ borderRadius: '10px', padding: '12px' }}
+                >
+                  {t("close2", { lng: languageReducer.language })}
+                </button>
+              </div>
+            </Card.Body>
+          </Card>
         </div>
       )}
 
       {showBuyMessage && (
-        <div className="buy-message" style={{
-          position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
-          backgroundColor: inCart ? "#4CAF50" : "#F44336", color: "white", padding: "10px 20px",
-          borderRadius: "5px", zIndex: 9999, display: "flex", alignItems: "center",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.2)"
+        <div style={{
+          position: "fixed", 
+          bottom: "30px", 
+          left: "50%", 
+          transform: "translateX(-50%)",
+          background: inCart 
+            ? "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)" 
+            : "linear-gradient(135deg, #F44336 0%, #d32f2f 100%)",
+          color: "white", 
+          padding: "14px 24px",
+          borderRadius: "50px", 
+          zIndex: 9999, 
+          display: "flex", 
+          alignItems: "center",
+          boxShadow: "0 6px 20px rgba(0,0,0,0.3)",
+          fontWeight: "500"
         }}>
-          <span className="material-icons" style={{ marginRight: "8px" }}>
+          <span className="material-icons" style={{ marginRight: "10px", fontSize: "22px" }}>
             {inCart ? "check_circle" : "shopping_cart"}
           </span>
           {inCart

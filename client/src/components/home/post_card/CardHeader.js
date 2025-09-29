@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Dropdown, Modal, Form, Alert } from 'react-bootstrap';
+import { Card, Dropdown, Modal, Form, Alert, Button } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +30,7 @@ import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
 import { createReport } from '../../../redux/actions/reportUserAction';
 import FollowBtn from '../../FollowBtn';
 
-// ✅ Importar los modales
+// Importar los modales
 import AuthModal from '../../authAndVerify/AuthModal';
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
@@ -42,7 +42,7 @@ const CardHeader = ({ post }) => {
   const [reportReason, setReportReason] = useState('');
   const [copied, setCopied] = useState(false);
 
-  // ✅ Estados para los modales de verificación
+  // Estados para los modales de verificación
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
@@ -51,7 +51,7 @@ const CardHeader = ({ post }) => {
   const history = useHistory();
   const { t, i18n } = useTranslation('cardheader');
 
-  // ✅ Función canProceed
+  // Función canProceed
   const canProceed = () => {
     if (!auth.token || !auth.user) {
       setShowAuthModal(true);
@@ -83,9 +83,6 @@ const CardHeader = ({ post }) => {
   // URL y texto para compartir
   const shareUrl = `${window.location.origin}/post/${post._id}`;
   const shareTitle = `🎨 Obra de arte por ${post.user.username}: "${post.content?.substring(0, 80)}..." - Mira más en Tassili Art`;
-
-  // Texto específico para TikTok/Instagram
- 
   const imageUrl = post.images?.[0]?.url || post.user.avatar;
 
   const handleAprove = () => {
@@ -95,11 +92,9 @@ const CardHeader = ({ post }) => {
     }
   };
 
-  // Buscar el primer usuario que tenga role === "admin"
   const adminUser = homeUsers.users.find(user => user.role === "admin");
 
   const handleChatWithAdmin = () => {
-    // ✅ Verificar si puede proceder antes de chatear con admin
     if (!canProceed()) return;
 
     if (!adminUser) {
@@ -112,13 +107,11 @@ const CardHeader = ({ post }) => {
   };
 
   const handleEditPost = () => {
-    // ✅ Verificar si puede proceder antes de editar
     if (!canProceed()) return;
     dispatch({ type: GLOBALTYPES.STATUS, payload: { ...post, onEdit: true } });
   };
 
   const handleDeletePost = () => {
-    // ✅ Verificar si puede proceder antes de eliminar
     if (!canProceed()) return;
 
     if (window.confirm(t('confirmDelete'))) {
@@ -128,7 +121,6 @@ const CardHeader = ({ post }) => {
   };
 
   const handleSubmitReport = () => {
-    // ✅ Verificar si puede proceder antes de reportar
     if (!canProceed()) return;
 
     if (!reportReason.trim()) {
@@ -154,125 +146,133 @@ const CardHeader = ({ post }) => {
   };
 
   const handleAddUser = (user) => {
-    // ✅ Verificar si puede proceder antes de agregar usuario
     if (!canProceed()) return;
 
     dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...user, text: '', media: [] } });
     return history.push(`/message/${user._id}`);
   };
 
-  // ✅ Función para manejar compartir (no requiere verificación)
   const handleShare = () => {
     setShowShareModal(true);
   };
 
-  // ✅ Función para manejar contacto con vendedor
   const handleContactSeller = () => {
     if (!canProceed()) return;
     handleAddUser(post.user);
   };
 
+  const handleCopy = (message) => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { success: message }
+    });
+  };
+
   return (
-    <Card.Header className="d-flex justify-content-between align-items-center p-3">
-      <div className='mt-0' >
+    <>
+      <Card.Header className="d-flex justify-content-between align-items-center p-3">
+        <div className='mt-0'></div>
 
-      </div>
+        {auth.user && (
+          <Dropdown align="end">
+            <Dropdown.Toggle variant="light" id="dropdown-actions" className="p-0 border-0">
+              <span className="material-icons">more_horiz</span>
+            </Dropdown.Toggle>
 
-
-      {auth.user && (
-        <Dropdown>
-          <Dropdown.Toggle variant="light" id="dropdown-actions" className="p-0 border-0">
-            <span className="material-icons">more_horiz</span>
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu align="end" style={{
-            direction: lang === 'ar' ? 'rtl' : 'ltr',
-            textAlign: lang === 'ar' ? 'right' : 'left',
-          }}>
-            {auth.user.role === 'admin' && (
-              <>
-                <Dropdown.Item onClick={handleAprove}>
-                  ✅ {t('approve')}
-                </Dropdown.Item>
-                <Dropdown.Item onClick={handleEditPost}>
-                  ✏️ {t('edit')}
-                </Dropdown.Item>
-                <Dropdown.Item onClick={handleDeletePost}>
-                  🗑️ {t('delete')}
-                </Dropdown.Item>
-              </>
-            )}
-
-            {auth.user._id === post.user._id && (
-              <>
-                <Dropdown.Item onClick={handleEditPost}>
-                  ✏️ {t('edit')}
-                </Dropdown.Item>
-                <Dropdown.Item onClick={handleDeletePost}>
-                  🗑️ {t('delete')}
-                </Dropdown.Item>
-              </>
-            )}
-
-            <Dropdown.Item onClick={handleContactSeller} style={{
-              direction: lang === 'ar' ? 'rtl' : 'ltr',
-              textAlign: lang === 'ar' ? 'right' : 'left',
-            }}>
-              💬 {t('contactSeller')}
-            </Dropdown.Item>
-
-            <Dropdown.Item
-              onClick={handleChatWithAdmin}
+            <Dropdown.Menu
               style={{
                 direction: lang === 'ar' ? 'rtl' : 'ltr',
                 textAlign: lang === 'ar' ? 'right' : 'left',
               }}
             >
-              🛡️ {t('contactAdmin')}
-            </Dropdown.Item>
+              {auth.user.role === 'admin' && (
+                <>
+                  <Dropdown.Item onClick={handleAprove}>
+                    ✅ {t('approve')}
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleEditPost}>
+                    ✏️ {t('edit')}
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleDeletePost}>
+                    🗑️ {t('delete')}
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                </>
+              )}
 
-            {auth.user._id !== user._id && (
-              <Dropdown.Item
-                as="div"
-                className="p-2"
-                style={{ cursor: 'default' }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="d-flex align-items-center">
-                  <span className="me-2">👤</span>
-                  <FollowBtn user={user} />
-                </div>
+              {auth.user._id === post.user._id && (
+                <>
+                  <Dropdown.Item onClick={handleEditPost}>
+                    ✏️ {t('edit')}
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleDeletePost}>
+                    🗑️ {t('delete')}
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                </>
+              )}
+
+              <Dropdown.Item onClick={handleContactSeller}>
+                💬 {t('contactSeller')}
               </Dropdown.Item>
-            )}
 
-            {/* ✅ Compartir no requiere verificación */}
-            <Dropdown.Item onClick={handleShare}>
-              📤 {t('share')}
-            </Dropdown.Item>
+              <Dropdown.Item onClick={handleChatWithAdmin}>
+                🛡️ {t('contactAdmin')}
+              </Dropdown.Item>
 
-            <Dropdown.Item onClick={() => {
-              // ✅ Verificar antes de abrir modal de reporte
-              if (!canProceed()) return;
-              setShowReportModal(true);
-            }}>
-              🚩 {t('report')}
-            </Dropdown.Item>
+              {auth.user._id !== user._id && (
+                <>
+                  <Dropdown.Divider />
+                  <Dropdown.Item
+                    as="div"
+                    className="p-2"
+                    style={{ cursor: 'default' }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="d-flex align-items-center">
+                      <span className="me-2">👤</span>
+                      <FollowBtn user={user} />
+                    </div>
+                  </Dropdown.Item>
+                </>
+              )}
 
-            <Dropdown.Item>
-              🔖 {t('save')}
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      )}
+              <Dropdown.Divider />
+
+              <Dropdown.Item onClick={handleShare}>
+                📤 {t('share')}
+              </Dropdown.Item>
+
+              <Dropdown.Item onClick={() => {
+                if (!canProceed()) return;
+                setShowReportModal(true);
+              }}>
+                🚩 {t('report')}
+              </Dropdown.Item>
+
+              <Dropdown.Item>
+                🔖 {t('save')}
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
+      </Card.Header>
 
       {/* Modal para Compartir */}
-      <Modal show={showShareModal} onHide={() => setShowShareModal(false)} centered size="lg">
+      <Modal 
+        show={showShareModal} 
+        onHide={() => setShowShareModal(false)} 
+        centered 
+        size="lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title>🎨 {t('shareArt')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {copied && (
-            <Alert variant="success" className="py-2">
+            <Alert variant="success" className="py-2" dismissible onClose={() => setCopied(false)}>
               ✅ {t('copiedToClipboard')}
             </Alert>
           )}
@@ -281,17 +281,17 @@ const CardHeader = ({ post }) => {
           <div className="d-flex justify-content-around flex-wrap mb-4">
             <FacebookShareButton url={shareUrl} quote={shareTitle} className="mx-2 my-2">
               <FacebookIcon size={45} round />
-              <div className="small mt-1">Facebook</div>
+              <div className="small mt-1 text-center">Facebook</div>
             </FacebookShareButton>
 
             <TwitterShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
               <TwitterIcon size={45} round />
-              <div className="small mt-1">Twitter</div>
+              <div className="small mt-1 text-center">Twitter</div>
             </TwitterShareButton>
 
             <WhatsappShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
               <WhatsappIcon size={45} round />
-              <div className="small mt-1">WhatsApp</div>
+              <div className="small mt-1 text-center">WhatsApp</div>
             </WhatsappShareButton>
 
             {imageUrl && (
@@ -302,157 +302,122 @@ const CardHeader = ({ post }) => {
                 className="mx-2 my-2"
               >
                 <PinterestIcon size={45} round />
-                <div className="small mt-1">Pinterest</div>
+                <div className="small mt-1 text-center">Pinterest</div>
               </PinterestShareButton>
             )}
 
-            <CopyToClipboard
-             
-              onCopy={() => {
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-                dispatch({
-                  type: GLOBALTYPES.ALERT,
-                  payload: { success: t('copiedForTikTok') }
-                });
+            <div 
+              className="mx-2 my-2 text-center" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                navigator.clipboard.writeText(shareTitle);
+                handleCopy(t('copiedForTikTok'));
               }}
             >
-              <div className="mx-2 my-2 text-center" style={{ cursor: 'pointer' }}>
-                <div style={{
-                  width: 45,
-                  height: 45,
-                  borderRadius: '50%',
-                  background: '#000',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto'
-                }}>
-                  <span style={{ color: '#fff', fontWeight: 'bold' }}>TK</span>
-                </div>
-                <div className="small mt-1">TikTok</div>
+              <div style={{
+                width: 45,
+                height: 45,
+                borderRadius: '50%',
+                background: '#000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto'
+              }}>
+                <span style={{ color: '#fff', fontWeight: 'bold' }}>TK</span>
               </div>
-            </CopyToClipboard>
+              <div className="small mt-1">TikTok</div>
+            </div>
 
-            <CopyToClipboard
-           
-              onCopy={() => {
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-                dispatch({
-                  type: GLOBALTYPES.ALERT,
-                  payload: { success: t('copiedForInstagram') }
-                });
+            <div 
+              className="mx-2 my-2 text-center" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                navigator.clipboard.writeText(shareTitle);
+                handleCopy(t('copiedForInstagram'));
               }}
             >
-              <div className="mx-2 my-2 text-center" style={{ cursor: 'pointer' }}>
-                <div style={{
-                  width: 45,
-                  height: 45,
-                  borderRadius: '50%',
-                  background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto'
-                }}>
-                  <span style={{ color: '#fff', fontWeight: 'bold' }}>IG</span>
-                </div>
-                <div className="small mt-1">Instagram</div>
+              <div style={{
+                width: 45,
+                height: 45,
+                borderRadius: '50%',
+                background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto'
+              }}>
+                <span style={{ color: '#fff', fontWeight: 'bold' }}>IG</span>
               </div>
-            </CopyToClipboard>
+              <div className="small mt-1">Instagram</div>
+            </div>
 
             <TelegramShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
               <TelegramIcon size={45} round />
-              <div className="small mt-1">Telegram</div>
+              <div className="small mt-1 text-center">Telegram</div>
             </TelegramShareButton>
 
             <EmailShareButton url={shareUrl} subject={t('artWork')} body={shareTitle} className="mx-2 my-2">
               <EmailIcon size={45} round />
-              <div className="small mt-1">Email</div>
+              <div className="small mt-1 text-center">Email</div>
             </EmailShareButton>
           </div>
 
           <h6 className="mb-3">{t('manualShare')}</h6>
-          <Form.Group>
+          <Form.Group className="mb-3">
             <Form.Label>{t('copyTextForSocial')}</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
-        
+              value={shareTitle}
               readOnly
-              style={{
-                direction: 'ltr',
-                textAlign: 'left',
-                fontSize: '14px'
-              }}
               className="mb-2"
             />
             <CopyToClipboard
-          
-              onCopy={() => {
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-                dispatch({
-                  type: GLOBALTYPES.ALERT,
-                  payload: { success: t('textCopied') }
-                });
-              }}
+              text={shareTitle}
+              onCopy={() => handleCopy(t('textCopied'))}
             >
-              <button className="btn btn-outline-primary btn-sm">
+              <Button variant="outline-primary" size="sm">
                 📋 {t('copyText')}
-              </button>
+              </Button>
             </CopyToClipboard>
           </Form.Group>
 
-          <Form.Group className="mt-3">
+          <Form.Group>
             <Form.Label>{t('copyLink')}</Form.Label>
             <div className="input-group">
               <Form.Control
                 type="text"
                 value={shareUrl}
                 readOnly
-                style={{
-                  direction: 'ltr',
-                  textAlign: 'left',
-                  fontSize: '14px'
-                }}
               />
               <CopyToClipboard
                 text={shareUrl}
-                onCopy={() => {
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 2000);
-                  dispatch({
-                    type: GLOBALTYPES.ALERT,
-                    payload: { success: t('linkCopied') }
-                  });
-                }}
+                onCopy={() => handleCopy(t('linkCopied'))}
               >
-                <button className="btn btn-outline-secondary" type="button">
+                <Button variant="outline-secondary" type="button">
                   📋
-                </button>
+                </Button>
               </CopyToClipboard>
             </div>
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <button className="btn btn-secondary" onClick={() => setShowShareModal(false)}>
+          <Button variant="secondary" onClick={() => setShowShareModal(false)}>
             {t('close')}
-          </button>
+          </Button>
         </Modal.Footer>
       </Modal>
 
       {/* Modal de Reporte */}
-      <Modal show={showReportModal} onHide={() => setShowReportModal(false)}>
+      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>{t('reportTitle')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group controlId="reportReason">
             <Form.Label>{t('reportLabel')}</Form.Label>
-            <Form.Control
-              as="select"
+            <Form.Select
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
               style={{
@@ -472,30 +437,30 @@ const CardHeader = ({ post }) => {
               <option value="disruption">{t('reasons.disruption')}</option>
               <option value="suspicious">{t('reasons.suspicious')}</option>
               <option value="other">{t('reasons.other')}</option>
-            </Form.Control>
+            </Form.Select>
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <button
-            className="btn btn-secondary"
+          <Button
+            variant="secondary"
             onClick={() => {
               setShowReportModal(false);
               setReportReason('');
             }}
           >
             {t('cancel')}
-          </button>
-          <button
-            className="btn btn-danger"
+          </Button>
+          <Button
+            variant="danger"
             disabled={!reportReason}
             onClick={handleSubmitReport}
           >
             {t('submitReport')}
-          </button>
+          </Button>
         </Modal.Footer>
       </Modal>
 
-      {/* ✅ Agregar los modales de verificación */}
+      {/* Modales de verificación */}
       <AuthModal
         show={showAuthModal}
         onClose={() => setShowAuthModal(false)}
@@ -508,7 +473,7 @@ const CardHeader = ({ post }) => {
         show={showDeactivatedModal}
         onClose={() => setShowDeactivatedModal(false)}
       />
-    </Card.Header>
+    </>
   );
 };
 

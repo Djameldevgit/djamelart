@@ -14,7 +14,8 @@ import {
   Col,
   Card,
   Accordion,
-  Form
+  Form,
+  InputGroup
 } from "react-bootstrap";
 import {
   PencilFill,
@@ -24,6 +25,8 @@ import {
   CheckCircleFill,
   XCircleFill,
   ThreeDotsVertical,
+  Search,
+  XCircle
 } from "react-bootstrap-icons";
 import moment from "moment";
 import "moment/locale/ar";
@@ -339,70 +342,108 @@ const Users = () => {
 
   if (initialLoad) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
-        <Spinner animation="border" variant="primary" />
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
+        <div className="text-center">
+          <Spinner animation="border" variant="primary" style={{ width: "3rem", height: "3rem" }} />
+          <p className="mt-3 text-muted fw-semibold">Cargando usuarios...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <Container fluid>
-      <Row className="justify-content-between align-items-center mb-4">
-        <Col md={6} className="mb-3 mb-md-0">
-          <Form.Group>
-            <Form.Control
-              type="text"
-              placeholder={t("searchUsers")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="rounded-pill"
-            />
-          </Form.Group>
+    <Container fluid className="py-4">
+      {/* Header con título y buscador */}
+      <Row className="mb-4">
+        <Col>
+          <Card className="border-0 shadow-sm bg-gradient" style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+            <Card.Body className="py-4">
+              <h2 className="text-white mb-3 fw-bold">
+                <i className="bi bi-people-fill me-2"></i>
+                Gestión de Usuarios
+              </h2>
+              <Row className="align-items-center g-3">
+                <Col lg={8} md={7}>
+                  <InputGroup size="lg">
+                    <InputGroup.Text className="bg-white border-0">
+                      <Search className="text-muted" />
+                    </InputGroup.Text>
+                    <Form.Control
+                      type="text"
+                      placeholder={t("searchUsers")}
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="border-0 shadow-sm"
+                      style={{ fontSize: "1rem" }}
+                    />
+                    {search.trim() !== "" && (
+                      <Button 
+                        variant="light" 
+                        onClick={() => setSearch("")}
+                        className="border-0"
+                      >
+                        <XCircle />
+                      </Button>
+                    )}
+                  </InputGroup>
+                </Col>
+                <Col lg={4} md={5} className="text-md-end">
+                  <Badge bg="light" text="dark" className="py-2 px-3 fs-6">
+                    <i className="bi bi-person-check me-2"></i>
+                    {usersToShow.length} {search.trim() !== "" ? "resultados" : "usuarios"}
+                  </Badge>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
         </Col>
-        {search.trim() !== "" && (
-          <Col md="auto">
-            <Button 
-              variant="outline-secondary" 
-              onClick={() => setSearch("")}
-              size="sm"
-            >
-              {t('clearSearch')}
-            </Button>
-          </Col>
-        )}
       </Row>
 
+      {/* Modal de eliminación */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{t('deleteModal.title')}</Modal.Title>
+        <Modal.Header closeButton className="border-0 pb-0">
+          <Modal.Title className="text-danger">
+            <TrashFill className="me-2" />
+            {t('deleteModal.title')}
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {t('deleteModal.message')}
+        <Modal.Body className="pt-2">
+          <p className="mb-0">{t('deleteModal.message')}</p>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+        <Modal.Footer className="border-0">
+          <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>
             {t('deleteModal.cancel')}
           </Button>
           <Button variant="danger" onClick={handleDeleteUser}>
+            <TrashFill className="me-2" />
             {t('deleteModal.confirm')}
           </Button>
         </Modal.Footer>
       </Modal>
 
+      {/* Indicador de búsqueda */}
       {isSearching && search.trim() !== "" && (
-        <div className="text-center my-3">
-          <Spinner animation="border" variant="primary" />
-          <p className="mt-2">{t('searching')}</p>
-        </div>
+        <Row className="mb-4">
+          <Col>
+            <Card className="border-0 shadow-sm">
+              <Card.Body className="text-center py-4">
+                <Spinner animation="border" variant="primary" className="mb-2" />
+                <p className="mb-0 text-muted">{t('searching')}</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       )}
 
+      {/* Vista Mobile - Accordion */}
       {isMobile ? (
         <Row>
           <Col>
             {usersToShow.length === 0 ? (
-              <Card className="text-center p-4">
-                <Card.Body>
-                  <p className="mb-0 text-muted">
+              <Card className="border-0 shadow-sm text-center">
+                <Card.Body className="py-5">
+                  <i className="bi bi-inbox" style={{ fontSize: "3rem", color: "#ccc" }}></i>
+                  <p className="mt-3 mb-0 text-muted fs-5">
                     {search ? t('noUsersFoundSearch') : t('noUsersFound')}
                   </p>
                 </Card.Body>
@@ -410,84 +451,93 @@ const Users = () => {
             ) : (
               <Accordion flush>
                 {usersToShow.map((user, index) => (
-                  <Accordion.Item key={user._id} eventKey={user._id} className="mb-3 shadow-sm">
-                    <Accordion.Header>
+                  <Accordion.Item key={user._id} eventKey={user._id} className="mb-3 border-0 shadow-sm rounded">
+                    <Accordion.Header className="bg-white">
                       <div className="d-flex align-items-center w-100">
-                        <span className="text-muted">#{index + 1}</span>
+                        <Badge bg="primary" className="me-3 rounded-circle" style={{ width: "30px", height: "30px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          {index + 1}
+                        </Badge>
                         <UserCard user={user} />
                       </div>
                     </Accordion.Header>
-                    <Accordion.Body>
+                    <Accordion.Body className="bg-light">
                       <Row className="g-3 mb-3">
                         <Col xs={6}>
-                          <strong>{t('tableHeader.status')}:</strong>
-                          <br />
-                          {online.some((u) => u._id === user._id) ? (
-                            <Badge bg="success">{t('status.online')}</Badge>
-                          ) : user.lastDisconnectedAt ? (
-                            <Badge bg="secondary">
-                              {t('status.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
-                            </Badge>
-                          ) : (
-                            <Badge bg="secondary">{t('status.offline')}</Badge>
-                          )}
+                          <div className="p-2 bg-white rounded">
+                            <small className="text-muted d-block mb-1">{t('tableHeader.status')}</small>
+                            {online.some((u) => u._id === user._id) ? (
+                              <Badge bg="success" className="w-100">{t('status.online')}</Badge>
+                            ) : user.lastDisconnectedAt ? (
+                              <Badge bg="secondary" className="w-100">
+                                {t('status.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
+                              </Badge>
+                            ) : (
+                              <Badge bg="secondary" className="w-100">{t('status.offline')}</Badge>
+                            )}
+                          </div>
                         </Col>
                         <Col xs={6}>
-                          <strong>{t('tableHeaderssss.lastDisconnect')}:</strong>
-                          <br />
-                          {user.lastDisconnectedAt ? (
-                            <small className="text-muted">
-                              {moment(user.lastDisconnectedAt).fromNow()}
+                          <div className="p-2 bg-white rounded">
+                            <small className="text-muted d-block mb-1">{t('tableHeaderssss.lastDisconnect')}</small>
+                            {user.lastDisconnectedAt ? (
+                              <small className="text-dark fw-semibold">
+                                {moment(user.lastDisconnectedAt).fromNow()}
+                              </small>
+                            ) : (
+                              <span className="text-muted">--</span>
+                            )}
+                          </div>
+                        </Col>
+                        <Col xs={6}>
+                          <div className="p-2 bg-white rounded">
+                            <small className="text-muted d-block mb-1">{t('tableHeaderssss.registration')}</small>
+                            <small className="text-dark fw-semibold">
+                              {new Date(user.createdAt).toLocaleDateString()}
                             </small>
-                          ) : (
-                            <span className="text-muted">--</span>
-                          )}
+                          </div>
                         </Col>
                         <Col xs={6}>
-                          <strong>{t('tableHeaderssss.registration')}:</strong>
-                          <br />
-                          <span className="text-muted">
-                            {new Date(user.createdAt).toLocaleDateString()}
-                          </span>
+                          <div className="p-2 bg-white rounded">
+                            <small className="text-muted d-block mb-1">{t('tableHeader.verification')}</small>
+                            {user.isVerified ? (
+                              <Badge bg="success" className="w-100"><CheckCircleFill className="me-1" /> {t('status.verified')}</Badge>
+                            ) : (
+                              <Badge bg="danger" className="w-100"><XCircleFill className="me-1" /> {t('status.notVerified')}</Badge>
+                            )}
+                          </div>
                         </Col>
                         <Col xs={6}>
-                          <strong>{t('tableHeader.verification')}:</strong>
-                          <br />
-                          {user.isVerified ? (
-                            <Badge bg="success"><CheckCircleFill className="me-1" /> {t('status.verified')}</Badge>
-                          ) : (
-                            <Badge bg="danger"><XCircleFill className="me-1" /> {t('status.notVerified')}</Badge>
-                          )}
+                          <div className="p-2 bg-white rounded">
+                            <small className="text-muted d-block mb-1">{t('tableHeaders.accountStatus')}</small>
+                            {user.isActive ? (
+                              <Badge bg="success" className="w-100">{t('status.active')}</Badge>
+                            ) : (
+                              <Badge bg="warning" text="dark" className="w-100">{t('status.inactive')}</Badge>
+                            )}
+                          </div>
                         </Col>
                         <Col xs={6}>
-                          <strong>{t('tableHeaders.accountStatus')}:</strong>
-                          <br />
-                          {user.isActive ? (
-                            <Badge bg="success">{t('status.active')}</Badge>
-                          ) : (
-                            <Badge bg="warning" text="dark">{t('status.inactive')}</Badge>
-                          )}
-                        </Col>
-                        <Col xs={6}>
-                          <strong>{t('tableHeaders.blockStatus')}:</strong>
-                          <br />
-                          {user.esBloqueado ? (
-                            <Badge bg="danger">{t('status.blocked')}</Badge>
-                          ) : (
-                            <Badge bg="success">{t('status.notBlocked')}</Badge>
-                          )}
+                          <div className="p-2 bg-white rounded">
+                            <small className="text-muted d-block mb-1">{t('tableHeaders.blockStatus')}</small>
+                            {user.esBloqueado ? (
+                              <Badge bg="danger" className="w-100">{t('status.blocked')}</Badge>
+                            ) : (
+                              <Badge bg="success" className="w-100">{t('status.notBlocked')}</Badge>
+                            )}
+                          </div>
                         </Col>
                       </Row>
 
-                      <Dropdown>
-                        <Dropdown.Toggle variant="outline-primary" size="sm" className="w-100 mb-2">
+                      <Dropdown className="d-grid">
+                        <Dropdown.Toggle variant="primary" size="sm" className="w-100">
                           <ThreeDotsVertical className="me-2" />
                           {t('tableHeaders.actions')}
                         </Dropdown.Toggle>
-                        <Dropdown.Menu className="w-100">
-                          <Dropdown.Item disabled>
+                        <Dropdown.Menu className="w-100 shadow">
+                          <Dropdown.Item disabled className="text-muted">
                             <PencilFill className="me-2" /> {t('action.edit')}
                           </Dropdown.Item>
+                          <Dropdown.Divider />
 
                           <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
                             <TrashFill className="me-2" /> {t('action.delete')}
@@ -496,6 +546,8 @@ const Users = () => {
                           <Dropdown.Item onClick={() => handleOpenPermissionModal(user)}>
                             🛡️ {t('action.managePermissions')}
                           </Dropdown.Item>
+
+                          <Dropdown.Divider />
 
                           <Dropdown.Item
                             className={user.isActive ? "text-warning" : "text-success"}
@@ -544,46 +596,48 @@ const Users = () => {
           </Col>
         </Row>
       ) : (
-        <Card className="shadow-sm">
+        /* Vista Desktop - Tabla */
+        <Card className="border-0 shadow-sm">
           <Card.Body className="p-0">
             <div className="table-responsive">
-              <Table striped bordered hover className="align-middle mb-0">
-                <thead className="table-dark">
+              <Table hover className="align-middle mb-0">
+                <thead style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
                   <tr>
-                    <th>#</th>
-                    <th>{t('tableHeaders.user')}</th>
-                    <th>{t('tableHeaders.status')}</th>
-                    <th>{t('tableHeaders.lastDisconnect')}</th>
-                    <th>{t('tableHeaders.registration')}</th>
-                    <th>{t('tableHeaders.verification')}</th>
-                    <th>{t('tableHeaders.accountStatus')}</th>
-                    <th>{t('tableHeaders.blockStatus')}</th>
-                    <th>{t('tableHeaders.actions')}</th>
+                    <th className="text-white border-0 py-3">#</th>
+                    <th className="text-white border-0 py-3">{t('tableHeaders.user')}</th>
+                    <th className="text-white border-0 py-3">{t('tableHeaders.status')}</th>
+                    <th className="text-white border-0 py-3">{t('tableHeaders.lastDisconnect')}</th>
+                    <th className="text-white border-0 py-3">{t('tableHeaders.registration')}</th>
+                    <th className="text-white border-0 py-3">{t('tableHeaders.verification')}</th>
+                    <th className="text-white border-0 py-3">{t('tableHeaders.accountStatus')}</th>
+                    <th className="text-white border-0 py-3">{t('tableHeaders.blockStatus')}</th>
+                    <th className="text-white border-0 py-3 text-center">{t('tableHeaders.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {usersToShow.length === 0 ? (
                     <tr>
-                      <td colSpan="9" className="text-center py-4">
-                        <span className="text-muted">
+                      <td colSpan="9" className="text-center py-5">
+                        <i className="bi bi-inbox" style={{ fontSize: "3rem", color: "#ccc" }}></i>
+                        <p className="mt-3 mb-0 text-muted fs-5">
                           {search ? t('noUsersFoundSearch') : t('noUsersFound')}
-                        </span>
+                        </p>
                       </td>
                     </tr>
                   ) : (
                     usersToShow.map((user, index) => (
-                      <tr key={user._id}>
-                        <td>{index + 1}</td>
+                      <tr key={user._id} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                        <td className="fw-bold text-primary">{index + 1}</td>
                         <td><UserCard user={user} /></td>
                         <td>
                           {online.some((u) => u._id === user._id) ? (
-                            <Badge bg="success">{t('status.online')}</Badge>
+                            <Badge bg="success" className="px-3 py-2">{t('status.online')}</Badge>
                           ) : user.lastDisconnectedAt ? (
-                            <Badge bg="secondary">
+                            <Badge bg="secondary" className="px-3 py-2">
                               {t('status.offlineSince', { time: moment(user.lastDisconnectedAt).fromNow() })}
                             </Badge>
                           ) : (
-                            <Badge bg="secondary">{t('status.offline')}</Badge>
+                            <Badge bg="secondary" className="px-3 py-2">{t('status.offline')}</Badge>
                           )}
                         </td>
                         <td>
@@ -595,37 +649,39 @@ const Users = () => {
                             <span className="text-muted">--</span>
                           )}
                         </td>
-                        <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                        <td><small className="text-muted">{new Date(user.createdAt).toLocaleDateString()}</small></td>
                         <td>
                           {user.isVerified ? (
-                            <Badge bg="success"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.verified')}</Badge>
+                            <Badge bg="success" className="px-3 py-2"><CheckCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.verified')}</Badge>
                           ) : (
-                            <Badge bg="danger"><XCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.notVerified')}</Badge>
+                            <Badge bg="danger" className="px-3 py-2"><XCircleFill className={`me-1 ${lang === 'ar' ? 'ms-1' : ''}`} /> {t('status.notVerified')}</Badge>
                           )}
                         </td>
                         <td>
                           {user.isActive ? (
-                            <Badge bg="success">{t('status.active')}</Badge>
+                            <Badge bg="success" className="px-3 py-2">{t('status.active')}</Badge>
                           ) : (
-                            <Badge bg="warning" text="dark">{t('status.inactive')}</Badge>
+                            <Badge bg="warning" text="dark" className="px-3 py-2">{t('status.inactive')}</Badge>
                           )}
                         </td>
                         <td>
                           {user.esBloqueado ? (
-                            <Badge bg="danger">{t('status.blocked')}</Badge>
+                            <Badge bg="danger" className="px-3 py-2">{t('status.blocked')}</Badge>
                           ) : (
-                            <Badge bg="success">{t('status.notBlocked')}</Badge>
+                            <Badge bg="success" className="px-3 py-2">{t('status.notBlocked')}</Badge>
                           )}
                         </td>
-                        <td>
+                        <td className="text-center">
                           <Dropdown drop={lang === 'ar' ? 'start' : 'end'}>
-                            <Dropdown.Toggle variant="outline-secondary" size="sm" id="dropdown-actions">
+                            <Dropdown.Toggle variant="outline-primary" size="sm" id="dropdown-actions" className="rounded-circle" style={{ width: "35px", height: "35px", padding: "0" }}>
                               <ThreeDotsVertical />
                             </Dropdown.Toggle>
-                            <Dropdown.Menu>
+                            <Dropdown.Menu className="shadow border-0">
                               <Dropdown.Item className="text-danger" onClick={() => confirmDelete(user._id)}>
                                 <TrashFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.delete')}
                               </Dropdown.Item>
+
+                              <Dropdown.Divider />
 
                               <Dropdown.Item
                                 className={user.isActive ? "text-warning" : "text-success"}
@@ -665,7 +721,9 @@ const Users = () => {
                                 {user.isVerified ? t('action.unverify') : t('action.verify')}
                               </Dropdown.Item>
 
-                              <Dropdown.Item disabled>
+                              <Dropdown.Divider />
+
+                              <Dropdown.Item disabled className="text-muted">
                                 <PencilFill className={`me-2 ${lang === 'ar' ? 'ms-2' : ''}`} /> {t('action.edit')}
                               </Dropdown.Item>
 
@@ -685,23 +743,35 @@ const Users = () => {
         </Card>
       )}
 
+      {/* Indicador de carga */}
       {load && (
-        <div className="text-center my-3">
-          <Spinner animation="border" variant="primary" />
-        </div>
+        <Row className="my-4">
+          <Col>
+            <Card className="border-0 shadow-sm">
+              <Card.Body className="text-center py-3">
+                <Spinner animation="border" variant="primary" size="sm" className="me-2" />
+                <span className="text-muted">Cargando más usuarios...</span>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       )}
 
+      {/* Botón de cargar más */}
       {hasMore && usersToShow.length > 0 && (
-        <div className="d-flex justify-content-center my-3">
-          <LoadMoreBtn
-            result={9} // Siempre mostramos el botón si hay más resultados
-            page={search.trim() !== "" ? searchPage : homeUsers.page}
-            load={load}
-            handleLoadMore={search.trim() !== "" ? handleLoadMoreSearch : handleLoadMore}
-          />
-        </div>
+        <Row className="my-4">
+          <Col className="d-flex justify-content-center">
+            <LoadMoreBtn
+              result={9}
+              page={search.trim() !== "" ? searchPage : homeUsers.page}
+              load={load}
+              handleLoadMore={search.trim() !== "" ? handleLoadMoreSearch : handleLoadMore}
+            />
+          </Col>
+        </Row>
       )}
 
+      {/* Modal de permisos */}
       {showPermissionModal && userForPermission && (
         <ModalPrivilegios
           user={userForPermission}
@@ -710,6 +780,7 @@ const Users = () => {
         />
       )}
 
+      {/* Modal de bloqueo */}
       {showBlockModal && selectedUser && (
         <BloqueModalUser
           show={showBlockModal}

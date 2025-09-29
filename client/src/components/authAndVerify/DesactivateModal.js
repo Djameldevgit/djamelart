@@ -1,53 +1,48 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { useTranslation } from 'react-i18next'
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const DesactivateModal = ({ show, onClose, closeOnOverlayClick = true }) => {
-  const { t } = useTranslation('authmodal')
-  const { auth, languageReducer } = useSelector(state => state)
-  const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
-  const lang = languageReducer?.language || 'es'
-  const modalRef = useRef(null)
-
-  // Función para cerrar al hacer clic fuera del modal
-  const handleOverlayClick = (e) => {
-    if (closeOnOverlayClick && modalRef.current && !modalRef.current.contains(e.target)) {
-      onClose()
-    }
-  }
-
-  // Función para cerrar con la tecla Escape
-  const handleEscapeKey = (e) => {
-    if (e.key === 'Escape') {
-      onClose()
-    }
-  }
+  const { t } = useTranslation('authmodal');
+  const { auth, languageReducer } = useSelector(state => state);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const lang = languageReducer?.language || 'es';
 
   useEffect(() => {
     if (show) {
-      // Agregar event listeners cuando el modal se muestra
-      document.addEventListener('mousedown', handleOverlayClick)
-      document.addEventListener('keydown', handleEscapeKey)
-      // Prevenir scroll del body cuando el modal está abierto
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden';
+      // Reset estados al abrir
+      setError('');
+      setSuccess('');
     }
 
-    // Cleanup function
     return () => {
-      document.removeEventListener('mousedown', handleOverlayClick)
-      document.removeEventListener('keydown', handleEscapeKey)
-      document.body.style.overflow = 'unset'
-    }
-  }, [show, closeOnOverlayClick])
+      document.body.style.overflow = 'unset';
+    };
+  }, [show]);
+
+  // Reset message cuando se cierra el modal
+  const handleClose = () => {
+    setMessage('');
+    setError('');
+    setSuccess('');
+    onClose();
+  };
 
   const handleSendEmail = async () => {
     if (!message.trim()) {
-      alert(t('messageRequired', { lng: lang }) || 'Debes escribir un mensaje.')
-      return
+      setError(t('messageRequired', { lng: lang }) || 'Debes escribir un mensaje.');
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
     try {
       const res = await fetch('/api/contact-activation-request', {
         method: 'POST',
@@ -59,164 +54,121 @@ const DesactivateModal = ({ show, onClose, closeOnOverlayClick = true }) => {
           message,
           lang
         })
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
+      
       if (res.ok) {
-        alert(t('messageSentSuccess', { lng: lang }) || 'Correo enviado con éxito.')
-        setMessage('')
-        onClose()
+        setSuccess(t('messageSentSuccess', { lng: lang }) || 'Correo enviado con éxito.');
+        setMessage('');
+        // Cerrar el modal después de 2 segundos
+        setTimeout(() => {
+          handleClose();
+        }, 2000);
       } else {
-        alert(data.msg || 'Error al enviar el mensaje.')
+        setError(data.msg || 'Error al enviar el mensaje.');
       }
     } catch (err) {
-      console.error(err)
-      alert(t('requestError', { lng: lang }) || 'Error al enviar la solicitud.')
+      console.error(err);
+      setError(t('requestError', { lng: lang }) || 'Error al enviar la solicitud.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
-  if (!show) return null
+  };
 
   return (
-    <div className="modal-overlay" style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      zIndex: 1000,
-      cursor: closeOnOverlayClick ? 'pointer' : 'default'
-    }}>
-      <div 
-        ref={modalRef}
-        className="modal-content" 
-        style={{
-          backgroundColor: "white",
-          padding: "25px",
-          borderRadius: "8px",
-          width: "400px",
-          maxWidth: "90%",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          cursor: "default",
-          position: "relative"
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          style={{
-            position: "absolute",
-            top: "10px",
-            right: "10px",
-            background: "none",
-            border: "none",
-            fontSize: "1.5rem",
-            cursor: "pointer",
-            color: "#999",
-            padding: "5px",
-            borderRadius: "50%",
-            width: "30px",
-            height: "30px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          onMouseOver={(e) => e.target.style.color = "#333"}
-          onMouseOut={(e) => e.target.style.color = "#999"}
-          title={t('close', { lng: lang })}
-        >
-          ×
-        </button>
-
-        <h4 style={{ margin: "0 0 15px 0", color: "#333", textAlign: "center" }}>
+    <Modal
+      show={show}
+      onHide={handleClose}
+      backdrop={closeOnOverlayClick ? true : 'static'}
+      keyboard={true}
+      centered
+      size="lg"
+      aria-labelledby="activation-modal-title"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="activation-modal-title" className="w-100 text-center">
           {t('activationRequest', { lng: lang })}
-        </h4>
-        
-        <p style={{ margin: "0 0 20px 0", color: "#666", textAlign: "center" }}>
+        </Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <p className="text-center text-muted mb-4">
           {t('activationMessage', { lng: lang })}
         </p>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-            {t('userEmail', { lng: lang })}:
-          </label>
-          <input
-            type="email"
-            value={auth.user?.email || ''}
-            readOnly
-            style={{ 
-              width: "100%", 
-              padding: "10px", 
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              backgroundColor: "#f5f5f5"
-            }}
-          />
-        </div>
+        {/* Alertas de error y éxito */}
+        {error && (
+          <Alert variant="danger" onClose={() => setError('')} dismissible>
+            {error}
+          </Alert>
+        )}
+        
+        {success && (
+          <Alert variant="success" onClose={() => setSuccess('')} dismissible>
+            {success}
+          </Alert>
+        )}
 
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-            {t('message', { lng: lang })}:
-          </label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={5}
-            placeholder={t('messagePlaceholder', { lng: lang })}
-            style={{ 
-              width: "100%", 
-              padding: "10px", 
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              resize: "vertical"
-            }}
-          />
-        </div>
+        <Form>
+          <Form.Group className="mb-3" controlId="userEmail">
+            <Form.Label className="fw-bold">
+              {t('userEmail', { lng: lang })}:
+            </Form.Label>
+            <Form.Control
+              type="email"
+              value={auth.user?.email || ''}
+              readOnly
+              disabled
+              style={{ backgroundColor: '#f5f5f5' }}
+            />
+          </Form.Group>
 
-        <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          <button 
-            onClick={handleSendEmail}
-            disabled={loading}
-            style={{
-              padding: "12px 20px",
-              backgroundColor: loading ? "#6c757d" : "#28a745",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: loading ? "not-allowed" : "pointer",
-              fontWeight: "bold",
-              minWidth: "120px"
-            }}
-          >
-            {loading ? t('sending', { lng: lang }) : t('requestActivation', { lng: lang })}
-          </button>
-          
-          <button 
-            onClick={onClose}
-            style={{
-              padding: "12px 20px",
-              backgroundColor: "#6c757d",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              minWidth: "80px"
-            }}
-          >
-            {t('close', { lng: lang })}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+          <Form.Group className="mb-4" controlId="activationMessage">
+            <Form.Label className="fw-bold">
+              {t('message', { lng: lang })}:
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={5}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder={t('messagePlaceholder', { lng: lang })}
+              disabled={loading}
+              style={{ resize: 'vertical' }}
+            />
+          </Form.Group>
+        </Form>
+      </Modal.Body>
 
-export default DesactivateModal
+      <Modal.Footer className="justify-content-center">
+        <Button 
+          variant="success"
+          onClick={handleSendEmail}
+          disabled={loading || !message.trim()}
+          style={{ minWidth: '120px' }}
+        >
+          {loading ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {t('sending', { lng: lang })}
+            </>
+          ) : (
+            t('requestActivation', { lng: lang })
+          )}
+        </Button>
+        
+        <Button 
+          variant="secondary"
+          onClick={handleClose}
+          disabled={loading}
+          style={{ minWidth: '80px' }}
+        >
+          {t('close', { lng: lang })}
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+export default DesactivateModal;
