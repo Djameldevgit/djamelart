@@ -11,7 +11,7 @@ export function MesureInput({ handleChangeInput, postData }) {
     <div className='form-group'>
     <label  >  {t('mesure.labels.measurement', { lng: lang })}</label>   
       <Form.Control
-        type="number"
+        type="text"
         name="measurementValue"
         value={postData.measurementValue || ''}
         onChange={handleChangeInput}

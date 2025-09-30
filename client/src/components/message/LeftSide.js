@@ -5,17 +5,18 @@ import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import { useHistory, useParams } from 'react-router-dom'
 import { MESS_TYPES, getConversations } from '../../redux/actions/messageAction'
 import { getDataAPI } from '../../utils/fetchData'
-
-// 🔥 Import para traducción
 import { useTranslation } from 'react-i18next'
 import i18n from 'i18next'
+import { Card, Form, InputGroup, Button, Badge, ListGroup, Spinner } from 'react-bootstrap'
+import { FaSearch, FaCircle, FaInbox } from 'react-icons/fa'
 
 const LeftSide = () => {
-  const { auth, message, online, languageReducer } = useSelector(state => state)
+  const { auth, message, online, languageReducer, theme } = useSelector(state => state)
   const dispatch = useDispatch()
 
   const [search, setSearch] = useState('')
   const [searchUsers, setSearchUsers] = useState([])
+  const [isSearching, setIsSearching] = useState(false)
 
   const history = useHistory()
   const { id } = useParams()
@@ -23,8 +24,7 @@ const LeftSide = () => {
   const pageEnd = useRef()
   const [page, setPage] = useState(0)
 
-  // ✅ Traducción
-  const { t } = useTranslation('chat') // namespace
+  const { t } = useTranslation('chat')
   const lang = languageReducer.language || 'es'
 
   useEffect(() => {
@@ -38,6 +38,7 @@ const LeftSide = () => {
     if (!search) return setSearchUsers([])
 
     try {
+      setIsSearching(true)
       const res = await getDataAPI(`search?username=${search}`, auth.token)
       setSearchUsers(res.data.users)
     } catch (err) {
@@ -45,6 +46,8 @@ const LeftSide = () => {
         type: GLOBALTYPES.ALERT,
         payload: { error: err.response?.data?.msg || t('message.searchError') }
       })
+    } finally {
+      setIsSearching(false)
     }
   }
 
@@ -66,7 +69,6 @@ const LeftSide = () => {
     dispatch(getConversations({ auth }))
   }, [dispatch, auth, message.firstLoad])
 
-  // Load More
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) {
@@ -85,7 +87,6 @@ const LeftSide = () => {
     }
   }, [message.resultUsers, page, auth, dispatch])
 
-  // Check User Online - Offline
   useEffect(() => {
     if (message.firstLoad) {
       dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online })
@@ -93,80 +94,325 @@ const LeftSide = () => {
   }, [online, message.firstLoad, dispatch])
 
   return (
-    <div style={{ direction: lang === 'ar' ? 'rtl' : 'ltr' }}>
-      {auth.user?.role === "admin" &&
-        <form className="message_header" onSubmit={handleSearch} >
-          <input
-            type="text"
-            value={search}
-            placeholder={t('message.searchPlaceholder', { lng: lang })}
-            onChange={e => setSearch(e.target.value)}
-            style={{
-              direction: lang === 'ar' ? 'rtl' : 'ltr',
-              textAlign: lang === 'ar' ? 'right' : 'left'
-            }}
-          />
+    <div 
+      style={{ 
+        direction: lang === 'ar' ? 'rtl' : 'ltr',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        background: theme ? '#0f0f1e' : '#ffffff'
+      }}
+    >
+      {/* 🎨 HEADER CON BÚSQUEDA MEJORADA */}
+      {auth.user?.role === "admin" && (
+        <Card 
+          className="border-0 shadow-sm"
+          style={{
+            borderRadius: '0',
+            background: theme 
+              ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
+              : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          }}
+        >
+          <Card.Body className="p-3">
+            <Form onSubmit={handleSearch}>
+              <InputGroup>
+                <Form.Control
+                  type="text"
+                  value={search}
+                  placeholder={t('message.searchPlaceholder', { lng: lang }) || 'Buscar usuarios...'}
+                  onChange={e => setSearch(e.target.value)}
+                  style={{
+                    borderRadius: '25px 0 0 25px',
+                    border: 'none',
+                    padding: '12px 20px',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    direction: lang === 'ar' ? 'rtl' : 'ltr',
+                    textAlign: lang === 'ar' ? 'right' : 'left',
+                    fontSize: '0.95rem'
+                  }}
+                />
+                <Button
+                  type="submit"
+                  style={{
+                    borderRadius: '0 25px 25px 0',
+                    border: 'none',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    padding: '0 20px',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                  }}
+                >
+                  {isSearching ? (
+                    <Spinner animation="border" size="sm" style={{ color: 'white' }} />
+                  ) : (
+                    <FaSearch size={16} style={{ color: 'white' }} />
+                  )}
+                </Button>
+              </InputGroup>
+            </Form>
 
-          <button type="submit" style={{ display: 'none' }}>
-            {t('message.searchButton', { lng: lang })}
-          </button>
-        </form>
-      }
-
-      <div className="message_chat_list">
-        {searchUsers.length !== 0
-          ? <>
-            {searchUsers.map(user => (
-              <div
-                key={user._id}
-                className={`message_user ${isActive(user)}`}
-                onClick={() => handleAddUser(user)}
-              >
-                <UserCard user={user} />
+            {/* Badge con contador de conversaciones */}
+            {message.users.length > 0 && (
+              <div className="mt-2 text-center">
+                <Badge 
+                  bg="light" 
+                  text="dark"
+                  style={{
+                    fontSize: '0.8rem',
+                    padding: '6px 12px',
+                    borderRadius: '20px',
+                    fontWeight: '600'
+                  }}
+                >
+                  {message.users.length} {message.users.length === 1 ? 'conversación' : 'conversaciones'}
+                </Badge>
               </div>
-            ))}
+            )}
+          </Card.Body>
+        </Card>
+      )}
+
+      {/* 🎨 LISTA DE CONVERSACIONES MEJORADA */}
+      <div 
+        className="message_chat_list"
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '8px',
+          background: theme ? '#0f0f1e' : '#f8f9fa'
+        }}
+      >
+        {searchUsers.length !== 0 ? (
+          <>
+            {/* Resultados de búsqueda */}
+            <div 
+              className="mb-2 px-2"
+              style={{
+                fontSize: '0.85rem',
+                color: theme ? '#aaa' : '#666',
+                fontWeight: '600'
+              }}
+            >
+              Resultados de búsqueda ({searchUsers.length})
+            </div>
+            <ListGroup variant="flush">
+              {searchUsers.map(user => (
+                <ListGroup.Item
+                  key={user._id}
+                  onClick={() => handleAddUser(user)}
+                  style={{
+                    cursor: 'pointer',
+                    border: 'none',
+                    borderRadius: '12px',
+                    marginBottom: '8px',
+                    padding: '12px',
+                    background: theme ? '#16213e' : 'white',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = theme 
+                      ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
+                      : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)';
+                    e.currentTarget.style.transform = 'translateX(4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = theme ? '#16213e' : 'white';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                  }}
+                >
+                  <UserCard user={user} />
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
           </>
-          : <>
+        ) : (
+          <>
             {message.users.length === 0 ? (
-              <div className="text-center p-3 text-muted">
-                {t('message.noUsersFound', { lng: lang })}
+              /* Estado vacío mejorado */
+              <div 
+                className="text-center p-5"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  color: theme ? '#aaa' : '#999'
+                }}
+              >
+                <div
+                  style={{
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '50%',
+                    background: theme 
+                      ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
+                      : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '20px'
+                  }}
+                >
+                  <FaInbox size={35} style={{ color: '#667eea' }} />
+                </div>
+                <h6 style={{ fontWeight: '600', marginBottom: '8px' }}>
+                  {t('message.noUsersFound', { lng: lang }) || 'No hay conversaciones'}
+                </h6>
+                <small style={{ opacity: 0.7 }}>
+                  Busca usuarios para iniciar una conversación
+                </small>
               </div>
             ) : (
-              message.users.map(user => (
-                <div
-                  key={user._id}
-                  className={`message_user ${isActive(user)}`}
-                  onClick={() => handleAddUser(user)}
-                >
-                  <UserCard user={user} msg={true}>
-                    {user.online ? (
-                      <i
-                        className="fas fa-circle text-success"
-                        title={t('message.online', { lng: lang })}
-                      />
-                    ) : (
-                      auth.user.following.find(item => item._id === user._id) && (
-                        <i
-                          className="fas fa-circle"
-                          title={t('message.offline', { lng: lang })}
-                        />
-                      )
-                    )}
-                  </UserCard>
-                </div>
-              ))
+              /* Lista de conversaciones */
+              <ListGroup variant="flush">
+                {message.users.map(user => (
+                  <ListGroup.Item
+                    key={user._id}
+                    onClick={() => handleAddUser(user)}
+                    className={isActive(user)}
+                    style={{
+                      cursor: 'pointer',
+                      border: 'none',
+                      borderRadius: '12px',
+                      marginBottom: '8px',
+                      padding: '12px',
+                      background: id === user._id
+                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                        : theme ? '#16213e' : 'white',
+                      transition: 'all 0.2s ease',
+                      boxShadow: id === user._id
+                        ? '0 4px 15px rgba(102, 126, 234, 0.4)'
+                        : '0 2px 8px rgba(0,0,0,0.05)',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (id !== user._id) {
+                        e.currentTarget.style.background = theme 
+                          ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
+                          : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)';
+                        e.currentTarget.style.transform = 'translateX(4px)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (id !== user._id) {
+                        e.currentTarget.style.background = theme ? '#16213e' : 'white';
+                        e.currentTarget.style.transform = 'translateX(0)';
+                      }
+                    }}
+                  >
+                    <div style={{ position: 'relative' }}>
+                      <UserCard user={user} msg={true}>
+                        {/* Indicador de online/offline mejorado */}
+                        <div style={{ position: 'relative' }}>
+                          {user.online ? (
+                            <Badge
+                              bg="success"
+                              pill
+                              style={{
+                                fontSize: '0.65rem',
+                                padding: '4px 8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                boxShadow: '0 2px 8px rgba(40, 167, 69, 0.4)'
+                              }}
+                            >
+                              <FaCircle size={6} />
+                              En línea
+                            </Badge>
+                          ) : (
+                            auth.user.following.find(item => item._id === user._id) && (
+                              <FaCircle 
+                                size={8} 
+                                style={{ 
+                                  color: theme ? '#555' : '#ccc',
+                                  opacity: 0.6
+                                }}
+                                title={t('message.offline', { lng: lang }) || 'Desconectado'}
+                              />
+                            )
+                          )}
+                        </div>
+                      </UserCard>
+
+                      {/* Indicador de mensaje no leído */}
+                      {user.unread > 0 && (
+                        <Badge
+                          bg="danger"
+                          pill
+                          style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            fontSize: '0.7rem',
+                            padding: '4px 8px',
+                            minWidth: '24px',
+                            boxShadow: '0 2px 8px rgba(220, 53, 69, 0.4)'
+                          }}
+                        >
+                          {user.unread > 9 ? '9+' : user.unread}
+                        </Badge>
+                      )}
+                    </div>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
             )}
           </>
-        }
+        )}
 
+        {/* Botón para cargar más (invisible pero funcional) */}
         <button
           ref={pageEnd}
-          style={{ opacity: 0 }}
+          style={{ 
+            opacity: 0, 
+            height: '1px',
+            border: 'none',
+            background: 'transparent'
+          }}
           aria-label={t('message.loadMore2', { lng: lang })}
         >
           {t('message.loadMore2', { lng: lang })}
         </button>
       </div>
+
+      {/* 🎨 ESTILOS PERSONALIZADOS */}
+      <style>{`
+        .message_chat_list::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .message_chat_list::-webkit-scrollbar-track {
+          background: ${theme ? '#0f0f1e' : '#f1f1f1'};
+          border-radius: 10px;
+        }
+
+        .message_chat_list::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 10px;
+        }
+
+        .message_chat_list::-webkit-scrollbar-thumb:hover {
+          background: #667eea;
+        }
+
+        .list-group-item.active {
+          color: white !important;
+        }
+
+        .list-group-item.active * {
+          color: white !important;
+        }
+      `}</style>
     </div>
   )
 }

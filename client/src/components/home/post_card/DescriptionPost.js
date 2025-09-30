@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 const DescriptionPost = ({ post }) => {
   const { languageReducer } = useSelector(state => state);
   const { t } = useTranslation('postDetail'); // namespace correcto
-
+  const [readMore, setReadMore] = useState(false)
   const lang = languageReducer.language || 'en'; // fallback por si acaso
 
   return (
@@ -32,7 +32,7 @@ const DescriptionPost = ({ post }) => {
         )}
         {post.description && (
           <div className="metadata-item">
-            <i className="fas fa-image"></i>
+            <i className="fas fa-align-left"></i>
             <span className="metadata-label">{t('description', { lng: lang })}:</span>
             <span className="infovalue">
               <div className="cardbodycontent"  >
@@ -135,13 +135,7 @@ const DescriptionPost = ({ post }) => {
             <span className="metadata-value">{post.talle}</span>
           </div>
         )}
-        {post.description && (
-          <div className="metadata-item">
-            <i className="fas fa-align-left"></i>
-            <span className="metadata-label">{t('description', { lng: lang })}:</span>
-            <span className="metadata-value">{post.description}</span>
-          </div>
-        )}
+       
         {post.wilaya && (
           <div className="metadata-item">
             <i className="fas fa-map-marker-alt"></i>

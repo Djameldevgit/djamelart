@@ -568,7 +568,7 @@ deleteUser: async (req, res) => {
 },
  
 
-
+ 
   getUsersAction: async (req, res) => {
     try {
       const { filter } = req.query;
@@ -576,18 +576,29 @@ deleteUser: async (req, res) => {
       let query = Users.find();
 
       const features = new APIfeatures(query, req.query).paginating();
-   
       let users = await features.query.sort('-createdAt');
 
       const usersWithDetails = await Promise.all(
         users.map(async (user) => {
           const posts = await Posts.find({ user: user._id });
-          const totalLikesReceived = posts.reduce((acc, post) => acc + post.likes.length, 0);
-          const totalCommentsReceived = posts.reduce((acc, post) => acc + post.comments.length, 0);
-          const reportsReceived = await Report.countDocuments({ userId: user._id });
+          const totalLikesReceived = posts.reduce(
+            (acc, post) => acc + post.likes.length,
+            0
+          );
+          const totalCommentsReceived = posts.reduce(
+            (acc, post) => acc + post.comments.length,
+            0
+          );
+          const reportsReceived = await Report.countDocuments({
+            userId: user._id,
+          });
           const likesGiven = await Posts.countDocuments({ likes: user._id });
-          const commentsMade = await Comments.countDocuments({ user: user._id });
+          const commentsMade = await Comments.countDocuments({
+            user: user._id,
+          });
 
+          // 🚀 Añadir privacidad de cada usuario
+         
           return {
             ...user.toObject(),
             postCount: posts.length,
@@ -597,40 +608,52 @@ deleteUser: async (req, res) => {
             totalFollowing: user.following.length,
             totalReportsReceived: reportsReceived,
             likesGiven,
-            commentsMade
-          };
+            commentsMade,
+              };
         })
       );
 
-      // APLICAR FILTRO
+      // 📊 Aplicar filtros
       switch (filter) {
-        case "mostLikes":
-          usersWithDetails.sort((a, b) => b.totalLikesReceived - a.totalLikesReceived);
+        case 'mostLikes':
+          usersWithDetails.sort(
+            (a, b) => b.totalLikesReceived - a.totalLikesReceived
+          );
           break;
-        case "mostComments":
-          usersWithDetails.sort((a, b) => b.totalCommentsReceived - a.totalCommentsReceived);
+        case 'mostComments':
+          usersWithDetails.sort(
+            (a, b) => b.totalCommentsReceived - a.totalCommentsReceived
+          );
           break;
-        case "mostFollowers":
-          usersWithDetails.sort((a, b) => b.totalFollowers - a.totalFollowers);
+        case 'mostFollowers':
+          usersWithDetails.sort(
+            (a, b) => b.totalFollowers - a.totalFollowers
+          );
           break;
-        case "mostPosts":
+        case 'mostPosts':
           usersWithDetails.sort((a, b) => b.postCount - a.postCount);
           break;
-        case "mostReports":
-          usersWithDetails.sort((a, b) => b.totalReportsReceived - a.totalReportsReceived);
+        case 'mostReports':
+          usersWithDetails.sort(
+            (a, b) => b.totalReportsReceived - a.totalReportsReceived
+          );
           break;
-        case "lastLogin":
-          usersWithDetails.sort((a, b) => new Date(b.lastLogin) - new Date(a.lastLogin));
+        case 'lastLogin':
+          usersWithDetails.sort(
+            (a, b) => new Date(b.lastLogin) - new Date(a.lastLogin)
+          );
           break;
-        case "latestRegistered":
-          usersWithDetails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        case 'latestRegistered':
+          usersWithDetails.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
           break;
         default:
           break; // ningún filtro
       }
 
       res.json({
-        msg: "Success!",
+        msg: 'Success!',
         result: usersWithDetails.length,
         users: usersWithDetails,
       });
@@ -638,7 +661,7 @@ deleteUser: async (req, res) => {
       return res.status(500).json({ msg: err.message });
     }
   },
-
+ 
 
 
  

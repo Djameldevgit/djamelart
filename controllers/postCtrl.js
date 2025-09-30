@@ -1,8 +1,8 @@
 const Posts = require('../models/postModel')
 const Comments = require('../models/commentModel')
 const Users = require('../models/userModel')
- 
-  const mongoose = require('mongoose');
+
+const mongoose = require('mongoose');
 class APIfeatures {
     constructor(query, queryString) {
         this.query = query;
@@ -24,27 +24,27 @@ const postCtrl = {
             const { postData, images } = req.body;
             const {
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                devisvente,  measurementValue, venteOption, price, negociable,
+                devisvente, measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit
             } = postData || {};
-    
+
             if (images.length === 0)
                 return res.status(400).json({ msg: req.__('post.add_photo') });
-    
+
             const newPost = new Posts({
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                devisvente,  measurementValue, venteOption, price, negociable,
+                devisvente, measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit, images,
                 user: req.user._id
             });
-    
+
             await newPost.save();
-    
+
             // 🟡 Actualizar la actividad del usuario
             await Users.findByIdAndUpdate(req.user._id, {
                 lastActivity: new Date()
             });
-    
+
             res.json({
                 msg: req.__('post.created_post'),
                 newPost: {
@@ -56,7 +56,7 @@ const postCtrl = {
             return res.status(500).json({ msg: err.message });
         }
     },
-    
+
     aprobarPostPendiente: async (req, res) => {
         try {
             const post = await Posts.findById(req.params.id);
@@ -94,87 +94,96 @@ const postCtrl = {
             return res.status(500).json({ msg: err.message });
         }
     },
-    
-   
-  getPosts: async (req, res) => {
-    try {
-      const { title, theme, style, priceMin, priceMax, wilaya, page = 1, ...categories } = req.query;
 
-      let query = {};
 
-      // 🔹 Buscar por título
-      if (title) {
-        query.title = { $regex: title, $options: "i" };
-      }
-
-      // 🔹 Filtros directos
-      if (theme) query.theme = { $regex: theme, $options: "i" };
-      if (style) query.style = { $regex: style, $options: "i" };
-      if (wilaya) query.wilaya = { $regex: wilaya, $options: "i" };
-
-      // 🔹 Precio
-      if (priceMin || priceMax) {
-        query.price = {};
-        if (priceMin) query.price.$gte = Number(priceMin);
-        if (priceMax) query.price.$lte = Number(priceMax);
-      }
-
-      // 🔹 Categorías dinámicas (ej: painting=true)
-      const selectedCategories = Object.keys(categories).filter((key) => categories[key] === "true");
-      if (selectedCategories.length > 0) {
-        query.category = { $in: selectedCategories };
-      }
-
-      // 🚨 Control clave:
-      // Si el usuario pasa una categoría que NO existe en tu app → no devolver nada
-      if (Object.keys(categories).length > 0 && selectedCategories.length === 0) {
-        return res.json({ posts: [] });
-      }
-
-      const limit = 6;
-      const skip = (page - 1) * limit;
-
-      const posts = await Posts.find(query)
-        .sort("-createdAt")
-        .skip(skip)
-        .limit(limit);
-
-      res.json({ posts });
-    } catch (err) {
-      return res.status(500).json({ message: err.message });
-    }
-  },
- 
-
- 
+    getPosts: async (req, res) => {
+        try {
+          const { title, theme, style, priceMin, priceMax, wilaya, ...categories } = req.query;
+      
+          let query = {};
+      
+          // 🔹 Buscar por título
+          if (title) {
+            query.title = { $regex: title, $options: "i" };
+          }
+      
+          // 🔹 Filtros directos
+          if (theme) query.theme = { $regex: theme, $options: "i" };
+          if (style) query.style = { $regex: style, $options: "i" };
+          if (wilaya) query.wilaya = { $regex: wilaya, $options: "i" };
+      
+          // 🔹 Precio
+          if (priceMin || priceMax) {
+            query.price = {};
+            if (priceMin) query.price.$gte = Number(priceMin);
+            if (priceMax) query.price.$lte = Number(priceMax);
+          }
+      
+          // 🔹 Categorías dinámicas (ej: painting=true)
+          const selectedCategories = Object.keys(categories).filter(
+            (key) => categories[key] === "true"
+          );
+          if (selectedCategories.length > 0) {
+            query.category = { $in: selectedCategories };
+          }
+      
+          // 🚨 Control clave:
+          if (Object.keys(categories).length > 0 && selectedCategories.length === 0) {
+            return res.json({ posts: [] });
+          }
+      
+          // 🔥 Mantener paginación con APIfeatures
+          const features = new APIfeatures(Posts.find(query), req.query).paginating();
+      
+          const posts = await features.query
+            .sort("-createdAt")
+            .populate("user likes", "avatar username fullname followers")
+            .populate({
+              path: "comments",
+              populate: {
+                path: "user likes",
+                select: "-password",
+              },
+            });
+      
+          res.json({
+            msg: "Success!",
+            result: posts.length,
+            posts,
+          });
+        } catch (err) {
+          return res.status(500).json({ msg: err.message });
+        }
+      },
+      
 
     updatePost: async (req, res) => {
         try {
             const {
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                devisvente,  measurementValue, venteOption, price, negociable,
+                devisvente, measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit, images
             } = req.body;
 
             const post = await Posts.findOneAndUpdate({ _id: req.params.id }, {
                 category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                devisvente,  measurementValue, venteOption, price, negociable,
+                devisvente, measurementValue, venteOption, price, negociable,
                 style, talle, theme, measurementUnit, images
             }).populate("user likes", "avatar username")
-              .populate({
-                  path: "comments",
-                  populate: {
-                      path: "user likes",
-                      select: "-password"
-                  }
-              });
+                .populate({
+                    path: "comments",
+                    populate: {
+                        path: "user likes",
+                        select: "-password"
+                    }
+                });
 
             res.json({
                 msg: req.__('post.updated_post'),
                 newPost: {
                     ...post._doc,
                     category, subcategory, wilaya, description, commune, envolverobra, title, support, derechoautor,
-                    devisvente,   measurementValue, venteOption, price, negociable,
+                    devisvente, measurementValue, venteOption, price, negociable,
                     style, talle, theme, measurementUnit, images
                 }
             });
@@ -185,22 +194,33 @@ const postCtrl = {
 
     likePost: async (req, res) => {
         try {
-            const post = await Posts.find({ _id: req.params.id, likes: req.user._id });
-            if (post.length > 0)
-                return res.status(400).json({ msg: req.__('post.already_liked') });
-
-            const like = await Posts.findOneAndUpdate({ _id: req.params.id }, {
-                $push: { likes: req.user._id }
-            }, { new: true });
-
-            if (!like)
-                return res.status(400).json({ msg: req.__('post.post_not_exist') });
-
-            res.json({ msg: req.__('post.liked_post') });
+          const post = await Posts.find({ _id: req.params.id, likes: req.user._id });
+          if (post.length > 0)
+            return res.status(400).json({ msg: req.__('post.already_liked') });
+      
+          const like = await Posts.findOneAndUpdate(
+            { _id: req.params.id },
+            { $push: { likes: req.user._id } },
+            { new: true }
+          )
+            .populate("user", "avatar username followers") // ✅ populamos followers
+            .populate({
+              path: "comments",
+              populate: {
+                path: "user likes",
+                select: "-password"
+              }
+            });
+      
+          if (!like)
+            return res.status(400).json({ msg: req.__('post.post_not_exist') });
+      
+          res.json({ msg: req.__('post.liked_post'), newPost: like }); // ✅ devolvemos el post completo
         } catch (err) {
-            return res.status(500).json({ msg: err.message });
+          return res.status(500).json({ msg: err.message });
         }
-    },
+      },
+      
 
     unLikePost: async (req, res) => {
         try {
@@ -231,83 +251,64 @@ const postCtrl = {
         }
     },
 
-// getPost: ya NO incrementa vistas
-getPost: async (req, res) => {
-    try {
-      const post = await Posts.findById(req.params.id)
-        .populate("user likes", "avatar username followers")
-        .populate({
-          path: "comments",
-          populate: {
-            path: "user likes",
-            select: "-password"
-          }
-        });
-  
-      if (!post) return res.status(400).json({ msg: req.__('post.post_not_exist') });
-  
-      res.json({ post });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
-  
-  // viewPost: nuevo endpoint para incrementar VISTAS (atomico)
-   
-  // getPost: ya NO incrementa vistas
-getPost: async (req, res) => {
-    try {
-      const post = await Posts.findById(req.params.id)
-        .populate("user likes", "avatar username followers")
-        .populate({
-          path: "comments",
-          populate: {
-            path: "user likes",
-            select: "-password"
-          }
-        });
-  
-      if (!post) return res.status(400).json({ msg: req.__('post.post_not_exist') });
-  
-      res.json({ post });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
 
 
-  viewPost: async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ msg: 'ID inválido' });
-      }
-  
-      const postUpdated = await Posts.findByIdAndUpdate(
-        id,
-        { $inc: { views: 1 } },
-        { new: true }
-      )
-      .populate("user likes", "avatar username followers")
-      .populate({
-        path: "comments",
-        populate: {
-          path: "user likes",
-          select: "-password"
+    // viewPost: nuevo endpoint para incrementar VISTAS (atomico)
+
+    // getPost: ya NO incrementa vistas
+    getPost: async (req, res) => {
+        try {
+            const post = await Posts.findById(req.params.id)
+                .populate("user likes", "avatar username followers")
+                .populate({
+                    path: "comments",
+                    populate: {
+                        path: "user likes",
+                        select: "-password"
+                    }
+                });
+
+            if (!post) return res.status(400).json({ msg: req.__('post.post_not_exist') });
+
+            res.json({ post });
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
         }
-      });
-  
-      if (!postUpdated) return res.status(404).json({ msg: 'Post no encontrado' });
-  
-      res.json({ post: postUpdated }); // ✅ enviar post completo
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
-  
-  
-  
+    },
+
+
+    viewPost: async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                return res.status(400).json({ msg: 'ID inválido' });
+            }
+
+            const postUpdated = await Posts.findByIdAndUpdate(
+                id,
+                { $inc: { views: 1 } },
+                { new: true }
+            )
+                .populate("user likes", "avatar username followers")
+                .populate({
+                    path: "comments",
+                    populate: {
+                        path: "user likes",
+                        select: "-password"
+                    }
+                });
+
+            if (!postUpdated) return res.status(404).json({ msg: 'Post no encontrado' });
+
+            res.json({ post: postUpdated }); // ✅ enviar post completo
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+
+
+
 
     getPostsDicover: async (req, res) => {
         try {
@@ -332,17 +333,17 @@ getPost: async (req, res) => {
     deletePost: async (req, res) => {
         try {
             const post = await Posts.findByIdAndDelete(req.params.id);
-        
+
             if (!post)
-              return res.status(404).json({ msg: 'Post no encontrado' });
-        
+                return res.status(404).json({ msg: 'Post no encontrado' });
+
             await Comments.deleteMany({ _id: { $in: post.comments || [] } });
-        
+
             res.json({ msg: 'Post eliminado por admin', id: post._id });
-          } catch (err) {
+        } catch (err) {
             return res.status(500).json({ msg: err.message });
-          }
-        },
+        }
+    },
 
     savePost: async (req, res) => {
         try {

@@ -1,17 +1,23 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import NoNotice from '../images/notice.png'
 import { Link } from 'react-router-dom'
 import Avatar from './Avatar'
 import moment from 'moment'
-import { isReadNotify, NOTIFY_TYPES, deleteAllNotifies } from '../redux/actions/notifyAction'
+import { isReadNotify, NOTIFY_TYPES, deleteAllNotifies, getNotifies } from '../redux/actions/notifyAction'
 import { useTranslation } from 'react-i18next'
 
-const NotifyModal = ({onClose }) => {
+const NotifyModal = ({ onClose }) => {
   const { auth, notify, languageReducer } = useSelector(state => state)
   const dispatch = useDispatch()
   const { t } = useTranslation('notify')   // 🔑 namespace de traducción
   const lang = languageReducer.language || 'en'
+
+  useEffect(() => {
+    if (auth.token) {
+      dispatch(getNotifies(auth.token))
+    }
+  }, [dispatch, auth.token])
 
   const handleIsRead = (msg) => {
     dispatch(isReadNotify({ msg, auth }))

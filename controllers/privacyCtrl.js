@@ -33,25 +33,42 @@ diagnostic: async (req, res) => {
     }
 },
 
-    getPrivacySettings: async (req, res) => {
-        try {
-            const privacySettings = await PrivacySettings.findOne({ 
-                user: req.user._id 
+getPrivacySettings: async (req, res) => {
+    try {
+        let privacySettings = await PrivacySettings.findOne({ 
+            user: req.user._id 
+        });
+
+        if (!privacySettings) {
+            // Crear configuración por defecto si no existe
+            privacySettings = await PrivacySettings.create({
+                user: req.user._id
             });
-            
-            if (!privacySettings) {
-                // Crear configuración por defecto si no existe
-                const defaultSettings = await PrivacySettings.create({
-                    user: req.user._id
-                });
-                return res.json({ privacySettings: defaultSettings });
-            }
-            
-            res.json({ privacySettings });
-        } catch (err) {
-            return res.status(500).json({ msg: err.message });
         }
-    },
+
+        // Definir los defaults
+        const defaults = {
+            profile: 'public',
+            posts: 'public',
+            followers: 'public',
+            following: 'public',
+            likes: 'public',
+            email: 'private',
+            address: 'private',
+            mobile: 'private'
+        };
+
+        // Combinar lo que viene de Mongo con los defaults
+        const completeSettings = {
+            ...defaults,
+            ...privacySettings.toObject()
+        };
+
+        return res.json({ privacySettings: completeSettings });
+    } catch (err) {
+        return res.status(500).json({ msg: err.message });
+    }
+},
 
 
     // controllers/privacyController.js

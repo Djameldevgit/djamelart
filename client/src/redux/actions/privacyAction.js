@@ -13,7 +13,7 @@ export const getPrivacySettings = (token) => async (dispatch) => {
         dispatch({ type: PRIVACY_TYPES.LOADING_PRIVACY, payload: true });
         
         const res = await getDataAPI('privacy', token);
-        console.log('Respuesta del servidor:', res);
+    
         
         dispatch({ 
             type: PRIVACY_TYPES.GET_PRIVACY, 

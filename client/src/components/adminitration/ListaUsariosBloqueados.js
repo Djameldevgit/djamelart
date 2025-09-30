@@ -4,7 +4,7 @@ import UserCard from "../UserCard";
 import moment from "moment";
 import { unBlockUser } from "../../redux/actions/userAction";
 import { getDataAPI } from "../../utils/fetchData";
-import { USER_TYPES_BLOCK } from "../../redux/actions/userBlockAction";
+import { getBlockedUsers, USER_TYPES_BLOCK } from "../../redux/actions/userBlockAction";
 import { useTranslation } from 'react-i18next';
 import LoadMoreBtn from "../LoadMoreBtn";
 import { Spinner } from "react-bootstrap";
@@ -19,6 +19,11 @@ const ListaUsuariosBloqueados = () => {
   const [load, setLoad] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
   const [searchTerm, setSearchTerm] = useState(""); // estado para búsqueda
+
+  useEffect(() => {
+     if (auth.token) {
+   dispatch(getBlockedUsers(auth.token))}
+  }, [dispatch, auth.token])
 
   // 🔹 Buscar en el backend
   const handleSearch = async () => {

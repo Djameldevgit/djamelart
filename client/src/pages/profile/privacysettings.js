@@ -65,7 +65,7 @@ const privacysettings = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
-        
+
         try {
             if (auth.token) {
                 await dispatch(updatePrivacySettings(settings, auth.token));
@@ -107,22 +107,24 @@ const privacysettings = () => {
     }
 
     return (
-        <Container className="py-4" style={{ 
+        <Container className="py-4" style={{
             direction: lang === 'ar' ? 'rtl' : 'ltr',
             textAlign: lang === 'ar' ? 'right' : 'left'
         }}>
-            {/* Header */}
+
+
+           
             <Row className="mb-4">
                 <Col>
-                    <Button 
-                        variant="outline-secondary" 
+                    <Button
+                        variant="outline-secondary"
                         onClick={() => history.goBack()}
                         className="d-flex align-items-center mb-3"
                     >
                         <ArrowLeft className={lang === 'ar' ? 'ms-2' : 'me-2'} />
                         {t('back')}
                     </Button>
-                    
+
                     <div className="d-flex align-items-center">
                         <Shield size={32} className="text-primary me-3" />
                         <div>
@@ -133,7 +135,7 @@ const privacysettings = () => {
                 </Col>
             </Row>
 
-           
+
             {/* Formulario de Configuración */}
             <Row className="justify-content-center">
                 <Col lg={10}>
@@ -149,7 +151,7 @@ const privacysettings = () => {
                                     <Form.Text className="d-block text-muted mb-2">
                                         {t('profileVisibilityDesc')}
                                     </Form.Text>
-                                    <Form.Select 
+                                    <Form.Select
                                         value={settings.profile}
                                         onChange={(e) => handleSettingChange('profile', e.target.value)}
                                     >
@@ -168,7 +170,7 @@ const privacysettings = () => {
                                     <Form.Text className="d-block text-muted mb-2">
                                         {t('postsVisibilityDesc')}
                                     </Form.Text>
-                                    <Form.Select 
+                                    <Form.Select
                                         value={settings.posts}
                                         onChange={(e) => handleSettingChange('posts', e.target.value)}
                                     >
@@ -187,7 +189,7 @@ const privacysettings = () => {
                                     <Form.Text className="d-block text-muted mb-2">
                                         {t('followersVisibilityDesc')}
                                     </Form.Text>
-                                    <Form.Select 
+                                    <Form.Select
                                         value={settings.followers}
                                         onChange={(e) => handleSettingChange('followers', e.target.value)}
                                     >
@@ -206,7 +208,7 @@ const privacysettings = () => {
                                     <Form.Text className="d-block text-muted mb-2">
                                         {t('followingVisibilityDesc')}
                                     </Form.Text>
-                                    <Form.Select 
+                                    <Form.Select
                                         value={settings.following}
                                         onChange={(e) => handleSettingChange('following', e.target.value)}
                                     >
@@ -225,7 +227,7 @@ const privacysettings = () => {
                                     <Form.Text className="d-block text-muted mb-2">
                                         {t('likesVisibilityDesc')}
                                     </Form.Text>
-                                    <Form.Select 
+                                    <Form.Select
                                         value={settings.likes}
                                         onChange={(e) => handleSettingChange('likes', e.target.value)}
                                     >
@@ -244,7 +246,7 @@ const privacysettings = () => {
                                     <Form.Text className="d-block text-muted mb-2">
                                         {t('emailVisibilityDesc')}
                                     </Form.Text>
-                                    <Form.Select 
+                                    <Form.Select
                                         value={settings.email}
                                         onChange={(e) => handleSettingChange('email', e.target.value)}
                                     >
@@ -263,7 +265,7 @@ const privacysettings = () => {
                                     <Form.Text className="d-block text-muted mb-2">
                                         {t('mobileVisibilityDesc')}
                                     </Form.Text>
-                                    <Form.Select 
+                                    <Form.Select
                                         value={settings.mobile}
                                         onChange={(e) => handleSettingChange('mobile', e.target.value)}
                                     >
@@ -282,7 +284,7 @@ const privacysettings = () => {
                                     <Form.Text className="d-block text-muted mb-2">
                                         {t('addressVisibilityDesc')}
                                     </Form.Text>
-                                    <Form.Select 
+                                    <Form.Select
                                         value={settings.address}
                                         onChange={(e) => handleSettingChange('address', e.target.value)}
                                     >
@@ -294,15 +296,15 @@ const privacysettings = () => {
 
                                 {/* Botones de Acción */}
                                 <div className="d-flex gap-3">
-                                    <Button 
-                                        variant="outline-secondary" 
+                                    <Button
+                                        variant="outline-secondary"
                                         onClick={handleReset}
                                         disabled={saving}
                                     >
                                         {t('reset')}
                                     </Button>
-                                    <Button 
-                                        variant="primary" 
+                                    <Button
+                                        variant="primary"
                                         type="submit"
                                         disabled={saving}
                                         className="d-flex align-items-center"

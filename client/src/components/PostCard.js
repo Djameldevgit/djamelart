@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import Location from './home/post_card/Location'
 
  
-import CardBodyCarouseltiktok from './home/post_card/CardBodyCarouseltiktok'
 import CardBodyCarousel from './home/post_card/CardBodyCarousel';
  
 const PostCard = ({ post, isDetail = false  }) => {
@@ -32,12 +31,9 @@ const PostCard = ({ post, isDetail = false  }) => {
         <div className="card">
             <CardHeader post={post} />
 
-            {
-                settings.style ? <CardBodyCarouseltiktok post={post} />
-
-                    : < CardBodyCarousel post={post} />
-            }
-
+       
+                 < CardBodyCarousel post={post} />
+           
             {isPostDetailPage && <DescriptionPost post={post} />}
             {isPostDetailPage && <Location post={post} />}
 

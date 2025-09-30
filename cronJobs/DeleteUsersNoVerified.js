@@ -2,19 +2,21 @@ const cron = require('node-cron');
 const Users = require('../models/userModel');
 const Posts = require('../models/postModel');
 const Comments = require('../models/commentModel');
-const BlogComment = require('../models/BlogComment'); // 🔹 agregado
+const BlogComment = require('../models/BlogComment');
 const Report = require('../models/reportModel');
 const Notify = require('../models/notifyModel');
 const Message = require('../models/messageModel');
 
-const UNVERIFIED_HOURS = process.env.CLEANUP_UNVERIFIED_HOURS || 24;
-const INACTIVE_DAYS = process.env.CLEANUP_INACTIVE_DAYS || 7;
+// 🔹 Variables de configuración (24 horas por defecto)
+const UNVERIFIED_HOURS = process.env.CLEANUP_UNVERIFIED_HOURS || 24; // horas
+const INACTIVE_DAYS = process.env.CLEANUP_INACTIVE_DAYS || 24; // días
 
+// 🔹 Ejecutar una vez cada 24h (a medianoche)
 cron.schedule('0 0 * * *', async () => {
-  console.log('🧹 Iniciando limpieza profunda...');
+  console.log('🧹 Iniciando limpieza profunda... (ejecutando cada 24h)');
 
-  const unverifiedLimit = new Date(Date.now() - UNVERIFIED_HOURS * 60 * 60 * 1000);
-  const inactiveLimit = new Date(Date.now() - INACTIVE_DAYS * 24 * 60 * 60 * 1000);
+  const unverifiedLimit = new Date(Date.now() - UNVERIFIED_HOURS * 60 * 60 * 1000); // usuarios no verificados
+  const inactiveLimit = new Date(Date.now() - INACTIVE_DAYS * 24 * 60 * 60 * 1000); // usuarios inactivos
 
   try {
     // 🔹 1. Eliminar usuarios NO verificados
@@ -30,7 +32,7 @@ cron.schedule('0 0 * * *', async () => {
         Users.deleteMany({ _id: { $in: userIds } }),
         Posts.deleteMany({ user: { $in: userIds } }),
         Comments.deleteMany({ user: { $in: userIds } }),
-        BlogComment.deleteMany({ user: { $in: userIds } }), // 🔹 limpieza de BlogComments
+        BlogComment.deleteMany({ user: { $in: userIds } }),
         Notify.deleteMany({ $or: [{ user: { $in: userIds } }, { recipients: { $in: userIds } }] }),
         Message.deleteMany({ $or: [{ sender: { $in: userIds } }, { recipient: { $in: userIds } }] }),
         Users.updateMany({}, { $pull: { followers: { $in: userIds }, following: { $in: userIds } } })
@@ -55,7 +57,7 @@ cron.schedule('0 0 * * *', async () => {
     await Promise.all([
       Posts.deleteMany({ user: { $nin: Array.from(existingUserIds) } }),
       Comments.deleteMany({ user: { $nin: Array.from(existingUserIds) } }),
-      BlogComment.deleteMany({ user: { $nin: Array.from(existingUserIds) } }) // 🔹 comentarios de blogs huérfanos
+      BlogComment.deleteMany({ user: { $nin: Array.from(existingUserIds) } })
     ]);
 
     // 🔹 5. Usuarios verificados inactivos
@@ -129,7 +131,7 @@ cron.schedule('0 0 * * *', async () => {
       }),
       Posts.updateMany({}, { $pull: { likes: { $nin: Array.from(existingUserIds) } } }),
       Comments.updateMany({}, { $pull: { likes: { $nin: Array.from(existingUserIds) } } }),
-      BlogComment.updateMany({}, { $pull: { likes: { $nin: Array.from(existingUserIds) } } }) // 🔹 likes de BlogComments
+      BlogComment.updateMany({}, { $pull: { likes: { $nin: Array.from(existingUserIds) } } })
     ]);
 
     console.log('✅ Likes, reportes, notificaciones y mensajes huérfanos eliminados');

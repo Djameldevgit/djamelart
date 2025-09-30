@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeFromCart, loadCart } from '../../redux/actions/cartAction';
+import { removeFromCart, loadCart, getCart } from '../../redux/actions/cartAction';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-// Importación simple de Font Awesome (sin SVG)
+ 
 import { FaTrashAlt, FaShoppingCart, FaSignInAlt, FaSpinner, FaHome, FaCreditCard } from 'react-icons/fa';
 
 const CartCarrito = () => {
@@ -12,7 +12,11 @@ const CartCarrito = () => {
   const [showMessage, setShowMessage] = useState({ show: false, text: '', type: '' });
   const { t } = useTranslation('cartt');
   const lang = languageReducer.language || 'en';
-
+  useEffect(() => {
+      if (auth.token) {
+        dispatch(getCart((auth.token)))
+       }
+  }, [dispatch, auth.token])
   useEffect(() => {
     if (auth.token) {
       dispatch(loadCart(auth.token));

@@ -15,38 +15,27 @@ import StatusModal from './components/StatusModal'
 import { useSelector, useDispatch } from 'react-redux'
 import { refreshToken } from './redux/actions/authAction'
 import { getPosts } from './redux/actions/postAction'
-import { getSuggestions } from './redux/actions/suggestionsAction'
-
-
+ 
 import { GLOBALTYPES } from './redux/actions/globalTypes'
 import SocketClient from './SocketClient'
 
 import { getNotifies } from './redux/actions/notifyAction'
 
-import { getPostsPendientes } from './redux/actions/postAproveAction'
-
-
+ 
 
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
 
-
-import { getCart } from './redux/actions/cartAction';
-
-
-import { getOrders } from './redux/actions/orderAction';
+ 
 import ForgotPassword from './auth/ForgotPassword';
 import ResetPassword from './auth/ResetPassword';
 
 import { io } from 'socket.io-client';
 
 import { getUsers } from './redux/actions/userAction';
-import { getBlockedUsers } from './redux/actions/userBlockAction';
-
-
+ 
 import Navbar2 from './components/header/Navbar2'
 import Accordionn from './pages/Accordionn'
-import Bloqueos from './pages/bloqueos'
-import { getSettings } from './redux/actions/settingsAction';
+ 
 import video from './pages/video';
 import { getPrivacySettings } from './redux/actions/privacyAction';
 
@@ -81,19 +70,13 @@ function App() {
   }, [language]);
  
   useEffect(() => {
-    dispatch(getSettings());
+   
     dispatch(getPosts())//EHECUTAR LAS ACCIONES GETUSER Y GETUSERSACTION EN SUS PROPIOS COMPONENTE
     if (auth.token) {
       dispatch(getPrivacySettings((auth.token)))
-      dispatch(getCart((auth.token)))
-      dispatch(getOrders((auth.token)))
+  
       dispatch(getUsers(auth.token))
-
-
-      dispatch(getPostsPendientes(auth.token))
-      dispatch(getBlockedUsers(auth.token))
-      dispatch(getSuggestions(auth.token))
-      dispatch(getNotifies(auth.token))
+ 
     }
   }, [dispatch, auth.token])
 

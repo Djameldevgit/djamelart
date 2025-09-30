@@ -11,6 +11,8 @@ import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '.
 import LoadIcon from '../../images/loading.gif'
 import { useTranslation } from 'react-i18next'
 import Avatar from '../Avatar'
+import { Card, Form, Button, Badge, Spinner, Alert, Container } from 'react-bootstrap'
+import { FaArrowLeft, FaTrash, FaImage, FaPaperPlane, FaTimes } from 'react-icons/fa'
 
 const RightSide = () => {
     const { auth, message, theme, socket, languageReducer } = useSelector(state => state)
@@ -283,220 +285,439 @@ const RightSide = () => {
             display: 'flex',
             flexDirection: 'column',
             height: 'calc(100vh - 170px)',
+            background: theme ? '#1a1a2e' : '#f8f9fa'
         }}>
-            <div className="message_header" style={{ cursor: 'pointer' }} >
-                {user.length !== 0 &&
-                    <div className="d-flex p-2 align-items-center justify-content-between w-100">
-                        <div className="d-flex align-items-center">
-                            <Avatar src={user.avatar || "/default-avatar.png"} size="big-avatar" />
-                            <div className="ml-1" style={{ transform: 'translateY(-2px)' }}>
-                                <span className="d-block">{user.username || "Usuario desconocido"}</span>
-                                <small style={{ opacity: 0.7 }}>
-                                    {user.fullname || user.username || ""}
-                                    
-                                    {/* 🔥 INDICADOR DE TYPING */}
-                                    {message.typing && Array.isArray(message.typing) && 
-  message.typing.some(item => item.chatId === id && item.sender !== auth.user._id)
-             && (
-                                        <span className="typing-indicator" style={{
-                                            marginLeft: '5px',
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            color: theme ? '#aaa' : '#666',
-                                            fontSize: '12px',
-                                            fontStyle: 'italic'
-                                        }}>
-                                            <span className="typing-dots">
-                                                <span>.</span>
-                                                <span>.</span>
-                                                <span>.</span>
+            {/* 🎨 HEADER MEJORADO */}
+            <Card 
+                className="border-0 shadow-sm"
+                style={{
+                    borderRadius: '0',
+                    background: theme 
+                        ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
+                        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                }}
+            >
+                <Card.Body className="p-3">
+                    {user.length !== 0 && (
+                        <div className="d-flex align-items-center justify-content-between">
+                            <div className="d-flex align-items-center gap-3">
+                                <div 
+                                    style={{
+                                        width: '50px',
+                                        height: '50px',
+                                        borderRadius: '50%',
+                                        border: '3px solid white',
+                                        padding: '2px',
+                                        background: 'white',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                                    }}
+                                >
+                                    <Avatar src={user.avatar || "/default-avatar.png"} size="big-avatar" />
+                                </div>
+                                <div>
+                                    <h6 className="mb-0 text-white fw-bold">{user.username || "Usuario desconocido"}</h6>
+                                    <small className="text-white" style={{ opacity: 0.9 }}>
+                                        {user.fullname || user.username || ""}
+                                        
+                                        {/* 🔥 INDICADOR DE TYPING MEJORADO */}
+                                        {message.typing && Array.isArray(message.typing) && 
+                                          message.typing.some(item => item.chatId === id && item.sender !== auth.user._id) && (
+                                            <span className="typing-indicator ms-2">
+                                                <span className="typing-dots">
+                                                    <span>.</span>
+                                                    <span>.</span>
+                                                    <span>.</span>
+                                                </span>
+                                                escribiendo
                                             </span>
-                                            escribiendo
-                                        </span>
-                                    )}
-                                </small>
+                                        )}
+                                    </small>
+                                </div>
+                            </div>
+                            <div className="d-flex gap-3">
+                                <Button
+                                    variant="light"
+                                    size="sm"
+                                    onClick={handleGoBack}
+                                    style={{
+                                        borderRadius: '10px',
+                                        width: '40px',
+                                        height: '40px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    className="p-0"
+                                >
+                                    <FaArrowLeft size={18} />
+                                </Button>
+                                <Button
+                                    variant="light"
+                                    size="sm"
+                                    onClick={handleDeleteConversation}
+                                    style={{
+                                        borderRadius: '10px',
+                                        width: '40px',
+                                        height: '40px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    className="p-0"
+                                >
+                                    <FaTrash size={16} className="text-danger" />
+                                </Button>
                             </div>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <i className="fas fa-arrow-left mr-4" onClick={handleGoBack} />
-                            <i className="fas fa-trash text-danger" onClick={handleDeleteConversation} />
-                        </div>
-                    </div>
-                }
-            </div>
+                    )}
+                </Card.Body>
+            </Card>
 
-            <div className="chat_container" style={{ flex: 1, overflowY: 'auto' }}>
+            {/* 🎨 ÁREA DE MENSAJES MEJORADA */}
+            <div 
+                className="chat_container" 
+                style={{ 
+                    flex: 1, 
+                    overflowY: 'auto',
+                    padding: '20px 15px',
+                    background: theme ? '#0f0f1e' : '#ffffff'
+                }}
+            >
                 <div className="chat_display" ref={refDisplay}>
-                    <button style={{ marginTop: '-25px', opacity: 0 }} ref={pageEnd}>
+                    <button 
+                        style={{ 
+                            marginTop: '-25px', 
+                            opacity: 0,
+                            height: '1px'
+                        }} 
+                        ref={pageEnd}
+                    >
                         {t('chat.loadMore')}
                     </button>
 
                     {data.map((msg, index) => (
                         <div key={index}>
-                            {msg.sender !== auth.user._id &&
-                                <div className="chat_row other_message">
+                            {msg.sender !== auth.user._id && (
+                                <div className="chat_row other_message mb-3">
                                     <MsgDisplay user={user} msg={msg} theme={theme} />
                                 </div>
-                            }
-                            {msg.sender === auth.user._id &&
-                                <div className="chat_row you_message">
+                            )}
+                            {msg.sender === auth.user._id && (
+                                <div className="chat_row you_message mb-3">
                                     <MsgDisplay user={auth.user} msg={msg} theme={theme} data={data} />
                                 </div>
-                            }
+                            )}
                         </div>
                     ))}
 
-                    {loadMedia &&
-                        <div className="chat_row you_message">
-                            <img src={LoadIcon} alt={t('chat.loading')} />
+                    {loadMedia && (
+                        <div className="chat_row you_message text-end">
+                            <div 
+                                style={{
+                                    display: 'inline-block',
+                                    padding: '15px 20px',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    borderRadius: '15px',
+                                    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                                }}
+                            >
+                                <Spinner animation="border" size="sm" style={{ color: 'white' }} />
+                            </div>
                         </div>
-                    }
+                    )}
                 </div>
             </div>
 
-            <div className="show_media" style={{ display: media.length > 0 ? 'grid' : 'none' }}>
-                {media.map((item, index) => (
-                    <div key={index} id="file_media">
-                        {item.type.match(/video/i)
-                            ? videoShow(URL.createObjectURL(item), theme)
-                            : imageShow(URL.createObjectURL(item), theme)
-                        }
-                        <span onClick={() => handleDeleteMedia(index)}>&times;</span>
-                    </div>
-                ))}
-            </div>
-
-            <form className="chat_input" onSubmit={handleSubmit} style={{
-                height: '60px',
-                display: 'flex',
-                alignItems: 'center',
-                padding: '0 15px'
-            }}>
-                <input
-                    type="text"
-                    placeholder={t('chat.placeholder')}
-                    value={text}
-                    onChange={(e) => {
-                        handleTextChange(e)
-                    
-                        socket.emit('typing-start', {
-                            sender: auth.user._id,
-                            recipient: id,
-                            chatId: id
-                        })
-                    
-                        clearTimeout(typingTimeout.current)
-                        typingTimeout.current = setTimeout(() => {
-                            socket.emit('typing-stop', {
-                                sender: auth.user._id,
-                                recipient: id,
-                                chatId: id
-                            })
-                        }, 1200)
+            {/* 🎨 PREVIEW DE MEDIOS MEJORADO */}
+            {media.length > 0 && (
+                <div 
+                    style={{ 
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+                        gap: '10px',
+                        padding: '15px',
+                        background: theme ? '#16213e' : '#f8f9fa',
+                        borderTop: `2px solid ${theme ? '#667eea' : '#e0e0e0'}`
                     }}
-                    
-                    
-                    style={{
-                        filter: theme ? 'invert(1)' : 'invert(0)',
-                        background: theme ? '#040404' : '',
-                        color: theme ? 'white' : '',
-                        border: textError ? '1px solid #dc3545' : '',
-                        direction: lang === 'ar' ? 'rtl' : 'ltr'
-                    }}
-                />
-
-                {text.length > 0 && (
-                    <div className="small text-muted" style={{
-                        position: 'absolute',
-                        bottom: '-20px',
-                        right: lang === 'ar' ? 'auto' : '10px',
-                        left: lang === 'ar' ? '10px' : 'auto',
-                        fontSize: '10px',
-                        color: text.length > 900 ? '#dc3545' : '#6c757d'
-                    }}>
-                        {t('chat.charCount', { count: text.length })}
-                    </div>
-                )}
-
-                <Icons setContent={setText} content={text} theme={theme} />
-
-                {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
-                    <div className="file_upload">
-                        <i className="fas fa-image text-danger" />
-                        <input
-                            type="file"
-                            name="file"
-                            id="file"
-                            multiple
-                            accept="image/*"
-                            onChange={handleChangeMedia}
-                        />
-                    </div>
-                )}
-
-                <button
-                    type="submit"
-                    className="material-icons"
-                    disabled={(text.trim() || media.length > 0) && !textError ? false : true}
-                    style={{ opacity: (text.trim() || media.length > 0) && !textError ? 1 : 0.5 }}
-                    title={t('chat.send')}
                 >
-                    near_me
-                </button>
-            </form>
-
-            {textError && (
-                <div className="small text-danger mt-1" style={{ padding: '0 10px' }}>
-                    {t('chat.validationError', { error: textError })}
+                    {media.map((item, index) => (
+                        <div 
+                            key={index} 
+                            style={{
+                                position: 'relative',
+                                borderRadius: '12px',
+                                overflow: 'hidden',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                aspectRatio: '1/1'
+                            }}
+                        >
+                            {item.type.match(/video/i)
+                                ? videoShow(URL.createObjectURL(item), theme)
+                                : imageShow(URL.createObjectURL(item), theme)
+                            }
+                            <Button
+                                variant="danger"
+                                size="sm"
+                                onClick={() => handleDeleteMedia(index)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '5px',
+                                    right: '5px',
+                                    width: '28px',
+                                    height: '28px',
+                                    borderRadius: '50%',
+                                    padding: '0',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    border: 'none',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                                }}
+                            >
+                                <FaTimes size={14} />
+                            </Button>
+                        </div>
+                    ))}
                 </div>
             )}
 
-            {/* 🔥 Estilos para la animación de typing */}
-           {/* 🔥 Estilos para la animación de typing */}
-<style>
-{`
-  .typing-indicator {
-    display: inline-flex;
-    align-items: center;
-    margin-left: 5px;
-    font-size: 12px;
-    font-style: italic;
-  }
+            {/* 🎨 FORMULARIO DE ENTRADA MEJORADO */}
+            <Card 
+                className="border-0"
+                style={{
+                    borderRadius: '0',
+                    background: theme ? '#16213e' : 'white',
+                    boxShadow: '0 -4px 12px rgba(0,0,0,0.08)'
+                }}
+            >
+                <Card.Body className="p-3">
+                    <Form onSubmit={handleSubmit}>
+                        <div className="d-flex align-items-center gap-2">
+                            <div className="position-relative flex-grow-1">
+                                <Form.Control
+                                    type="text"
+                                    placeholder={t('chat.placeholder', 'Escribe un mensaje...')}
+                                    value={text}
+                                    onChange={(e) => {
+                                        handleTextChange(e)
+                                        
+                                        socket.emit('typing-start', {
+                                            sender: auth.user._id,
+                                            recipient: id,
+                                            chatId: id
+                                        })
+                                        
+                                        clearTimeout(typingTimeout.current)
+                                        typingTimeout.current = setTimeout(() => {
+                                            socket.emit('typing-stop', {
+                                                sender: auth.user._id,
+                                                recipient: id,
+                                                chatId: id
+                                            })
+                                        }, 1200)
+                                    }}
+                                    style={{
+                                        borderRadius: '25px',
+                                        border: textError 
+                                            ? '2px solid #dc3545' 
+                                            : `2px solid ${theme ? '#667eea' : '#e0e0e0'}`,
+                                        padding: '12px 50px 12px 20px',
+                                        background: theme ? '#0f0f1e' : '#f8f9fa',
+                                        color: theme ? 'white' : '#333',
+                                        direction: lang === 'ar' ? 'rtl' : 'ltr',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onFocus={(e) => {
+                                        if (!textError) {
+                                            e.target.style.borderColor = '#667eea';
+                                            e.target.style.boxShadow = '0 0 0 0.2rem rgba(102, 126, 234, 0.15)';
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        e.target.style.borderColor = theme ? '#667eea' : '#e0e0e0';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                />
+                                
+                                {/* Contador de caracteres */}
+                                {text.length > 0 && (
+                                    <Badge
+                                        bg={text.length > 900 ? 'danger' : 'secondary'}
+                                        style={{
+                                            position: 'absolute',
+                                            right: '15px',
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            fontSize: '0.7rem',
+                                            padding: '4px 8px',
+                                            borderRadius: '12px'
+                                        }}
+                                    >
+                                        {text.length}/1000
+                                    </Badge>
+                                )}
+                            </div>
 
-  .typing-dots {
-    display: flex;
-    margin-right: 4px;
-  }
+                            {/* Iconos de emojis */}
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Icons setContent={setText} content={text} theme={theme} />
+                            </div>
 
-  .typing-dots span {
-    display: inline-block;
-    animation: typing-dot 1s infinite;
-    margin: 0 2px;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .typing-dots span:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-  
-  .typing-dots span:nth-child(3) {
-    animation-delay: 0.4s;
-  }
-  
-  @keyframes typing-dot {
-    0%, 80%, 100% { 
-      transform: translateY(0); 
-      opacity: 0.3; 
-    }
-    40% { 
-      transform: translateY(-5px); 
-      opacity: 1; 
-    }
-  }
-`}
-</style>
+                            {/* Botón de adjuntar imagen */}
+                            {(auth.user?.role === "Super-utilisateur" || auth.user?.role === "admin") && (
+                                <div className="position-relative">
+                                    <Button
+                                        variant={theme ? "outline-light" : "outline-primary"}
+                                        style={{
+                                            width: '45px',
+                                            height: '45px',
+                                            borderRadius: '50%',
+                                            padding: '0',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            border: `2px solid ${theme ? '#667eea' : '#667eea'}`,
+                                            background: theme ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.1)',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                                            e.currentTarget.style.transform = 'scale(1.05)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = theme ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.1)';
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                        }}
+                                    >
+                                        <FaImage size={18} style={{ color: '#667eea' }} />
+                                    </Button>
+                                    <Form.Control
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        onChange={handleChangeMedia}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%',
+                                            opacity: 0,
+                                            cursor: 'pointer'
+                                        }}
+                                    />
+                                </div>
+                            )}
 
+                            {/* Botón de enviar */}
+                            <Button
+                                type="submit"
+                                disabled={!(text.trim() || media.length > 0) || !!textError}
+                                style={{
+                                    width: '45px',
+                                    height: '45px',
+                                    borderRadius: '50%',
+                                    padding: '0',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: (text.trim() || media.length > 0) && !textError
+                                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                                        : '#ccc',
+                                    border: 'none',
+                                    transition: 'all 0.3s ease',
+                                    boxShadow: (text.trim() || media.length > 0) && !textError
+                                        ? '0 4px 12px rgba(102, 126, 234, 0.4)'
+                                        : 'none'
+                                }}
+                                onMouseEnter={(e) => {
+                                    if ((text.trim() || media.length > 0) && !textError) {
+                                        e.currentTarget.style.transform = 'scale(1.05)';
+                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.5)';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1)';
+                                    e.currentTarget.style.boxShadow = (text.trim() || media.length > 0) && !textError
+                                        ? '0 4px 12px rgba(102, 126, 234, 0.4)'
+                                        : 'none';
+                                }}
+                            >
+                                <FaPaperPlane size={16} style={{ color: 'white' }} />
+                            </Button>
+                        </div>
+                    </Form>
+
+                    {/* Mensaje de error */}
+                    {textError && (
+                        <Alert variant="danger" className="mt-2 mb-0 py-2" style={{ fontSize: '0.85rem', borderRadius: '10px' }}>
+                            <small>{textError}</small>
+                        </Alert>
+                    )}
+                </Card.Body>
+            </Card>
+
+            {/* 🎨 ESTILOS PARA ANIMACIONES */}
+            <style>{`
+                .typing-indicator {
+                    display: inline-flex;
+                    align-items: center;
+                    font-size: 11px;
+                    font-style: italic;
+                    color: rgba(255,255,255,0.9);
+                }
+
+                .typing-dots {
+                    display: flex;
+                    margin-right: 4px;
+                }
+
+                .typing-dots span {
+                    display: inline-block;
+                    animation: typing-dot 1.2s infinite;
+                    margin: 0 1px;
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+                
+                .typing-dots span:nth-child(2) {
+                    animation-delay: 0.2s;
+                }
+                
+                .typing-dots span:nth-child(3) {
+                    animation-delay: 0.4s;
+                }
+                
+                @keyframes typing-dot {
+                    0%, 80%, 100% { 
+                        transform: translateY(0); 
+                        opacity: 0.4; 
+                    }
+                    40% { 
+                        transform: translateY(-4px); 
+                        opacity: 1; 
+                    }
+                }
+
+                .chat_container::-webkit-scrollbar {
+                    width: 8px;
+                }
+
+                .chat_container::-webkit-scrollbar-track {
+                    background: ${theme ? '#0f0f1e' : '#f1f1f1'};
+                }
+
+                .chat_container::-webkit-scrollbar-thumb {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border-radius: 10px;
+                }
+
+                .chat_container::-webkit-scrollbar-thumb:hover {
+                    background: #667eea;
+                }
+            `}</style>
         </div>
     )
 }

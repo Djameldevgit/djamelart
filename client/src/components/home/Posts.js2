@@ -8,12 +8,14 @@ import { getDataAPI } from '../../utils/fetchData'
 import { POST_TYPES } from '../../redux/actions/postAction'
 
 
-const Posts = () => {
+const Posts = ({ filteredPosts }) => {
     const { homePosts, auth, theme } = useSelector(state => state)
     const dispatch = useDispatch()
 
     const [load, setLoad] = useState(false)
-
+    const displayPosts = filteredPosts !== undefined && filteredPosts !== null 
+    ? filteredPosts 
+    : homePosts.posts;
     const handleLoadMore = async () => {
         setLoad(true)
         const res = await getDataAPI(`posts?limit=${homePosts.page * 9}`, auth.token)
@@ -27,11 +29,9 @@ const Posts = () => {
     }
 
     return (
-  <div>
-        <div className="post_thumb">
-          
+        <div className="posts">
             {
-                homePosts.posts.map(post => (
+                displayPosts.homePosts.posts.map(post => (
                     <PostCard key={post._id} post={post} theme={theme} />
                 ))
             }
@@ -41,11 +41,8 @@ const Posts = () => {
             }
 
             
-          
-        </div>
-          <LoadMoreBtn result={homePosts.result} page={homePosts.page}
+            <LoadMoreBtn result={homePosts.result} page={homePosts.page}
             load={load} handleLoadMore={handleLoadMore} />
-        
         </div>
     )
 }

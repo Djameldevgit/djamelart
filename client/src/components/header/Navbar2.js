@@ -30,12 +30,14 @@ import {
   FaBell,
   FaShareAlt,
   FaGlobe,
+  FaCog,
+  FaCheckCircle,
 } from 'react-icons/fa';
 import { Navbar, Container, NavDropdown, Badge } from 'react-bootstrap';
 import { BsCartFill } from 'react-icons/bs';
 import NotifyModal from '../NotifyModal';
 import LanguageSelectorpc from '../LanguageSelectorpc';
-import LanguageSelectorandroid from '../LanguageSelectorandroid';
+ 
 import ActivateButton from '../../auth/ActivateButton';
 import VerifyModal from '../authAndVerify/VerifyModal';
 import DesactivateModal from '../authAndVerify/DesactivateModal';
@@ -49,8 +51,6 @@ const Navbar2 = () => {
   const { t, i18n } = useTranslation('navbar');
   const lang = languageReducer.language || 'es';
   const [showShareModal, setShowShareModal] = useState(false);
-
-  // 🔥 CRÍTICO: Estado local para forzar re-render cuando cambia el rol
   const [userRole, setUserRole] = useState(auth.user?.role);
 
   useEffect(() => {
@@ -59,7 +59,6 @@ const Navbar2 = () => {
     }
   }, [lang, i18n]);
 
-  // 🔥 SOLUCIÓN: Detectar cambios en el rol del usuario
   useEffect(() => {
     if (auth.user?.role && auth.user.role !== userRole) {
       setUserRole(auth.user.role);
@@ -112,6 +111,28 @@ const Navbar2 = () => {
 
   const unreadNotifications = notify.data.filter(n => !n.isRead).length;
 
+  // Función helper para items del menú
+  const MenuItem = ({ icon: Icon, iconColor, to, onClick, children, danger = false }) => (
+    <NavDropdown.Item
+      as={to ? Link : 'button'}
+      to={to}
+      onClick={onClick}
+      className={`custom-menu-item ${danger ? 'text-danger' : ''}`}
+      style={{
+        padding: '12px 20px',
+        transition: 'all 0.2s ease',
+        borderRadius: '8px',
+        margin: '2px 8px',
+        display: 'flex',
+        alignItems: 'center',
+        fontWeight: '500'
+      }}
+    >
+      <Icon className={`me-3`} style={{ color: iconColor, fontSize: '1.1rem' }} />
+      <span>{children}</span>
+    </NavDropdown.Item>
+  );
+
   return (
     <div>
       <Navbar
@@ -119,8 +140,11 @@ const Navbar2 = () => {
         style={{
           zIndex: 1030,
           marginTop: isMobile ? '55px' : '0',
-          backgroundColor: settings.style ? '#1e1e2f' : '#f8f9fa',
-          padding: isMobile ? '8px 0' : '12px 0'
+          background: settings.style 
+            ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
+            : 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+          padding: isMobile ? '8px 0' : '12px 0',
+          boxShadow: '0 2px 20px rgba(0,0,0,0.08)'
         }}
         className={settings.style ? "navbar-dark" : "navbar-light"}
       >
@@ -128,22 +152,47 @@ const Navbar2 = () => {
           <div className="d-flex align-items-center">
             <Link
               to="/"
-              className="btn btn-outline-primary"
+              className="btn"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 width: isMobile ? '45px' : '55px',
                 height: isMobile ? '45px' : '55px',
+                marginLeft: '8px',
                 padding: '0',
-                marginRight: isMobile ? '8px' : '12px'
+                marginRight: isMobile ? '8px' : '12px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                border: 'none',
+                borderRadius: '12px',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
               }}
             >
-              <FaHome size={isMobile ? 24 : 32} />
+              <FaHome size={isMobile ? 24 : 28} style={{ color: 'white' }} />
             </Link>
 
             <Navbar.Brand href="/" className="py-2 d-none d-lg-block mb-0">
-              <Card.Title className="mb-0">{t('appName')}</Card.Title>
+              <Card.Title 
+                className="mb-0" 
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem'
+                }}
+              >
+                {t('appName')}
+              </Card.Title>
             </Navbar.Brand>
           </div>
 
@@ -153,69 +202,79 @@ const Navbar2 = () => {
               <LanguageSelectorpc />
             </div>
 
-            {/* Búsqueda - Mejorado para móvil */}
+            {/* Búsqueda */}
             <Link 
               to="/search" 
-              className="text-decoration-none d-flex align-items-center justify-content-center"
+              className="text-decoration-none d-flex align-items-center justify-content-center icon-button"
               style={{
-                width: isMobile ? '40px' : 'auto',
-                height: isMobile ? '40px' : 'auto'
+                width: isMobile ? '40px' : '45px',
+                height: isMobile ? '40px' : '45px',
+                borderRadius: '12px',
+                transition: 'all 0.3s ease',
+                backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)'
               }}
             >
               <FaSearch
-                size={isMobile ? 20 : 18}
-                className="text-secondary"
+                size={isMobile ? 18 : 20}
+                style={{ color: '#667eea' }}
                 title={t('search')}
-                style={{ cursor: 'pointer' }}
               />
             </Link>
 
-            {/* Botón Agregar Post - Mejorado */}
+            {/* Botón Agregar Post */}
             {(userRole === "Super-utilisateur" || userRole === "admin") && (
               <div
                 onClick={openStatusModal}
-                className="d-flex align-items-center justify-content-center"
+                className="d-flex align-items-center justify-content-center icon-button"
                 style={{
                   cursor: 'pointer',
-                  width: isMobile ? '40px' : 'auto',
-                  height: isMobile ? '40px' : 'auto',
-                  padding: isMobile ? '0' : '8px'
+                  width: isMobile ? '40px' : '45px',
+                  height: isMobile ? '40px' : '45px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
                 }}
               >
                 <FaPlus 
-                  size={isMobile ? 20 : 18} 
-                  className="text-primary"
+                  size={isMobile ? 18 : 20} 
+                  style={{ color: 'white' }}
                   title={t('addPost')}
                 />
               </div>
             )}
 
-            {/* Notificaciones - Mejorado para móvil */}
+            {/* Notificaciones */}
             {auth.user && (
               <div 
-                className="position-relative d-flex align-items-center justify-content-center" 
+                className="position-relative d-flex align-items-center justify-content-center icon-button" 
                 ref={notifyDropdownRef}
                 style={{
-                  width: isMobile ? '40px' : 'auto',
-                  height: isMobile ? '40px' : 'auto'
+                  width: isMobile ? '40px' : '45px',
+                  height: isMobile ? '40px' : '45px',
+                  borderRadius: '12px',
+                  backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
                 }}
               >
                 <FaBell
-                  size={isMobile ? 22 : 20}
-                  className="text-dark cursor-pointer"
+                  size={isMobile ? 20 : 22}
+                  style={{ color: unreadNotifications > 0 ? '#f5576c' : '#667eea' }}
                   onClick={() => setShowNotifyDropdown(!showNotifyDropdown)}
-                  style={{ cursor: 'pointer' }}
                 />
                 {unreadNotifications > 0 && (
                   <Badge
                     pill
-                    bg="danger"
-                    className="position-absolute"
                     style={{ 
-                      fontSize: '0.6rem',
-                      top: isMobile ? '-2px' : '0',
-                      right: isMobile ? '-2px' : '0',
-                      padding: '3px 6px'
+                      fontSize: '0.65rem',
+                      position: 'absolute',
+                      top: '-2px',
+                      right: '-2px',
+                      padding: '4px 7px',
+                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      border: '2px solid white',
+                      boxShadow: '0 2px 8px rgba(245, 87, 108, 0.4)'
                     }}
                   >
                     {unreadNotifications > 9 ? '9+' : unreadNotifications}
@@ -236,7 +295,9 @@ const Navbar2 = () => {
                       overflowY: 'auto',
                       zIndex: 1050,
                       marginTop: isMobile ? '0' : '8px',
-                      borderRadius: '12px'
+                      borderRadius: '15px',
+                      border: 'none',
+                      boxShadow: '0 10px 40px rgba(0,0,0,0.15)'
                     }}
                   >
                     <NotifyModal onClose={() => setShowNotifyDropdown(false)} />
@@ -255,27 +316,32 @@ const Navbar2 = () => {
               </div>
             )}
 
-            {/* Carrito - Mejorado para móvil */}
+            {/* Carrito */}
             {auth.user && (
               <Link 
                 to="/cart" 
-                className="position-relative text-decoration-none d-flex align-items-center justify-content-center"
+                className="position-relative text-decoration-none d-flex align-items-center justify-content-center icon-button"
                 style={{
-                  width: isMobile ? '40px' : 'auto',
-                  height: isMobile ? '40px' : 'auto'
+                  width: isMobile ? '40px' : '45px',
+                  height: isMobile ? '40px' : '45px',
+                  borderRadius: '12px',
+                  backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                  transition: 'all 0.3s ease'
                 }}
               >
-                <BsCartFill size={isMobile ? 22 : 20} className="text-dark" />
+                <BsCartFill size={isMobile ? 20 : 22} style={{ color: '#667eea' }} />
                 {totalItems > 0 && (
                   <Badge 
                     pill 
-                    bg="danger" 
-                    className="position-absolute"
                     style={{ 
-                      fontSize: '0.6rem',
-                      top: isMobile ? '-2px' : '0',
-                      right: isMobile ? '-2px' : '0',
-                      padding: '3px 6px'
+                      fontSize: '0.65rem',
+                      position: 'absolute',
+                      top: '-2px',
+                      right: '-2px',
+                      padding: '4px 7px',
+                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      border: '2px solid white',
+                      boxShadow: '0 2px 8px rgba(245, 87, 108, 0.4)'
                     }}
                   >
                     {cart.items?.length > 9 ? '9+' : cart.items?.length || 0}
@@ -284,7 +350,7 @@ const Navbar2 = () => {
               </Link>
             )}
 
-            {/* Dropdown de usuario - Mejorado */}
+            {/* Dropdown de usuario MEJORADO */}
             <NavDropdown
               align="end"
               title={
@@ -293,207 +359,286 @@ const Navbar2 = () => {
                     className="d-flex dropdown-avatar" 
                     style={{
                       width: isMobile ? '40px' : '45px',
-                      height: isMobile ? '40px' : '45px'
+                      height: isMobile ? '40px' : '45px',
+                      borderRadius: '12px',
+                      padding: '2px',
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
                     }}
                   >
                     <Avatar 
                       src={auth.user.avatar} 
                       size="medium-avatar"
                       style={{
-                        border: '2px solid #667eea',
-                        boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)'
+                        borderRadius: '10px',
+                        objectFit: 'cover'
                       }}
                     />
                   </div>
                 ) : (
-                  <FaUserCircle size={isMobile ? 28 : 25} />
+                  <div
+                    style={{
+                      width: isMobile ? '40px' : '45px',
+                      height: isMobile ? '40px' : '45px',
+                      borderRadius: '12px',
+                      backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <FaUserCircle size={isMobile ? 24 : 28} style={{ color: '#667eea' }} />
+                  </div>
                 )
               }
               id="nav-user-dropdown"
               className="custom-dropdown"
               key={`nav-role-${userRole}`}
+              style={{
+                '--bs-dropdown-border-radius': '15px',
+                '--bs-dropdown-box-shadow': '0 10px 40px rgba(0,0,0,0.15)'
+              }}
             >
-              <div className="dropdown-scroll-wrapper" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+              <div 
+                className="dropdown-scroll-wrapper" 
+                style={{ 
+                  maxHeight: '70vh', 
+                  overflowY: 'auto',
+                  padding: '8px 0'
+                }}
+              >
                 {auth.user ? (
                   <>
-                    <NavDropdown.Header className="bg-light">
-                      <div className="d-flex align-items-center gap-2">
+                    {/* Header del usuario mejorado */}
+                    <div 
+                      style={{
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        padding: '20px',
+                        margin: '0 0 8px 0',
+                        borderRadius: '12px 12px 0 0'
+                      }}
+                    >
+                      <div className="d-flex align-items-center gap-3">
                         <div 
                           style={{
-                            width: '45px',
-                            height: '45px',
+                            width: '55px',
+                            height: '55px',
                             borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            padding: '2px'
+                            border: '3px solid white',
+                            padding: '2px',
+                            background: 'white'
                           }}
                         >
                           <Avatar src={auth.user.avatar} size="medium-avatar" />
                         </div>
-                        <div>
-                          <div className="fw-bold">{auth.user.username}</div>
-                          <small className="text-muted">
+                        <div className="flex-grow-1">
+                          <div className="fw-bold text-white" style={{ fontSize: '1.1rem' }}>
+                            {auth.user.username}
+                          </div>
+                          <div 
+                            style={{
+                              fontSize: '0.85rem',
+                              backgroundColor: 'rgba(255,255,255,0.2)',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              display: 'inline-block',
+                              marginTop: '4px',
+                              color: 'white',
+                              fontWeight: '600'
+                            }}
+                          >
                             {userRole === 'admin' ? '👑 Admin' :
                              userRole === 'Moderateur' ? '🛡️ Moderador' :
                              userRole === 'Super-utilisateur' ? '⭐ Super User' :
                              '👤 Usuario'}
-                          </small>
+                          </div>
                         </div>
                       </div>
-                    </NavDropdown.Header>
+                    </div>
 
-                    <NavDropdown.Header>
+                    {/* Estado de verificación */}
+                    <div style={{ padding: '12px 20px', margin: '0 8px' }}>
                       {auth.user?.isVerified ? (
-                        <span className="text-success fw-semibold d-flex align-items-center">
-                          <i className="fas fa-user-check me-2"></i>
-                          ✅ {t('verified')}
-                        </span>
+                        <div 
+                          style={{
+                            background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                            padding: '12px 16px',
+                            borderRadius: '10px',
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontWeight: '600',
+                            fontSize: '0.9rem',
+                            boxShadow: '0 4px 12px rgba(56, 239, 125, 0.3)'
+                          }}
+                        >
+                          <FaCheckCircle className="me-2" size={18} />
+                          {t('verified', 'Cuenta Verificada')}
+                        </div>
                       ) : (
                         <ActivateButton onClose={() => console.log("Dropdown cerrado")} />
                       )}
-                    </NavDropdown.Header>
-
-                    <div className="d-lg-none">
-                      <NavDropdown.Divider />
-                      <NavDropdown.Item onClick={() => setShowLanguageModal(true)}>
-                        <FaGlobe className="me-2" />
-                        {t('changeLanguage')}
-                      </NavDropdown.Item>
                     </div>
 
+                    <NavDropdown.Divider style={{ margin: '8px 16px' }} />
+
+                    {/* Cambio de idioma en móvil */}
+                    <div className="d-lg-none">
+                      <MenuItem 
+                        icon={FaGlobe} 
+                        iconColor="#667eea"
+                        onClick={() => setShowLanguageModal(true)}
+                      >
+                        {t('changeLanguage')}
+                      </MenuItem>
+                    </div>
+
+                    {/* Agregar post para super usuarios */}
                     {(userRole === "Super-utilisateur" || userRole === "admin") && (
                       <>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item onClick={openStatusModal}>
-                          <FaPlus className="me-2 text-primary" />
+                        <MenuItem 
+                          icon={FaPlus} 
+                          iconColor="#667eea"
+                          onClick={openStatusModal}
+                        >
                           {t('addPost')}
-                        </NavDropdown.Item>
+                        </MenuItem>
+                        <NavDropdown.Divider style={{ margin: '8px 16px' }} />
                       </>
                     )}
 
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item as={Link} to="/encargos">
-                      <FaEnvelope className="me-2 text-info" />
+                    {/* Menú principal */}
+                    <MenuItem icon={FaEnvelope} iconColor="#17a2b8" to="/encargos">
                       Encargos
-                    </NavDropdown.Item>
+                    </MenuItem>
 
-                    <NavDropdown.Item as={Link} to="/bloginfo">
-                      <FaInfoCircle className="me-2 text-secondary" />
+                    <MenuItem icon={FaInfoCircle} iconColor="#6c757d" to="/bloginfo">
                       {t('appInfo')}
-                    </NavDropdown.Item>
+                    </MenuItem>
 
-                    <NavDropdown.Item as={Link} to={`/profile/${auth.user._id}`}>
-                      <FaUserCircle className="me-2 text-primary" />
+                    <MenuItem icon={FaUserCircle} iconColor="#667eea" to={`/profile/${auth.user._id}`}>
                       {t('profile')}
-                    </NavDropdown.Item>
+                    </MenuItem>
 
-                    <NavDropdown.Item as={Link} to="/message">
-                      <FaComments className="me-2 text-success" />
+                    <MenuItem icon={FaComments} iconColor="#28a745" to="/message">
                       {t('conversations')}
-                    </NavDropdown.Item>
+                    </MenuItem>
 
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={() => setShowShareModal(true)}>
-                      <FaShareAlt className="me-2 text-warning" />
+                    <NavDropdown.Divider style={{ margin: '8px 16px' }} />
+
+                    <MenuItem icon={FaShareAlt} iconColor="#ffc107" onClick={() => setShowModal(true)}>
                       Compartir Aplicación
-                    </NavDropdown.Item>
+                    </MenuItem>
 
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item as={Link} to="/users/roles">
-                      <FaTools className="me-2" />
+                    <NavDropdown.Divider style={{ margin: '8px 16px' }} />
+
+                    <MenuItem icon={FaTools} iconColor="#6c757d" to="/users/roles">
                       {t('roles')}
-                    </NavDropdown.Item>
+                    </MenuItem>
 
+                    {/* Panel de Admin */}
                     {userRole === "admin" && (
                       <>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Header className="bg-danger text-white">
-                          <FaShieldAlt className="me-2" />
-                          {t('adminPanel')}
-                        </NavDropdown.Header>
+                        <NavDropdown.Divider style={{ margin: '8px 16px' }} />
+                        
+                        <div 
+                          style={{
+                            background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)',
+                            padding: '12px 20px',
+                            margin: '4px 16px 8px 16px',
+                            borderRadius: '10px',
+                            color: 'white',
+                            fontWeight: '700',
+                            fontSize: '0.9rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            boxShadow: '0 4px 12px rgba(255, 107, 107, 0.3)'
+                          }}
+                        >
+                          <FaShieldAlt className="me-2" size={18} />
+                          {t('adminPanel', 'Panel de Administración')}
+                        </div>
 
-                        <NavDropdown.Item as={Link} to="/users/privacidad">
-                          ⚙️ Ajustes de privacidad
-                        </NavDropdown.Item>
+                        <MenuItem icon={FaCog} iconColor="#6c757d" to="/users/privacidad">
+                          Ajustes de privacidad
+                        </MenuItem>
 
-                        <NavDropdown.Item onClick={() => setShowFeaturesModal(true)}>
-                          ⚙️ Configuración global
-                        </NavDropdown.Item>
+                        <MenuItem icon={FaCog} iconColor="#6c757d" onClick={() => setShowFeaturesModal(true)}>
+                          Configuración global
+                        </MenuItem>
 
-                        <NavDropdown.Item as={Link} to="/blog">
-                          <FaBlog className="me-2" />
+                        <MenuItem icon={FaBlog} iconColor="#667eea" to="/blog">
                           {t('blog')}
-                        </NavDropdown.Item>
+                        </MenuItem>
 
-                        <NavDropdown.Item as={Link} to="/mails">
-                          <FaEnvelope className="me-2" />
+                        <MenuItem icon={FaEnvelope} iconColor="#17a2b8" to="/mails">
                           {t('adminSendEmail')}
-                        </NavDropdown.Item>
+                        </MenuItem>
 
-                        <NavDropdown.Item as={Link} to="/users">
-                          <FaUsers className="me-2" />
+                        <MenuItem icon={FaUsers} iconColor="#28a745" to="/users">
                           {t('users')}
-                        </NavDropdown.Item>
+                        </MenuItem>
 
-                        <NavDropdown.Item as={Link} to="/postspendientes">
-                          <FaClipboardList className="me-2" />
+                        <MenuItem icon={FaClipboardList} iconColor="#ffc107" to="/postspendientes">
                           {t('pendingPosts')}
-                        </NavDropdown.Item>
+                        </MenuItem>
 
-                        <NavDropdown.Item as={Link} to="/usersactionn">
-                          <FaUserCog className="me-2" />
+                        <MenuItem icon={FaUserCog} iconColor="#667eea" to="/usersactionn">
                           {t('userActions')}
-                        </NavDropdown.Item>
+                        </MenuItem>
 
-                        <NavDropdown.Item as={Link} to="/listuserbloque">
-                          <FaUserSlash className="me-2" />
+                        <MenuItem icon={FaUserSlash} iconColor="#dc3545" to="/listuserbloque">
                           {t('blockedUsersList')}
-                        </NavDropdown.Item>
+                        </MenuItem>
 
-                        <NavDropdown.Item as={Link} to="/listausariosdenunciadoss">
-                          <FaFlag className="me-2" />
+                        <MenuItem icon={FaFlag} iconColor="#ff6b6b" to="/listausariosdenunciadoss">
                           {t('usariosdenunciados')}
-                        </NavDropdown.Item>
+                        </MenuItem>
 
-                        <NavDropdown.Item as={Link} to="/bloqueos">
-                          <FaBan className="me-2" />
+                        <MenuItem icon={FaBan} iconColor="#6c757d" to="/bloqueos">
                           {t('estadodeusuariosrespectoalbloqueo')}
-                        </NavDropdown.Item>
+                        </MenuItem>
 
-                        <NavDropdown.Item as={Link} to="/cart/orderss">
-                          <FaShoppingCart className="me-2" />
+                        <MenuItem icon={FaShoppingCart} iconColor="#28a745" to="/cart/orderss">
                           {t('orders')}
-                        </NavDropdown.Item>
+                        </MenuItem>
                       </>
                     )}
 
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={toggleTheme}>
-                      {theme ? '🌞 ' + t('lightMode') : '🌙 ' + t('darkMode')}
-                    </NavDropdown.Item>
+                    <NavDropdown.Divider style={{ margin: '8px 16px' }} />
 
-                    <NavDropdown.Item onClick={handleLogout} className="text-danger fw-semibold">
-                      <FaSignOutAlt className="me-2" />
-                      {t('logout')}
-                    </NavDropdown.Item>
+                    {/* Tema y Logout */}
+                    <MenuItem 
+                      icon={theme ? () => <span style={{ fontSize: '1.2rem' }}>🌞</span> : () => <span style={{ fontSize: '1.2rem' }}>🌙</span>}
+                      iconColor="#ffc107"
+                      onClick={toggleTheme}
+                    >
+                      {theme ? t('lightMode') : t('darkMode')}
+                    </MenuItem>
+
+                    <MenuItem 
+                      icon={FaSignOutAlt} 
+                      iconColor="#dc3545"
+                      onClick={handleLogout}
+                      danger
+                    >
+                      <span className="fw-bold">{t('logout')}</span>
+                    </MenuItem>
                   </>
                 ) : (
                   <>
-                    <NavDropdown.Item as={Link} to="/login">
-                      <FaSignInAlt className="me-2 text-success" />
+                    <MenuItem icon={FaSignInAlt} iconColor="#28a745" to="/login">
                       {t('login')}
-                    </NavDropdown.Item>
-                    <NavDropdown.Item as={Link} to="/register">
-                      <FaUserPlus className="me-2 text-success" />
+                    </MenuItem>
+                    <MenuItem icon={FaUserPlus} iconColor="#667eea" to="/register">
                       {t('register')}
-                    </NavDropdown.Item>
-                    <NavDropdown.Item as={Link} to="/bloginfo">
-                      <FaInfoCircle className="me-2" />
+                    </MenuItem>
+                    <MenuItem icon={FaInfoCircle} iconColor="#6c757d" to="/bloginfo">
                       {t('appInfo')}
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={() => setShowShareModal(true)}>
-                      <FaShareAlt className="me-2" />
+                    </MenuItem>
+                    <MenuItem icon={FaShareAlt} iconColor="#ffc107" onClick={() => setShowShareModal(true)}>
                       Compartir Aplicación
-                    </NavDropdown.Item>
+                    </MenuItem>
                   </>
                 )}
               </div>
@@ -501,6 +646,42 @@ const Navbar2 = () => {
           </div>
         </Container>
       </Navbar>
+
+      {/* CSS personalizado */}
+      <style jsx>{`
+        .icon-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+        }
+
+        .custom-menu-item:hover {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+          transform: translateX(4px);
+        }
+
+        .custom-menu-item.text-danger:hover {
+          background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%) !important;
+        }
+
+        .dropdown-scroll-wrapper::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .dropdown-scroll-wrapper::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+
+        .dropdown-scroll-wrapper::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 10px;
+        }
+
+        .dropdown-menu {
+          border: none !important;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
+        }
+      `}</style>
 
       {showLanguageModal && (
         <div 
@@ -512,18 +693,27 @@ const Navbar2 = () => {
             className="modal-dialog modal-dialog-centered" 
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">🌍 {t('selectLanguage', 'Seleccionar Idioma')}</h5>
+            <div className="modal-content" style={{ borderRadius: '15px', border: 'none' }}>
+              <div 
+                className="modal-header" 
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: 'white',
+                  borderRadius: '15px 15px 0 0'
+                }}
+              >
+                <h5 className="modal-title fw-bold">
+                  <FaGlobe className="me-2" />
+                  {t('selectLanguage', 'Seleccionar Idioma')}
+                </h5>
                 <button 
                   type="button" 
-                  className="btn-close" 
+                  className="btn-close btn-close-white" 
                   onClick={() => setShowLanguageModal(false)}
                 ></button>
               </div>
-              <div className="modal-body">
-                <LanguageSelectorandroid />
-              </div>
+              
+ 
             </div>
           </div>
         </div>
