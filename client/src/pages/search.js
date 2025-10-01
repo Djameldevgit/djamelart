@@ -1,8 +1,8 @@
-// SearchPage.jsx - Versión con Estilos Mejorados
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getDataAPI } from "../utils/fetchData";
 import { GLOBALTYPES } from "../redux/actions/globalTypes";
+import { POST_TYPES } from '../redux/actions/postAction';
 import UserCard from "../components/UserCard";
 import Posts from "../components/home/Posts";
 import { useTranslation } from "react-i18next";
@@ -19,10 +19,14 @@ import {
 } from "react-bootstrap";
 
 import LoadIcon from "../images/loading.gif";
+ 
 
-export default function SearchPage() {
-  const { auth, languageReducer } = useSelector(state => state);
-  const { t } = useTranslation('navbar');
+export default function search() {
+  const { auth, languageReducer, homePosts } = useSelector(state => state);
+  const { t } = useTranslation('search');
+  const lang = languageReducer.language || 'es';
+  const isRTL = lang === 'ar';
+
   const dispatch = useDispatch();
 
   const [search, setSearch] = useState("");
@@ -36,11 +40,22 @@ export default function SearchPage() {
     collage: false,
     textile_art: false,
   });
+  
+  // 🔹 NUEVOS ESTADOS PARA LOS CAMPOS ADICIONALES
   const [theme, setTheme] = useState("");
   const [style, setStyle] = useState("");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [wilaya, setWilaya] = useState("");
+  const [artType, setArtType] = useState("");
+  const [material, setMaterial] = useState("");
+  const [technique, setTechnique] = useState("");
+  const [orientation, setOrientation] = useState("");
+  const [size, setSize] = useState("");
+  const [year, setYear] = useState("");
+  const [tags, setTags] = useState("");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -50,8 +65,9 @@ export default function SearchPage() {
   const [users, setUsers] = useState([]);
   const [userLoading, setUserLoading] = useState(false);
   const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const [advancedFilters, setAdvancedFilters] = useState(false);
 
-  // 🔹 Contar filtros activos
+  // 🔹 Contar filtros activos (actualizado con nuevos campos)
   const activeFiltersCount = [
     search,
     theme,
@@ -59,27 +75,46 @@ export default function SearchPage() {
     priceMin,
     priceMax,
     wilaya,
+    artType,
+    material,
+    technique,
+    orientation,
+    size,
+    year,
+    tags,
     ...Object.values(categories).filter(Boolean)
   ].filter(Boolean).length;
 
   // 🔹 Cargar posts iniciales al montar el componente
   useEffect(() => {
-    loadInitialPosts();
-  }, []);
+    const loadInitialData = async () => {
+      try {
+        setInitialLoading(true);
+        
+        // Si ya hay posts en Redux, usarlos
+        if (homePosts.posts.length > 0) {
+          setFilteredPosts(homePosts.posts);
+        } else {
+          // Si no hay posts, cargarlos
+          const res = await getDataAPI('posts?limit=12', auth.token);
+          setFilteredPosts(res.data.posts || []);
+          
+          // También actualizar Redux store
+          dispatch({
+            type: POST_TYPES.GET_POSTS,
+            payload: { ...res.data, page: 1 }
+          });
+        }
+      } catch (err) {
+        console.error("Error loading initial posts:", err);
+        setError(t('errors.loadingPosts', { lng: lang }));
+      } finally {
+        setInitialLoading(false);
+      }
+    };
 
-  // 🔹 Función para cargar posts iniciales
-  const loadInitialPosts = async () => {
-    try {
-      setInitialLoading(true);
-      const res = await getDataAPI('posts?limit=12', auth.token);
-      setFilteredPosts(res.data.posts || []);
-    } catch (err) {
-      console.error("Error loading initial posts:", err);
-      setError(err.response?.data?.message || err.message || "Error al cargar posts");
-    } finally {
-      setInitialLoading(false);
-    }
-  };
+    loadInitialData();
+  }, [auth.token, dispatch, t, homePosts.posts.length, lang]);
 
   // 🔹 Manejar cambio de categorías
   const handleCategoryChange = (category) => {
@@ -89,24 +124,44 @@ export default function SearchPage() {
     }));
   };
 
-  // 🔹 Buscar posts con filtros
+  // 🔹 Buscar posts con filtros (ACTUALIZADO)
   const handleSearch = async (e) => {
     if (e) e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
+      // Si la búsqueda está vacía, mostrar todos los posts
+      if (!search && !theme && !style && !priceMin && !priceMax && !wilaya && 
+          !artType && !material && !technique && !orientation && !size && 
+          !year && !tags && !Object.values(categories).some(Boolean)) {
+        
+        setFilteredPosts(homePosts.posts);
+        setLoading(false);
+        return;
+      }
+
       const query = {
-        title: search || "",
+        search: search || "",
         theme: theme || "",
         style: style || "",
         wilaya: wilaya || "",
+        artType: artType || "",
+        material: material || "",
+        technique: technique || "",
+        orientation: orientation || "",
+        size: size || "",
+        year: year || "",
+        tags: tags || "",
+        sortBy: sortBy || "createdAt",
+        sortOrder: sortOrder || "desc",
         page: 1,
       };
 
-      if (priceMin) query.priceMin = priceMin;
-      if (priceMax) query.priceMax = priceMax;
+      if (priceMin) query.minPrice = priceMin;
+      if (priceMax) query.maxPrice = priceMax;
 
+      // Agregar categorías seleccionadas
       Object.keys(categories).forEach(category => {
         if (categories[category]) {
           query[category] = "true";
@@ -123,7 +178,7 @@ export default function SearchPage() {
       const res = await getDataAPI(`posts?${params.toString()}`, auth.token);
       setFilteredPosts(res.data.posts || []);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Error en la búsqueda");
+      setError(t('errors.searchError', { lng: lang }));
     } finally {
       setLoading(false);
     }
@@ -144,14 +199,14 @@ export default function SearchPage() {
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
-        payload: { error: err.response?.data?.msg || "Error al buscar usuarios" },
+        payload: { error: t('errors.userSearchError', { lng: lang }) },
       });
     } finally {
       setUserLoading(false);
     }
   };
 
-  // 🔹 Resetear filtros
+  // 🔹 Resetear filtros (ACTUALIZADO)
   const handleReset = () => {
     setSearch("");
     setCategories({
@@ -169,13 +224,32 @@ export default function SearchPage() {
     setPriceMin("");
     setPriceMax("");
     setWilaya("");
+    setArtType("");
+    setMaterial("");
+    setTechnique("");
+    setOrientation("");
+    setSize("");
+    setYear("");
+    setTags("");
+    setSortBy("createdAt");
+    setSortOrder("desc");
     setUsers([]);
     setError(null);
-    loadInitialPosts();
+    
+    // Al resetear, mostrar todos los posts disponibles
+    setFilteredPosts(homePosts.posts);
   };
 
   return (
-    <Container fluid className="py-3" style={{ maxWidth: '1400px' }}>
+    <Container 
+      fluid 
+      className={`py-3 ${isRTL ? 'rtl' : ''}`} 
+      style={{ 
+        maxWidth: '1400px', 
+        direction: isRTL ? 'rtl' : 'ltr' 
+      }}
+      dir={isRTL ? 'rtl' : 'ltr'}
+    >
       {/* 🔹 HEADER MEJORADO CON GRADIENTE */}
       <div 
         className="sticky-top shadow-sm py-3 mb-3" 
@@ -189,21 +263,21 @@ export default function SearchPage() {
           <Col md={4} className="mb-3 mb-md-0">
             <div className="d-flex align-items-center">
               <h4 className="mb-0 text-white fw-bold">
-                <i className="fas fa-search me-2"></i>
-                {t("search", "Buscar")}
+                <i className={`fas fa-search ${isRTL ? 'ms-2' : 'me-2'}`}></i>
+                {t("header.title", { lng: lang })}
               </h4>
               {activeFiltersCount > 0 && (
                 <Badge 
                   bg="light" 
                   text="dark"
-                  className="ms-2"
+                  className={isRTL ? 'me-2' : 'ms-2'}
                   style={{
                     fontSize: '0.75rem',
                     padding: '0.35rem 0.65rem',
                     borderRadius: '20px'
                   }}
                 >
-                  {activeFiltersCount} {t("filtersActive", "filtros")}
+                  {activeFiltersCount} {t("header.filtersActive", { lng: lang })}
                 </Badge>
               )}
             </div>
@@ -216,15 +290,17 @@ export default function SearchPage() {
                   <div className="position-relative">
                     <Form.Control
                       type="text"
-                      placeholder={t("searchUserPlaceholder", "Buscar usuarios o posts...")}
+                      placeholder={t("search.placeholder", { lng: lang })}
                       value={search}
                       onChange={(e) => handleUserSearch(e.target.value)}
                       style={{
                         borderRadius: '25px',
-                        paddingLeft: '2.5rem',
+                        paddingLeft: isRTL ? '1rem' : '2.5rem',
+                        paddingRight: isRTL ? '2.5rem' : '1rem',
                         border: '2px solid rgba(255,255,255,0.3)',
                         backgroundColor: 'rgba(255,255,255,0.95)',
-                        transition: 'all 0.3s ease'
+                        transition: 'all 0.3s ease',
+                        textAlign: isRTL ? 'right' : 'left'
                       }}
                       onFocus={(e) => {
                         e.target.style.backgroundColor = 'white';
@@ -236,9 +312,9 @@ export default function SearchPage() {
                       }}
                     />
                     <i 
-                      className="fas fa-search position-absolute" 
+                      className={`fas fa-search position-absolute`} 
                       style={{
-                        left: '1rem',
+                        [isRTL ? 'right' : 'left']: '1rem',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         color: '#667eea',
@@ -247,7 +323,7 @@ export default function SearchPage() {
                     ></i>
                   </div>
                 </Col>
-                <Col md={3}>
+                <Col md={2}>
                   <Button 
                     type="submit" 
                     disabled={loading} 
@@ -269,10 +345,10 @@ export default function SearchPage() {
                       e.target.style.boxShadow = '0 4px 15px rgba(245, 87, 108, 0.3)';
                     }}
                   >
-                    {loading ? <Spinner animation="border" size="sm" /> : "🔍 Buscar"}
+                    {loading ? <Spinner animation="border" size="sm" /> : t("buttons.search", { lng: lang })}
                   </Button>
                 </Col>
-                <Col md={3}>
+                <Col md={2}>
                   <Button
                     variant="light"
                     onClick={() => setFiltersExpanded(!filtersExpanded)}
@@ -292,8 +368,32 @@ export default function SearchPage() {
                       e.target.style.boxShadow = 'none';
                     }}
                   >
-                    <i className={`fas fa-${filtersExpanded ? 'chevron-up' : 'sliders-h'} me-2`}></i>
-                    {filtersExpanded ? "Ocultar" : "Filtros"}
+                    <i className={`fas fa-${filtersExpanded ? 'chevron-up' : 'sliders-h'} ${isRTL ? 'ms-2' : 'me-2'}`}></i>
+                    {filtersExpanded ? t("buttons.hide", { lng: lang }) : t("buttons.filters", { lng: lang })}
+                  </Button>
+                </Col>
+                <Col md={2}>
+                  <Button
+                    variant="outline-light"
+                    onClick={() => setAdvancedFilters(!advancedFilters)}
+                    className="w-100"
+                    style={{
+                      borderRadius: '25px',
+                      border: '2px solid rgba(255,255,255,0.5)',
+                      fontWeight: '600',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(255,255,255,0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  >
+                    <i className={`fas fa-${advancedFilters ? 'cog' : 'cogs'} ${isRTL ? 'ms-2' : 'me-2'}`}></i>
+                    {t("buttons.advanced", { lng: lang })}
                   </Button>
                 </Col>
               </Row>
@@ -331,8 +431,8 @@ export default function SearchPage() {
                     >
                       <div className="d-flex justify-content-between align-items-center">
                         <small className="fw-bold">
-                          <i className="fas fa-users me-2"></i>
-                          {t("usersFound", "Usuarios encontrados")}
+                          <i className={`fas fa-users ${isRTL ? 'ms-2' : 'me-2'}`}></i>
+                          {t("users.title", { lng: lang })}
                         </small>
                         <Button 
                           variant="link" 
@@ -360,9 +460,9 @@ export default function SearchPage() {
               <Col md={12}>
                 <div className="mb-3">
                   <div className="d-flex align-items-center mb-3">
-                    <i className="fas fa-palette me-2" style={{ color: '#667eea', fontSize: '1.2rem' }}></i>
+                    <i className={`fas fa-palette ${isRTL ? 'ms-2' : 'me-2'}`} style={{ color: '#667eea', fontSize: '1.2rem' }}></i>
                     <Form.Label className="fw-bold mb-0" style={{ fontSize: '1rem', color: '#333' }}>
-                      {t("categories", "Categorías")}
+                      {t("categories.title", { lng: lang })}
                     </Form.Label>
                   </div>
                   <Row className="g-2">
@@ -402,8 +502,8 @@ export default function SearchPage() {
                             }
                           }}
                         >
-                          {categories[category] && <i className="fas fa-check me-1"></i>}
-                          {t(`categories.${category}`, category)}
+                          {categories[category] && <i className={`fas fa-check ${isRTL ? 'ms-1' : 'me-1'}`}></i>}
+                          {t(`categories.${category}`, { lng: lang })}
                         </div>
                       </Col>
                     ))}
@@ -411,12 +511,12 @@ export default function SearchPage() {
                 </div>
               </Col>
 
-              {/* 🔹 Filtros Principales Mejorados */}
+              {/* 🔹 FILTROS BÁSICOS */}
               <Col md={3}>
                 <Form.Group>
                   <Form.Label className="small fw-semibold text-muted">
-                    <i className="fas fa-tag me-1"></i>
-                    {t("selectTheme", "Tema")}
+                    <i className={`fas fa-tag ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                    {t("filters.theme", { lng: lang })}
                   </Form.Label>
                   <Form.Select
                     value={theme}
@@ -424,15 +524,19 @@ export default function SearchPage() {
                     style={{
                       borderRadius: '10px',
                       border: '2px solid #e0e0e0',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      textAlign: isRTL ? 'right' : 'left'
                     }}
                     onFocus={(e) => e.target.style.borderColor = '#667eea'}
                     onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
                   >
-                    <option value="">Todos</option>
-                    <option value="abstrait">Abstracto</option>
-                    <option value="colore">Color</option>
-                    <option value="graffiti">Graffiti</option>
+                    <option value="">{t("filters.allThemes", { lng: lang })}</option>
+                    <option value="abstract">{t("filters.themes.abstract", { lng: lang })}</option>
+                    <option value="landscape">{t("filters.themes.landscape", { lng: lang })}</option>
+                    <option value="portrait">{t("filters.themes.portrait", { lng: lang })}</option>
+                    <option value="still_life">{t("filters.themes.still_life", { lng: lang })}</option>
+                    <option value="urban">{t("filters.themes.urban", { lng: lang })}</option>
+                    <option value="surreal">{t("filters.themes.surreal", { lng: lang })}</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
@@ -440,8 +544,8 @@ export default function SearchPage() {
               <Col md={3}>
                 <Form.Group>
                   <Form.Label className="small fw-semibold text-muted">
-                    <i className="fas fa-brush me-1"></i>
-                    {t("selectStyle", "Estilo")}
+                    <i className={`fas fa-brush ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                    {t("filters.style", { lng: lang })}
                   </Form.Label>
                   <Form.Select
                     value={style}
@@ -449,14 +553,19 @@ export default function SearchPage() {
                     style={{
                       borderRadius: '10px',
                       border: '2px solid #e0e0e0',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      textAlign: isRTL ? 'right' : 'left'
                     }}
                     onFocus={(e) => e.target.style.borderColor = '#667eea'}
                     onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
                   >
-                    <option value="">Todos</option>
-                    <option value="abstrait">Abstracto</option>
-                    <option value="cubisme">Cubismo</option>
+                    <option value="">{t("filters.allStyles", { lng: lang })}</option>
+                    <option value="realism">{t("filters.styles.realism", { lng: lang })}</option>
+                    <option value="impressionism">{t("filters.styles.impressionism", { lng: lang })}</option>
+                    <option value="expressionism">{t("filters.styles.expressionism", { lng: lang })}</option>
+                    <option value="cubism">{t("filters.styles.cubism", { lng: lang })}</option>
+                    <option value="surrealism">{t("filters.styles.surrealism", { lng: lang })}</option>
+                    <option value="abstract">{t("filters.styles.abstract", { lng: lang })}</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
@@ -464,18 +573,19 @@ export default function SearchPage() {
               <Col md={2}>
                 <Form.Group>
                   <Form.Label className="small fw-semibold text-muted">
-                    <i className="fas fa-coins me-1"></i>
-                    {t("minPrice", "Precio Mín")}
+                    <i className={`fas fa-coins ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                    {t("filters.minPrice", { lng: lang })}
                   </Form.Label>
                   <Form.Control
                     type="number"
-                    placeholder="0 DZD"
+                    placeholder={t("filters.pricePlaceholder", { lng: lang })}
                     value={priceMin}
                     onChange={(e) => setPriceMin(e.target.value)}
                     style={{
                       borderRadius: '10px',
                       border: '2px solid #e0e0e0',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      textAlign: isRTL ? 'right' : 'left'
                     }}
                     onFocus={(e) => e.target.style.borderColor = '#667eea'}
                     onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
@@ -486,18 +596,19 @@ export default function SearchPage() {
               <Col md={2}>
                 <Form.Group>
                   <Form.Label className="small fw-semibold text-muted">
-                    <i className="fas fa-coins me-1"></i>
-                    {t("maxPrice", "Precio Máx")}
+                    <i className={`fas fa-coins ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                    {t("filters.maxPrice", { lng: lang })}
                   </Form.Label>
                   <Form.Control
                     type="number"
-                    placeholder="10000 DZD"
+                    placeholder={t("filters.maxPricePlaceholder", { lng: lang })}
                     value={priceMax}
                     onChange={(e) => setPriceMax(e.target.value)}
                     style={{
                       borderRadius: '10px',
                       border: '2px solid #e0e0e0',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      textAlign: isRTL ? 'right' : 'left'
                     }}
                     onFocus={(e) => e.target.style.borderColor = '#667eea'}
                     onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
@@ -508,24 +619,264 @@ export default function SearchPage() {
               <Col md={2}>
                 <Form.Group>
                   <Form.Label className="small fw-semibold text-muted">
-                    <i className="fas fa-map-marker-alt me-1"></i>
-                    {t("wilaya", "Wilaya")}
+                    <i className={`fas fa-map-marker-alt ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                    {t("filters.location", { lng: lang })}
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Ej: Alger"
+                    placeholder={t("filters.locationPlaceholder", { lng: lang })}
                     value={wilaya}
                     onChange={(e) => setWilaya(e.target.value)}
                     style={{
                       borderRadius: '10px',
                       border: '2px solid #e0e0e0',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      textAlign: isRTL ? 'right' : 'left'
                     }}
                     onFocus={(e) => e.target.style.borderColor = '#667eea'}
                     onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
                   />
                 </Form.Group>
               </Col>
+
+              {/* 🔹 FILTROS AVANZADOS */}
+              {advancedFilters && (
+                <>
+                  <Col md={12}>
+                    <hr />
+                    <div className="d-flex align-items-center mb-3">
+                      <i className={`fas fa-cogs ${isRTL ? 'ms-2' : 'me-2'}`} style={{ color: '#667eea', fontSize: '1.2rem' }}></i>
+                      <h6 className="mb-0 fw-bold" style={{ color: '#333' }}>{t("advancedFilters.title", { lng: lang })}</h6>
+                    </div>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className={`fas fa-paint-brush ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                        {t("advancedFilters.artType", { lng: lang })}
+                      </Form.Label>
+                      <Form.Select
+                        value={artType}
+                        onChange={(e) => setArtType(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease',
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
+                      >
+                        <option value="">{t("advancedFilters.allTypes", { lng: lang })}</option>
+                        <option value="oil_painting">{t("advancedFilters.artTypes.oil_painting", { lng: lang })}</option>
+                        <option value="watercolor">{t("advancedFilters.artTypes.watercolor", { lng: lang })}</option>
+                        <option value="acrylic">{t("advancedFilters.artTypes.acrylic", { lng: lang })}</option>
+                        <option value="digital_art">{t("advancedFilters.artTypes.digital_art", { lng: lang })}</option>
+                        <option value="sculpture">{t("advancedFilters.artTypes.sculpture", { lng: lang })}</option>
+                        <option value="photography">{t("advancedFilters.artTypes.photography", { lng: lang })}</option>
+                        <option value="drawing">{t("advancedFilters.artTypes.drawing", { lng: lang })}</option>
+                        <option value="mixed_media">{t("advancedFilters.artTypes.mixed_media", { lng: lang })}</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className={`fas fa-hammer ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                        {t("advancedFilters.material", { lng: lang })}
+                      </Form.Label>
+                      <Form.Select
+                        value={material}
+                        onChange={(e) => setMaterial(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease',
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
+                      >
+                        <option value="">{t("advancedFilters.allMaterials", { lng: lang })}</option>
+                        <option value="canvas">{t("advancedFilters.materials.canvas", { lng: lang })}</option>
+                        <option value="paper">{t("advancedFilters.materials.paper", { lng: lang })}</option>
+                        <option value="wood">{t("advancedFilters.materials.wood", { lng: lang })}</option>
+                        <option value="metal">{t("advancedFilters.materials.metal", { lng: lang })}</option>
+                        <option value="clay">{t("advancedFilters.materials.clay", { lng: lang })}</option>
+                        <option value="stone">{t("advancedFilters.materials.stone", { lng: lang })}</option>
+                        <option value="fabric">{t("advancedFilters.materials.fabric", { lng: lang })}</option>
+                        <option value="digital">{t("advancedFilters.materials.digital", { lng: lang })}</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className={`fas fa-magic ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                        {t("advancedFilters.technique", { lng: lang })}
+                      </Form.Label>
+                      <Form.Select
+                        value={technique}
+                        onChange={(e) => setTechnique(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease',
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
+                      >
+                        <option value="">{t("advancedFilters.allTechniques", { lng: lang })}</option>
+                        <option value="oil_painting">{t("advancedFilters.techniques.oil_painting", { lng: lang })}</option>
+                        <option value="watercolor">{t("advancedFilters.techniques.watercolor", { lng: lang })}</option>
+                        <option value="acrylic">{t("advancedFilters.techniques.acrylic", { lng: lang })}</option>
+                        <option value="digital_painting">{t("advancedFilters.techniques.digital_painting", { lng: lang })}</option>
+                        <option value="sculpting">{t("advancedFilters.techniques.sculpting", { lng: lang })}</option>
+                        <option value="carving">{t("advancedFilters.techniques.carving", { lng: lang })}</option>
+                        <option value="photography_digital">{t("advancedFilters.techniques.photography_digital", { lng: lang })}</option>
+                        <option value="collage">{t("advancedFilters.techniques.collage", { lng: lang })}</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className={`fas fa-arrows-alt ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                        {t("advancedFilters.orientation", { lng: lang })}
+                      </Form.Label>
+                      <Form.Select
+                        value={orientation}
+                        onChange={(e) => setOrientation(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease',
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
+                      >
+                        <option value="">{t("advancedFilters.allOrientations", { lng: lang })}</option>
+                        <option value="horizontal">{t("advancedFilters.orientations.horizontal", { lng: lang })}</option>
+                        <option value="vertical">{t("advancedFilters.orientations.vertical", { lng: lang })}</option>
+                        <option value="square">{t("advancedFilters.orientations.square", { lng: lang })}</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className={`fas fa-expand ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                        {t("advancedFilters.size", { lng: lang })}
+                      </Form.Label>
+                      <Form.Select
+                        value={size}
+                        onChange={(e) => setSize(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease',
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
+                      >
+                        <option value="">{t("advancedFilters.allSizes", { lng: lang })}</option>
+                        <option value="small">{t("advancedFilters.sizes.small", { lng: lang })}</option>
+                        <option value="medium">{t("advancedFilters.sizes.medium", { lng: lang })}</option>
+                        <option value="large">{t("advancedFilters.sizes.large", { lng: lang })}</option>
+                        <option value="extra-large">{t("advancedFilters.sizes.extra_large", { lng: lang })}</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className={`fas fa-calendar ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                        {t("advancedFilters.year", { lng: lang })}
+                      </Form.Label>
+                      <Form.Control
+                        type="number"
+                        placeholder="2024"
+                        value={year}
+                        onChange={(e) => setYear(e.target.value)}
+                        min="1900"
+                        max="2024"
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease',
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
+                      />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={4}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className={`fas fa-tags ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                        {t("advancedFilters.tags", { lng: lang })}
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder={t("advancedFilters.tagsPlaceholder", { lng: lang })}
+                        value={tags}
+                        onChange={(e) => setTags(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease',
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
+                      />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className={`fas fa-sort ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                        {t("advancedFilters.sortBy", { lng: lang })}
+                      </Form.Label>
+                      <Form.Select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease',
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
+                      >
+                        <option value="createdAt">{t("advancedFilters.sortOptions.createdAt", { lng: lang })}</option>
+                        <option value="price">{t("advancedFilters.sortOptions.price", { lng: lang })}</option>
+                        <option value="title">{t("advancedFilters.sortOptions.title", { lng: lang })}</option>
+                        <option value="likesCount">{t("advancedFilters.sortOptions.likesCount", { lng: lang })}</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className={`fas fa-sort-amount-down ${isRTL ? 'ms-1' : 'me-1'}`}></i>
+                        {t("advancedFilters.order", { lng: lang })}
+                      </Form.Label>
+                      <Form.Select
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease',
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
+                      >
+                        <option value="desc">{t("advancedFilters.orderOptions.desc", { lng: lang })}</option>
+                        <option value="asc">{t("advancedFilters.orderOptions.asc", { lng: lang })}</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                </>
+              )}
 
               {/* 🔹 Botones de Acción Modernos */}
               <Col md={12}>
@@ -555,13 +906,13 @@ export default function SearchPage() {
                     >
                       {loading ? (
                         <>
-                          <Spinner animation="border" size="sm" className="me-2" />
-                          Buscando...
+                          <Spinner animation="border" size="sm" className={isRTL ? 'ms-2' : 'me-2'} />
+                          {t("buttons.searching", { lng: lang })}
                         </>
                       ) : (
                         <>
-                          <i className="fas fa-search me-2"></i>
-                          Aplicar Filtros
+                          <i className={`fas fa-search ${isRTL ? 'ms-2' : 'me-2'}`}></i>
+                          {t("buttons.applyFilters", { lng: lang })}
                         </>
                       )}
                     </Button>
@@ -591,8 +942,8 @@ export default function SearchPage() {
                         e.target.style.color = '#666';
                       }}
                     >
-                      <i className="fas fa-redo me-2"></i>
-                      Limpiar Todo
+                      <i className={`fas fa-redo ${isRTL ? 'ms-2' : 'me-2'}`}></i>
+                      {t("buttons.clearAll", { lng: lang })}
                     </Button>
                   </Col>
                 </Row>
@@ -614,7 +965,7 @@ export default function SearchPage() {
             boxShadow: '0 4px 12px rgba(255, 107, 107, 0.3)'
           }}
         >
-          <i className="fas fa-exclamation-circle me-2"></i>
+          <i className={`fas fa-exclamation-circle ${isRTL ? 'ms-2' : 'me-2'}`}></i>
           <small className="fw-semibold">{error}</small>
         </Alert>
       )}
@@ -624,7 +975,7 @@ export default function SearchPage() {
         {initialLoading ? (
           <div className="text-center py-5">
             <img src={LoadIcon} alt="loading" className="d-block mx-auto" style={{ width: '80px' }} />
-            <p className="mt-3 text-muted fw-semibold">{t("loadingPosts", "Cargando posts...")}</p>
+            <p className="mt-3 text-muted fw-semibold">{t("results.loadingPosts", { lng: lang })}</p>
           </div>
         ) : loading ? (
           <div className="text-center py-5">
@@ -637,7 +988,7 @@ export default function SearchPage() {
                 borderWidth: '4px'
               }}
             />
-            <p className="mt-3 text-muted fw-semibold">{t("searching", "Buscando...")}</p>
+            <p className="mt-3 text-muted fw-semibold">{t("results.searching", { lng: lang })}</p>
           </div>
         ) : filteredPosts.length > 0 ? (
           <>
@@ -650,11 +1001,11 @@ export default function SearchPage() {
               }}
             >
               <h6 className="mb-0 fw-bold" style={{ color: '#333' }}>
-                <i className="fas fa-image me-2" style={{ color: '#667eea' }}></i>
-                {t("resultsFound", "Resultados")}: 
+                <i className={`fas fa-image ${isRTL ? 'ms-2' : 'me-2'}`} style={{ color: '#667eea' }}></i>
+                {t("results.title", { lng: lang })}: 
                 <Badge 
                   bg="primary" 
-                  className="ms-2"
+                  className={isRTL ? 'me-2' : 'ms-2'}
                   style={{
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     fontSize: '0.9rem',
@@ -686,7 +1037,7 @@ export default function SearchPage() {
                   e.target.style.transform = 'translateY(0)';
                 }}
               >
-                <i className="fas fa-arrow-up me-1"></i> Top
+                <i className={`fas fa-arrow-up ${isRTL ? 'ms-1' : 'me-1'}`}></i> {t("results.top", { lng: lang })}
               </Button>
             </div>
             <Posts filteredPosts={filteredPosts} />
@@ -702,11 +1053,11 @@ export default function SearchPage() {
             }}
           >
             <i className="fas fa-search" style={{ fontSize: '3rem', color: '#667eea', marginBottom: '1rem' }}></i>
-            <h5 className="fw-bold mb-3">No se encontraron resultados</h5>
+            <h5 className="fw-bold mb-3">{t("results.noResults.title", { lng: lang })}</h5>
             <p className="mb-0">
               {search || theme || style || priceMin || priceMax || wilaya || Object.values(categories).some(Boolean) 
-                ? "Intenta con otros filtros o términos de búsqueda."
-                : "No hay posts disponibles en este momento."
+                ? t("results.noResults.withFilters", { lng: lang })
+                : t("results.noResults.withoutFilters", { lng: lang })
               }
             </p>
           </Alert>

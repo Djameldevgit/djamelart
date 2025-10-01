@@ -1,101 +1,145 @@
 {
-  "No_Post":"لا توجد مشاركات",
-
-
-  "advanced_search": "بحث متقدم",
-  "advanced_search_title": "البحث المتقدم",
-  "select_category": "اختر الفئة",
-  "select_theme": "اختر الموضوع",
-  "select_style": "اختر النمط",
-  "min_price": "الحد الأدنى للسعر:",
-  "max_price": "الحد الأقصى للسعر:",
-  "min_price_placeholder": "أدنى سعر",
-  "max_price_placeholder": "أعلى سعر",
-  "reset_filters": "إعادة الضبط",
-  "no_posts": "لا توجد منشورات",
-  
-  "category": {
+  "header": {
+    "title": "بحث",
+    "filtersActive": "فلاتر نشطة"
+  },
+  "search": {
+    "placeholder": "ابحث بالعنوان، الوصف، الفنان..."
+  },
+  "buttons": {
+    "search": "🔍 بحث",
+    "filters": "الفلاتر",
+    "hide": "إخفاء",
+    "advanced": "متقدم",
+    "searching": "جاري البحث...",
+    "applyFilters": "تطبيق الفلاتر",
+    "clearAll": "مسح الكل"
+  },
+  "users": {
+    "title": "المستخدمون الموجودون"
+  },
+  "categories": {
+    "title": "الفئات",
     "painting": "الرسم",
     "sculpture": "النحت",
-    "photography": "التصوير",
+    "photography": "التصوير الفوتوغرافي",
     "drawing": "الرسم",
     "engraving": "النقش",
     "digital_art": "الفن الرقمي",
-    "collage": "الكولاج",
+    "collage": "كولاج",
     "textile_art": "الفن النسيجي"
   },
-  
-  "painting": "الرسم",
-  "sculpture": "النحت",
-  "photography": "التصوير",
-  "textile": "الفن النسيجي",
-  "digital": "الفن الرقمي",
-  
- 
-    "landscape": "المناظر الطبيعية",
-    "portrait": "بورتريه",
-    "animals": "الحيوانات",
-    "seascape": "المناظر البحرية",
-    "urban": "الحضري",
-    "abstract": "التجريدي",
-    "still_life": "الطبيعة الصامتة",
-    "botanical": "النباتي",
-    "human_figure": "الشكل البشري",
-    "animals_sculpture": "الحيوانات (نحت)",
-    "abstract_sculpture": "التجريدي (نحت)",
-    "mythological": "الأسطوري",
-    "kinetic": "الحركي",
-    "minimalist": "الحد الأدنى",
-    "portrait_photo": "بورتريه (تصوير)",
-    "wildlife": "الحياة البرية",
-    "street": "الشارع",
-    "architectural": "المعماري",
-    "conceptual": "المفاهيمي",
-    "tapestry_patterns": "أنماط النسيج",
-    "ethnic": "الإثني",
-    "abstract_textile": "التجريدي (نسيج)",
-    "nature_inspired": "مستوحى من الطبيعة",
-    "fantasy": "الخيال",
-    "sci_fi": "الخيال العلمي",
-    "concept_art": "الفن المفاهيمي",
-    "pop_culture": "الثقافة الشعبية",
- 
-  
-  "style": {
-    "select_style": "اختر النمط",
-    "group_universal": "أنماط عالمية",
-    "group_painting": "أنماط الرسم",
-    "group_sculpture": "أنماط النحت",
-    "group_photography": "أنماط التصوير",
-    "group_digital": "أنماط الفن الرقمي",
-    "group_textile": "أنماط الفن النسيجي",
-    
-    "realism": "الواقعية",
-    "impressionism": "الانطباعية",
-    "abstract": "التجريدي",
-    "surrealism": "السريالية",
-    "cubism": "التكعيبية",
-    "minimalism": "الحد الأدنى",
-    "oil_technique": "تقنية الزيت",
-    "watercolor_style": "أسلوب الألوان المائية",
-    "fresco": "الفريسكو",
-    "hyperrealism": "فائق الواقعية",
-    "graffiti_style": "أسلوب الجرافيتي",
-    "figurative": "التشخيصي",
-    "kinetic_style": "النمط الحركي",
-    "organic_abstraction": "التجريد العضوي",
-    "neoclassical": "الكلاسيكي الحديث",
-    "assemblage": "التجميع",
-    "vintage": "القديم",
-    "conceptual_photo": "المفاهيمي (تصوير)",
-    "documentary": "الوثائقي",
-    "tilt_shift": "إمالة التحول",
-    "vector_art": "فن المتجهات",
-    "pixel_art": "فن البكسل",
-    "cyberpunk": "السايبربانك",
-    "vaporwave": "فابرويف",
-    "batik": "باتيك",
-    "japanese_sashiko": "الساشيكو الياباني",
-    "abstract_weaving": "النسيج التجريدي"
+  "filters": {
+    "theme": "الموضوع",
+    "style": "النمط",
+    "minPrice": "أدنى سعر",
+    "maxPrice": "أعلى سعر",
+    "location": "الموقع",
+    "allThemes": "جميع المواضيع",
+    "allStyles": "جميع الأنماط",
+    "pricePlaceholder": "0 دينار",
+    "maxPricePlaceholder": "10000 دينار",
+    "locationPlaceholder": "مثال: الجزائر",
+    "themes": {
+      "abstract": "تجريدي",
+      "landscape": "مناظر طبيعية",
+      "portrait": "بورتريه",
+      "still_life": "طبيعة صامتة",
+      "urban": "حضري",
+      "surreal": "سريالي"
+    },
+    "styles": {
+      "realism": "واقعية",
+      "impressionism": "انطباعية",
+      "expressionism": "تعبيرية",
+      "cubism": "تكعيبية",
+      "surrealism": "سريالية",
+      "abstract": "تجريدي"
+    }
+  },
+  "advancedFilters": {
+    "title": "فلاتر متقدمة",
+    "artType": "نوع الفن",
+    "material": "المادة",
+    "technique": "التقنية",
+    "orientation": "الاتجاه",
+    "size": "الحجم",
+    "year": "السنة",
+    "tags": "الوسوم",
+    "sortBy": "ترتيب حسب",
+    "order": "الترتيب",
+    "allTypes": "جميع الأنواع",
+    "allMaterials": "جميع المواد",
+    "allTechniques": "جميع التقنيات",
+    "allOrientations": "جميع الاتجاهات",
+    "allSizes": "جميع الأحجام",
+    "tagsPlaceholder": "تجريدي، حديث، ملون...",
+    "artTypes": {
+      "oil_painting": "رسم زيتي",
+      "watercolor": "ألوان مائية",
+      "acrylic": "أكريليك",
+      "digital_art": "فن رقمي",
+      "sculpture": "نحت",
+      "photography": "تصوير فوتوغرافي",
+      "drawing": "رسم",
+      "mixed_media": "تقنية مختلطة"
+    },
+    "materials": {
+      "canvas": "قماش",
+      "paper": "ورق",
+      "wood": "خشب",
+      "metal": "معدن",
+      "clay": "طين",
+      "stone": "حجر",
+      "fabric": "قماش",
+      "digital": "رقمي"
+    },
+    "techniques": {
+      "oil_painting": "رسم زيتي",
+      "watercolor": "ألوان مائية",
+      "acrylic": "أكريليك",
+      "digital_painting": "رسم رقمي",
+      "sculpting": "نحت",
+      "carving": "نقش",
+      "photography_digital": "تصوير رقمي",
+      "collage": "كولاج"
+    },
+    "orientations": {
+      "horizontal": "أفقي",
+      "vertical": "عمودي",
+      "square": "مربع"
+    },
+    "sizes": {
+      "small": "صغير",
+      "medium": "متوسط",
+      "large": "كبير",
+      "extra_large": "كبير جداً"
+    },
+    "sortOptions": {
+      "createdAt": "الأحدث",
+      "price": "السعر",
+      "title": "العنوان",
+      "likesCount": "الأكثر شعبية"
+    },
+    "orderOptions": {
+      "desc": "تنازلي",
+      "asc": "تصاعدي"
+    }
+  },
+  "results": {
+    "title": "النتائج",
+    "top": "أعلى",
+    "loadingPosts": "جاري تحميل المنشورات...",
+    "searching": "جاري البحث...",
+    "noResults": {
+      "title": "لم يتم العثور على نتائج",
+      "withFilters": "حاول استخدام فلاتر أو مصطلحات بحث أخرى.",
+      "withoutFilters": "لا توجد منشورات متاحة في الوقت الحالي."
+    }
+  },
+  "errors": {
+    "loadingPosts": "خطأ في تحميل المنشورات",
+    "searchError": "خطأ في البحث",
+    "userSearchError": "خطأ في البحث عن المستخدمين"
   }
 }

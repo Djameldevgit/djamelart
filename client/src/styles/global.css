@@ -149,6 +149,7 @@ url("./header.css"); */
  
 @import url("./components/home/cardnodycarouselestilotikto02.css");
 @import url("./typing.css");
+ 
 .rtl {
   direction: rtl;
   text-align: right;

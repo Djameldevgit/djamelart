@@ -1,97 +1,145 @@
 {
-  "No_Post": "No hay publicaciones",
-  "advanced_search": "Búsqueda avanzada",
-  "advanced_search_title": "Búsqueda avanzada",
-  "select_category": "Seleccionar categoría",
-  "select_theme": "Seleccionar tema",
-  "select_style": "Seleccionar estilo",
-  "min_price": "Precio mínimo:",
-  "max_price": "Precio máximo:",
-  "min_price_placeholder": "Precio mínimo",
-  "max_price_placeholder": "Precio máximo",
-  "reset_filters": "Reiniciar filtros",
-  "no_posts": "No hay publicaciones",
-  
-  "category": {
+  "header": {
+    "title": "Buscar",
+    "filtersActive": "filtros activos"
+  },
+  "search": {
+    "placeholder": "Buscar por título, descripción, artista..."
+  },
+  "buttons": {
+    "search": "🔍 Buscar",
+    "filters": "Filtros",
+    "hide": "Ocultar",
+    "advanced": "Avanzado",
+    "searching": "Buscando...",
+    "applyFilters": "Aplicar Filtros",
+    "clearAll": "Limpiar Todo"
+  },
+  "users": {
+    "title": "Usuarios encontrados"
+  },
+  "categories": {
+    "title": "Categorías",
     "painting": "Pintura",
     "sculpture": "Escultura",
     "photography": "Fotografía",
     "drawing": "Dibujo",
     "engraving": "Grabado",
-    "digital_art": "Arte digital",
+    "digital_art": "Arte Digital",
     "collage": "Collage",
-    "textile_art": "Arte textil"
+    "textile_art": "Arte Textil"
   },
-  
-  "painting": "Pintura",
-  "sculpture": "Escultura",
-  "photography": "Fotografía",
-  "textile": "Arte textil",
-  "digital": "Arte digital",
-  
-  "landscape": "Paisaje",
-  "portrait": "Retrato",
-  "animals": "Animales",
-  "seascape": "Marina",
-  "urban": "Urbano",
-  "abstract": "Abstracto",
-  "still_life": "Naturaleza muerta",
-  "botanical": "Botánico",
-  "human_figure": "Figura humana",
-  "animals_sculpture": "Animales (escultura)",
-  "abstract_sculpture": "Abstracto (escultura)",
-  "mythological": "Mitológico",
-  "kinetic": "Cinético",
-  "minimalist": "Minimalista",
-  "portrait_photo": "Retrato (fotografía)",
-  "wildlife": "Vida salvaje",
-  "street": "Callejero",
-  "architectural": "Arquitectónico",
-  "conceptual": "Conceptual",
-  "tapestry_patterns": "Patrones de tapicería",
-  "ethnic": "Étnico",
-  "abstract_textile": "Abstracto (textil)",
-  "nature_inspired": "Inspirado en la naturaleza",
-  "fantasy": "Fantasía",
-  "sci_fi": "Ciencia ficción",
-  "concept_art": "Arte conceptual",
-  "pop_culture": "Cultura pop",
-  
-  "style": {
-    "select_style": "Seleccionar estilo",
-    "group_universal": "Estilos universales",
-    "group_painting": "Estilos de pintura",
-    "group_sculpture": "Estilos de escultura",
-    "group_photography": "Estilos de fotografía",
-    "group_digital": "Estilos de arte digital",
-    "group_textile": "Estilos de arte textil",
-    
-    "realism": "Realismo",
-    "impressionism": "Impresionismo",
-    "abstract": "Abstracto",
-    "surrealism": "Surrealismo",
-    "cubism": "Cubismo",
-    "minimalism": "Minimalismo",
-    "oil_technique": "Técnica de óleo",
-    "watercolor_style": "Estilo acuarela",
-    "fresco": "Fresco",
-    "hyperrealism": "Hiperrealismo",
-    "graffiti_style": "Estilo graffiti",
-    "figurative": "Figurativo",
-    "kinetic_style": "Estilo cinético",
-    "organic_abstraction": "Abstracción orgánica",
-    "neoclassical": "Neoclásico",
-    "assemblage": "Ensamblaje",
-    "vintage": "Vintage",
-    "conceptual_photo": "Conceptual (fotografía)",
-    "documentary": "Documental",
-    "tilt_shift": "Tilt-shift",
-    "vector_art": "Arte vectorial",
-    "pixel_art": "Pixel art",
-    "cyberpunk": "Cyberpunk",
-    "vaporwave": "Vaporwave",
-    "batik": "Batik",
-    "japanese_sashiko": "Sashiko japonés",
-    "abstract_weaving": "Tejido abstracto"
+  "filters": {
+    "theme": "Tema",
+    "style": "Estilo",
+    "minPrice": "Precio Mín",
+    "maxPrice": "Precio Máx",
+    "location": "Ubicación",
+    "allThemes": "Todos los temas",
+    "allStyles": "Todos los estilos",
+    "pricePlaceholder": "0 DZD",
+    "maxPricePlaceholder": "10000 DZD",
+    "locationPlaceholder": "Ej: Alger",
+    "themes": {
+      "abstract": "Abstracto",
+      "landscape": "Paisaje",
+      "portrait": "Retrato",
+      "still_life": "Naturaleza Muerta",
+      "urban": "Urbano",
+      "surreal": "Surrealista"
+    },
+    "styles": {
+      "realism": "Realismo",
+      "impressionism": "Impresionismo",
+      "expressionism": "Expresionismo",
+      "cubism": "Cubismo",
+      "surrealism": "Surrealismo",
+      "abstract": "Abstracto"
+    }
+  },
+  "advancedFilters": {
+    "title": "Filtros Avanzados",
+    "artType": "Tipo de Arte",
+    "material": "Material",
+    "technique": "Técnica",
+    "orientation": "Orientación",
+    "size": "Tamaño",
+    "year": "Año",
+    "tags": "Etiquetas",
+    "sortBy": "Ordenar por",
+    "order": "Orden",
+    "allTypes": "Todos los tipos",
+    "allMaterials": "Todos los materiales",
+    "allTechniques": "Todas las técnicas",
+    "allOrientations": "Todas las orientaciones",
+    "allSizes": "Todos los tamaños",
+    "tagsPlaceholder": "abstract, modern, colorful...",
+    "artTypes": {
+      "oil_painting": "Pintura al óleo",
+      "watercolor": "Acuarela",
+      "acrylic": "Acrílico",
+      "digital_art": "Arte digital",
+      "sculpture": "Escultura",
+      "photography": "Fotografía",
+      "drawing": "Dibujo",
+      "mixed_media": "Técnica mixta"
+    },
+    "materials": {
+      "canvas": "Lienzo",
+      "paper": "Papel",
+      "wood": "Madera",
+      "metal": "Metal",
+      "clay": "Arcilla",
+      "stone": "Piedra",
+      "fabric": "Tela",
+      "digital": "Digital"
+    },
+    "techniques": {
+      "oil_painting": "Pintura al óleo",
+      "watercolor": "Acuarela",
+      "acrylic": "Acrílico",
+      "digital_painting": "Pintura digital",
+      "sculpting": "Esculpido",
+      "carving": "Tallado",
+      "photography_digital": "Fotografía digital",
+      "collage": "Collage"
+    },
+    "orientations": {
+      "horizontal": "Horizontal",
+      "vertical": "Vertical",
+      "square": "Cuadrado"
+    },
+    "sizes": {
+      "small": "Pequeño",
+      "medium": "Mediano",
+      "large": "Grande",
+      "extra_large": "Extra Grande"
+    },
+    "sortOptions": {
+      "createdAt": "Más reciente",
+      "price": "Precio",
+      "title": "Título",
+      "likesCount": "Más populares"
+    },
+    "orderOptions": {
+      "desc": "Descendente",
+      "asc": "Ascendente"
+    }
+  },
+  "results": {
+    "title": "Resultados",
+    "top": "Top",
+    "loadingPosts": "Cargando posts...",
+    "searching": "Buscando...",
+    "noResults": {
+      "title": "No se encontraron resultados",
+      "withFilters": "Intenta con otros filtros o términos de búsqueda.",
+      "withoutFilters": "No hay posts disponibles en este momento."
+    }
+  },
+  "errors": {
+    "loadingPosts": "Error al cargar posts",
+    "searchError": "Error en la búsqueda",
+    "userSearchError": "Error al buscar usuarios"
   }
 }

@@ -1,0 +1,1058 @@
+// SearchPage.jsx - Versión Actualizada con Nuevos Campos
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getDataAPI } from "../utils/fetchData";
+import { GLOBALTYPES } from "../redux/actions/globalTypes";
+import UserCard from "../components/UserCard";
+import Posts from "../components/home/Posts";
+import { useTranslation } from "react-i18next";
+import {
+  Container,
+  Form,
+  Button,
+  Spinner,
+  Alert,
+  Row,
+  Col,
+  Card,
+  Badge
+} from "react-bootstrap";
+
+import LoadIcon from "../images/loading.gif";
+
+export default function SearchPage() {
+  const { auth, languageReducer } = useSelector(state => state);
+  const { t, i18n } = useTranslation('search');
+ 
+    const lang = languageReducer.language || 'es';
+   
+
+  const dispatch = useDispatch();
+
+  const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState({
+    painting: false,
+    sculpture: false,
+    photography: false,
+    drawing: false,
+    engraving: false,
+    digital_art: false,
+    collage: false,
+    textile_art: false,
+  });
+  
+  // 🔹 NUEVOS ESTADOS PARA LOS CAMPOS ADICIONALES
+  const [theme, setTheme] = useState("");
+  const [style, setStyle] = useState("");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [wilaya, setWilaya] = useState("");
+  const [artType, setArtType] = useState("");
+  const [material, setMaterial] = useState("");
+  const [technique, setTechnique] = useState("");
+  const [orientation, setOrientation] = useState("");
+  const [size, setSize] = useState("");
+  const [year, setYear] = useState("");
+  const [tags, setTags] = useState("");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState("desc");
+
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [error, setError] = useState(null);
+
+  const [users, setUsers] = useState([]);
+  const [userLoading, setUserLoading] = useState(false);
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const [advancedFilters, setAdvancedFilters] = useState(false);
+
+  // 🔹 Contar filtros activos (actualizado con nuevos campos)
+  const activeFiltersCount = [
+    search,
+    theme,
+    style,
+    priceMin,
+    priceMax,
+    wilaya,
+    artType,
+    material,
+    technique,
+    orientation,
+    size,
+    year,
+    tags,
+    ...Object.values(categories).filter(Boolean)
+  ].filter(Boolean).length;
+
+  // 🔹 Cargar posts iniciales al montar el componente
+  useEffect(() => {
+    loadInitialPosts();
+  }, []);
+
+  // 🔹 Función para cargar posts iniciales
+  const loadInitialPosts = async () => {
+    try {
+      setInitialLoading(true);
+      const res = await getDataAPI('posts?limit=12', auth.token);
+      setFilteredPosts(res.data.posts || []);
+    } catch (err) {
+      console.error("Error loading initial posts:", err);
+      setError(err.response?.data?.message || err.message || "Error al cargar posts");
+    } finally {
+      setInitialLoading(false);
+    }
+  };
+
+  // 🔹 Manejar cambio de categorías
+  const handleCategoryChange = (category) => {
+    setCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+
+  // 🔹 Buscar posts con filtros (ACTUALIZADO)
+  const handleSearch = async (e) => {
+    if (e) e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const query = {
+        search: search || "",
+        theme: theme || "",
+        style: style || "",
+        wilaya: wilaya || "",
+        artType: artType || "",
+        material: material || "",
+        technique: technique || "",
+        orientation: orientation || "",
+        size: size || "",
+        year: year || "",
+        tags: tags || "",
+        sortBy: sortBy || "createdAt",
+        sortOrder: sortOrder || "desc",
+        page: 1,
+      };
+
+      if (priceMin) query.minPrice = priceMin;
+      if (priceMax) query.maxPrice = priceMax;
+
+      // Agregar categorías seleccionadas
+      Object.keys(categories).forEach(category => {
+        if (categories[category]) {
+          query[category] = "true";
+        }
+      });
+
+      const params = new URLSearchParams();
+      Object.entries(query).forEach(([key, value]) => {
+        if (value !== "" && value !== undefined && value !== false) {
+          params.append(key, value);
+        }
+      });
+
+      const res = await getDataAPI(`posts?${params.toString()}`, auth.token);
+      setFilteredPosts(res.data.posts || []);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Error en la búsqueda");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔹 Buscar usuarios en vivo
+  const handleUserSearch = async (value) => {
+    setSearch(value);
+    if (!value) {
+      setUsers([]);
+      return;
+    }
+
+    try {
+      setUserLoading(true);
+      const res = await getDataAPI(`search?username=${value}`, auth.token);
+      setUsers(res.data.users || []);
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: err.response?.data?.msg || "Error al buscar usuarios" },
+      });
+    } finally {
+      setUserLoading(false);
+    }
+  };
+
+  // 🔹 Resetear filtros (ACTUALIZADO)
+  const handleReset = () => {
+    setSearch("");
+    setCategories({
+      painting: false,
+      sculpture: false,
+      photography: false,
+      drawing: false,
+      engraving: false,
+      digital_art: false,
+      collage: false,
+      textile_art: false,
+    });
+    setTheme("");
+    setStyle("");
+    setPriceMin("");
+    setPriceMax("");
+    setWilaya("");
+    setArtType("");
+    setMaterial("");
+    setTechnique("");
+    setOrientation("");
+    setSize("");
+    setYear("");
+    setTags("");
+    setSortBy("createdAt");
+    setSortOrder("desc");
+    setUsers([]);
+    setError(null);
+    loadInitialPosts();
+  };
+
+  return (
+    <Container fluid className="py-3" style={{ maxWidth: '1400px' }}>
+      {/* 🔹 HEADER MEJORADO CON GRADIENTE */}
+      <div 
+        className="sticky-top shadow-sm py-3 mb-3" 
+        style={{ 
+          zIndex: 1020,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderRadius: '0 0 15px 15px',
+        }}
+      >
+        <Row className="align-items-center px-3">
+          <Col md={4} className="mb-3 mb-md-0">
+            <div className="d-flex align-items-center">
+              <h4 className="mb-0 text-white fw-bold">
+                <i className="fas fa-search me-2"></i>
+                {t("search", "Buscar")}
+              </h4>
+              {activeFiltersCount > 0 && (
+                <Badge 
+                  bg="light" 
+                  text="dark"
+                  className="ms-2"
+                  style={{
+                    fontSize: '0.75rem',
+                    padding: '0.35rem 0.65rem',
+                    borderRadius: '20px'
+                  }}
+                >
+                  {activeFiltersCount} {t("filtersActive", "filtros")}
+                </Badge>
+              )}
+            </div>
+          </Col>
+          
+          <Col md={8}>
+            <Form onSubmit={handleSearch}>
+              <Row className="g-2">
+                <Col md={6}>
+                  <div className="position-relative">
+                    <Form.Control
+                      type="text"
+                      placeholder={t("searchUserPlaceholder", "Buscar por título, descripción, artista...")}
+                      value={search}
+                      onChange={(e) => handleUserSearch(e.target.value)}
+                      style={{
+                        borderRadius: '25px',
+                        paddingLeft: '2.5rem',
+                        border: '2px solid rgba(255,255,255,0.3)',
+                        backgroundColor: 'rgba(255,255,255,0.95)',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.backgroundColor = 'white';
+                        e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.backgroundColor = 'rgba(255,255,255,0.95)';
+                        e.target.style.boxShadow = 'none';
+                      }}
+                    />
+                    <i 
+                      className="fas fa-search position-absolute" 
+                      style={{
+                        left: '1rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: '#667eea',
+                        fontSize: '1rem'
+                      }}
+                    ></i>
+                  </div>
+                </Col>
+                <Col md={2}>
+                  <Button 
+                    type="submit" 
+                    disabled={loading} 
+                    className="w-100"
+                    style={{
+                      borderRadius: '25px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      fontWeight: '600',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 15px rgba(245, 87, 108, 0.3)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 6px 20px rgba(245, 87, 108, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 4px 15px rgba(245, 87, 108, 0.3)';
+                    }}
+                  >
+                    {loading ? <Spinner animation="border" size="sm" /> : "🔍 Buscar"}
+                  </Button>
+                </Col>
+                <Col md={2}>
+                  <Button
+                    variant="light"
+                    onClick={() => setFiltersExpanded(!filtersExpanded)}
+                    className="w-100"
+                    style={{
+                      borderRadius: '25px',
+                      border: '2px solid rgba(255,255,255,0.5)',
+                      fontWeight: '600',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  >
+                    <i className={`fas fa-${filtersExpanded ? 'chevron-up' : 'sliders-h'} me-2`}></i>
+                    {filtersExpanded ? "Ocultar" : "Filtros"}
+                  </Button>
+                </Col>
+                <Col md={2}>
+                  <Button
+                    variant="outline-light"
+                    onClick={() => setAdvancedFilters(!advancedFilters)}
+                    className="w-100"
+                    style={{
+                      borderRadius: '25px',
+                      border: '2px solid rgba(255,255,255,0.5)',
+                      fontWeight: '600',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(255,255,255,0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  >
+                    <i className={`fas fa-${advancedFilters ? 'cog' : 'cogs'} me-2`}></i>
+                    Avanzado
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Col>
+        </Row>
+      </div>
+
+      {/* 🔹 FILTROS EXPANDIBLES MEJORADOS */}
+      {filtersExpanded && (
+        <Card 
+          className="mb-3 border-0 shadow-lg"
+          style={{
+            borderRadius: '15px',
+            overflow: 'hidden',
+            animation: 'slideDown 0.3s ease-out'
+          }}
+        >
+          <Card.Body className="py-4" style={{ background: 'linear-gradient(to bottom, #f8f9fa, #ffffff)' }}>
+            <Row className="g-3">
+              {/* 🔹 Búsqueda de Usuarios - Resultados Mejorados */}
+              {users.length > 0 && (
+                <Col md={12}>
+                  <Card 
+                    className="border-0 shadow-sm"
+                    style={{ borderRadius: '12px' }}
+                  >
+                    <Card.Header 
+                      className="py-2"
+                      style={{
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        color: 'white',
+                        borderRadius: '12px 12px 0 0'
+                      }}
+                    >
+                      <div className="d-flex justify-content-between align-items-center">
+                        <small className="fw-bold">
+                          <i className="fas fa-users me-2"></i>
+                          {t("usersFound", "Usuarios encontrados")}
+                        </small>
+                        <Button 
+                          variant="link" 
+                          size="sm" 
+                          onClick={() => setUsers([])} 
+                          className="p-0 text-white"
+                          style={{ fontSize: '1.5rem', lineHeight: '1' }}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className="py-2">
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {users.map(user => (
+                          <UserCard key={user._id} user={user} compact />
+                        ))}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              )}
+
+              {/* 🔹 Categorías con Estilo de Pills */}
+              <Col md={12}>
+                <div className="mb-3">
+                  <div className="d-flex align-items-center mb-3">
+                    <i className="fas fa-palette me-2" style={{ color: '#667eea', fontSize: '1.2rem' }}></i>
+                    <Form.Label className="fw-bold mb-0" style={{ fontSize: '1rem', color: '#333' }}>
+                      {t("categories", "Categorías")}
+                    </Form.Label>
+                  </div>
+                  <Row className="g-2">
+                    {Object.keys(categories).map(category => (
+                      <Col xs={6} sm={4} md={3} key={category}>
+                        <div
+                          onClick={() => handleCategoryChange(category)}
+                          style={{
+                            padding: '0.6rem 1rem',
+                            borderRadius: '25px',
+                            border: categories[category] 
+                              ? '2px solid #667eea' 
+                              : '2px solid #e0e0e0',
+                            background: categories[category]
+                              ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                              : 'white',
+                            color: categories[category] ? 'white' : '#666',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            textAlign: 'center',
+                            fontSize: '0.85rem',
+                            fontWeight: categories[category] ? '600' : '500',
+                            boxShadow: categories[category] 
+                              ? '0 4px 12px rgba(102, 126, 234, 0.3)' 
+                              : 'none'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!categories[category]) {
+                              e.target.style.borderColor = '#667eea';
+                              e.target.style.transform = 'translateY(-2px)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!categories[category]) {
+                              e.target.style.borderColor = '#e0e0e0';
+                              e.target.style.transform = 'translateY(0)';
+                            }
+                          }}
+                        >
+                          {categories[category] && <i className="fas fa-check me-1"></i>}
+                          {t(`categories.${category}`, category)}
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+              </Col>
+
+              {/* 🔹 FILTROS BÁSICOS */}
+              <Col md={3}>
+                <Form.Group>
+                  <Form.Label className="small fw-semibold text-muted">
+                    <i className="fas fa-tag me-1"></i>
+                    {t("selectTheme", "Tema")}
+                  </Form.Label>
+                  <Form.Select
+                    value={theme}
+                    onChange={(e) => setTheme(e.target.value)}
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid #e0e0e0',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                  >
+                    <option value="">Todos los temas</option>
+                    <option value="abstract">Abstracto</option>
+                    <option value="landscape">Paisaje</option>
+                    <option value="portrait">Retrato</option>
+                    <option value="still_life">Naturaleza Muerta</option>
+                    <option value="urban">Urbano</option>
+                    <option value="surreal">Surrealista</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+
+              <Col md={3}>
+                <Form.Group>
+                  <Form.Label className="small fw-semibold text-muted">
+                    <i className="fas fa-brush me-1"></i>
+                    {t("selectStyle", "Estilo")}
+                  </Form.Label>
+                  <Form.Select
+                    value={style}
+                    onChange={(e) => setStyle(e.target.value)}
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid #e0e0e0',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                  >
+                    <option value="">Todos los estilos</option>
+                    <option value="realism">Realismo</option>
+                    <option value="impressionism">Impresionismo</option>
+                    <option value="expressionism">Expresionismo</option>
+                    <option value="cubism">Cubismo</option>
+                    <option value="surrealism">Surrealismo</option>
+                    <option value="abstract">Abstracto</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+
+              <Col md={2}>
+                <Form.Group>
+                  <Form.Label className="small fw-semibold text-muted">
+                    <i className="fas fa-coins me-1"></i>
+                    {t("minPrice", "Precio Mín")}
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="0 DZD"
+                    value={priceMin}
+                    onChange={(e) => setPriceMin(e.target.value)}
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid #e0e0e0',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col md={2}>
+                <Form.Group>
+                  <Form.Label className="small fw-semibold text-muted">
+                    <i className="fas fa-coins me-1"></i>
+                    {t("maxPrice", "Precio Máx")}
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="10000 DZD"
+                    value={priceMax}
+                    onChange={(e) => setPriceMax(e.target.value)}
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid #e0e0e0',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col md={2}>
+                <Form.Group>
+                  <Form.Label className="small fw-semibold text-muted">
+                    <i className="fas fa-map-marker-alt me-1"></i>
+                    {t("wilaya", "Ubicación")}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ej: Alger"
+                    value={wilaya}
+                    onChange={(e) => setWilaya(e.target.value)}
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid #e0e0e0',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                  />
+                </Form.Group>
+              </Col>
+
+              {/* 🔹 FILTROS AVANZADOS */}
+              {advancedFilters && (
+                <>
+                  <Col md={12}>
+                    <hr />
+                    <div className="d-flex align-items-center mb-3">
+                      <i className="fas fa-cogs me-2" style={{ color: '#667eea', fontSize: '1.2rem' }}></i>
+                      <h6 className="mb-0 fw-bold" style={{ color: '#333' }}>Filtros Avanzados</h6>
+                    </div>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className="fas fa-paint-brush me-1"></i>
+                        Tipo de Arte
+                      </Form.Label>
+                      <Form.Select
+                        value={artType}
+                        onChange={(e) => setArtType(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <option value="">Todos los tipos</option>
+                        <option value="oil_painting">Pintura al óleo</option>
+                        <option value="watercolor">Acuarela</option>
+                        <option value="acrylic">Acrílico</option>
+                        <option value="digital_art">Arte digital</option>
+                        <option value="sculpture">Escultura</option>
+                        <option value="photography">Fotografía</option>
+                        <option value="drawing">Dibujo</option>
+                        <option value="mixed_media">Técnica mixta</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className="fas fa-hammer me-1"></i>
+                        Material
+                      </Form.Label>
+                      <Form.Select
+                        value={material}
+                        onChange={(e) => setMaterial(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <option value="">Todos los materiales</option>
+                        <option value="canvas">Lienzo</option>
+                        <option value="paper">Papel</option>
+                        <option value="wood">Madera</option>
+                        <option value="metal">Metal</option>
+                        <option value="clay">Arcilla</option>
+                        <option value="stone">Piedra</option>
+                        <option value="fabric">Tela</option>
+                        <option value="digital">Digital</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className="fas fa-magic me-1"></i>
+                        Técnica
+                      </Form.Label>
+                      <Form.Select
+                        value={technique}
+                        onChange={(e) => setTechnique(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <option value="">Todas las técnicas</option>
+                        <option value="oil_painting">Pintura al óleo</option>
+                        <option value="watercolor">Acuarela</option>
+                        <option value="acrylic">Acrílico</option>
+                        <option value="digital_painting">Pintura digital</option>
+                        <option value="sculpting">Esculpido</option>
+                        <option value="carving">Tallado</option>
+                        <option value="photography_digital">Fotografía digital</option>
+                        <option value="collage">Collage</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className="fas fa-arrows-alt me-1"></i>
+                        Orientación
+                      </Form.Label>
+                      <Form.Select
+                        value={orientation}
+                        onChange={(e) => setOrientation(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <option value="">Todas</option>
+                        <option value="horizontal">Horizontal</option>
+                        <option value="vertical">Vertical</option>
+                        <option value="square">Cuadrado</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className="fas fa-expand me-1"></i>
+                        Tamaño
+                      </Form.Label>
+                      <Form.Select
+                        value={size}
+                        onChange={(e) => setSize(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <option value="">Todos</option>
+                        <option value="small">Pequeño</option>
+                        <option value="medium">Mediano</option>
+                        <option value="large">Grande</option>
+                        <option value="extra-large">Extra Grande</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className="fas fa-calendar me-1"></i>
+                        Año
+                      </Form.Label>
+                      <Form.Control
+                        type="number"
+                        placeholder="2024"
+                        value={year}
+                        onChange={(e) => setYear(e.target.value)}
+                        min="1900"
+                        max="2024"
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease'
+                        }}
+                      />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={4}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className="fas fa-tags me-1"></i>
+                        Etiquetas
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="abstract, modern, colorful..."
+                        value={tags}
+                        onChange={(e) => setTags(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease'
+                        }}
+                      />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className="fas fa-sort me-1"></i>
+                        Ordenar por
+                      </Form.Label>
+                      <Form.Select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <option value="createdAt">Más reciente</option>
+                        <option value="price">Precio</option>
+                        <option value="title">Título</option>
+                        <option value="likesCount">Más populares</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold text-muted">
+                        <i className="fas fa-sort-amount-down me-1"></i>
+                        Orden
+                      </Form.Label>
+                      <Form.Select
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                        style={{
+                          borderRadius: '10px',
+                          border: '2px solid #e0e0e0',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <option value="desc">Descendente</option>
+                        <option value="asc">Ascendente</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                </>
+              )}
+
+              {/* 🔹 Botones de Acción Modernos */}
+              <Col md={12}>
+                <Row className="g-2 mt-2">
+                  <Col md={6}>
+                    <Button 
+                      onClick={handleSearch}
+                      disabled={loading} 
+                      className="w-100"
+                      style={{
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        fontWeight: '600',
+                        padding: '0.65rem',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+                      }}
+                    >
+                      {loading ? (
+                        <>
+                          <Spinner animation="border" size="sm" className="me-2" />
+                          Buscando...
+                        </>
+                      ) : (
+                        <>
+                          <i className="fas fa-search me-2"></i>
+                          Aplicar Filtros
+                        </>
+                      )}
+                    </Button>
+                  </Col>
+                  <Col md={6}>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={handleReset}
+                      disabled={loading}
+                      className="w-100"
+                      style={{
+                        borderRadius: '12px',
+                        border: '2px solid #e0e0e0',
+                        fontWeight: '600',
+                        padding: '0.65rem',
+                        transition: 'all 0.3s ease',
+                        color: '#666'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.borderColor = '#667eea';
+                        e.target.style.color = '#667eea';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.borderColor = '#e0e0e0';
+                        e.target.style.color = '#666';
+                      }}
+                    >
+                      <i className="fas fa-redo me-2"></i>
+                      Limpiar Todo
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+      )}
+
+      {/* 🔹 MENSAJES DE ERROR MODERNOS */}
+      {error && (
+        <Alert 
+          variant="danger" 
+          className="py-3 mb-3 border-0"
+          style={{
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)',
+            color: 'white',
+            boxShadow: '0 4px 12px rgba(255, 107, 107, 0.3)'
+          }}
+        >
+          <i className="fas fa-exclamation-circle me-2"></i>
+          <small className="fw-semibold">{error}</small>
+        </Alert>
+      )}
+
+      {/* 🔹 RESULTADOS CON MEJOR PRESENTACIÓN */}
+      <div className="mt-3">
+        {initialLoading ? (
+          <div className="text-center py-5">
+            <img src={LoadIcon} alt="loading" className="d-block mx-auto" style={{ width: '80px' }} />
+            <p className="mt-3 text-muted fw-semibold">{t("loadingPosts", "Cargando posts...")}</p>
+          </div>
+        ) : loading ? (
+          <div className="text-center py-5">
+            <Spinner 
+              animation="border" 
+              variant="primary" 
+              style={{ 
+                width: '3rem', 
+                height: '3rem',
+                borderWidth: '4px'
+              }}
+            />
+            <p className="mt-3 text-muted fw-semibold">{t("searching", "Buscando...")}</p>
+          </div>
+        ) : filteredPosts.length > 0 ? (
+          <>
+            <div 
+              className="d-flex justify-content-between align-items-center mb-4 p-3"
+              style={{
+                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}
+            >
+              <h6 className="mb-0 fw-bold" style={{ color: '#333' }}>
+                <i className="fas fa-image me-2" style={{ color: '#667eea' }}></i>
+                {t("resultsFound", "Resultados")}: 
+                <Badge 
+                  bg="primary" 
+                  className="ms-2"
+                  style={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    fontSize: '0.9rem',
+                    padding: '0.4rem 0.8rem',
+                    borderRadius: '20px'
+                  }}
+                >
+                  {filteredPosts.length}
+                </Badge>
+              </h6>
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                style={{
+                  borderRadius: '20px',
+                  border: '2px solid #667eea',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                  e.target.style.color = 'white';
+                  e.target.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = '#667eea';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                <i className="fas fa-arrow-up me-1"></i> Top
+              </Button>
+            </div>
+            <Posts filteredPosts={filteredPosts} />
+          </>
+        ) : (
+          <Alert 
+            variant="info" 
+            className="text-center py-5 border-0"
+            style={{
+              borderRadius: '15px',
+              background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+              color: '#333'
+            }}
+          >
+            <i className="fas fa-search" style={{ fontSize: '3rem', color: '#667eea', marginBottom: '1rem' }}></i>
+            <h5 className="fw-bold mb-3">No se encontraron resultados</h5>
+            <p className="mb-0">
+              {search || theme || style || priceMin || priceMax || wilaya || Object.values(categories).some(Boolean) 
+                ? "Intenta con otros filtros o términos de búsqueda."
+                : "No hay posts disponibles en este momento."
+              }
+            </p>
+          </Alert>
+        )}
+      </div>
+
+      {/* 🔹 CSS PERSONALIZADO PARA ANIMACIONES */}
+      <style jsx>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+          box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        /* Scroll suave para resultados de usuarios */
+        div::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        div::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+
+        div::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 10px;
+        }
+
+        div::-webkit-scrollbar-thumb:hover {
+          background: #667eea;
+        }
+      `}</style>
+    </Container>
+  );
+}

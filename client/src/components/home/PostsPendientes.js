@@ -15,7 +15,10 @@ import {
   Badge, 
   Dropdown,
   Spinner,
-  Table
+  Table,
+  Form,
+  Alert,
+  ButtonGroup
 } from 'react-bootstrap';
 import { 
   FaCheck, 
@@ -24,7 +27,11 @@ import {
   FaEnvelope, 
   FaEllipsisV,
   FaClipboardList,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  FaCheckDouble,
+  FaTrashAlt,
+  FaCheckCircle,
+  FaTimesCircle
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -38,6 +45,9 @@ const PostsPendientes = () => {
   const history = useHistory();
   const [load, setLoad] = useState(false);
   const [postsPendientes, setPostsPendientes] = useState([]);
+  const [selectedPosts, setSelectedPosts] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [showMessage, setShowMessage] = useState({ show: false, text: '', type: '' });
 
   useEffect(() => {
     if (homePostsAprove && homePostsAprove.posts) {
@@ -45,6 +55,90 @@ const PostsPendientes = () => {
       setPostsPendientes(postspedientes);
     }
   }, [homePostsAprove]);
+
+  // Manejar selección individual
+  const handleSelectPost = (postId) => {
+    setSelectedPosts(prev => 
+      prev.includes(postId) 
+        ? prev.filter(id => id !== postId)
+        : [...prev, postId]
+    );
+  };
+
+  // Manejar selección masiva
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedPosts([]);
+    } else {
+      const allPostIds = postsPendientes.map(post => post._id);
+      setSelectedPosts(allPostIds);
+    }
+    setSelectAll(!selectAll);
+  };
+
+  // Aprobar posts seleccionados
+  const handleApproveSelected = () => {
+    if (selectedPosts.length === 0) {
+      setShowMessage({
+        show: true,
+        text: t('noPostsSelected') || 'Selecciona al menos un post para aprobar',
+        type: 'warning'
+      });
+      setTimeout(() => setShowMessage({ show: false, text: '', type: '' }), 3000);
+      return;
+    }
+
+    if (window.confirm(t('confirm.approveMultiple', { count: selectedPosts.length }) || `¿Aprobar ${selectedPosts.length} posts seleccionados?`)) {
+      selectedPosts.forEach(postId => {
+        const post = postsPendientes.find(p => p._id === postId);
+        if (post) {
+          dispatch(aprovarPostPendiente({ post, auth, socket }));
+        }
+      });
+      
+      setShowMessage({
+        show: true,
+        text: t('postsApprovedSuccessfully', { count: selectedPosts.length }) || `${selectedPosts.length} posts aprobados exitosamente`,
+        type: 'success'
+      });
+      
+      setSelectedPosts([]);
+      setSelectAll(false);
+      setTimeout(() => setShowMessage({ show: false, text: '', type: '' }), 3000);
+    }
+  };
+
+  // Eliminar posts seleccionados
+  const handleDeleteSelected = () => {
+    if (selectedPosts.length === 0) {
+      setShowMessage({
+        show: true,
+        text: t('noPostsSelected') || 'Selecciona al menos un post para eliminar',
+        type: 'warning'
+      });
+      setTimeout(() => setShowMessage({ show: false, text: '', type: '' }), 3000);
+      return;
+    }
+
+    if (window.confirm(t('confirm.deleteMultiple', { count: selectedPosts.length }) || `¿Eliminar ${selectedPosts.length} posts seleccionados?`)) {
+      selectedPosts.forEach(postId => {
+        const post = postsPendientes.find(p => p._id === postId);
+        if (post) {
+          dispatch(deletePost({ post, auth, socket }));
+        }
+      });
+      
+      setShowMessage({
+        show: true,
+        text: t('postsDeletedSuccessfully', { count: selectedPosts.length }) || `${selectedPosts.length} posts eliminados exitosamente`,
+        type: 'success'
+      });
+      
+      setSelectedPosts([]);
+      setSelectAll(false);
+      setTimeout(() => setShowMessage({ show: false, text: '', type: '' }), 3000);
+    }
+  };
 
   const handleLoadMore = async () => {
     setLoad(true);
@@ -108,9 +202,22 @@ const PostsPendientes = () => {
           </p>
         </div>
 
-        {/* Tarjeta de estadísticas */}
+        {/* Alert Messages */}
+        {showMessage.show && (
+          <Alert 
+            variant={showMessage.type}
+            dismissible 
+            onClose={() => setShowMessage({ show: false, text: '', type: '' })}
+            className="mb-4"
+            style={{ borderRadius: '12px' }}
+          >
+            {showMessage.text}
+          </Alert>
+        )}
+
+        {/* Tarjetas de estadísticas */}
         <Row className="mb-4">
-          <Col xs={12} md={6} lg={4}>
+          <Col xs={12} md={4}>
             <Card 
               className="border-0 shadow-sm text-center"
               style={{ 
@@ -126,7 +233,98 @@ const PostsPendientes = () => {
               </Card.Body>
             </Card>
           </Col>
+          
+          <Col xs={12} md={4}>
+            <Card 
+              className="border-0 shadow-sm text-center"
+              style={{ 
+                borderRadius: '20px',
+                background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
+                color: 'white'
+              }}
+            >
+              <Card.Body className="p-4">
+                <FaCheckCircle style={{ fontSize: '2.5rem', marginBottom: '1rem' }} />
+                <h3 className="fw-bold mb-2">{selectedPosts.length}</h3>
+                <p className="mb-0">{t('selected') || 'Seleccionados'}</p>
+              </Card.Body>
+            </Card>
+          </Col>
+          
+          <Col xs={12} md={4}>
+            <Card 
+              className="border-0 shadow-sm text-center"
+              style={{ 
+                borderRadius: '20px',
+                background: selectedPosts.length > 0 
+                  ? 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)'
+                  : 'linear-gradient(135deg, #a0aec0 0%, #718096 100%)',
+                color: 'white'
+              }}
+            >
+              <Card.Body className="p-4">
+                <FaCheckDouble style={{ fontSize: '2.5rem', marginBottom: '1rem' }} />
+                <h3 className="fw-bold mb-2">{selectedPosts.length}</h3>
+                <p className="mb-0">{t('readyForAction') || 'Listos para acción'}</p>
+              </Card.Body>
+            </Card>
+          </Col>
         </Row>
+
+        {/* Barra de acciones masivas */}
+        {selectedPosts.length > 0 && (
+          <Card 
+            className="border-0 shadow-sm mb-4"
+            style={{ 
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%)',
+              border: '2px dashed #cbd5e0'
+            }}
+          >
+            <Card.Body className="p-3">
+              <Row className="align-items-center">
+                <Col xs={12} md={6} className="mb-2 mb-md-0">
+                  <h6 className="fw-bold mb-0" style={{ color: '#2d3748' }}>
+                    <FaCheckCircle className="me-2 text-success" />
+                    {selectedPosts.length} {t('postsSelected') || 'posts seleccionados'}
+                  </h6>
+                </Col>
+                <Col xs={12} md={6}>
+                  <ButtonGroup className="w-100">
+                    <Button
+                      variant="success"
+                      onClick={handleApproveSelected}
+                      className="flex-grow-1"
+                      style={{
+                        background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontWeight: '600'
+                      }}
+                    >
+                      <FaCheckDouble className="me-2" />
+                      {t('approveSelected') || 'Aprobar Seleccionados'}
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={handleDeleteSelected}
+                      className="flex-grow-1"
+                      style={{
+                        background: 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontWeight: '600'
+                      }}
+                    >
+                      <FaTrashAlt className="me-2" />
+                      {t('deleteSelected') || 'Eliminar Seleccionados'}
+                    </Button>
+                  </ButtonGroup>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        )}
 
         {/* Tabla de posts pendientes */}
         <Card 
@@ -137,9 +335,23 @@ const PostsPendientes = () => {
             className="bg-white border-0 py-4"
             style={{ borderRadius: '20px 20px 0 0' }}
           >
-            <h5 className="mb-0 fw-bold" style={{ color: '#2d3748' }}>
-              {t('pendingList') || 'Lista de Posts Pendientes'}
-            </h5>
+            <Row className="align-items-center">
+              <Col xs={12} md={6}>
+                <h5 className="mb-0 fw-bold" style={{ color: '#2d3748' }}>
+                  {t('pendingList') || 'Lista de Posts Pendientes'}
+                </h5>
+              </Col>
+              <Col xs={12} md={6} className="text-md-end">
+                <Form.Check
+                  type="checkbox"
+                  label={t('selectAll') || 'Seleccionar Todos'}
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  className="fw-semibold"
+                  style={{ color: '#667eea' }}
+                />
+              </Col>
+            </Row>
           </Card.Header>
           
           <div className="table-responsive">
@@ -151,7 +363,14 @@ const PostsPendientes = () => {
                 }}
               >
                 <tr>
-                  <th className="text-center py-3" style={{ border: 'none' }}>#</th>
+                  <th className="text-center py-3" style={{ border: 'none', width: '50px' }}>
+                    <Form.Check
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                  <th className="text-center py-3" style={{ border: 'none', width: '60px' }}>#</th>
                   <th className="py-3" style={{ border: 'none' }}>{t('table.image')}</th>
                   <th className="py-3 d-none d-md-table-cell" style={{ border: 'none' }}>{t('table.content')}</th>
                   <th className="py-3" style={{ border: 'none' }}>{t('table.user')}</th>
@@ -170,15 +389,28 @@ const PostsPendientes = () => {
                       className="align-middle"
                       style={{ 
                         borderBottom: '1px solid #e2e8f0',
-                        transition: 'all 0.3s ease'
+                        transition: 'all 0.3s ease',
+                        background: selectedPosts.includes(post._id) ? '#ebf8ff' : 'transparent'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#f7fafc'
+                        e.currentTarget.style.background = selectedPosts.includes(post._id) 
+                          ? '#d6eaf8' 
+                          : '#f7fafc'
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.background = selectedPosts.includes(post._id) 
+                          ? '#ebf8ff' 
+                          : 'transparent'
                       }}
                     >
+                      <td className="text-center">
+                        <Form.Check
+                          type="checkbox"
+                          checked={selectedPosts.includes(post._id)}
+                          onChange={() => handleSelectPost(post._id)}
+                        />
+                      </td>
+                      
                       <td className="text-center fw-bold" style={{ color: '#667eea' }}>
                         {index + 1}
                       </td>
@@ -369,7 +601,7 @@ const PostsPendientes = () => {
                 ) : (
                   <tr>
                     <td 
-                      colSpan="9" 
+                      colSpan="10" 
                       className="text-center py-5"
                       style={{ color: '#718096' }}
                     >

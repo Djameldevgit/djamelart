@@ -1,3 +1,4 @@
+// Posts.jsx - Versión actualizada
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PostCard from '../PostCard'
@@ -7,14 +8,19 @@ import LoadMoreBtn from '../LoadMoreBtn'
 import { getDataAPI } from '../../utils/fetchData'
 import { POST_TYPES } from '../../redux/actions/postAction'
 
-
-const Posts = () => {
+const Posts = ({ filteredPosts }) => {
     const { homePosts, auth, theme } = useSelector(state => state)
     const dispatch = useDispatch()
 
     const [load, setLoad] = useState(false)
 
+    // Usar filteredPosts si se proporciona, de lo contrario usar homePosts
+    const postsToShow = filteredPosts || homePosts.posts
+    const hasMorePosts = filteredPosts ? false : homePosts.result >= (homePosts.page * 9)
+
     const handleLoadMore = async () => {
+        if (filteredPosts) return; // No cargar más si estamos mostrando resultados filtrados
+
         setLoad(true)
         const res = await getDataAPI(`posts?limit=${homePosts.page * 9}`, auth.token)
 
@@ -27,25 +33,30 @@ const Posts = () => {
     }
 
     return (
-  <div>
-        <div className="post_thumb">
-          
-            {
-                homePosts.posts.map(post => (
-                    <PostCard key={post._id} post={post} theme={theme} />
-                ))
-            }
+        <div>
+            <div className="post_thumb">
+                {postsToShow.length > 0 ? (
+                    postsToShow.map(post => (
+                        <PostCard key={post._id} post={post} theme={theme} />
+                    ))
+                ) : (
+                    <div className="text-center py-5">
+                        <p className="text-muted">No hay posts para mostrar</p>
+                    </div>
+                )}
 
-            {
-                load && <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
-            }
-
+                {load && <img src={LoadIcon} alt="loading" className="d-block mx-auto" />}
+            </div>
             
-          
-        </div>
-          <LoadMoreBtn result={homePosts.result} page={homePosts.page}
-            load={load} handleLoadMore={handleLoadMore} />
-        
+            {/* Mostrar LoadMoreBtn solo cuando no hay filtros aplicados */}
+            {!filteredPosts && (
+                <LoadMoreBtn 
+                    result={homePosts.result} 
+                    page={homePosts.page}
+                    load={load} 
+                    handleLoadMore={handleLoadMore} 
+                />
+            )}
         </div>
     )
 }
