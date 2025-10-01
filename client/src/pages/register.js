@@ -4,6 +4,7 @@ import { useHistory, Link } from 'react-router-dom'
 import { register } from '../redux/actions/authAction'
 import { useTranslation } from 'react-i18next'
 import valid from '../utils/valid'
+import { Container, Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap'
 
 const Register = () => {
 
@@ -11,8 +12,8 @@ const Register = () => {
     const dispatch = useDispatch()
     const history = useHistory()
     const { t, i18n } = useTranslation('auth');
-  const lang = languageReducer.language || 'es';
-  if (i18n.language !== lang) i18n.changeLanguage(lang);
+    const lang = languageReducer.language || 'es';
+    if (i18n.language !== lang) i18n.changeLanguage(lang);
 
     const initialState = {
         username: '', email: '', password: '', cf_password: ''
@@ -32,16 +33,11 @@ const Register = () => {
         setUserData({ ...userData, [name]: value })
     }
 
-
-
-    // Dentro del componente Register...
-
     const handleSubmit = (e) => {
         e.preventDefault()
 
         const check = valid(userData)
         if (check.errLength > 0) {
-            // Traducir cada mensaje con t()
             const translated = {}
             for (const key in check.errMsg) {
                 translated[key] = t(check.errMsg[key], { lng: lang })
@@ -53,74 +49,366 @@ const Register = () => {
         dispatch(register(userData))
     }
 
+    const isRTL = lang === "ar"
 
     return (
-        <div   className={`auth_page ${lang === "ar" ? "rtl" : ""}`}>
-            <form onSubmit={handleSubmit}>
-                <h3 className="text-uppercase text-center mb-4">{t('nameregister', { lng: lang })}</h3>
+        <div 
+            className={isRTL ? "rtl" : ""}
+            style={{
+                minHeight: '100vh',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '2rem 1rem'
+            }}
+        >
+            <Container>
+                <Row className="justify-content-center">
+                    <Col xs={12} sm={10} md={8} lg={6} xl={5}>
+                        <Card 
+                            className="shadow-lg border-0"
+                            style={{
+                                borderRadius: '24px',
+                                overflow: 'hidden',
+                                background: 'rgba(255, 255, 255, 0.98)'
+                            }}
+                        >
+                            {/* Header elegante */}
+                            <div 
+                                className="text-center py-5"
+                                style={{
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    position: 'relative'
+                                }}
+                            >
+                                <div 
+                                    style={{
+                                        width: '80px',
+                                        height: '80px',
+                                        background: 'rgba(255,255,255,0.25)',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        margin: '0 auto 1rem',
+                                        backdropFilter: 'blur(10px)',
+                                        border: '3px solid rgba(255,255,255,0.3)'
+                                    }}
+                                >
+                                    <svg 
+                                        width="40" 
+                                        height="40" 
+                                        viewBox="0 0 24 24" 
+                                        fill="none" 
+                                        stroke="white" 
+                                        strokeWidth="2"
+                                    >
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </div>
+                                <h3 
+                                    className="text-uppercase fw-bold mb-0" 
+                                    style={{ 
+                                        color: 'white',
+                                        letterSpacing: '1px',
+                                        fontSize: '1.75rem'
+                                    }}
+                                >
+                                    {t('nameregister', { lng: lang })}
+                                </h3>
+                            </div>
 
-                <div className="form-group">
-                    <label htmlFor="username">{t('userName', { lng: lang })}</label>
-                    <input type="text" className="form-control" id="username" name="username"
-                        onChange={handleChangeInput} value={username.toLowerCase().replace(/ /g, '')}
-                        style={{ background: `${alert.username ? '#fd2d6a14' : ''}` }} />
-                    <small className="form-text text-danger">
-                        {alert.username ? t(alert.username, { lng: lang }) : ''}
-                    </small>
-                </div>
+                            <Card.Body className="p-4 p-md-5">
+                                <Form onSubmit={handleSubmit}>
+                                    
+                                    {/* Username */}
+                                    <Form.Group className="mb-4">
+                                        <Form.Label 
+                                            className="fw-semibold"
+                                            style={{ color: '#4a5568', fontSize: '0.95rem' }}
+                                        >
+                                            {t('userName', { lng: lang })}
+                                        </Form.Label>
+                                        <InputGroup>
+                                            <InputGroup.Text 
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                    border: 'none',
+                                                    borderRadius: '12px 0 0 12px'
+                                                }}
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="12" cy="7" r="4"></circle>
+                                                </svg>
+                                            </InputGroup.Text>
+                                            <Form.Control
+                                                type="text"
+                                                id="username"
+                                                name="username"
+                                                onChange={handleChangeInput}
+                                                value={username.toLowerCase().replace(/ /g, '')}
+                                                isInvalid={!!alert.username}
+                                                placeholder="johndoe"
+                                                style={{
+                                                    borderLeft: 'none',
+                                                    borderRadius: '0 12px 12px 0',
+                                                    padding: '0.75rem 1rem',
+                                                    fontSize: '1rem',
+                                                    border: alert.username ? '2px solid #fc8181' : '2px solid #e2e8f0',
+                                                    background: alert.username ? '#fff5f5' : 'white'
+                                                }}
+                                            />
+                                        </InputGroup>
+                                        {alert.username && (
+                                            <Form.Text className="text-danger d-block mt-2 fw-medium">
+                                                {t(alert.username, { lng: lang })}
+                                            </Form.Text>
+                                        )}
+                                    </Form.Group>
 
-                <div className="form-group">
-                    <label htmlFor="exampleInputEmail1">{t('emailAddress', { lng: lang })}</label>
-                    <input type="email" className="form-control" id="exampleInputEmail1" name="email"
-                        onChange={handleChangeInput} value={email}
-                        style={{ background: `${alert.email ? '#fd2d6a14' : ''}` }} />
-                    <small className="form-text text-danger">
-                        {alert.email ? t(alert.email, { lng: lang }) : ''}
-                    </small>
-                </div>
+                                    {/* Email */}
+                                    <Form.Group className="mb-4">
+                                        <Form.Label 
+                                            className="fw-semibold"
+                                            style={{ color: '#4a5568', fontSize: '0.95rem' }}
+                                        >
+                                            {t('emailAddress', { lng: lang })}
+                                        </Form.Label>
+                                        <InputGroup>
+                                            <InputGroup.Text 
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                    border: 'none',
+                                                    borderRadius: '12px 0 0 12px'
+                                                }}
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                                </svg>
+                                            </InputGroup.Text>
+                                            <Form.Control
+                                                type="email"
+                                                id="exampleInputEmail1"
+                                                name="email"
+                                                onChange={handleChangeInput}
+                                                value={email}
+                                                isInvalid={!!alert.email}
+                                                placeholder="john@example.com"
+                                                style={{
+                                                    borderLeft: 'none',
+                                                    borderRadius: '0 12px 12px 0',
+                                                    padding: '0.75rem 1rem',
+                                                    fontSize: '1rem',
+                                                    border: alert.email ? '2px solid #fc8181' : '2px solid #e2e8f0',
+                                                    background: alert.email ? '#fff5f5' : 'white'
+                                                }}
+                                            />
+                                        </InputGroup>
+                                        {alert.email && (
+                                            <Form.Text className="text-danger d-block mt-2 fw-medium">
+                                                {t(alert.email, { lng: lang })}
+                                            </Form.Text>
+                                        )}
+                                    </Form.Group>
 
-                <div className="form-group">
-                    <label htmlFor="exampleInputPassword1">{t('password', { lng: lang })}</label>
-                    <div className="pass">
-                        <input type={typePass ? "text" : "password"}
-                            className="form-control" id="exampleInputPassword1"
-                            onChange={handleChangeInput} value={password} name="password"
-                            style={{ background: `${alert.password ? '#fd2d6a14' : ''}` }} />
-                        <small onClick={() => setTypePass(!typePass)}>
-                            {typePass ? t('hide', { lng: lang }) : t('show', { lng: lang })}
-                        </small>
-                    </div>
-                    <small className="form-text text-danger">
-                        {alert.password ? t(alert.password, { lng: lang }) : ''}
-                    </small>
-                </div>
+                                    {/* Password */}
+                                    <Form.Group className="mb-4">
+                                        <Form.Label 
+                                            className="fw-semibold"
+                                            style={{ color: '#4a5568', fontSize: '0.95rem' }}
+                                        >
+                                            {t('password', { lng: lang })}
+                                        </Form.Label>
+                                        <InputGroup>
+                                            <InputGroup.Text 
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                    border: 'none',
+                                                    borderRadius: '12px 0 0 0'
+                                                }}
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                                </svg>
+                                            </InputGroup.Text>
+                                            <Form.Control
+                                                type={typePass ? "text" : "password"}
+                                                id="exampleInputPassword1"
+                                                name="password"
+                                                onChange={handleChangeInput}
+                                                value={password}
+                                                isInvalid={!!alert.password}
+                                                placeholder="••••••••"
+                                                style={{
+                                                    borderLeft: 'none',
+                                                    borderRight: 'none',
+                                                    borderRadius: '0',
+                                                    padding: '0.75rem 1rem',
+                                                    fontSize: '1rem',
+                                                    border: alert.password ? '2px solid #fc8181' : '2px solid #e2e8f0',
+                                                    borderLeft: 'none !important',
+                                                    borderRight: 'none !important',
+                                                    background: alert.password ? '#fff5f5' : 'white'
+                                                }}
+                                            />
+                                            <Button
+                                                variant="outline-secondary"
+                                                onClick={() => setTypePass(!typePass)}
+                                                style={{
+                                                    borderRadius: '0 12px 12px 0',
+                                                    border: alert.password ? '2px solid #fc8181' : '2px solid #e2e8f0',
+                                                    borderLeft: 'none',
+                                                    background: 'white',
+                                                    color: '#667eea'
+                                                }}
+                                            >
+                                                {typePass ? (
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                                    </svg>
+                                                ) : (
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                        <circle cx="12" cy="12" r="3"></circle>
+                                                    </svg>
+                                                )}
+                                            </Button>
+                                        </InputGroup>
+                                        {alert.password && (
+                                            <Form.Text className="text-danger d-block mt-2 fw-medium">
+                                                {t(alert.password, { lng: lang })}
+                                            </Form.Text>
+                                        )}
+                                    </Form.Group>
 
-                <div className="form-group">
-                    <label htmlFor="cf_password">{t('confirmPassword', { lng: lang })}</label>
-                    <div className="pass">
-                        <input type={typeCfPass ? "text" : "password"}
-                            className="form-control" id="cf_password"
-                            onChange={handleChangeInput} value={cf_password} name="cf_password"
-                            style={{ background: `${alert.cf_password ? '#fd2d6a14' : ''}` }} />
-                        <small onClick={() => setTypeCfPass(!typeCfPass)}>
-                            {typeCfPass ? t('hide', { lng: lang }) : t('show', { lng: lang })}
-                        </small>
-                    </div>
-                    <small className="form-text text-danger">
-                        {alert.cf_password ? t(alert.cf_password, { lng: lang }) : ''}
-                    </small>
-                </div>
+                                    {/* Confirm Password */}
+                                    <Form.Group className="mb-4">
+                                        <Form.Label 
+                                            className="fw-semibold"
+                                            style={{ color: '#4a5568', fontSize: '0.95rem' }}
+                                        >
+                                            {t('confirmPassword', { lng: lang })}
+                                        </Form.Label>
+                                        <InputGroup>
+                                            <InputGroup.Text 
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                    border: 'none',
+                                                    borderRadius: '12px 0 0 0'
+                                                }}
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                                </svg>
+                                            </InputGroup.Text>
+                                            <Form.Control
+                                                type={typeCfPass ? "text" : "password"}
+                                                id="cf_password"
+                                                name="cf_password"
+                                                onChange={handleChangeInput}
+                                                value={cf_password}
+                                                isInvalid={!!alert.cf_password}
+                                                placeholder="••••••••"
+                                                style={{
+                                                    borderLeft: 'none',
+                                                    borderRight: 'none',
+                                                    borderRadius: '0',
+                                                    padding: '0.75rem 1rem',
+                                                    fontSize: '1rem',
+                                                    border: alert.cf_password ? '2px solid #fc8181' : '2px solid #e2e8f0',
+                                                    borderLeft: 'none !important',
+                                                    borderRight: 'none !important',
+                                                    background: alert.cf_password ? '#fff5f5' : 'white'
+                                                }}
+                                            />
+                                            <Button
+                                                variant="outline-secondary"
+                                                onClick={() => setTypeCfPass(!typeCfPass)}
+                                                style={{
+                                                    borderRadius: '0 12px 12px 0',
+                                                    border: alert.cf_password ? '2px solid #fc8181' : '2px solid #e2e8f0',
+                                                    borderLeft: 'none',
+                                                    background: 'white',
+                                                    color: '#667eea'
+                                                }}
+                                            >
+                                                {typeCfPass ? (
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                                    </svg>
+                                                ) : (
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                        <circle cx="12" cy="12" r="3"></circle>
+                                                    </svg>
+                                                )}
+                                            </Button>
+                                        </InputGroup>
+                                        {alert.cf_password && (
+                                            <Form.Text className="text-danger d-block mt-2 fw-medium">
+                                                {t(alert.cf_password, { lng: lang })}
+                                            </Form.Text>
+                                        )}
+                                    </Form.Group>
 
-                <button type="submit" className="btn btn-dark w-100">
-                    {t('register', { lng: lang })}
-                </button>
+                                    {/* Submit Button */}
+                                    <Button
+                                        type="submit"
+                                        className="w-100 fw-bold text-uppercase mt-3"
+                                        style={{
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                            border: 'none',
+                                            borderRadius: '12px',
+                                            padding: '0.875rem',
+                                            fontSize: '1rem',
+                                            letterSpacing: '1px',
+                                            boxShadow: '0 10px 25px rgba(102, 126, 234, 0.3)',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.transform = 'translateY(-2px)'
+                                            e.target.style.boxShadow = '0 15px 35px rgba(102, 126, 234, 0.4)'
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.transform = 'translateY(0)'
+                                            e.target.style.boxShadow = '0 10px 25px rgba(102, 126, 234, 0.3)'
+                                        }}
+                                    >
+                                        {t('register', { lng: lang })}
+                                    </Button>
 
-                <p className="my-2">
-                    {t('alreadyHaveAccount', { lng: lang })} <Link to="/login" style={{ color: "crimson" }}>
-                        {t('loginNow', { lng: lang })}
-                    </Link>
-                </p>
-            </form>
+                                    {/* Login Link */}
+                                    <div className="text-center mt-4">
+                                        <p className="mb-0" style={{ color: '#718096' }}>
+                                            {t('alreadyHaveAccount', { lng: lang })}{' '}
+                                            <Link 
+                                                to="/login" 
+                                                style={{
+                                                    color: 'crimson',
+                                                    textDecoration: 'none',
+                                                    fontWeight: '600',
+                                                    transition: 'all 0.3s ease'
+                                                }}
+                                                onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+                                                onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+                                            >
+                                                {t('loginNow', { lng: lang })}
+                                            </Link>
+                                        </p>
+                                    </div>
+                                </Form>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+            </Container>
         </div>
     )
 }
