@@ -172,32 +172,15 @@ const PostsPendientes = () => {
   };
 
   return (
-    <div 
-      style={{
-        minHeight: '100vh',
-        background: '#f8f9fa',
-        padding: '2rem 0'
-      }}
-      className={isRTL ? 'rtl' : ''}
-    >
+    <div className={`min-vh-100 bg-light py-4 ${isRTL ? 'rtl' : ''}`}>
       <Container>
         {/* Header */}
         <div className="mb-4">
-          <h2 
-            className="fw-bold d-flex align-items-center"
-            style={{
-              color: '#2d3748',
-              fontSize: '2rem',
-              direction: isRTL ? 'rtl' : 'ltr'
-            }}
-          >
-            <FaClipboardList 
-              className={isRTL ? 'ms-3' : 'me-3'} 
-              style={{ color: '#667eea' }} 
-            />
+          <h2 className="fw-bold d-flex align-items-center text-dark">
+            <FaClipboardList className={isRTL ? 'ms-3' : 'me-3'} style={{ color: '#667eea' }} />
             {t('title') || 'Posts Pendientes'}
           </h2>
-          <p className="text-muted" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+          <p className="text-muted">
             {t('subtitle') || 'Gestiona y revisa los posts pendientes de aprobación'}
           </p>
         </div>
@@ -208,64 +191,42 @@ const PostsPendientes = () => {
             variant={showMessage.type}
             dismissible 
             onClose={() => setShowMessage({ show: false, text: '', type: '' })}
-            className="mb-4"
-            style={{ borderRadius: '12px' }}
+            className="mb-4 rounded-3"
           >
             {showMessage.text}
           </Alert>
         )}
 
-        {/* Tarjetas de estadísticas */}
-        <Row className="mb-4">
+        {/* Tarjetas de estadísticas - COMPACTAS */}
+        <Row className="mb-4 g-3">
           <Col xs={12} md={4}>
-            <Card 
-              className="border-0 shadow-sm text-center"
-              style={{ 
-                borderRadius: '20px',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white'
-              }}
-            >
-              <Card.Body className="p-4">
-                <FaExclamationTriangle style={{ fontSize: '2.5rem', marginBottom: '1rem' }} />
-                <h3 className="fw-bold mb-2">{postsPendientes.length}</h3>
-                <p className="mb-0">{t('totalPending') || 'Posts Pendientes'}</p>
+            <Card className="border-0 shadow-sm text-center h-100">
+              <Card.Body className="p-3 bg-primary text-white rounded-3">
+                <FaExclamationTriangle className="fs-3 mb-2" />
+                <h5 className="fw-bold mb-1">{postsPendientes.length}</h5>
+                <small>{t('totalPending') || 'Posts Pendientes'}</small>
               </Card.Body>
             </Card>
           </Col>
           
           <Col xs={12} md={4}>
-            <Card 
-              className="border-0 shadow-sm text-center"
-              style={{ 
-                borderRadius: '20px',
-                background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
-                color: 'white'
-              }}
-            >
-              <Card.Body className="p-4">
-                <FaCheckCircle style={{ fontSize: '2.5rem', marginBottom: '1rem' }} />
-                <h3 className="fw-bold mb-2">{selectedPosts.length}</h3>
-                <p className="mb-0">{t('selected') || 'Seleccionados'}</p>
+            <Card className="border-0 shadow-sm text-center h-100">
+              <Card.Body className="p-3 bg-success text-white rounded-3">
+                <FaCheckCircle className="fs-3 mb-2" />
+                <h5 className="fw-bold mb-1">{selectedPosts.length}</h5>
+                <small>{t('selected') || 'Seleccionados'}</small>
               </Card.Body>
             </Card>
           </Col>
           
           <Col xs={12} md={4}>
-            <Card 
-              className="border-0 shadow-sm text-center"
-              style={{ 
-                borderRadius: '20px',
-                background: selectedPosts.length > 0 
-                  ? 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)'
-                  : 'linear-gradient(135deg, #a0aec0 0%, #718096 100%)',
-                color: 'white'
-              }}
-            >
-              <Card.Body className="p-4">
-                <FaCheckDouble style={{ fontSize: '2.5rem', marginBottom: '1rem' }} />
-                <h3 className="fw-bold mb-2">{selectedPosts.length}</h3>
-                <p className="mb-0">{t('readyForAction') || 'Listos para acción'}</p>
+            <Card className="border-0 shadow-sm text-center h-100">
+              <Card.Body className={`p-3 rounded-3 text-white ${
+                selectedPosts.length > 0 ? 'bg-warning' : 'bg-secondary'
+              }`}>
+                <FaCheckDouble className="fs-3 mb-2" />
+                <h5 className="fw-bold mb-1">{selectedPosts.length}</h5>
+                <small>{t('readyForAction') || 'Listos para acción'}</small>
               </Card.Body>
             </Card>
           </Col>
@@ -273,53 +234,34 @@ const PostsPendientes = () => {
 
         {/* Barra de acciones masivas */}
         {selectedPosts.length > 0 && (
-          <Card 
-            className="border-0 shadow-sm mb-4"
-            style={{ 
-              borderRadius: '20px',
-              background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%)',
-              border: '2px dashed #cbd5e0'
-            }}
-          >
+          <Card className="border-0 shadow-sm mb-4 bg-light border-dashed">
             <Card.Body className="p-3">
               <Row className="align-items-center">
-                <Col xs={12} md={6} className="mb-2 mb-md-0">
-                  <h6 className="fw-bold mb-0" style={{ color: '#2d3748' }}>
+                <Col xs={12} md={6} className="mb-3 mb-md-0">
+                  <h6 className="fw-bold mb-0 text-dark text-center text-md-start">
                     <FaCheckCircle className="me-2 text-success" />
                     {selectedPosts.length} {t('postsSelected') || 'posts seleccionados'}
                   </h6>
                 </Col>
                 <Col xs={12} md={6}>
-                  <ButtonGroup className="w-100">
+                  <div className="d-flex flex-column flex-md-row gap-2">
                     <Button
                       variant="success"
                       onClick={handleApproveSelected}
                       className="flex-grow-1"
-                      style={{
-                        background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
-                        border: 'none',
-                        borderRadius: '10px',
-                        fontWeight: '600'
-                      }}
                     >
                       <FaCheckDouble className="me-2" />
-                      {t('approveSelected') || 'Aprobar Seleccionados'}
+                      {t('approveSelected') || 'Aprobar'}
                     </Button>
                     <Button
                       variant="danger"
                       onClick={handleDeleteSelected}
                       className="flex-grow-1"
-                      style={{
-                        background: 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)',
-                        border: 'none',
-                        borderRadius: '10px',
-                        fontWeight: '600'
-                      }}
                     >
                       <FaTrashAlt className="me-2" />
-                      {t('deleteSelected') || 'Eliminar Seleccionados'}
+                      {t('deleteSelected') || 'Eliminar'}
                     </Button>
-                  </ButtonGroup>
+                  </div>
                 </Col>
               </Row>
             </Card.Body>
@@ -327,17 +269,11 @@ const PostsPendientes = () => {
         )}
 
         {/* Tabla de posts pendientes */}
-        <Card 
-          className="border-0 shadow-sm"
-          style={{ borderRadius: '20px' }}
-        >
-          <Card.Header 
-            className="bg-white border-0 py-4"
-            style={{ borderRadius: '20px 20px 0 0' }}
-          >
+        <Card className="border-0 shadow-sm">
+          <Card.Header className="bg-white border-0 py-3">
             <Row className="align-items-center">
               <Col xs={12} md={6}>
-                <h5 className="mb-0 fw-bold" style={{ color: '#2d3748' }}>
+                <h5 className="mb-0 fw-bold text-dark">
                   {t('pendingList') || 'Lista de Posts Pendientes'}
                 </h5>
               </Col>
@@ -347,8 +283,7 @@ const PostsPendientes = () => {
                   label={t('selectAll') || 'Seleccionar Todos'}
                   checked={selectAll}
                   onChange={handleSelectAll}
-                  className="fw-semibold"
-                  style={{ color: '#667eea' }}
+                  className="fw-semibold text-primary"
                 />
               </Col>
             </Row>
@@ -356,29 +291,25 @@ const PostsPendientes = () => {
           
           <div className="table-responsive">
             <Table hover className="mb-0">
-              <thead 
-                style={{ 
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white'
-                }}
-              >
+              <thead className="text-white">
                 <tr>
-                  <th className="text-center py-3" style={{ border: 'none', width: '50px' }}>
+                  <th className="text-center py-3" style={{ width: '50px' }}>
                     <Form.Check
                       type="checkbox"
                       checked={selectAll}
                       onChange={handleSelectAll}
+                      className="mx-3"
                     />
                   </th>
-                  <th className="text-center py-3" style={{ border: 'none', width: '60px' }}>#</th>
-                  <th className="py-3" style={{ border: 'none' }}>{t('table.image')}</th>
-                  <th className="py-3 d-none d-md-table-cell" style={{ border: 'none' }}>{t('table.content')}</th>
-                  <th className="py-3" style={{ border: 'none' }}>{t('table.user')}</th>
-                  <th className="py-3" style={{ border: 'none' }}>{t('table.category')}</th>
-                  <th className="py-3" style={{ border: 'none' }}>{t('table.title')}</th>
-                  <th className="py-3" style={{ border: 'none' }}>{t('table.status')}</th>
-                  <th className="py-3 d-none d-md-table-cell" style={{ border: 'none' }}>{t('table.date')}</th>
-                  <th className="text-center py-3" style={{ border: 'none' }}>{t('table.actions')}</th>
+                  <th className="text-center py-3" style={{ width: '60px' }}>#</th>
+                  <th className="py-3">{t('table.image')}</th>
+                  <th className="py-3 d-none d-lg-table-cell">{t('table.content')}</th>
+                  <th className="py-3">{t('table.user')}</th>
+                  <th className="py-3">{t('table.category')}</th>
+                  <th className="py-3">{t('table.title')}</th>
+                  <th className="py-3">{t('table.status')}</th>
+                  <th className="py-3 d-none d-md-table-cell">{t('table.date')}</th>
+                  <th className="text-center py-3">{t('table.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -386,32 +317,22 @@ const PostsPendientes = () => {
                   postsPendientes.map((post, index) => (
                     <tr 
                       key={post._id} 
-                      className="align-middle"
-                      style={{ 
-                        borderBottom: '1px solid #e2e8f0',
-                        transition: 'all 0.3s ease',
-                        background: selectedPosts.includes(post._id) ? '#ebf8ff' : 'transparent'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = selectedPosts.includes(post._id) 
-                          ? '#d6eaf8' 
-                          : '#f7fafc'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = selectedPosts.includes(post._id) 
-                          ? '#ebf8ff' 
-                          : 'transparent'
-                      }}
+                      className={`align-middle ${
+                        selectedPosts.includes(post._id) ? 'table-primary' : ''
+                      }`}
                     >
                       <td className="text-center">
-                        <Form.Check
-                          type="checkbox"
-                          checked={selectedPosts.includes(post._id)}
-                          onChange={() => handleSelectPost(post._id)}
-                        />
+                        <div className="d-flex justify-content-center align-items-center">
+                          <Form.Check
+                            type="checkbox"
+                            checked={selectedPosts.includes(post._id)}
+                            onChange={() => handleSelectPost(post._id)}
+                            className="my-1"
+                          />
+                        </div>
                       </td>
                       
-                      <td className="text-center fw-bold" style={{ color: '#667eea' }}>
+                      <td className="text-center fw-bold text-primary">
                         {index + 1}
                       </td>
                       
@@ -419,104 +340,58 @@ const PostsPendientes = () => {
                         {post.images?.length > 0 ? (
                           <Link to={`/post/${post._id}`}>
                             <div
+                              className="rounded overflow-hidden shadow-sm"
                               style={{
                                 width: '60px',
                                 height: '60px',
-                                borderRadius: '12px',
-                                overflow: 'hidden',
-                                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                                 cursor: 'pointer'
                               }}
                             >
                               <img
                                 src={post.images[0]?.url || ""}
                                 alt="Post"
-                                style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  objectFit: 'cover'
-                                }}
+                                className="w-100 h-100 object-fit-cover"
                               />
                             </div>
                           </Link>
                         ) : (
-                          <Badge 
-                            bg="secondary"
-                            style={{ 
-                              borderRadius: '10px',
-                              padding: '0.5rem 0.75rem'
-                            }}
-                          >
-                            {t('noImage')}
+                          <Badge bg="secondary" className="rounded-pill px-3 py-2">
+                            {t('noImage') || 'Sin imagen'}
                           </Badge>
                         )}
                       </td>
 
-                      <td className="d-none d-md-table-cell">
-                        <div 
-                          style={{
-                            maxWidth: '200px',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            color: '#718096'
-                          }}
-                        >
+                      <td className="d-none d-lg-table-cell">
+                        <div className="text-truncate" style={{ maxWidth: '200px' }}>
                           {post.content}
                         </div>
                       </td>
                       
                       <td>
-                        <Badge 
-                          style={{
-                            background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
-                            border: 'none',
-                            borderRadius: '10px',
-                            padding: '0.5rem 0.75rem',
-                            fontSize: '0.875rem'
-                          }}
-                        >
+                        <Badge bg="success" className="rounded-pill px-3 py-2">
                           {post.user.username}
                         </Badge>
                       </td>
                       
                       <td>
-                        <span style={{ color: '#4a5568', fontWeight: '500' }}>
+                        <span className="text-dark fw-medium">
                           {post.subCategory}
                         </span>
                       </td>
                       
                       <td>
-                        <div 
-                          style={{
-                            maxWidth: '150px',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            color: '#2d3748',
-                            fontWeight: '500'
-                          }}
-                        >
+                        <div className="text-truncate text-dark fw-medium" style={{ maxWidth: '150px' }}>
                           {post.title}
                         </div>
                       </td>
 
                       <td>
-                        <Badge 
-                          style={{
-                            background: 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)',
-                            border: 'none',
-                            borderRadius: '20px',
-                            padding: '0.5rem 1rem',
-                            fontSize: '0.875rem',
-                            fontWeight: '600'
-                          }}
-                        >
-                          {t(`status.${post.estado}`)}
+                        <Badge bg="warning" className="rounded-pill px-3 py-2 fw-semibold">
+                          {t(`status.${post.estado}`) || post.estado}
                         </Badge>
                       </td>
 
-                      <td className="d-none d-md-table-cell" style={{ color: '#718096' }}>
+                      <td className="d-none d-md-table-cell text-muted">
                         {new Date(post.createdAt).toLocaleString()}
                       </td>
 
@@ -525,73 +400,41 @@ const PostsPendientes = () => {
                           <Dropdown.Toggle 
                             variant="outline-primary"
                             size="sm"
-                            style={{
-                              border: '2px solid #667eea',
-                              borderRadius: '10px',
-                              color: '#667eea',
-                              fontWeight: '600',
-                              background: 'transparent'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.target.style.background = '#667eea'
-                              e.target.style.color = 'white'
-                            }}
-                            onMouseLeave={(e) => {
-                              e.target.style.background = 'transparent'
-                              e.target.style.color = '#667eea'
-                            }}
+                            className="rounded-pill border-2 fw-semibold"
                           >
                             <FaEllipsisV />
                           </Dropdown.Toggle>
 
-                          <Dropdown.Menu style={{ zIndex: 10000, borderRadius: '12px' }}>
+                          <Dropdown.Menu className="rounded-3 shadow-sm border-0">
                             <Dropdown.Item 
                               onClick={() => handleAprovePost(post)}
-                              style={{ 
-                                borderRadius: '8px',
-                                margin: '2px',
-                                fontWeight: '500'
-                              }}
+                              className="rounded-2 fw-medium"
                             >
                               <FaCheck className="me-2 text-success" /> 
-                              {t('actionss.approve')}
+                              {t('actionss.approve') || 'Aprobar'}
                             </Dropdown.Item>
                             
                             <Dropdown.Item 
-                              style={{ 
-                                borderRadius: '8px',
-                                margin: '2px',
-                                fontWeight: '500'
-                              }}
+                              className="rounded-2 fw-medium"
                             >
                               <FaEnvelope className="me-2 text-primary" /> 
-                              {t('actionss.sendMessage')}
+                              {t('actionss.sendMessage') || 'Enviar Mensaje'}
                             </Dropdown.Item>
 
                             <Dropdown.Item 
                               onClick={() => handleDeletePost(post)}
-                              style={{ 
-                                borderRadius: '8px',
-                                margin: '2px',
-                                fontWeight: '500',
-                                color: '#e53e3e'
-                              }}
+                              className="rounded-2 fw-medium text-danger"
                             >
                               <FaTrash className="me-2" /> 
-                              {t('actionss.delete')}
+                              {t('actionss.delete') || 'Eliminar'}
                             </Dropdown.Item>
                             
                             <Dropdown.Item 
                               onClick={() => handleBlockUser(post.user)}
-                              style={{ 
-                                borderRadius: '8px',
-                                margin: '2px',
-                                fontWeight: '500',
-                                color: '#dd6b20'
-                              }}
+                              className="rounded-2 fw-medium text-warning"
                             >
                               <FaBan className="me-2" /> 
-                              {t('actionss.blockUser')}
+                              {t('actionss.blockUser') || 'Bloquear Usuario'}
                             </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
@@ -602,11 +445,10 @@ const PostsPendientes = () => {
                   <tr>
                     <td 
                       colSpan="10" 
-                      className="text-center py-5"
-                      style={{ color: '#718096' }}
+                      className="text-center py-5 text-muted"
                     >
-                      <FaClipboardList style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.5 }} />
-                      <h5 className="fw-bold">{t('noPending')}</h5>
+                      <FaClipboardList className="fs-1 mb-3 opacity-50" />
+                      <h5 className="fw-bold">{t('noPending') || 'No hay posts pendientes'}</h5>
                       <p className="mb-0">No hay posts pendientes de aprobación</p>
                     </td>
                   </tr>
@@ -622,7 +464,7 @@ const PostsPendientes = () => {
             <Spinner 
               animation="border" 
               variant="primary" 
-              style={{ width: '3rem', height: '3rem' }}
+              className="fs-4"
             />
             <p className="mt-3 text-muted">{t('loading') || 'Cargando más posts...'}</p>
           </div>

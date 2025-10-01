@@ -282,38 +282,39 @@ const Navbar2 = () => {
                   </Badge>
                 )}
 
-                {showNotifyDropdown && (
-                  <div
-                    className="dropdown-menu show shadow-lg"
-                    style={{
-                      position: isMobile ? 'fixed' : 'absolute',
-                      [isMobile ? 'left' : 'right']: isMobile ? '50%' : '0',
-                      [isMobile ? 'top' : 'top']: isMobile ? '50%' : '100%',
-                      transform: isMobile ? 'translate(-50%, -50%)' : 'translateX(-230px)',
-                      width: isMobile ? '90vw' : '400px',
-                      maxWidth: '400px',
-                      maxHeight: isMobile ? '80vh' : '500px',
-                      overflowY: 'auto',
-                       zIndex: 9999,
-                      marginTop: isMobile ? '0' : '8px',
-                      borderRadius: '15px',
-                      border: 'none',
-                      boxShadow: '0 10px 40px rgba(0,0,0,0.15)'
-                    }}
-                  >
-                    <NotifyModal onClose={() => setShowNotifyDropdown(false)} />
-                    {isMobile && (
-                      <div className="text-center p-2 border-top">
-                        <button
-                          className="btn btn-sm btn-outline-secondary rounded-pill px-4"
-                          onClick={() => setShowNotifyDropdown(false)}
-                        >
-                          Cerrar
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
+{showNotifyDropdown && (
+  <div
+    className="dropdown-menu show shadow-lg"
+    style={{
+      position: isMobile ? 'fixed' : 'absolute',
+      [isMobile ? 'left' : 'right']: isMobile ? '10%' : '0',
+      [isMobile ? 'top' : 'top']: isMobile ? 'calc(35% + 35px)' : '100%',  // ✅ +20px más abajo
+      transform: isMobile ? 'translate(-50%, 0)' : 'translateX(-230px)',
+      width: isMobile ? '90vw' : '400px',
+      maxWidth: '400px',
+      maxHeight: isMobile ? '70vh' : '500px',
+      overflowY: 'auto',
+      zIndex: 9999,
+      marginTop: isMobile ? '0' : '8px',
+      borderRadius: '15px',
+      border: 'none',
+      boxShadow: '0 10px 40px rgba(0,0,0,0.15)'
+    }}
+  >
+    <NotifyModal onClose={() => setShowNotifyDropdown(false)} />
+    {isMobile && (
+      <div className="text-center p-2 border-top">
+        <button
+          className="btn btn-sm btn-outline-secondary rounded-pill px-4"
+          onClick={() => setShowNotifyDropdown(false)}
+        >
+          Cerrar
+        </button>
+    
+  </div>
+)}
+  </div>
+)}
               </div>
             )}
 

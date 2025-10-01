@@ -59,7 +59,7 @@ const Register = () => {
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 display: 'flex',
                 alignItems: 'center',
-                padding: '2rem 1rem'
+                padding: '1rem 0.5rem'
             }}
         >
             <Container>
@@ -68,14 +68,14 @@ const Register = () => {
                         <Card 
                             className="shadow-lg border-0"
                             style={{
-                                borderRadius: '24px',
+                                borderRadius: '20px',
                                 overflow: 'hidden',
                                 background: 'rgba(255, 255, 255, 0.98)'
                             }}
                         >
                             {/* Header elegante */}
                             <div 
-                                className="text-center py-5"
+                                className="text-center py-2"
                                 style={{
                                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                     position: 'relative'
@@ -119,7 +119,7 @@ const Register = () => {
                                 </h3>
                             </div>
 
-                            <Card.Body className="p-4 p-md-5">
+                            <Card.Body className="p-3 p-md-4">
                                 <Form onSubmit={handleSubmit}>
                                     
                                     {/* Username */}
@@ -385,7 +385,7 @@ const Register = () => {
                                     </Button>
 
                                     {/* Login Link */}
-                                    <div className="text-center mt-4">
+                                    <div className="text-center mt-3">
                                         <p className="mb-0" style={{ color: '#718096' }}>
                                             {t('alreadyHaveAccount', { lng: lang })}{' '}
                                             <Link 

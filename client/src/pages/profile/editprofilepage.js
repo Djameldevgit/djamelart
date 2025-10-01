@@ -40,15 +40,22 @@ const EditProfilePage = () => {
         }
     }, [auth.user?._id, id, history])
 
-    useEffect(() => {
-        if (auth.user) {
-            setUserData(prevState => ({
-                ...initState,
-                ...auth.user
-            }))
-        }
-    }, [auth.user])
-
+    // CORRECCIÓN 1: Mejor inicialización de userData
+    // VERSIÓN MÁS ROBUSTA
+// CORRECCIÓN EN TU COMPONENTE - Reemplaza este useEffect:
+useEffect(() => {
+    if (auth.user) {
+        setUserData({
+            presentacion: auth.user.presentacion || '',
+            fullname: auth.user.fullname || '',
+            mobile: auth.user.mobile || '',
+            address: auth.user.address || '',
+            email: auth.user.email || '',
+            website: auth.user.website || '',
+            story: auth.user.story || ''
+        })
+    }
+}, [auth.user])
     useEffect(() => {
         if (id && profile.ids?.every(item => item !== id)) {
             dispatch(getProfileUsers({ id, auth }))
@@ -79,12 +86,12 @@ const EditProfilePage = () => {
         }
     }
 
-    // Validación del formulario
+    // CORRECCIÓN 2: Validación de email más flexible
     const validateForm = () => {
         const errors = {}
         
-        // Validar email
-        if (email && !/\S+@\S+\.\S+/.test(email)) {
+        // Validación de email más flexible
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             errors.email = t('invalidEmail')
         }
         
@@ -93,15 +100,20 @@ const EditProfilePage = () => {
             errors.fullname = t('fullnameRequired')
         }
         
-        // Validar website si existe
-        if (website && !/^https?:\/\/.+\..+/.test(website)) {
-            errors.website = t('invalidWebsite')
+        // Validación de website opcional y más flexible
+        if (website && website.trim() !== '') {
+            // Permitir URLs sin http/https y validar dominio básico
+            const websiteValue = website.trim()
+            if (!/^https?:\/\/.+\..+/.test(websiteValue) && !/^.+\..+/.test(websiteValue)) {
+                errors.website = t('invalidWebsite')
+            }
         }
         
         setFormErrors(errors)
         return Object.keys(errors).length === 0
     }
 
+    // CORRECCIÓN 3: Manejo mejorado del submit
     const handleSubmit = async e => {
         e.preventDefault()
         setLoading(true)
@@ -115,40 +127,59 @@ const EditProfilePage = () => {
         }
 
         try {
+            // Preparar datos para enviar - CORRECCIÓN CLAVE
+            const dataToSend = {
+                ...userData,
+                // Asegurar que todos los campos tengan valor
+                presentacion: presentacion?.trim() || '',
+                fullname: fullname?.trim() || '',
+                mobile: mobile?.trim() || '',
+                address: address?.trim() || '',
+                email: email?.trim() || '',
+                website: website?.trim() || '',
+                story: story?.trim() || ''
+            }
+
+            console.log('Enviando datos:', dataToSend) // Para debug
+
             const result = await dispatch(updateProfileUser({ 
-                userData: {
-                    ...userData,
-                    // Asegurar que los campos vacíos se envíen como string vacío
-                    presentacion: presentacion || '',
-                    mobile: mobile || '',
-                    address: address || '',
-                    website: website || '',
-                    story: story || ''
-                }, 
+                userData: dataToSend,
                 avatar, 
                 auth 
             }))
 
-            // Verificar si la acción fue exitosa
-            if (result && result.type === GLOBALTYPES.ALERT) {
-                // Si hay un error de email duplicado
-                if (result.payload?.error?.toLowerCase().includes('email')) {
+            // Si la acción fue exitosa y no hay error
+            if (result?.type !== GLOBALTYPES.ALERT || 
+                (result?.payload?.error === undefined && result?.payload?.success)) {
+                
+                dispatch({
+                    type: GLOBALTYPES.ALERT,
+                    payload: { success: t('profileUpdated') }
+                })
+
+                // Redirigir después de un breve delay
+                setTimeout(() => {
+                    history.push(`/profile/${id}`)
+                }, 1500)
+            } else {
+                // Manejar errores del servidor
+                const errorMsg = result.payload?.error?.toLowerCase() || ''
+                if (errorMsg.includes('email') || errorMsg.includes('correo')) {
                     setEmailError(t('emailAlreadyExists'))
-                    setLoading(false)
-                    return
+                } else {
+                    dispatch({
+                        type: GLOBALTYPES.ALERT,
+                        payload: { error: errorMsg || t('updateError') }
+                    })
                 }
             }
-
-            // Si todo sale bien, redirigir después de un breve delay
-            setTimeout(() => {
-                history.push(`/profile/${id}`)
-            }, 1000)
 
         } catch (error) {
             console.error('Error updating profile:', error)
             
-            // Manejar errores específicos
-            if (error?.response?.data?.error?.toLowerCase().includes('email')) {
+            // Manejar errores de red o del servidor
+            const errorMsg = error?.response?.data?.error?.toLowerCase() || error.message?.toLowerCase() || ''
+            if (errorMsg.includes('email') || errorMsg.includes('correo')) {
                 setEmailError(t('emailAlreadyExists'))
             } else {
                 dispatch({
@@ -156,6 +187,7 @@ const EditProfilePage = () => {
                     payload: { error: t('updateError') }
                 })
             }
+        } finally {
             setLoading(false)
         }
     }
@@ -268,15 +300,16 @@ const EditProfilePage = () => {
                                     </div>
                                 </div>
 
+                                {/* CORRECCIÓN: Campo presentacion */}
                                 <Form.Group className="mb-3">
                                     <Form.Label>{t('presentacion')}</Form.Label>
                                     <Form.Control
                                         as="textarea"
                                         rows={2}
                                         name="presentacion"
-                                        value={presentacion || ''}
+                                        value={presentacion}
                                         onChange={handleInput}
-                                        placeholder={t('presentacion')}
+                                        placeholder={t('presentacionPlaceholder')}
                                         maxLength={150}
                                         dir={isRTL ? "rtl" : "ltr"}
                                         style={{ textAlign: isRTL ? 'right' : 'left' }}
@@ -287,12 +320,13 @@ const EditProfilePage = () => {
                                     </Form.Text>
                                 </Form.Group>
 
+                                {/* CORRECCIÓN: Campo fullname */}
                                 <Form.Group className="mb-3">
                                     <Form.Label>{t('fullname')} *</Form.Label>
                                     <Form.Control
                                         type="text"
                                         name="fullname"
-                                        value={fullname || ''}
+                                        value={fullname}
                                         onChange={handleInput}
                                         placeholder={t('fullnamePlaceholder')}
                                         dir={isRTL ? "rtl" : "ltr"}
@@ -304,20 +338,24 @@ const EditProfilePage = () => {
                                     </Form.Control.Feedback>
                                 </Form.Group>
 
+                                {/* CORRECCIÓN: Campo email más flexible */}
                                 <Form.Group className="mb-3">
                                     <Form.Label>{t('email')}</Form.Label>
                                     <Form.Control
                                         type="email"
                                         name="email"
-                                        value={email || ''}
+                                        value={email}
                                         onChange={handleInput}
                                         placeholder={t('emailPlaceholder')}
-                                        dir={isRTL ? "rtl" : "ltr"}
+                                        dir="ltr" // Email siempre LTR
                                         isInvalid={!!emailError || !!formErrors.email}
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         {emailError || formErrors.email}
                                     </Form.Control.Feedback>
+                                    <Form.Text className="text-muted">
+                                        {t('emailOptionalHint')}
+                                    </Form.Text>
                                 </Form.Group>
 
                                 <Form.Group className="mb-3">
@@ -325,11 +363,10 @@ const EditProfilePage = () => {
                                     <Form.Control
                                         type="text"
                                         name="address"
-                                        value={address || ''}
+                                        value={address}
                                         onChange={handleInput}
                                         placeholder={t('addressPlaceholder')}
                                         dir={isRTL ? "rtl" : "ltr"}
-                                        isInvalid={!!formErrors.address}
                                     />
                                 </Form.Group>
 
@@ -338,11 +375,10 @@ const EditProfilePage = () => {
                                     <Form.Control
                                         type="text"
                                         name="mobile"
-                                        value={mobile || ''}
+                                        value={mobile}
                                         onChange={handleInput}
                                         placeholder={t('mobilePlaceholder')}
-                                        dir={isRTL ? "rtl" : "ltr"}
-                                        isInvalid={!!formErrors.mobile}
+                                        dir="ltr" // Teléfono siempre LTR
                                     />
                                 </Form.Group>
 
@@ -351,10 +387,10 @@ const EditProfilePage = () => {
                                     <Form.Control
                                         type="text"
                                         name="website"
-                                        value={website || ''}
+                                        value={website}
                                         onChange={handleInput}
                                         placeholder={t('websitePlaceholder')}
-                                        dir="ltr"
+                                        dir="ltr" // Website siempre LTR
                                         isInvalid={!!formErrors.website}
                                     />
                                     <Form.Control.Feedback type="invalid">
@@ -368,13 +404,12 @@ const EditProfilePage = () => {
                                         as="textarea"
                                         rows={4}
                                         name="story"
-                                        value={story || ''}
+                                        value={story}
                                         onChange={handleInput}
                                         placeholder={t('bioPlaceholder')}
                                         maxLength={200}
                                         dir={isRTL ? "rtl" : "ltr"}
                                         style={{ textAlign: isRTL ? 'right' : 'left' }}
-                                        isInvalid={!!formErrors.story}
                                     />
                                     <Form.Text className="text-muted">
                                         {getStoryLength()}/200 {t('characters')}

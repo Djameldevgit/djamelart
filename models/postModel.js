@@ -59,7 +59,7 @@ const postSchema = new mongoose.Schema({
     type: Number,
     trim: true,
     maxlength: 20,
-    required: true
+    
     /*  validate: {
         validator: function(v) {
           return /^[0-9.,]+$/.test(v); // 👈 Solo números y decimales
@@ -88,7 +88,7 @@ const postSchema = new mongoose.Schema({
   },
   theme: {
     type: String,
-    required: true
+   
   },
   measurementUnit: {
     type: String,

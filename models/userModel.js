@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
-const Posts = require('./postModel'); // Asegúrate de que la ruta es correcta
+const Posts = require('./postModel');
 
- 
 const userSchema = new mongoose.Schema({
   // --- PRIVACY SETTINGS ---
   fullname: { type: String, default: '' },
    
-
   // --- DATOS BÁSICOS ---
   username: {
     type: String,
@@ -45,7 +43,8 @@ const userSchema = new mongoose.Schema({
     enum: ['Utilisateur-No-authentifié', 'user', 'Super-utilisateur', 'moderador', 'admin'],
     default: 'user'
   },
- presentacion: { type: String, default: '', maxlength: 130 },
+  // ✅ CORREGIDO: presentacion sin typo
+  presentacion: { type: String, default: '', maxlength: 150 }, // También cambié 130 a 150 para coincidir con tu frontend
   mobile: { type: String, default: '' },
   address: { type: String, default: '' },
   story: { type: String, default: '', maxlength: 200 },

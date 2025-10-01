@@ -100,7 +100,7 @@ const postCtrl = {
         try {
           const { title, theme, style, priceMin, priceMax, wilaya, ...categories } = req.query;
       
-          let query = {};
+          const query = { estado: "aprobado" };
       
           // 🔹 Buscar por título
           if (title) {

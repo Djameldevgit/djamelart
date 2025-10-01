@@ -217,15 +217,38 @@ const userCtrl = {
 
   updateUser: async (req, res) => {
     try {
-      const { avatar, username, mobile, address, story, website } = req.body
-      if (!username) return res.status(400).json({ msg: "Please add your full name." })
-
+      // ✅ INCLUIR todos los campos que necesitas
+      const { 
+        fullname, 
+        presentacion, 
+        username, 
+        mobile, 
+        address, 
+        story, 
+        website, 
+        email,
+        avatar 
+      } = req.body
+      
+      // ✅ Validar fullname (que es requerido)
+      if (!fullname) 
+        return res.status(400).json({ msg: "Please add your full name." })
+  
+      // ✅ Actualizar TODOS los campos
       await Users.findOneAndUpdate({ _id: req.user._id }, {
-        avatar, username, mobile, address, story, website
+        fullname,
+        presentacion, 
+        username, 
+        mobile, 
+        address, 
+        story, 
+        website,
+        ...(email && { email }), // Solo actualizar email si se proporciona
+        ...(avatar && { avatar }) // Solo actualizar avatar si se proporciona
       })
-
+  
       res.json({ msg: "Update Success!" })
-
+  
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }
