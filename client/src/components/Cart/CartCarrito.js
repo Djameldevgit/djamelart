@@ -3,14 +3,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, loadCart, getCart } from '../../redux/actions/cartAction';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { 
-  Container, 
-  Row, 
-  Col, 
-  Card, 
-  Button, 
-  Badge, 
-  Alert, 
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Badge,
+  Alert,
   Spinner,
   ListGroup
 } from 'react-bootstrap';
@@ -39,7 +39,7 @@ const CartCarrito = () => {
   const handleRemove = async (postId) => {
     try {
       const cleanId = String(postId._id || postId).trim();
-   
+
       if (!cleanId || cleanId.length !== 24) {
         alert(t('invalidProductId', { lng: lang }));
         return;
@@ -70,7 +70,7 @@ const CartCarrito = () => {
   // Usuario no autenticado
   if (!auth.token) {
     return (
-      <div 
+      <div
         style={{
           minHeight: '100vh',
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -79,10 +79,10 @@ const CartCarrito = () => {
           padding: '2rem 1rem'
         }}
       >
-        <Container>
+        <Container   >
           <Row className="justify-content-center">
             <Col xs={12} md={8} lg={6}>
-              <Card 
+              <Card
                 className="text-center shadow-lg border-0"
                 style={{
                   borderRadius: '24px',
@@ -90,7 +90,7 @@ const CartCarrito = () => {
                 }}
               >
                 <Card.Body className="p-5">
-                  <div 
+                  <div
                     style={{
                       width: '100px',
                       height: '100px',
@@ -130,7 +130,7 @@ const CartCarrito = () => {
   }
 
   return (
-    <div 
+    <div
       style={{
         minHeight: '100vh',
         background: '#f8f9fa',
@@ -141,7 +141,7 @@ const CartCarrito = () => {
       <Container>
         {/* Header del carrito */}
         <div className="mb-4">
-          <h2 
+          <h2
             className="fw-bold d-flex align-items-center"
             style={{
               color: '#2d3748',
@@ -149,9 +149,9 @@ const CartCarrito = () => {
               direction: isRTL ? 'rtl' : 'ltr'
             }}
           >
-            <FaShoppingCart 
-              className={isRTL ? 'ms-3' : 'me-3'} 
-              style={{ color: '#667eea' }} 
+            <FaShoppingCart
+              className={isRTL ? 'ms-3' : 'me-3'}
+              style={{ color: '#667eea' }}
             />
             {t('shoppingCart', { lng: lang }) || 'Carrito de Compras'}
           </h2>
@@ -159,9 +159,9 @@ const CartCarrito = () => {
 
         {/* Mensajes de alerta */}
         {showMessage.show && (
-          <Alert 
+          <Alert
             variant={showMessage.type === 'success' ? 'success' : 'danger'}
-            dismissible 
+            dismissible
             onClose={() => setShowMessage({ show: false, text: '', type: '' })}
             className="mb-4"
             style={{ borderRadius: '12px' }}
@@ -173,23 +173,23 @@ const CartCarrito = () => {
         {/* Loading */}
         {cart.loading ? (
           <div className="text-center py-5">
-            <Spinner 
-              animation="border" 
-              variant="primary" 
+            <Spinner
+              animation="border"
+              variant="primary"
               style={{ width: '3rem', height: '3rem' }}
             />
             <p className="mt-3 text-muted">{t('loadingYourCart', { lng: lang })}</p>
           </div>
         ) : cart.items?.length === 0 ? (
           // Carrito vacío
-          <Row className="justify-content-center">
+          <Row className="justify-content-center" >
             <Col xs={12} md={8} lg={6}>
-              <Card 
+              <Card
                 className="text-center shadow-sm border-0"
                 style={{ borderRadius: '20px' }}
               >
                 <Card.Body className="p-5">
-                  <div 
+                  <div
                     style={{
                       width: '120px',
                       height: '120px',
@@ -231,20 +231,20 @@ const CartCarrito = () => {
           <Row>
             {/* Lista de productos */}
             <Col xs={12} lg={8} className="mb-4">
-              <Card 
+              <Card
                 className="border-0 shadow-sm"
                 style={{ borderRadius: '20px' }}
               >
-                <Card.Header 
+                <Card.Header
                   className="bg-white border-0 py-3"
                   style={{ borderRadius: '20px 20px 0 0' }}
                 >
                   <h5 className="mb-0 fw-bold" style={{ color: '#2d3748' }}>
-                    {t('products', { lng: lang }) || 'Productos'} 
-                    <Badge 
-                      bg="primary" 
+                    {t('products', { lng: lang }) || 'Productos'}
+                    <Badge
+                      bg="primary"
                       className={isRTL ? 'me-2' : 'ms-2'}
-                      style={{ 
+                      style={{
                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                         border: 'none'
                       }}
@@ -257,7 +257,7 @@ const CartCarrito = () => {
                   {cart.items?.map((item) => {
                     const postId = String(item.postId._id || item.postId);
                     return (
-                      <ListGroup.Item 
+                      <ListGroup.Item
                         key={postId}
                         className="px-4 py-4"
                         style={{ border: 'none', borderBottom: '1px solid #e2e8f0' }}
@@ -266,7 +266,7 @@ const CartCarrito = () => {
                           {/* Imagen del producto */}
                           <Col xs={12} sm={3} className="mb-3 mb-sm-0">
                             <Link to={`/post/${postId}`}>
-                              <div 
+                              <div
                                 style={{
                                   width: '100%',
                                   paddingTop: '100%',
@@ -296,16 +296,16 @@ const CartCarrito = () => {
                           <Col xs={12} sm={9}>
                             <Row>
                               <Col xs={12} md={7}>
-                                <h5 
+                                <h5
                                   className="fw-bold mb-3"
-                                  style={{ 
+                                  style={{
                                     color: '#2d3748',
                                     fontSize: '1.1rem'
                                   }}
                                 >
                                   {item.postId?.title || t('unnamedProduct', { lng: lang })}
                                 </h5>
-                                
+
                                 <div className="mb-3">
                                   <div className="d-flex justify-content-between mb-2">
                                     <span style={{ color: '#718096' }}>
@@ -319,7 +319,7 @@ const CartCarrito = () => {
                                     <span style={{ color: '#718096' }}>
                                       {t('quantity', { lng: lang })}:
                                     </span>
-                                    <Badge 
+                                    <Badge
                                       bg="secondary"
                                       style={{ fontSize: '0.9rem' }}
                                     >
@@ -372,14 +372,14 @@ const CartCarrito = () => {
 
             {/* Resumen del pedido */}
             <Col xs={12} lg={4}>
-              <Card 
+              <Card
                 className="border-0 shadow-sm position-sticky"
-                style={{ 
+                style={{
                   borderRadius: '20px',
                   top: '20px'
                 }}
               >
-                <Card.Header 
+                <Card.Header
                   className="text-center py-4 border-0"
                   style={{
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -388,7 +388,7 @@ const CartCarrito = () => {
                   }}
                 >
                   <FaCreditCard style={{ fontSize: '2rem', marginBottom: '0.5rem' }} />
-                  <h5 className="mb-0 fw-bold">{t('orderSummary', { lng: lang })}</h5>
+                  <h5 className="mb-0 fw-bold" >{t('orderSummary', { lng: lang })}</h5>
                 </Card.Header>
                 <Card.Body className="p-4">
                   <div className="mb-3 pb-3" style={{ borderBottom: '2px dashed #e2e8f0' }}>
@@ -396,9 +396,9 @@ const CartCarrito = () => {
                       <span style={{ color: '#718096' }}>
                         {t('totalProducts', { lng: lang })}:
                       </span>
-                      <Badge 
+                      <Badge
                         bg="primary"
-                        style={{ 
+                        style={{
                           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                           fontSize: '1rem',
                           padding: '0.5rem 1rem'
@@ -414,9 +414,9 @@ const CartCarrito = () => {
                       <h4 className="mb-0 fw-bold" style={{ color: '#2d3748' }}>
                         {t('totalToPay', { lng: lang })}:
                       </h4>
-                      <h3 
+                      <h3
                         className="mb-0 fw-bold"
-                        style={{ 
+                        style={{
                           color: '#667eea',
                           fontSize: '2rem'
                         }}
@@ -432,7 +432,7 @@ const CartCarrito = () => {
                     className="w-100"
                     disabled={cart.items?.length === 0}
                     style={{
-                      background: cart.items?.length > 0 
+                      background: cart.items?.length > 0
                         ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                         : '#cbd5e0',
                       border: 'none',
@@ -442,7 +442,7 @@ const CartCarrito = () => {
                       fontWeight: '700',
                       textTransform: 'uppercase',
                       letterSpacing: '1px',
-                      boxShadow: cart.items?.length > 0 
+                      boxShadow: cart.items?.length > 0
                         ? '0 10px 25px rgba(102, 126, 234, 0.3)'
                         : 'none',
                       transition: 'all 0.3s ease'

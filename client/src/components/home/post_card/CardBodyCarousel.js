@@ -144,9 +144,9 @@ const CardBodyCarousel = ({ post }) => {
         {post.images.length > 0 && (
           <div className="carousel-container" style={{ 
             position: "relative",
-            height: "600px", // Height fijo para el contenedor
+            height: "400px", // Height fijo para el contenedor
             maxHeight: "80vh", // Máximo 80% del viewport height
-            overflow: "hidden"
+            overflow:'hidden'
           }}>
             {/* Fecha de publicación (parte superior) */}
             <div style={{

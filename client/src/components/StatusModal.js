@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { imageShow, videoShow } from '../utils/mediaShow';
 import { GLOBALTYPES } from '../redux/actions/globalTypes';
 
-import { Form } from 'react-bootstrap';
+import { Container, Form } from 'react-bootstrap';
 
 import communesjson from "../json/communes.json"
 import { createPostAprove, updatePost } from '../redux/actions/postAproveAction';
@@ -17,7 +17,7 @@ import { ItemsSubCategoryPhotographie } from './categorias/Potography';
 import { ItemsSubCategoryDesign } from './categorias/Dessin'
 import { ItemsSubCategoryGravures } from './categorias/GravuresEstampes';
 import { ItemsSubCategoryArtsNumeriques } from './categorias/ArtNumirique';
- 
+
 import { DescriptionInput } from './categorias/Descriptionn';
 
 
@@ -38,7 +38,7 @@ import { TalleSelect } from './categorias/Talle';
 import { Negociarprecio } from './categorias/Negociable';
 import { VenteOptionsSelect } from './categorias/OptionDeVente';
 import { ItemsSubCategoryPeinture } from './categorias/Peinture';
-import { Paises } from './categorias/Pais';
+//import { Paises } from './categorias/Pais';
 import { WilayaCommune } from './StatusModalComponents';
 
 import { useTranslation } from 'react-i18next';
@@ -67,7 +67,7 @@ const StatusModal = () => {
         style: '',
         negociable: "",
         devisvente: '',
-    
+
         talle: '',
 
         theme: '',
@@ -84,26 +84,26 @@ const StatusModal = () => {
     const [postData, setPostData] = useState(initialState);
     const [images, setImages] = useState([])
     const [selectedWilaya, setSelectedWilaya] = useState("");
-    const [selectedCountry, setSelectedCountry] = useState('');
+    // const [selectedCountry, setSelectedCountry] = useState('');
     const [stream, setStream] = useState(false)
     const videoRef = useRef()
     const refCanvas = useRef()
     const [tracks, setTracks] = useState('')
-
-    const handleStream = () => {
-        setStream(true)
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(mediaStream => {
-                    videoRef.current.srcObject = mediaStream
-                    videoRef.current.play()
-
-                    const track = mediaStream.getTracks()
-                    setTracks(track[0])
-                }).catch(err => console.log(err))
+    /*
+        const handleStream = () => {
+            setStream(true)
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(mediaStream => {
+                        videoRef.current.srcObject = mediaStream
+                        videoRef.current.play()
+    
+                        const track = mediaStream.getTracks()
+                        setTracks(track[0])
+                    }).catch(err => console.log(err))
+            }
         }
-    }
-
+    */
     const handleCapture = () => {
         const width = videoRef.current.clientWidth;
         const height = videoRef.current.clientHeight;
@@ -338,7 +338,7 @@ const StatusModal = () => {
                 style: status.style || "",
                 theme: status.theme || "",
                 devisvente: status.devisvente || "",
-        
+
                 talle: status.talle || "",
                 measurementUnit: status.measurementUnit || "",
                 description: status.description || "",
@@ -444,7 +444,7 @@ const StatusModal = () => {
 
         </div>
     )
-   
+
 
     const Envolverlaobraa = () => (
         <div>
@@ -569,14 +569,14 @@ const StatusModal = () => {
             commune: selectedCommune,
         }));
     };
-/*
-    const paisess = () => (
-        <Paises
-            handleChangeInput={handleChangeInput} postData={postData}
-
-        />
-    )
-*/
+    /*
+        const paisess = () => (
+            <Paises
+                handleChangeInput={handleChangeInput} postData={postData}
+    
+            />
+        )
+    */
     const wilayascommunes = () => (
         <WilayaCommune
             postData={postData}
@@ -608,8 +608,8 @@ const StatusModal = () => {
         <div className={`status_modal ${lang === 'ar' ? 'rtl' : ''}`}    >
 
 
+            <Container>
 
-            <Form.Group className="status_form_scrollable" >
                 <Form onSubmit={handleSubmit}>
                     <div className="status_header">
                         <h3 className="m-0"> {t('titulostatusmoddal', { lng: lang })}</h3>
@@ -620,67 +620,67 @@ const StatusModal = () => {
                         </span>
                     </div>
 
+                    <Form.Group>
+                        {postData.category === "Painting" && (
+                            <div className='form-group'>
+                                {ItemsSubCategoryPeinturee()}
+                            </div>
+                        )}
 
-                    {postData.category === "Painting" && (
-                        <div className='form-group'>
-                            {ItemsSubCategoryPeinturee()}
-                        </div>
-                    )}
+                        {postData.category === "Sculpture" && (
+                            <div className='form-group'>
+                                {ItemsSubCategorySculpturee()}
+                            </div>
+                        )}
 
-                    {postData.category === "Sculpture" && (
-                        <div className='form-group'>
-                            {ItemsSubCategorySculpturee()}
-                        </div>
-                    )}
+                        {postData.category === "Photography" && (
+                            <div className='form-group'>
+                                {ItemsSubCategoryPhotographiee()}
+                            </div>
+                        )}
 
-                    {postData.category === "Photography" && (
-                        <div className='form-group'>
-                            {ItemsSubCategoryPhotographiee()}
-                        </div>
-                    )}
+                        {postData.category === "drawing" && (
+                            <div className='form-group'>
+                                {ItemsSubCategoryDesignn()}
+                            </div>
+                        )}
 
-                    {postData.category === "drawing" && (
-                        <div className='form-group'>
-                            {ItemsSubCategoryDesignn()}
-                        </div>
-                    )}
+                        {postData.category === "Engraving" && (
+                            <div className='form-group'>
+                                {ItemsSubCategoryGravuress()}
+                            </div>
+                        )}
 
-                    {postData.category === "Engraving" && (
-                        <div className='form-group'>
-                            {ItemsSubCategoryGravuress()}
-                        </div>
-                    )}
-
-                    {postData.category === "Digital_art" && (
-                        <div className='form-group'>
-                            {ItemsSubCategoryArtsNumeriquess()}
-                        </div>
-                    )}
-                    {postData.category === "Collage" && (
-                        <div className="form-group">
-                            {ItemsSubCategoryCollagess()}
-                        </div>
-                    )}
-                    {postData.category === "Textile_art" && (
-                        <div className="Textile_art">
-                            {ItemsSubCategoryArtTextilee()}
-                        </div>
-                    )}
-
-
-
+                        {postData.category === "Digital_art" && (
+                            <div className='form-group'>
+                                {ItemsSubCategoryArtsNumeriquess()}
+                            </div>
+                        )}
+                        {postData.category === "Collage" && (
+                            <div className="form-group">
+                                {ItemsSubCategoryCollagess()}
+                            </div>
+                        )}
+                        {postData.category === "Textile_art" && (
+                            <div className="Textile_art">
+                                {ItemsSubCategoryArtTextilee()}
+                            </div>
+                        )}
+                    </Form.Group>
 
 
-                    <div className='form-group'>
+
+
+                    <Form.Group>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.basicInfo')}</h3>
                         <div >{TitleInputt()}</div>
                         <div >{Descriptionnn()}</div>
                         <div >{ItemsCategoryy()}</div>
-                    </div>
+                    </Form.Group>
 
 
 
-                    <div className='form-group'>
+                    <Form.Group>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.artisticDetails')}</h3>
 
                         <div >
@@ -692,10 +692,10 @@ const StatusModal = () => {
                         <div >
                             {Derechosdelautorr()}
                         </div>
-                    </div>
+                    </Form.Group>
 
 
-                    <div className='form-group'>
+                    <Form.Group>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.dimensions')}</h3>
                         <div >
                             {TalleSelectt()}
@@ -708,15 +708,14 @@ const StatusModal = () => {
                         </div>
                         <div >
                             {SuporteDeLaObraa()}
-                        </div> </div>
+                        </div> </Form.Group>
 
 
 
-
-                    <div className='form-group'>
+                    <Form.Group>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.availabilityPrice')}</h3>
 
-                      
+
                         <div >
                             {PriceInputt()}
                         </div>
@@ -727,13 +726,13 @@ const StatusModal = () => {
                         <div >
                             {Negociarprecioo()}
                         </div>
-                    </div>
+                    </Form.Group>
 
 
 
 
 
-                    <div className='form-group'>
+                    <Form.Group>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.saleLogistics')}</h3>
 
                         <div >
@@ -742,7 +741,7 @@ const StatusModal = () => {
                         <div >
                             {Envolverlaobraa()}
                         </div>
-                    </div>
+                    </Form.Group>
 
 
 
@@ -752,7 +751,7 @@ const StatusModal = () => {
 
 
 
-                    <div className='form-group'>
+                    <Form.Group>
                         <h3 className="m-0" style={{ color: '#3a86ff', marginBottom: '0.5rem', fontWeight: '500' }}> {t('sectionTitles.artistInfo')}</h3>
 
                         <div >
@@ -764,83 +763,82 @@ const StatusModal = () => {
                     <div >
                         {ciudadInput()}
                     </div>*/}
+                    </Form.Group>
 
 
 
-                    </div>
 
+                    <Form.Group>
+                        <div className="status_body">
 
-                    <div className="status_body">
-
-                        <div className="show_images">
-                            {
-                                images.map((img, index) => (
-                                    <div key={index} id="file_img">
-                                        {
-                                            img.camera ? imageShow(img.camera, theme)
-                                                : img.url
-                                                    ? <>
-                                                        {
-                                                            img.url.match(/video/i)
-                                                                ? videoShow(img.url, theme)
-                                                                : imageShow(img.url, theme)
-                                                        }
-                                                    </>
-                                                    : <>
-                                                        {
-                                                            img.type.match(/video/i)
-                                                                ? videoShow(URL.createObjectURL(img), theme)
-                                                                : imageShow(URL.createObjectURL(img), theme)
-                                                        }
-                                                    </>
-                                        }
-                                        <span onClick={() => deleteImage(index)}>&times;</span>
-                                    </div>
-                                ))
-                            }
-                        </div>
-
-                        {
-                            stream &&
-                            <div className="stream position-relative">
-                                <video autoPlay muted ref={videoRef} width="100%" height="100%"
-                                    style={{ filter: theme ? 'invert(1)' : 'invert(0)' }} />
-
-                                <span onClick={handleStopStream}>&times;</span>
-                                <canvas ref={refCanvas} style={{ display: 'none' }} />
-                            </div>
-                        }
-
-                        <div className="input_images">
-                            {
-                                stream
-                                    ? <i className="fas fa-camera" onClick={handleCapture} />
-                                    : <>
-                                        <i className="fas fa-camera" onClick={handleStream} />
-
-                                        <div className="file_upload">
-                                            <i className="fas fa-image" />
-                                            <input type="file" name="file" id="file"
-                                                multiple accept="image/*,video/*" onChange={handleChangeImages} />
+                            <div className="show_images">
+                                {
+                                    images.map((img, index) => (
+                                        <div key={index} id="file_img">
+                                            {
+                                                img.camera ? imageShow(img.camera, theme)
+                                                    : img.url
+                                                        ? <>
+                                                            {
+                                                                img.url.match(/video/i)
+                                                                    ? videoShow(img.url, theme)
+                                                                    : imageShow(img.url, theme)
+                                                            }
+                                                        </>
+                                                        : <>
+                                                            {
+                                                                img.type.match(/video/i)
+                                                                    ? videoShow(URL.createObjectURL(img), theme)
+                                                                    : imageShow(URL.createObjectURL(img), theme)
+                                                            }
+                                                        </>
+                                            }
+                                            <span onClick={() => deleteImage(index)}>&times;</span>
                                         </div>
-                                    </>
+                                    ))
+                                }
+                            </div>
+
+                            {
+                                stream &&
+                                <div className="stream position-relative">
+                                    <video autoPlay muted ref={videoRef} width="100%" height="100%"
+                                        style={{ filter: theme ? 'invert(1)' : 'invert(0)' }} />
+
+                                    <span onClick={handleStopStream}>&times;</span>
+                                    <canvas ref={refCanvas} style={{ display: 'none' }} />
+                                </div>
                             }
 
+                            <div className="input_images">
+                                {
+                                    stream
+                                        ? <i className="fas fa-camera" onClick={handleCapture} />
+                                        : <>
+
+                                            <div className="file_upload">
+                                                <i className="fas fa-image" />
+                                                <input type="file" name="file" id="file"
+                                                    multiple accept="image/*,video/*" onChange={handleChangeImages} />
+                                            </div>
+                                        </>
+                                }
 
 
-                        </div>
 
-                        <div className="status_footer">
-                            <button className="btn btn-secondary w-100" type="submit">
-                                {t('button.post')}
-                            </button>
-                        </div>
+                            </div>
 
-                    </div>
+                            <div className="status_footer">
+                                <button className="btn btn-secondary w-100" type="submit">
+                                    {t('button.post')}
+                                </button>
+                            </div>
+
+                        </div> </Form.Group>
 
                 </Form>
 
-            </Form.Group>
+            </Container>
         </div>
     )
 }

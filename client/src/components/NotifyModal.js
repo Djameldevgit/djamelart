@@ -39,7 +39,7 @@ const NotifyModal = ({ onClose }) => {
   }
 
   return (
-    <div style={{ minWidth: '300px' }}>
+    <div style={{ minWidth: '300px' }}  >
       <div className="d-flex justify-content-between align-items-center px-3">
         <h3>{t('title', { lng: lang })}</h3>
         {

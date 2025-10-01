@@ -77,7 +77,7 @@ const Navbar2 = () => {
   const totalItems = cart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
-  const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
+  //const [showAdminRedirectModal, setShowAdminRedirectModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
   const [showFeaturesModal, setShowFeaturesModal] = useState(false);
   const [showNotifyDropdown, setShowNotifyDropdown] = useState(false);
@@ -255,7 +255,8 @@ const Navbar2 = () => {
                   borderRadius: '12px',
                   backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
                   transition: 'all 0.3s ease',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  
                 }}
               >
                 <FaBell
@@ -293,7 +294,7 @@ const Navbar2 = () => {
                       maxWidth: '400px',
                       maxHeight: isMobile ? '80vh' : '500px',
                       overflowY: 'auto',
-                      zIndex: 1050,
+                       zIndex: 9999,
                       marginTop: isMobile ? '0' : '8px',
                       borderRadius: '15px',
                       border: 'none',

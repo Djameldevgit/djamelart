@@ -109,13 +109,13 @@ const Chekout = () => {
 
         <Row>
           {/* Formulario de Pago */}
-          <Col xs={12} lg={8} className="mb-4">
+          <Col xs={12} lg={8} className="mb-2">
             <Card 
-              className="border-0 shadow-sm mb-4"
+              className="border-0 shadow-sm mb-1"
               style={{ borderRadius: '20px' }}
             >
               <Card.Header 
-                className="bg-white border-0 py-4"
+                className="bg-white border-0 py-3"
                 style={{ borderRadius: '20px 20px 0 0' }}
               >
                 <h5 className="mb-0 fw-bold d-flex align-items-center" style={{ color: '#2d3748' }}>
@@ -123,13 +123,13 @@ const Chekout = () => {
                   {t('selectCountryLabel', { lng: lang })}
                 </h5>
               </Card.Header>
-              <Card.Body className="p-4">
-                <Form.Group>
+              
+            </Card>
+<Card.Body className="p-4"  >
+                <Form.Group  >
                   <CountrySelect onChange={setCountryCode} />
                 </Form.Group>
               </Card.Body>
-            </Card>
-
             {/* Métodos de Pago - Argelia */}
             {isAlgeria && (
               <Card 

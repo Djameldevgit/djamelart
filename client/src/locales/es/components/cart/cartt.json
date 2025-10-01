@@ -1,5 +1,7 @@
 {
-
+"shoppingCart":"Carro de la compra",
+"completeYourOrder":"Completa tu pedido",
+"products":"Productos",
   "CARTCARRITO": "CARTCARRITO",
   "yourShoppingCart": "Tu Carrito de Compras",
   "yourCartIsEmpty": "Tu carrito está vacío",
