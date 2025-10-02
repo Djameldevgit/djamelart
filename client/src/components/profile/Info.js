@@ -5,8 +5,8 @@ import FollowBtn from '../FollowBtn'
 import Followers from './Followers'
 import Following from './Following'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
-import { Card, Row, Col, Button, Spinner, Badge, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { Person, Link45deg, Journal, Pencil, GeoAlt, Envelope, Telephone, Eye, EyeSlash, People, Shield } from 'react-bootstrap-icons'
+import { Card, Row, Col, Button, Spinner, Badge, OverlayTrigger, Tooltip, Container } from 'react-bootstrap'
+import { Person, Link45deg, Journal, Pencil, GeoAlt, Envelope, Telephone, Eye, EyeSlash, People, Shield, Heart, Grid3x3, ChatDots } from 'react-bootstrap-icons'
 import { useTranslation } from 'react-i18next'
 
 const Info = ({ id, auth, profile, dispatch }) => {
@@ -19,7 +19,6 @@ const Info = ({ id, auth, profile, dispatch }) => {
     const { theme, privacy } = useSelector(state => state)
     const { t, i18n } = useTranslation('profileinfo')
     const lang = i18n.language || 'es'
- 
 
     // Detectar si es móvil
     useEffect(() => {
@@ -35,7 +34,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
         }
     }, [])
 
-    // Cargar userData (propio o desde profile.users)
+    // Cargar userData
     useEffect(() => {
         setLoading(true)
 
@@ -58,7 +57,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
         }
     }, [id, auth.user, profile.users, profile.loading])
 
-    // Control del modal cuando se muestran listas
+    // Control del modal
     useEffect(() => {
         if (showFollowers || showFollowing) {
             dispatch({ type: GLOBALTYPES.MODAL, payload: true })
@@ -67,18 +66,13 @@ const Info = ({ id, auth, profile, dispatch }) => {
         }
     }, [showFollowers, showFollowing, dispatch])
 
-    // ----------------------------
-    // Helpers de privacidad & utils
-    // ----------------------------
-
-    // Normaliza niveles: acepta 'friends' o 'followers' como sinónimos
+    // Helpers de privacidad
     const normalizeLevel = (level) => {
         if (!level) return level
         if (level === 'friends') return 'followers'
         return level
     }
 
-    // Maneja arrays de followers que pueden contener ids (string) o objetos {_id}
     const isFollowerOf = (user, authId) => {
         if (!user || !user.followers) return false
         return user.followers.some(f => {
@@ -92,51 +86,48 @@ const Info = ({ id, auth, profile, dispatch }) => {
         const l = normalizeLevel(level)
         switch (l) {
             case 'public':
-                return '#28a745'; // Verde
+                return '#10b981'
             case 'followers':
-                return '#ffc107'; // Amarillo
+                return '#f59e0b'
             case 'private':
-                return '#dc3545'; // Rojo
+                return '#ef4444'
             default:
-                return '#6c757d'; // Gris
+                return '#6b7280'
         }
-    };
+    }
 
     const getPrivacyIcon = (level, size = 14) => {
         const l = normalizeLevel(level)
         switch (l) {
             case 'public':
-                return <Eye size={size} />;
+                return <Eye size={size} />
             case 'followers':
-                return <People size={size} />;
+                return <People size={size} />
             case 'private':
-                return <EyeSlash size={size} />;
+                return <EyeSlash size={size} />
             default:
-                return <Shield size={size} />;
+                return <Shield size={size} />
         }
-    };
+    }
 
     const getPrivacyText = (level) => {
         const l = normalizeLevel(level)
         switch (l) {
             case 'public':
-                return t('public') || 'Público';
+                return t('public') || 'Público'
             case 'followers':
-                return t('followersOnly') || 'Solo seguidores';
+                return t('followersOnly') || 'Solo seguidores'
             case 'private':
-                return t('onlyMe') || 'Solo yo';
+                return t('onlyMe') || 'Solo yo'
             default:
-                return level;
+                return level
         }
-    };
+    }
 
-    // Obtener configuración actual de privacidad (del perfil visitado si existe)
     const getCurrentPrivacySettings = () => {
-        // Si el perfil trae sus propios settings (recomendado)
         if (userData && userData.privacySettings) {
             return userData.privacySettings
         }
-        // Fallback al estado global privacy (usualmente propio)
         return privacy?.privacySettings || {
             profile: 'public',
             posts: 'public',
@@ -146,12 +137,10 @@ const Info = ({ id, auth, profile, dispatch }) => {
             email: 'private',
             address: 'private',
             mobile: 'private'
-        };
-    };
+        }
+    }
 
-    // ----------------------------
-    // Funciones de verificación por campo (usando la configuración del perfil)
-    // ----------------------------
+    // Funciones de verificación
     const canViewProfile = () => {
         if (!userData) return false
         if (auth.user._id === userData._id) return true
@@ -169,104 +158,77 @@ const Info = ({ id, auth, profile, dispatch }) => {
     const canViewPosts = () => {
         if (!userData) return false
         if (auth.user._id === userData._id) return true
-
         const postsPrivacy = normalizeLevel(getCurrentPrivacySettings().posts || 'public')
-
         if (postsPrivacy === 'public') return true
         if (postsPrivacy === 'private') return false
-        if (postsPrivacy === 'followers') {
-            return isFollowerOf(userData, auth.user._id)
-        }
+        if (postsPrivacy === 'followers') return isFollowerOf(userData, auth.user._id)
         return true
     }
 
     const canViewFollowers = () => {
         if (!userData) return false
         if (auth.user._id === userData._id) return true
-
         const followersPrivacy = normalizeLevel(getCurrentPrivacySettings().followers || 'public')
-
         if (followersPrivacy === 'public') return true
         if (followersPrivacy === 'private') return false
-        if (followersPrivacy === 'followers') {
-            return isFollowerOf(userData, auth.user._id)
-        }
+        if (followersPrivacy === 'followers') return isFollowerOf(userData, auth.user._id)
         return true
     }
 
     const canViewFollowing = () => {
         if (!userData) return false
         if (auth.user._id === userData._id) return true
-
         const followingPrivacy = normalizeLevel(getCurrentPrivacySettings().following || 'public')
-
         if (followingPrivacy === 'public') return true
         if (followingPrivacy === 'private') return false
-        if (followingPrivacy === 'followers') {
-            return isFollowerOf(userData, auth.user._id)
-        }
+        if (followingPrivacy === 'followers') return isFollowerOf(userData, auth.user._id)
         return true
     }
 
     const canViewLikes = () => {
         if (!userData) return false
         if (auth.user._id === userData._id) return true
-
         const likesPrivacy = normalizeLevel(getCurrentPrivacySettings().likes || 'public')
-
         if (likesPrivacy === 'public') return true
         if (likesPrivacy === 'private') return false
-        if (likesPrivacy === 'followers') {
-            return isFollowerOf(userData, auth.user._id)
-        }
+        if (likesPrivacy === 'followers') return isFollowerOf(userData, auth.user._id)
         return true
     }
 
     const canViewEmail = () => {
         if (!userData) return false
         if (auth.user._id === userData._id) return true
-
         const emailPrivacy = normalizeLevel(getCurrentPrivacySettings().email || 'private')
-
         if (emailPrivacy === 'public') return true
         if (emailPrivacy === 'private') return false
-        if (emailPrivacy === 'followers') {
-            return isFollowerOf(userData, auth.user._id)
-        }
+        if (emailPrivacy === 'followers') return isFollowerOf(userData, auth.user._id)
         return false
     }
 
     const canViewMobile = () => {
         if (!userData) return false
         if (auth.user._id === userData._id) return true
-
         const mobilePrivacy = normalizeLevel(getCurrentPrivacySettings().mobile || 'private')
-
         if (mobilePrivacy === 'public') return true
         if (mobilePrivacy === 'private') return false
-        if (mobilePrivacy === 'followers') {
-            return isFollowerOf(userData, auth.user._id)
-        }
+        if (mobilePrivacy === 'followers') return isFollowerOf(userData, auth.user._id)
         return false
     }
 
     const canViewAddress = () => {
         if (!userData) return false
         if (auth.user._id === userData._id) return true
-
         const addressPrivacy = normalizeLevel(getCurrentPrivacySettings().address || 'private')
-
         if (addressPrivacy === 'public') return true
         if (addressPrivacy === 'private') return false
-        if (addressPrivacy === 'followers') {
-            return isFollowerOf(userData, auth.user._id)
-        }
+        if (addressPrivacy === 'followers') return isFollowerOf(userData, auth.user._id)
         return false
     }
 
-    // Componente de Icono de Privacidad con Tooltip
-    const PrivacyIcon = ({ level, category, size = 14, className = "" }) => {
-        const privacyText = getPrivacyText(level);
+    // Componente de Badge de Privacidad mejorado
+    const PrivacyBadge = ({ level, category, size = 14 }) => {
+        const privacyText = getPrivacyText(level)
+        const color = getPrivacyColor(level)
 
         return (
             <OverlayTrigger
@@ -277,20 +239,37 @@ const Info = ({ id, auth, profile, dispatch }) => {
                     </Tooltip>
                 }
             >
-                <span
-                    className={`privacy-icon ${className}`}
+                <Badge
+                    className="d-inline-flex align-items-center gap-1"
                     style={{
-                        color: getPrivacyColor(level),
-                        cursor: 'help'
+                        background: `${color}20`,
+                        color: color,
+                        border: `1.5px solid ${color}`,
+                        padding: '0.35rem 0.6rem',
+                        borderRadius: '8px',
+                        fontSize: '0.7rem',
+                        fontWeight: '600',
+                        cursor: 'help',
+                        transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.background = color
+                        e.currentTarget.style.color = 'white'
+                        e.currentTarget.style.transform = 'scale(1.05)'
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.background = `${color}20`
+                        e.currentTarget.style.color = color
+                        e.currentTarget.style.transform = 'scale(1)'
                     }}
                 >
                     {getPrivacyIcon(level, size)}
-                </span>
+                </Badge>
             </OverlayTrigger>
-        );
-    };
+        )
+    }
 
-    // Handlers seguros para abrir modals
+    // Handlers
     const handleShowFollowers = (e) => {
         if (!canViewFollowers()) return
 
@@ -301,9 +280,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
         }
 
         if (isMobile) {
-            setTimeout(() => {
-                setShowFollowers(true)
-            }, 50)
+            setTimeout(() => setShowFollowers(true), 50)
         } else {
             setShowFollowers(true)
         }
@@ -319,15 +296,12 @@ const Info = ({ id, auth, profile, dispatch }) => {
         }
 
         if (isMobile) {
-            setTimeout(() => {
-                setShowFollowing(true)
-            }, 50)
+            setTimeout(() => setShowFollowing(true), 50)
         } else {
             setShowFollowing(true)
         }
     }
 
-    // Estadísticas (igual que antes)
     const calculateStats = (user) => {
         if (!user) return { followers: 0, following: 0, totalPosts: 0, totalLikes: 0 }
 
@@ -345,10 +319,10 @@ const Info = ({ id, auth, profile, dispatch }) => {
 
     if (loading) {
         return (
-            <Card className="info-component border-0 shadow-sm mb-4">
+            <Card className="border-0 shadow-lg" style={{ borderRadius: '24px', overflow: 'hidden' }}>
                 <Card.Body className="text-center py-5">
-                    <Spinner animation="border" variant="primary" />
-                    <p className="mt-3">{t('loadingProfile')}</p>
+                    <Spinner animation="border" variant="primary" style={{ width: '3rem', height: '3rem' }} />
+                    <p className="mt-3 fw-medium">{t('loadingProfile')}</p>
                 </Card.Body>
             </Card>
         )
@@ -356,16 +330,21 @@ const Info = ({ id, auth, profile, dispatch }) => {
 
     if (!userData || !canViewProfile()) {
         return (
-            <Card className="info-component border-0 shadow-sm mb-4">
+            <Card className="border-0 shadow-lg" style={{ borderRadius: '24px', overflow: 'hidden' }}>
                 <Card.Body className="text-center py-5">
-                    <EyeSlash size={48} className="text-muted mb-3" />
-                    <h5>{t('profilePrivate')}</h5>
+                    <div
+                        className="mb-4 d-inline-flex align-items-center justify-content-center"
+                        style={{
+                            width: '80px',
+                            height: '80px',
+                            borderRadius: '20px',
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                        }}
+                    >
+                        <EyeSlash size={40} className="text-white" />
+                    </div>
+                    <h5 className="fw-bold mb-2">{t('profilePrivate')}</h5>
                     <p className="text-muted">{t('profileNotAccessible')}</p>
-                    {!auth.user && (
-                        <Button variant="primary" onClick={() => window.location.href = '/login'}>
-                            {t('loginToView')}
-                        </Button>
-                    )}
                 </Card.Body>
             </Card>
         )
@@ -376,542 +355,554 @@ const Info = ({ id, auth, profile, dispatch }) => {
     const currentPrivacy = getCurrentPrivacySettings()
 
     return (
-        <Card className="info-component border-0 shadow-sm mb-2"
-            style={{
-                background: theme ? '#2d3748' : 'white',
-                color: theme ? 'white' : 'inherit',
-                fontFamily: lang === 'ar' ? 'Tahoma, Arial, sans-serif' : 'inherit'
-            }}>
+        <div style={{
+            background: theme ? '#1a202c' : '#f8f9fa',
+            paddingBottom: '1rem'
+        }}>
+            <Container fluid className="px-0">
+                {/* Hero Section con Cover Image Simulado */}
+                <div
+                    style={{
+                        height: isMobile ? '100px' : '130px',
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}
+                >
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                            opacity: 0.3
+                        }}
+                    />
+                </div>
 
+                {/* Profile Card */}
+                <Container style={{ marginTop: isMobile ? '-60px' : '-80px' }}>
+                    <Card
+                        className="border-0 shadow-lg"
+                        style={{
+                            borderRadius: '24px',
+                            overflow: 'visible',
+                            background: theme ? '#2d3748' : 'white'
+                        }}
+                    >
+                        <Card.Body className="p-1">
+                            {/* Avatar y Nombre */}
+                            <Row className="align-items-start">
+                                <Col xs={12} className="text-center mb-4">
+                                    <div className="position-relative d-inline-block">
+                                        <div
+                                            style={{
+                                                padding: '6px',
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                borderRadius: '50%',
+                                                boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)'
+                                            }}
+                                        >
+                                            <Avatar
+                                                src={userData.avatar}
+                                                size="supper-avatar"
+                                                style={{
+                                                    width: isMobile ? '100px' : '140px',
+                                                    height: isMobile ? '100px' : '140px',
+                                                    border: '5px solid white'
+                                                }}
+                                            />
+                                        </div>
 
-{auth.user._id !== userData._id && (
-  <div>
-    <h2>Prueba de privacidad</h2>
-    {console.log("DEBUG privacidad email:", privacy.privacySettings?.email)}
+                                        {isCurrentUser && (
+                                            <Button
+                                                size="sm"
+                                                className="position-absolute shadow-lg"
+                                                style={{
+                                                    bottom: '5px',
+                                                    right: '5px',
+                                                    width: '44px',
+                                                    height: '44px',
+                                                    borderRadius: '50%',
+                                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                    border: '3px solid white',
+                                                    padding: 0
+                                                }}
+                                                onClick={() => window.location.href = `/profile/${id}/editprofilepage`}
+                                            >
+                                                <Pencil size={18} />
+                                            </Button>
+                                        )}
+                                    </div>
 
-    {privacy.privacySettings?.email === "public" && (
-      <div style={{ padding: "10px", background: "#d1e7dd" }}>
-        <p>{userData.email}</p>
-      </div>
-    )}
+                                    <div className="mt-3">
+                                        <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
+                                            <h2 className="fw-bold mb-0" style={{
+                                                color: theme ? '#f7fafc' : '#1a202c',
+                                                fontSize: isMobile ? '1.5rem' : '2rem'
+                                            }}>
+                                                {userData.username}
+                                            </h2>
+                                            <PrivacyBadge
+                                                level={currentPrivacy.profile}
+                                                category="Perfil"
+                                                size={16}
+                                            />
+                                        </div>
 
-    {privacy.privacySettings?.email === "friends" && (
-      <div style={{ padding: "10px", background: "#cff4fc" }}>
-        <p>{userData.email} (solo amigos)</p>
-      </div>
-    )}
+                                        {userData.fullname && (
+                                            <p className="text-muted mb-3" style={{ fontSize: '1.4rem' }}>
+                                                {userData.fullname}
+                                            </p>
+                                        )}
 
-    {privacy.privacySettings?.email === "private" && (
-      <div style={{ padding: "10px", background: "#f8d7da" }}>
-        <p>📧 Email oculto por privacidad</p>
-      </div>
-    )}
-  </div>
-)}
+                                        {userData.presentacion && (
+                                            <Card
+                                                className="border-0 mb-3 mx-auto"
+                                                style={{
+                                                    maxWidth: '600px',
+                                                    background: `linear-gradient(135deg, ${getPrivacyColor(currentPrivacy.profile)}15 0%, ${getPrivacyColor(currentPrivacy.profile)}08 100%)`,
+                                                    borderRadius: '13px',
+                                                    border: `1.5px solid ${getPrivacyColor(currentPrivacy.profile)}30`
+                                                }}
+                                            >
+                                                <Card.Body className="p-2">
+                                                    <div className="d-flex justify-content-between align-items-start">
+                                                        <p className="mb-0 fst-italic" style={{
+                                                            color: theme ? '#e2e8f0' : '#4a5568',
+                                                            fontSize: '1.2rem'
+                                                        }}>
+                                                            <ChatDots className="me-1" size={16} />
+                                                            "{userData.presentacion}"
+                                                        </p>
+                                                        <PrivacyBadge
+                                                            level={currentPrivacy.profile}
+                                                            category="Presentación"
+                                                            size={12}
+                                                        />
+                                                    </div>
+                                                </Card.Body>
+                                            </Card>
+                                        )}
 
+                                        {!isCurrentUser && (
+                                            <div className="mt-3">
+                                                <FollowBtn user={userData} />
+                                            </div>
+                                        )}
+                                    </div>
+                                </Col>
+                            </Row>
 
+                            {/* Estadísticas Mejoradas */}
+                            <Row className="g-3 mb-4">
+                                {/* Seguidores */}
+                                <Col xs={6} md={3}>
+                                    <Card
+                                        className={`border-0 h-100 ${canViewFollowers() ? 'cursor-pointer' : 'opacity-50'}`}
+                                        onClick={canViewFollowers() ? handleShowFollowers : undefined}
+                                        style={{
+                                            background: `linear-gradient(135deg, ${getPrivacyColor(currentPrivacy.followers)}15 0%, ${getPrivacyColor(currentPrivacy.followers)}08 100%)`,
+                                            borderRadius: '16px',
+                                            border: `2px solid ${getPrivacyColor(currentPrivacy.followers)}`,
+                                            transition: 'all 0.3s ease',
+                                            cursor: canViewFollowers() ? 'pointer' : 'not-allowed'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (canViewFollowers()) {
+                                                e.currentTarget.style.transform = 'translateY(-4px)'
+                                                e.currentTarget.style.boxShadow = `0 8px 24px ${getPrivacyColor(currentPrivacy.followers)}40`
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(0)'
+                                            e.currentTarget.style.boxShadow = 'none'
+                                        }}
+                                    >
+                                        <Card.Body className="p-3 text-center">
+                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                                <People size={20} style={{ color: getPrivacyColor(currentPrivacy.followers) }} />
+                                                <PrivacyBadge
+                                                    level={currentPrivacy.followers}
+                                                    category="Seguidores"
+                                                    size={12}
+                                                />
+                                            </div>
+                                            <h3 className="fw-bold mb-1" style={{
+                                                color: canViewFollowers()
+                                                    ? getPrivacyColor(currentPrivacy.followers)
+                                                    : theme ? '#718096' : '#a0aec0',
+                                                fontSize: '1.75rem'
+                                            }}>
+                                                {canViewFollowers() ? stats.followers : <EyeSlash size={20} />}
+                                            </h3>
+                                            <p className="mb-0 small fw-medium" style={{
+                                                color: theme ? '#cbd5e0' : '#6c757d'
+                                            }}>
+                                                {t('followers')}
+                                            </p>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
 
-           
+                                {/* Siguiendo */}
+                                <Col xs={6} md={3}>
+                                    <Card
+                                        className={`border-0 h-100 ${canViewFollowing() ? 'cursor-pointer' : 'opacity-50'}`}
+                                        onClick={canViewFollowing() ? handleShowFollowing : undefined}
+                                        style={{
+                                            background: `linear-gradient(135deg, ${getPrivacyColor(currentPrivacy.following)}15 0%, ${getPrivacyColor(currentPrivacy.following)}08 100%)`,
+                                            borderRadius: '16px',
+                                            border: `2px solid ${getPrivacyColor(currentPrivacy.following)}`,
+                                            transition: 'all 0.3s ease',
+                                            cursor: canViewFollowing() ? 'pointer' : 'not-allowed'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (canViewFollowing()) {
+                                                e.currentTarget.style.transform = 'translateY(-4px)'
+                                                e.currentTarget.style.boxShadow = `0 8px 24px ${getPrivacyColor(currentPrivacy.following)}40`
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(0)'
+                                            e.currentTarget.style.boxShadow = 'none'
+                                        }}
+                                    >
+                                        <Card.Body className="p-3 text-center">
+                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                                <Person size={20} style={{ color: getPrivacyColor(currentPrivacy.following) }} />
+                                                <PrivacyBadge
+                                                    level={currentPrivacy.following}
+                                                    category="Siguiendo"
+                                                    size={12}
+                                                />
+                                            </div>
+                                            <h3 className="fw-bold mb-1" style={{
+                                                color: canViewFollowing()
+                                                    ? getPrivacyColor(currentPrivacy.following)
+                                                    : theme ? '#718096' : '#a0aec0',
+                                                fontSize: '1.75rem'
+                                            }}>
+                                                {canViewFollowing() ? stats.following : <EyeSlash size={20} />}
+                                            </h3>
+                                            <p className="mb-0 small fw-medium" style={{
+                                                color: theme ? '#cbd5e0' : '#6c757d'
+                                            }}>
+                                                {t('following')}
+                                            </p>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
 
+                                {/* Posts */}
+                                <Col xs={6} md={3}>
+                                    <Card
+                                        className={`border-0 h-100 ${!canViewPosts() && 'opacity-50'}`}
+                                        style={{
+                                            background: `linear-gradient(135deg, ${getPrivacyColor(currentPrivacy.posts)}15 0%, ${getPrivacyColor(currentPrivacy.posts)}08 100%)`,
+                                            borderRadius: '16px',
+                                            border: `2px solid ${getPrivacyColor(currentPrivacy.posts)}`
+                                        }}
+                                    >
+                                        <Card.Body className="p-3 text-center">
+                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                                <Grid3x3 size={20} style={{ color: getPrivacyColor(currentPrivacy.posts) }} />
+                                                <PrivacyBadge
+                                                    level={currentPrivacy.posts}
+                                                    category="Posts"
+                                                    size={12}
+                                                />
+                                            </div>
+                                            <h3 className="fw-bold mb-1" style={{
+                                                color: canViewPosts()
+                                                    ? getPrivacyColor(currentPrivacy.posts)
+                                                    : theme ? '#718096' : '#a0aec0',
+                                                fontSize: '1.75rem'
+                                            }}>
+                                                {canViewPosts() ? stats.totalPosts : <EyeSlash size={20} />}
+                                            </h3>
+                                            <p className="mb-0 small fw-medium" style={{
+                                                color: theme ? '#cbd5e0' : '#6c757d'
+                                            }}>
+                                                {t('posts')}
+                                            </p>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
 
+                                {/* Likes */}
+                                <Col xs={6} md={3}>
+                                    <Card
+                                        className={`border-0 h-100 ${!canViewLikes() && 'opacity-50'}`}
+                                        style={{
+                                            background: `linear-gradient(135deg, ${getPrivacyColor(currentPrivacy.likes)}15 0%, ${getPrivacyColor(currentPrivacy.likes)}08 100%)`,
+                                            borderRadius: '16px',
+                                            border: `2px solid ${getPrivacyColor(currentPrivacy.likes)}`
+                                        }}
+                                    >
+                                        <Card.Body className="p-3 text-center">
+                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                                <Heart size={20} style={{ color: getPrivacyColor(currentPrivacy.likes) }} />
+                                                <PrivacyBadge
+                                                    level={currentPrivacy.likes}
+                                                    category="Likes"
+                                                    size={12}
+                                                />
+                                            </div>
+                                            <h3 className="fw-bold mb-1" style={{
+                                                color: canViewLikes()
+                                                    ? getPrivacyColor(currentPrivacy.likes)
+                                                    : theme ? '#718096' : '#a0aec0',
+                                                fontSize: '1.75rem'
+                                            }}>
+                                                {canViewLikes() ? stats.totalLikes : <EyeSlash size={20} />}
+                                            </h3>
+                                            <p className="mb-0 small fw-medium" style={{
+                                                color: theme ? '#cbd5e0' : '#6c757d'
+                                            }}>
+                                                {t('likes')}
+                                            </p>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            </Row>
 
-
-
-
-
-
-            <Card.Body className="p-4">
-                {/* Primera Fila: Avatar y información básica */}
-                <Row className="text-center mb-2">
-                    <Col>
-                        <div className="position-relative d-inline-block">
-                            <Avatar
-                                src={userData.avatar}
-                                size="supper-avatar"
-                                className="border-4 border-white shadow"
-                                style={{
-                                    width: '120px',
-                                    height: '120px',
-                                    border: '4px solid white',
-                                    boxShadow: theme ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)'
-                                }}
-                            />
-                            {isCurrentUser && (
-                                <Button
-                                    variant="primary"
-                                    size="sm"
-                                    className="position-absolute bottom-0 end-0 rounded-circle shadow"
-                                    style={{
-                                        width: '40px',
-                                        height: '40px',
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        border: 'none'
-                                    }}
-                                    onClick={() => window.location.href = `/profile/${id}/editprofilepage`}
-                                    title={t('editProfile')}
-                                >
-                                    <Pencil size={16} />
-                                </Button>
-                            )}
-                        </div>
-
-                        <div className="mt-3">
-                            <div className="d-flex align-items-center justify-content-center mb-2">
-                                <h3 className="fw-bold mb-0 me-2" style={{
-                                    color: theme ? '#f7fafc' : '#2d3748',
-                                    textShadow: theme ? '0 1px 2px rgba(0,0,0,0.5)' : 'none'
+                            {/* Biografía */}
+                            {userData.story && canViewProfile() && (
+                                <Card className="border-0 mb-4" style={{
+                                    background: `linear-gradient(135deg, ${getPrivacyColor(currentPrivacy.profile)}15 0%, ${getPrivacyColor(currentPrivacy.profile)}08 100%)`,
+                                    borderRadius: '16px',
+                                    border: `2px solid ${getPrivacyColor(currentPrivacy.profile)}30`
                                 }}>
-                                    {userData.username}
-                                </h3>
-                                {/* Icono de privacidad del perfil */}
-                                <PrivacyIcon
-                                    level={currentPrivacy.profile}
-                                    category="Perfil"
-                                    size={16}
-                                />
-                            </div>
-
-                            {userData.fullname && (
-                                <p className="text-muted fw-medium" style={{
-                                    fontSize: '1.1rem',
-                                    color: theme ? '#cbd5e0' : '#6c757d'
-                                }}>
-                                    {userData.fullname}
-                                </p>
-                            )}
-
-                            {userData.presentacion && (
-                                <div className="bio-section p-3 rounded-3 mt-2" style={{
-                                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-                                    border: `2px solid ${getPrivacyColor(currentPrivacy.profile)}`
-                                }}>
-                                    <div className="d-flex align-items-center justify-content-between mb-1">
-                                        <strong className="text-break fst-italic" style={{
+                                    <Card.Body className="p-4">
+                                        <div className="d-flex justify-content-between align-items-center mb-3">
+                                            <div className="d-flex align-items-center gap-2">
+                                                <div
+                                                    className="d-flex align-items-center justify-content-center"
+                                                    style={{
+                                                        width: '36px',
+                                                        height: '36px',
+                                                        borderRadius: '10px',
+                                                        background: getPrivacyColor(currentPrivacy.profile)
+                                                    }}
+                                                >
+                                                    <Journal size={18} className="text-white" />
+                                                </div>
+                                                <h6 className="mb-0 fw-bold" style={{
+                                                    color: theme ? '#f7fafc' : '#2d3748'
+                                                }}>
+                                                    {t('biography')}
+                                                </h6>
+                                            </div>
+                                            <PrivacyBadge
+                                                level={currentPrivacy.profile}
+                                                category="Biografía"
+                                                size={12}
+                                            />
+                                        </div>
+                                        <p className="mb-0" style={{
                                             color: theme ? '#e2e8f0' : '#4a5568',
                                             fontSize: '0.95rem',
-                                            lineHeight: '1.4'
+                                            lineHeight: '1.6'
                                         }}>
-                                            "{userData.presentacion}"
-                                        </strong>
-                                        <PrivacyIcon
-                                            level={currentPrivacy.profile}
-                                            category="Presentación"
-                                            size={12}
-                                        />
-                                    </div>
-                                </div>
+                                            {userData.story}
+                                        </p>
+                                    </Card.Body>
+                                </Card>
                             )}
-                        </div>
 
-                        {!isCurrentUser && (
-                            <div className="mt-3">
-                                <FollowBtn user={userData} />
-                            </div>
-                        )}
-                    </Col>
-                </Row>
-
-                {/* Segunda Fila: Estadísticas COMPACTAS con iconos de privacidad */}
-                <Row className="mb-3">
-                    <Col>
-                        <div className="d-flex flex-nowrap overflow-auto justify-content-center gap-2 gap-sm-3 py-2"
-                            style={{ maxWidth: '100vw', scrollbarWidth: 'none' }}>
-
-                            {/* Seguidores */}
-                            <div
-                                className={`text-center px-3 py-3 rounded border shadow-sm position-relative ${canViewFollowers() ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'
-                                    }`}
-                                onClick={canViewFollowers() ? handleShowFollowers : undefined}
-                                style={{
-                                    minWidth: '85px',
-                                    background: 'transparent',
-                                    transition: 'all 0.3s ease',
-                                    cursor: canViewFollowers() ? 'pointer' : 'not-allowed',
-                                    border: `2px solid ${getPrivacyColor(currentPrivacy.followers)} !important`,
-                                    paddingTop: '2rem'
-                                }}
-                                onMouseEnter={(e) => {
-                                    if (canViewFollowers()) {
-                                        e.target.style.background = theme ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)'
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.target.style.background = 'transparent'
-                                }}
-                            >
-                                {/* Icono de privacidad en la esquina superior derecha */}
-                                <div className="position-absolute top-0 end-0 m-1">
-                                    <PrivacyIcon
-                                        level={currentPrivacy.followers}
-                                        category="Seguidores"
-                                        size={12}
-                                    />
-                                </div>
-
-                                <div className="fw-bold" style={{
-                                    fontSize: '1.2rem',
-                                    color: canViewFollowers()
-                                        ? (theme ? '#feb2b12' : '#dc2626') // slight correction: keep visual contrast
-                                        : (theme ? '#718096' : '#a0aec0'),
-                                    textShadow: theme ? '0 1px 2px rgba(0,0,0,0.3)' : 'none'
-                                }}>
-                                    {canViewFollowers() ? stats.followers : <EyeSlash size={16} />}
-                                </div>
-                                <div className="small" style={{
-                                    color: canViewFollowers()
-                                        ? (theme ? '#cbd5e0' : '#6c757d')
-                                        : (theme ? '#718096' : '#a0aec0')
-                                }}>
-                                    {t('followers')}
-                                </div>
-                            </div>
-
-                            {/* Siguiendo */}
-                            <div
-                                className={`text-center px-3 py-3 rounded border shadow-sm position-relative ${canViewFollowing() ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'
-                                    }`}
-                                onClick={canViewFollowing() ? handleShowFollowing : undefined}
-                                style={{
-                                    minWidth: '85px',
-                                    background: 'transparent',
-                                    transition: 'all 0.3s ease',
-                                    cursor: canViewFollowing() ? 'pointer' : 'not-allowed',
-                                    border: `2px solid ${getPrivacyColor(currentPrivacy.following)} !important`,
-                                    paddingTop: '2rem'
-                                }}
-                                onMouseEnter={(e) => {
-                                    if (canViewFollowing()) {
-                                        e.target.style.background = theme ? 'rgba(34, 197, 94, 0.1)' : 'rgba(34, 197, 94, 0.05)'
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.target.style.background = 'transparent'
-                                }}
-                            >
-                                <div className="position-absolute top-0 end-0 m-1">
-                                    <PrivacyIcon
-                                        level={currentPrivacy.following}
-                                        category="Siguiendo"
-                                        size={12}
-                                    />
-                                </div>
-
-                                <div className="fw-bold" style={{
-                                    fontSize: '1.2rem',
-                                    color: canViewFollowing()
-                                        ? (theme ? '#9ae6b4' : '#16a34a')
-                                        : (theme ? '#718096' : '#a0aec0'),
-                                    textShadow: theme ? '0 1px 2px rgba(0,0,0,0.3)' : 'none'
-                                }}>
-                                    {canViewFollowing() ? stats.following : <EyeSlash size={16} />}
-                                </div>
-                                <div className="small" style={{
-                                    color: canViewFollowing()
-                                        ? (theme ? '#cbd5e0' : '#6c757d')
-                                        : (theme ? '#718096' : '#a0aec0')
-                                }}>
-                                    {t('following')}
-                                </div>
-                            </div>
-
-                            {/* Publicaciones */}
-                            <div
-                                className={`text-center px-3 py-3 rounded border shadow-sm position-relative ${canViewPosts() ? '' : 'opacity-50'
-                                    }`}
-                                style={{
-                                    minWidth: '85px',
-                                    background: 'transparent',
-                                    border: `2px solid ${getPrivacyColor(currentPrivacy.posts)} !important`,
-                                    paddingTop: '2rem'
-                                }}
-                            >
-                                <div className="position-absolute top-0 end-0 m-1">
-                                    <PrivacyIcon
-                                        level={currentPrivacy.posts}
-                                        category="Publicaciones"
-                                        size={12}
-                                    />
-                                </div>
-
-                                <div className="fw-bold" style={{
-                                    fontSize: '1.2rem',
-                                    color: canViewPosts()
-                                        ? (theme ? '#90cdf4' : '#2563eb')
-                                        : (theme ? '#718096' : '#a0aec0'),
-                                    textShadow: theme ? '0 1px 2px rgba(0,0,0,0.3)' : 'none'
-                                }}>
-                                    {canViewPosts() ? stats.totalPosts : <EyeSlash size={16} />}
-                                </div>
-                                <div className="small" style={{
-                                    color: canViewPosts()
-                                        ? (theme ? '#cbd5e0' : '#6c757d')
-                                        : (theme ? '#718096' : '#a0aec0')
-                                }}>
-                                    {t('posts')}
-                                </div>
-                            </div>
-
-                            {/* Likes */}
-                            <div
-                                className={`text-center px-3 py-3 rounded border shadow-sm position-relative ${canViewLikes() ? '' : 'opacity-50'
-                                    }`}
-                                style={{
-                                    minWidth: '85px',
-                                    background: 'transparent',
-                                    border: `2px solid ${getPrivacyColor(currentPrivacy.likes)} !important`,
-                                    paddingTop: '2rem'
-                                }}
-                            >
-                                <div className="position-absolute top-0 end-0 m-1">
-                                    <PrivacyIcon
-                                        level={currentPrivacy.likes}
-                                        category="Likes"
-                                        size={12}
-                                    />
-                                </div>
-
-                                <div className="fw-bold" style={{
-                                    fontSize: '1.2rem',
-                                    color: canViewLikes()
-                                        ? (theme ? '#fbb6ce' : '#db2777')
-                                        : (theme ? '#718096' : '#a0aec0'),
-                                    textShadow: theme ? '0 1px 2px rgba(0,0,0,0.3)' : 'none'
-                                }}>
-                                    {canViewLikes() ? stats.totalLikes : <EyeSlash size={16} />}
-                                </div>
-                                <div className="small" style={{
-                                    color: canViewLikes()
-                                        ? (theme ? '#cbd5e0' : '#6c757d')
-                                        : (theme ? '#718096' : '#a0aec0')
-                                }}>
-                                    {t('likes')}
-                                </div>
-                            </div>
-                        </div>
-                    </Col>
-                </Row>
-
-                {/* Tercera Fila: Biografía con icono de privacidad */}
-                {userData.story && canViewProfile() && (
-                    <Row className="mb-3">
-                        <Col>
-                            <div className="bio-section p-3 rounded-3 shadow-sm position-relative"
-                                style={{
-                                    background: theme ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.03)',
-                                    border: `2px solid ${getPrivacyColor(currentPrivacy.profile)}`,
-                                    backgroundImage: theme
-                                        ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%)'
-                                        : 'linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.02) 100%)'
-                                }}>
-                                <div className="d-flex align-items-center justify-content-between mb-2">
-                                    <div className="d-flex align-items-center">
-                                        <Journal className="me-2" style={{ color: theme ? '#f6ad55' : '#d97706' }} />
-                                        <h6 className="mb-0 fw-bold" style={{
-                                            color: theme ? '#f6ad55' : '#d97706',
-                                            fontSize: '0.9rem'
+                            {/* Información de Contacto y Enlaces */}
+                            <Row className="g-3">
+                                {/* Contacto */}
+                                {(userData.email || userData.address || userData.mobile) && (
+                                    <Col md={6}>
+                                        <Card className="border-0 h-100" style={{
+                                            background: theme ? 'rgba(255,255,255,0.05)' : '#f8f9fa',
+                                            borderRadius: '16px'
                                         }}>
-                                            {t('biography')}
-                                        </h6>
-                                    </div>
-                                    <PrivacyIcon
-                                        level={currentPrivacy.profile}
-                                        category="Biografía"
-                                        size={14}
-                                    />
-                                </div>
-                                <p className="mb-0 text-break" style={{
-                                    color: theme ? '#e2e8f0' : '#4a5568',
-                                    fontSize: '0.9rem',
-                                    lineHeight: '1.5'
-                                }}>
-                                    {userData.story}
-                                </p>
-                            </div>
-                        </Col>
-                    </Row>
-                )}
+                                            <Card.Body className="p-4">
+                                                <div className="d-flex align-items-center gap-2 mb-3">
+                                                    <div
+                                                        className="d-flex align-items-center justify-content-center"
+                                                        style={{
+                                                            width: '36px',
+                                                            height: '36px',
+                                                            borderRadius: '10px',
+                                                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                                                        }}
+                                                    >
+                                                        <Person size={18} className="text-white" />
+                                                    </div>
+                                                    <h6 className="mb-0 fw-bold" style={{
+                                                        color: theme ? '#f7fafc' : '#2d3748'
+                                                    }}>
+                                                        {t('contactInfo')}
+                                                    </h6>
+                                                </div>
 
-                {/* Cuarta Fila: Información de contacto y redes con iconos de privacidad */}
-                <Row>
-                    <Col md={6}>
-                        {(userData.email || userData.address || userData.mobile) && (
-                            <div className="contact-info p-3 rounded-3 shadow-sm"
-                                style={{
-                                    background: theme ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.03)',
-                                    border: `2px dashed ${getPrivacyColor(currentPrivacy.profile)}`,
-                                    backgroundImage: 'linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(56, 161, 105, 0.05) 100%)'
-                                }}>
-                                <div className="d-flex align-items-center justify-content-between mb-3">
-                                    <h6 className="mb-0 fw-bold d-flex align-items-center" style={{
-                                        color: theme ? '#68d391' : '#16a34a',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        <Person className="me-1" />
-                                        {t('contactInfo')}
-                                    </h6>
-                                    <PrivacyIcon
-                                        level={currentPrivacy.profile}
-                                        category="Información de Contacto"
-                                        size={14}
-                                    />
-                                </div>
-
-                                {/* Email con control de privacidad */}
-                                {/* Email con control de privacidad */}
-                                {userData.email && (
-                                    <div className="mb-3 d-flex align-items-center justify-content-between p-2 rounded"
-                                        style={{
-                                            background: theme ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)'
-                                        }}>
-                                        <div className="d-flex align-items-center">
-                                            <Envelope className="me-2" style={{
-                                                color: theme ? '#90cdf4' : '#2563eb',
-                                                width: '16px'
-                                            }} />
-                                            <div>
-                                                <div style={{
-                                                    color: theme ? '#e2e8f0' : '#4a5568',
-                                                    fontSize: '0.85rem',
-                                                    fontWeight: '500'
-                                                }}>
-                                                    {auth.user._id === userData._id ? (
-                                                        // 👤 Si es el dueño → siempre ve su email
-                                                        userData.email
-                                                    ) : (
-                                                        privacy.privacySettings.email === "public" ? (
-                                                            userData.email
-                                                        ) : privacy.privacySettings.email === "followers" ? (
-                                                            isFollowerOf(userData, auth.user._id)
+                                                {/* Email */}
+                                                {userData.email && (
+                                                    <div className="mb-3 p-3 rounded-3" style={{
+                                                        background: theme ? 'rgba(255,255,255,0.03)' : 'white',
+                                                        border: `2px solid ${getPrivacyColor(currentPrivacy.email)}30`
+                                                    }}>
+                                                        <div className="d-flex justify-content-between align-items-start mb-2">
+                                                            <div className="d-flex align-items-center gap-2">
+                                                                <Envelope size={16} style={{
+                                                                    color: getPrivacyColor(currentPrivacy.email)
+                                                                }} />
+                                                                <small className="text-muted fw-medium">Email</small>
+                                                            </div>
+                                                            <PrivacyBadge
+                                                                level={currentPrivacy.email}
+                                                                category="Email"
+                                                                size={10}
+                                                            />
+                                                        </div>
+                                                        <div style={{
+                                                            color: theme ? '#e2e8f0' : '#2d3748',
+                                                            fontSize: '0.9rem',
+                                                            wordBreak: 'break-word'
+                                                        }}>
+                                                            {canViewEmail()
                                                                 ? userData.email
-                                                                : "📧 Email solo visible para seguidores"
-                                                        ) : (
-                                                            "📧 Email oculto por privacidad"
-                                                        )
-                                                    )}
+                                                                : '••••••@••••••.com'}
+                                                        </div>
+                                                    </div>
+                                                )}
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <PrivacyIcon
-                                            level={currentPrivacy.email}
-                                            category="Email"
-                                            size={12}
-                                        />
-                                    </div>
+                                                {/* Teléfono */}
+                                                {userData.mobile && (
+                                                    <div className="mb-3 p-3 rounded-3" style={{
+                                                        background: theme ? 'rgba(255,255,255,0.03)' : 'white',
+                                                        border: `2px solid ${getPrivacyColor(currentPrivacy.mobile)}30`
+                                                    }}>
+                                                        <div className="d-flex justify-content-between align-items-start mb-2">
+                                                            <div className="d-flex align-items-center gap-2">
+                                                                <Telephone size={16} style={{
+                                                                    color: getPrivacyColor(currentPrivacy.mobile)
+                                                                }} />
+                                                                <small className="text-muted fw-medium">Teléfono</small>
+                                                            </div>
+                                                            <PrivacyBadge
+                                                                level={currentPrivacy.mobile}
+                                                                category="Teléfono"
+                                                                size={10}
+                                                            />
+                                                        </div>
+                                                        <div style={{
+                                                            color: theme ? '#e2e8f0' : '#2d3748',
+                                                            fontSize: '0.9rem'
+                                                        }}>
+                                                            {canViewMobile()
+                                                                ? userData.mobile
+                                                                : '•••••••••'}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Dirección */}
+                                                {userData.address && (
+                                                    <div className="p-3 rounded-3" style={{
+                                                        background: theme ? 'rgba(255,255,255,0.03)' : 'white',
+                                                        border: `2px solid ${getPrivacyColor(currentPrivacy.address)}30`
+                                                    }}>
+                                                        <div className="d-flex justify-content-between align-items-start mb-2">
+                                                            <div className="d-flex align-items-center gap-2">
+                                                                <GeoAlt size={16} style={{
+                                                                    color: getPrivacyColor(currentPrivacy.address)
+                                                                }} />
+                                                                <small className="text-muted fw-medium">Dirección</small>
+                                                            </div>
+                                                            <PrivacyBadge
+                                                                level={currentPrivacy.address}
+                                                                category="Dirección"
+                                                                size={10}
+                                                            />
+                                                        </div>
+                                                        <div style={{
+                                                            color: theme ? '#e2e8f0' : '#2d3748',
+                                                            fontSize: '0.9rem'
+                                                        }}>
+                                                            {canViewAddress()
+                                                                ? userData.address
+                                                                : '•••••••••••••••'}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
                                 )}
 
-
-                                {/* Dirección con control de privacidad */}
-                                {userData.address && (
-                                    <div className="mb-3 d-flex align-items-center justify-content-between p-2 rounded"
-                                        style={{
-                                            background: theme ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)'
+                                {/* Enlaces */}
+                                {userData.website && canViewProfile() && (
+                                    <Col md={6}>
+                                        <Card className="border-0 h-100" style={{
+                                            background: theme ? 'rgba(255,255,255,0.05)' : '#f8f9fa',
+                                            borderRadius: '16px'
                                         }}>
-                                        <div className="d-flex align-items-center">
-                                            <GeoAlt className="me-2" style={{
-                                                color: theme ? '#f6ad55' : '#d97706',
-                                                width: '16px'
-                                            }} />
-                                            <div>
-                                                <div style={{
-                                                    color: theme ? '#e2e8f0' : '#4a5568',
-                                                    fontSize: '0.85rem',
-                                                    fontWeight: '500'
-                                                }}>
-                                                    {canViewAddress() ? userData.address : '••••••••••••••••••'}
+                                            <Card.Body className="p-4">
+                                                <div className="d-flex justify-content-between align-items-center mb-3">
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        <div
+                                                            className="d-flex align-items-center justify-content-center"
+                                                            style={{
+                                                                width: '36px',
+                                                                height: '36px',
+                                                                borderRadius: '10px',
+                                                                background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'
+                                                            }}
+                                                        >
+                                                            <Link45deg size={18} className="text-white" />
+                                                        </div>
+                                                        <h6 className="mb-0 fw-bold" style={{
+                                                            color: theme ? '#f7fafc' : '#2d3748'
+                                                        }}>
+                                                            {t('links')}
+                                                        </h6>
+                                                    </div>
+                                                    <PrivacyBadge
+                                                        level={currentPrivacy.profile}
+                                                        category="Enlaces"
+                                                        size={12}
+                                                    />
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <PrivacyIcon
-                                            level={currentPrivacy.address}
-                                            category="Dirección"
-                                            size={12}
-                                        />
-                                    </div>
-                                )}
 
-                                {/* Teléfono con control de privacidad */}
-                                {userData.mobile && (
-                                    <div className="d-flex align-items-center justify-content-between p-2 rounded"
-                                        style={{
-                                            background: theme ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)'
-                                        }}>
-                                        <div className="d-flex align-items-center">
-                                            <Telephone className="me-2" style={{
-                                                color: theme ? '#fc8181' : '#dc2626',
-                                                width: '16px'
-                                            }} />
-                                            <div>
-                                                <div style={{
-                                                    color: theme ? '#e2e8f0' : '#4a5568',
-                                                    fontSize: '0.85rem',
-                                                    fontWeight: '500'
-                                                }}>
-                                                    {canViewMobile() ? userData.mobile : '•••••••••'}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <PrivacyIcon
-                                            level={currentPrivacy.mobile}
-                                            category="Teléfono"
-                                            size={12}
-                                        />
-                                    </div>
+                                                <a
+                                                    href={userData.website}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="d-block p-3 rounded-3 text-decoration-none"
+                                                    style={{
+                                                        background: theme ? 'rgba(255,255,255,0.03)' : 'white',
+                                                        border: `2px solid ${getPrivacyColor(currentPrivacy.profile)}30`,
+                                                        color: '#8b5cf6',
+                                                        fontSize: '0.9rem',
+                                                        wordBreak: 'break-all',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.background = '#8b5cf620'
+                                                        e.currentTarget.style.transform = 'translateX(4px)'
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.background = theme ? 'rgba(255,255,255,0.03)' : 'white'
+                                                        e.currentTarget.style.transform = 'translateX(0)'
+                                                    }}
+                                                >
+                                                    {userData.website}
+                                                </a>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
                                 )}
-                            </div>
-                        )}
-                    </Col>
-
-                    <Col md={6}>
-                        {userData.website && canViewProfile() && (
-                            <div className="links-section p-3 rounded-3 shadow-sm"
-                                style={{
-                                    background: theme ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.03)',
-                                    border: `2px solid ${getPrivacyColor(currentPrivacy.profile)}`,
-                                    backgroundImage: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%)'
-                                }}>
-                                <div className="d-flex align-items-center justify-content-between mb-2">
-                                    <h6 className="mb-0 fw-bold" style={{
-                                        color: theme ? '#a78bfa' : '#7c3aed',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        <Link45deg className="me-1" />
-                                        {t('links')}
-                                    </h6>
-                                    <PrivacyIcon
-                                        level={currentPrivacy.profile}
-                                        category="Enlaces"
-                                        size={14}
-                                    />
-                                </div>
-                                <a
-                                    href={userData.website}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="d-block text-decoration-none mb-1 mt-1 p-2 rounded"
-                                    style={{
-                                        wordBreak: 'break-all',
-                                        color: theme ? '#90cdf4' : '#2563eb',
-                                        fontSize: '0.85rem',
-                                        transition: 'all 0.3s ease',
-                                        background: theme ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
-                                        fontWeight: '500'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.color = theme ? '#63b3ed' : '#1d4ed8';
-                                        e.target.style.background = theme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.color = theme ? '#90cdf4' : '#2563eb';
-                                        e.target.style.background = theme ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)';
-                                    }}
-                                >
-                                    {userData.website}
-                                </a>
-                            </div>
-                        )}
-                    </Col>
-                </Row>
+                            </Row>
+                        </Card.Body>
+                    </Card>
+                </Container>
 
                 {/* Modals */}
                 {showFollowers && (
@@ -931,8 +922,18 @@ const Info = ({ id, auth, profile, dispatch }) => {
                         />
                     </div>
                 )}
-            </Card.Body>
-        </Card>
+            </Container>
+
+            {/* CSS personalizado */}
+            <style jsx>{`
+                .cursor-pointer {
+                    cursor: pointer;
+                }
+                .cursor-not-allowed {
+                    cursor: not-allowed;
+                }
+            `}</style>
+        </div>
     )
 }
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { FaArrowLeft } from "react-icons/fa";
 import { Container, Row, Col, Button, Badge, Card, Spinner, Alert } from 'react-bootstrap'
 import {
   Person,
@@ -110,29 +111,29 @@ const infouser = () => {
   const getVerificationStatus = isVerified => {
     return isVerified
       ? {
-          variant: 'success',
-          icon: <PatchCheck className="me-1" />,
-          text: t('verified', { lng: lang })
-        }
+        variant: 'success',
+        icon: <PatchCheck className="me-1" />,
+        text: t('verified', { lng: lang })
+      }
       : {
-          variant: 'warning',
-          icon: <PatchQuestion className="me-1" />,
-          text: t('pending', { lng: lang })
-        }
+        variant: 'warning',
+        icon: <PatchQuestion className="me-1" />,
+        text: t('pending', { lng: lang })
+      }
   }
 
   const getAccountStatus = isActive => {
     return isActive
       ? {
-          variant: 'success',
-          icon: <CheckCircle className="me-1" />,
-          text: t('active', { lng: lang })
-        }
+        variant: 'success',
+        icon: <CheckCircle className="me-1" />,
+        text: t('active', { lng: lang })
+      }
       : {
-          variant: 'danger',
-          icon: <XCircle className="me-1" />,
-          text: t('inactive', { lng: lang })
-        }
+        variant: 'danger',
+        icon: <XCircle className="me-1" />,
+        text: t('inactive', { lng: lang })
+      }
   }
 
   const getRoleBadge = role => {
@@ -212,21 +213,31 @@ const infouser = () => {
       {/* Header */}
       <Row className="mb-4">
         <Col>
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex justify-content-between">
             <Button
-              variant="outline-secondary"
+              variant="outline-primary"
               onClick={() => history.push(`/profile/${id}`)}
               className="d-flex align-items-center"
+              style={{
+                borderRadius: "20px",
+                padding: "0.3rem 1rem",
+                fontSize: "0.9rem",
+                fontWeight: "500"
+              }}
             >
-              <ArrowLeft className="me-2" />
+              <FaArrowLeft className="me-1 mt-1 d-none d-sm-inline" />
               {t('backToProfile', { lng: lang })}
             </Button>
-            
-            <div className="d-flex align-items-center">
+
+
+            <div className="d-flex" style={{
+              direction: lang === 'ar' ? 'rtl' : 'ltr',
+              textAlign: lang === 'ar' ? 'right' : 'left'
+            }}>
               <Eye className="me-2 text-primary" size={24} />
-              <h4 className="mb-0">{t('profileInfo', { lng: lang })}</h4>
+              <h4 className="d-flex align-items-flex-end">{t('profileInfo', { lng: lang })}</h4>
             </div>
-            
+
             <div style={{ width: '100px' }}></div> {/* Espaciador para centrar */}
           </div>
         </Col>
@@ -258,21 +269,21 @@ const infouser = () => {
                     <Person size={48} className="text-white" />
                   </div>
                 )}
-                
+
                 <h4 className="mb-1">{userStats.fullname}</h4>
                 <p className="text-muted mb-2">@{userStats.username}</p>
-                
+
                 <div className="d-flex flex-wrap gap-2 justify-content-center mb-3">
                   <Badge bg={getRoleBadge(userStats.role).variant} className="d-flex align-items-center">
                     {getRoleBadge(userStats.role).icon}
                     <span className="ms-1">{getRoleBadge(userStats.role).text}</span>
                   </Badge>
-                  
+
                   <Badge bg={getVerificationStatus(userStats.isVerified).variant} className="d-flex align-items-center">
                     {getVerificationStatus(userStats.isVerified).icon}
                     <span className="ms-1">{getVerificationStatus(userStats.isVerified).text}</span>
                   </Badge>
-                  
+
                   <Badge bg={getAccountStatus(userStats.isActive).variant} className="d-flex align-items-center">
                     {getAccountStatus(userStats.isActive).icon}
                     <span className="ms-1">{getAccountStatus(userStats.isActive).text}</span>
@@ -291,7 +302,7 @@ const infouser = () => {
                     </Card.Body>
                   </Card>
                 </Col>
-                
+
                 <Col xs={6} md={3} className="mb-3">
                   <Card className="border-0 bg-success bg-opacity-10">
                     <Card.Body>
@@ -301,7 +312,7 @@ const infouser = () => {
                     </Card.Body>
                   </Card>
                 </Col>
-                
+
                 <Col xs={6} md={3} className="mb-3">
                   <Card className="border-0 bg-info bg-opacity-10">
                     <Card.Body>
@@ -311,7 +322,7 @@ const infouser = () => {
                     </Card.Body>
                   </Card>
                 </Col>
-                
+
                 <Col xs={6} md={3} className="mb-3">
                   <Card className="border-0 bg-warning bg-opacity-10">
                     <Card.Body>
