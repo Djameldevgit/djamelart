@@ -96,33 +96,8 @@ const Info = ({ id, auth, profile, dispatch }) => {
         }
     }
 
-    const getPrivacyIcon = (level, size = 14) => {
-        const l = normalizeLevel(level)
-        switch (l) {
-            case 'public':
-                return <Eye size={size} />
-            case 'followers':
-                return <People size={size} />
-            case 'private':
-                return <EyeSlash size={size} />
-            default:
-                return <Shield size={size} />
-        }
-    }
-
-    const getPrivacyText = (level) => {
-        const l = normalizeLevel(level)
-        switch (l) {
-            case 'public':
-                return t('public') || 'Público'
-            case 'followers':
-                return t('followersOnly') || 'Solo seguidores'
-            case 'private':
-                return t('onlyMe') || 'Solo yo'
-            default:
-                return level
-        }
-    }
+    
+ 
 
     const getCurrentPrivacySettings = () => {
         if (userData && userData.privacySettings) {
@@ -225,49 +200,6 @@ const Info = ({ id, auth, profile, dispatch }) => {
         return false
     }
 
-    // Componente de Badge de Privacidad mejorado
-    const PrivacyBadge = ({ level, category, size = 14 }) => {
-        const privacyText = getPrivacyText(level)
-        const color = getPrivacyColor(level)
-
-        return (
-            <OverlayTrigger
-                placement="top"
-                overlay={
-                    <Tooltip>
-                        <strong>{category}:</strong> {privacyText}
-                    </Tooltip>
-                }
-            >
-                <Badge
-                    className="d-inline-flex align-items-center gap-1"
-                    style={{
-                        background: `${color}20`,
-                        color: color,
-                        border: `1.5px solid ${color}`,
-                        padding: '0.35rem 0.6rem',
-                        borderRadius: '8px',
-                        fontSize: '0.7rem',
-                        fontWeight: '600',
-                        cursor: 'help',
-                        transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.background = color
-                        e.currentTarget.style.color = 'white'
-                        e.currentTarget.style.transform = 'scale(1.05)'
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.background = `${color}20`
-                        e.currentTarget.style.color = color
-                        e.currentTarget.style.transform = 'scale(1)'
-                    }}
-                >
-                    {getPrivacyIcon(level, size)}
-                </Badge>
-            </OverlayTrigger>
-        )
-    }
 
     // Handlers
     const handleShowFollowers = (e) => {
@@ -357,16 +289,17 @@ const Info = ({ id, auth, profile, dispatch }) => {
     return (
         <div style={{
             background: theme ? '#1a202c' : '#f8f9fa',
-            paddingBottom: '1rem'
+            paddingBottom: '0.5rem'
         }}>
             <Container fluid className="px-0">
                 {/* Hero Section con Cover Image Simulado */}
                 <div
                     style={{
-                        height: isMobile ? '100px' : '130px',
+                        height: isMobile ? '75px' : '130px',
                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                         position: 'relative',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                         
                     }}
                 >
                     <div
@@ -395,7 +328,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                         <Card.Body className="p-1">
                             {/* Avatar y Nombre */}
                             <Row className="align-items-start">
-                                <Col xs={12} className="text-center mb-4">
+                                <Col xs={12} className="text-center mb-1">
                                     <div className="position-relative d-inline-block">
                                         <div
                                             style={{
@@ -445,11 +378,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                             }}>
                                                 {userData.username}
                                             </h2>
-                                            <PrivacyBadge
-                                                level={currentPrivacy.profile}
-                                                category="Perfil"
-                                                size={16}
-                                            />
+
                                         </div>
 
                                         {userData.fullname && (
@@ -477,11 +406,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                                             <ChatDots className="me-1" size={16} />
                                                             "{userData.presentacion}"
                                                         </p>
-                                                        <PrivacyBadge
-                                                            level={currentPrivacy.profile}
-                                                            category="Presentación"
-                                                            size={12}
-                                                        />
+
                                                     </div>
                                                 </Card.Body>
                                             </Card>
@@ -524,11 +449,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                         <Card.Body className="p-3 text-center">
                                             <div className="d-flex justify-content-between align-items-start mb-2">
                                                 <People size={20} style={{ color: getPrivacyColor(currentPrivacy.followers) }} />
-                                                <PrivacyBadge
-                                                    level={currentPrivacy.followers}
-                                                    category="Seguidores"
-                                                    size={12}
-                                                />
+
                                             </div>
                                             <h3 className="fw-bold mb-1" style={{
                                                 color: canViewFollowers()
@@ -573,11 +494,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                         <Card.Body className="p-3 text-center">
                                             <div className="d-flex justify-content-between align-items-start mb-2">
                                                 <Person size={20} style={{ color: getPrivacyColor(currentPrivacy.following) }} />
-                                                <PrivacyBadge
-                                                    level={currentPrivacy.following}
-                                                    category="Siguiendo"
-                                                    size={12}
-                                                />
+
                                             </div>
                                             <h3 className="fw-bold mb-1" style={{
                                                 color: canViewFollowing()
@@ -609,11 +526,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                         <Card.Body className="p-3 text-center">
                                             <div className="d-flex justify-content-between align-items-start mb-2">
                                                 <Grid3x3 size={20} style={{ color: getPrivacyColor(currentPrivacy.posts) }} />
-                                                <PrivacyBadge
-                                                    level={currentPrivacy.posts}
-                                                    category="Posts"
-                                                    size={12}
-                                                />
+
                                             </div>
                                             <h3 className="fw-bold mb-1" style={{
                                                 color: canViewPosts()
@@ -645,11 +558,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                         <Card.Body className="p-3 text-center">
                                             <div className="d-flex justify-content-between align-items-start mb-2">
                                                 <Heart size={20} style={{ color: getPrivacyColor(currentPrivacy.likes) }} />
-                                                <PrivacyBadge
-                                                    level={currentPrivacy.likes}
-                                                    category="Likes"
-                                                    size={12}
-                                                />
+
                                             </div>
                                             <h3 className="fw-bold mb-1" style={{
                                                 color: canViewLikes()
@@ -676,15 +585,15 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                     borderRadius: '16px',
                                     border: `2px solid ${getPrivacyColor(currentPrivacy.profile)}30`
                                 }}>
-                                    <Card.Body className="p-4">
+                                    <Card.Body className="p-1">
                                         <div className="d-flex justify-content-between align-items-center mb-3">
                                             <div className="d-flex align-items-center gap-2">
                                                 <div
                                                     className="d-flex align-items-center justify-content-center"
                                                     style={{
-                                                        width: '36px',
-                                                        height: '36px',
-                                                        borderRadius: '10px',
+                                                        width: '20px',
+                                                        height: '20px',
+                                                        borderRadius: '5px',
                                                         background: getPrivacyColor(currentPrivacy.profile)
                                                     }}
                                                 >
@@ -696,11 +605,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                                     {t('biography')}
                                                 </h6>
                                             </div>
-                                            <PrivacyBadge
-                                                level={currentPrivacy.profile}
-                                                category="Biografía"
-                                                size={12}
-                                            />
+
                                         </div>
                                         <p className="mb-0" style={{
                                             color: theme ? '#e2e8f0' : '#4a5568',
@@ -714,7 +619,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                             )}
 
                             {/* Información de Contacto y Enlaces */}
-                            <Row className="g-3">
+                            <Row className="g-1">
                                 {/* Contacto */}
                                 {(userData.email || userData.address || userData.mobile) && (
                                     <Col md={6}>
@@ -722,14 +627,14 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                             background: theme ? 'rgba(255,255,255,0.05)' : '#f8f9fa',
                                             borderRadius: '16px'
                                         }}>
-                                            <Card.Body className="p-4">
+                                            <Card.Body className="p-1">
                                                 <div className="d-flex align-items-center gap-2 mb-3">
                                                     <div
                                                         className="d-flex align-items-center justify-content-center"
                                                         style={{
-                                                            width: '36px',
-                                                            height: '36px',
-                                                            borderRadius: '10px',
+                                                            width: '20px',
+                                                            height: '20px',
+                                                            borderRadius: '5px',
                                                             background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
                                                         }}
                                                     >
@@ -755,11 +660,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                                                 }} />
                                                                 <small className="text-muted fw-medium">Email</small>
                                                             </div>
-                                                            <PrivacyBadge
-                                                                level={currentPrivacy.email}
-                                                                category="Email"
-                                                                size={10}
-                                                            />
+
                                                         </div>
                                                         <div style={{
                                                             color: theme ? '#e2e8f0' : '#2d3748',
@@ -786,11 +687,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                                                 }} />
                                                                 <small className="text-muted fw-medium">Teléfono</small>
                                                             </div>
-                                                            <PrivacyBadge
-                                                                level={currentPrivacy.mobile}
-                                                                category="Teléfono"
-                                                                size={10}
-                                                            />
+
                                                         </div>
                                                         <div style={{
                                                             color: theme ? '#e2e8f0' : '#2d3748',
@@ -816,11 +713,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                                                 }} />
                                                                 <small className="text-muted fw-medium">Dirección</small>
                                                             </div>
-                                                            <PrivacyBadge
-                                                                level={currentPrivacy.address}
-                                                                category="Dirección"
-                                                                size={10}
-                                                            />
+
                                                         </div>
                                                         <div style={{
                                                             color: theme ? '#e2e8f0' : '#2d3748',
@@ -844,15 +737,15 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                             background: theme ? 'rgba(255,255,255,0.05)' : '#f8f9fa',
                                             borderRadius: '16px'
                                         }}>
-                                            <Card.Body className="p-4">
-                                                <div className="d-flex justify-content-between align-items-center mb-3">
+                                            <Card.Body className="p-1 mb-2">
+                                                <div className="d-flex justify-content-between align-items-center mb-2">
                                                     <div className="d-flex align-items-center gap-2">
                                                         <div
                                                             className="d-flex align-items-center justify-content-center"
                                                             style={{
-                                                                width: '36px',
-                                                                height: '36px',
-                                                                borderRadius: '10px',
+                                                                width: '20px',
+                                                                height: '20px',
+                                                                borderRadius: '5px',
                                                                 background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'
                                                             }}
                                                         >
@@ -864,11 +757,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                                             {t('links')}
                                                         </h6>
                                                     </div>
-                                                    <PrivacyBadge
-                                                        level={currentPrivacy.profile}
-                                                        category="Enlaces"
-                                                        size={12}
-                                                    />
+
                                                 </div>
 
                                                 <a

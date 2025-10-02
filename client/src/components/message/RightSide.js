@@ -12,7 +12,8 @@ import LoadIcon from '../../images/loading.gif'
 import { useTranslation } from 'react-i18next'
 import Avatar from '../Avatar'
 import { Card, Form, Button, Badge, Spinner, Alert, Container } from 'react-bootstrap'
-import { FaArrowLeft, FaTrash, FaImage, FaPaperPlane, FaTimes } from 'react-icons/fa'
+import { FaArrowLeft, FaTrash, FaImage, FaPaperPlane, FaTimes, FaSmile } from 'react-icons/fa'
+import EmojiPicker from 'emoji-picker-react'
 
 const RightSide = () => {
     const { auth, message, theme, socket, languageReducer } = useSelector(state => state)
@@ -26,8 +27,12 @@ const RightSide = () => {
     const [loadMedia, setLoadMedia] = useState(false)
     const [textError, setTextError] = useState('')
 
+    // 🔥 NUEVO ESTADO PARA EMOJI PICKER
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+
     const refDisplay = useRef()
     const pageEnd = useRef()
+    const emojiPickerRef = useRef()
 
     const [data, setData] = useState([])
     const [result, setResult] = useState(9)
@@ -37,6 +42,32 @@ const RightSide = () => {
     const history = useHistory()
     const [isTyping, setIsTyping] = useState(false)
     const typingTimeout = useRef()
+
+    // 🔥 Efecto para cerrar emoji picker al hacer clic fuera - MEJORADO
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+                // Verificar si el clic no fue en el botón de emojis
+                const emojiButton = document.querySelector('.emoji-button')
+                if (!emojiButton || !emojiButton.contains(event.target)) {
+                    setShowEmojiPicker(false)
+                }
+            }
+        }
+
+        if (showEmojiPicker) {
+            document.addEventListener('mousedown', handleClickOutside)
+            // Prevenir scroll del body cuando el picker está abierto
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+            document.body.style.overflow = 'auto'
+        }
+    }, [showEmojiPicker])
 
     // 🔥 Efecto para detectar typing
     useEffect(() => {
@@ -113,6 +144,28 @@ const RightSide = () => {
             .replace(/(\b)(on\w+)=([^>]*)/gi, '')
             .slice(0, 1000);
     };
+
+    // 🔥 NUEVA FUNCIÓN PARA MANEJAR EMOJIS
+    const handleEmojiClick = (emojiObject) => {
+        setText(prevText => {
+            const newText = prevText + emojiObject.emoji
+            // Validar que no exceda el límite
+            return newText.slice(0, 1000)
+        })
+        // Cerrar el picker después de seleccionar (opcional)
+        // setShowEmojiPicker(false)
+        
+        // Mantener el foco en el input
+        const input = document.querySelector('.chat_input input')
+        if (input) {
+            input.focus()
+        }
+    }
+
+    // 🔥 FUNCIÓN MEJORADA PARA TOGGLE EMOJI PICKER
+    const toggleEmojiPicker = () => {
+        setShowEmojiPicker(prev => !prev)
+    }
 
     useEffect(() => {
         const newData = message.data.find(item => item._id === id)
@@ -197,6 +250,9 @@ const RightSide = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        
+        // Cerrar emoji picker al enviar
+        setShowEmojiPicker(false)
         
         // 🔥 Validación final antes de enviar
         if (!text.trim() && media.length === 0) return;
@@ -285,7 +341,8 @@ const RightSide = () => {
             display: 'flex',
             flexDirection: 'column',
             height: 'calc(100vh - 170px)',
-            background: theme ? '#1a1a2e' : '#f8f9fa'
+            background: theme ? '#1a1a2e' : '#f8f9fa',
+            position: 'relative' // 🔥 IMPORTANTE para el z-index
         }}>
             {/* 🎨 HEADER MEJORADO */}
             <Card 
@@ -295,6 +352,8 @@ const RightSide = () => {
                     background: theme 
                         ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
                         : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    zIndex: 100,
+                    position: 'relative'
                 }}
             >
                 <Card.Body className="p-3">
@@ -382,7 +441,9 @@ const RightSide = () => {
                     flex: 1, 
                     overflowY: 'auto',
                     padding: '20px 15px',
-                    background: theme ? '#0f0f1e' : '#ffffff'
+                    background: theme ? '#0f0f1e' : '#ffffff',
+                    position: 'relative',
+                    zIndex: 1
                 }}
             >
                 <div className="chat_display" ref={refDisplay}>
@@ -439,7 +500,9 @@ const RightSide = () => {
                         gap: '10px',
                         padding: '15px',
                         background: theme ? '#16213e' : '#f8f9fa',
-                        borderTop: `2px solid ${theme ? '#667eea' : '#e0e0e0'}`
+                        borderTop: `2px solid ${theme ? '#667eea' : '#e0e0e0'}`,
+                        position: 'relative',
+                        zIndex: 2
                     }}
                 >
                     {media.map((item, index) => (
@@ -483,16 +546,18 @@ const RightSide = () => {
                 </div>
             )}
 
-            {/* 🎨 FORMULARIO DE ENTRADA MEJORADO */}
+            {/* 🎨 FORMULARIO DE ENTRADA MEJORADO CON NUEVO EMOJI PICKER */}
             <Card 
                 className="border-0"
                 style={{
                     borderRadius: '0',
                     background: theme ? '#16213e' : 'white',
-                    boxShadow: '0 -4px 12px rgba(0,0,0,0.08)'
+                    boxShadow: '0 -4px 12px rgba(0,0,0,0.08)',
+                    position: 'relative',
+                    zIndex: 10
                 }}
             >
-                <Card.Body className="p-3">
+                <Card.Body className="p-3" style={{ position: 'relative', zIndex: 10 }}>
                     <Form onSubmit={handleSubmit}>
                         <div className="d-flex align-items-center gap-2">
                             <div className="position-relative flex-grow-1">
@@ -560,9 +625,75 @@ const RightSide = () => {
                                 )}
                             </div>
 
-                            {/* Iconos de emojis */}
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Icons setContent={setText} content={text} theme={theme} />
+                            {/* 🔥 NUEVO BOTÓN DE EMOJIS - POSICIÓN CORREGIDA */}
+                            <div className="position-relative">
+                                <Button
+                                    className="emoji-button"
+                                    variant={theme ? "outline-light" : "outline-primary"}
+                                    onClick={toggleEmojiPicker}
+                                    style={{
+                                        width: '45px',
+                                        height: '45px',
+                                        borderRadius: '50%',
+                                        padding: '0',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        border: `2px solid ${theme ? '#667eea' : '#667eea'}`,
+                                        background: showEmojiPicker 
+                                            ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                                            : theme ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.1)',
+                                        transition: 'all 0.3s ease',
+                                        zIndex: 1000
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (!showEmojiPicker) {
+                                            e.currentTarget.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                                            e.currentTarget.style.transform = 'scale(1.05)';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (!showEmojiPicker) {
+                                            e.currentTarget.style.background = theme ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.1)';
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                        }
+                                    }}
+                                >
+                                    <FaSmile size={18} style={{ 
+                                        color: showEmojiPicker ? 'white' : '#667eea' 
+                                    }} />
+                                </Button>
+
+                                {/* 🔥 EMOJI PICKER - POSICIÓN CORREGIDA Y Z-INDEX SUPER ALTO */}
+                                {showEmojiPicker && (
+                                    <div 
+                                        ref={emojiPickerRef}
+                                        style={{
+                                            position: 'fixed', // 🔥 CAMBIADO de absolute a fixed
+                                            bottom: '100px',   // 🔥 POSICIÓN FIJA desde abajo
+                                            right: '20px',     // 🔥 POSICIÓN FIJA desde la derecha
+                                            zIndex: 99999,     // 🔥 Z-INDEX SUPER ALTO
+                                            borderRadius: '12px',
+                                            overflow: 'hidden',
+                                            boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                                            border: `1px solid ${theme ? '#333' : '#ddd'}`,
+                                            maxWidth: '90vw',
+                                            maxHeight: '60vh'
+                                        }}
+                                    >
+                                        <EmojiPicker
+                                            onEmojiClick={handleEmojiClick}
+                                            height={400}
+                                            width={350}
+                                            theme={theme ? 'dark' : 'light'}
+                                            searchDisabled={false}
+                                            skinTonesDisabled={true}
+                                            previewConfig={{
+                                                showPreview: false
+                                            }}
+                                        />
+                                    </div>
+                                )}
                             </div>
 
                             {/* Botón de adjuntar imagen */}
@@ -716,6 +847,12 @@ const RightSide = () => {
 
                 .chat_container::-webkit-scrollbar-thumb:hover {
                     background: #667eea;
+                }
+
+                /* 🔥 ESTILOS GLOBALES PARA EL EMOJI PICKER */
+                .EmojiPickerReact {
+                    --epr-emoji-size: 30px;
+                    --epr-horizontal-padding: 10px;
                 }
             `}</style>
         </div>

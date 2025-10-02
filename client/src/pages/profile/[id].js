@@ -141,7 +141,7 @@ const Profile = () => {
                 <div 
                     className="profile_tab sticky-top bg-white shadow-sm" 
                     style={{ 
-                        top: '56px',
+                        top: '36px',
                         zIndex: 100,
                         borderBottom: '1px solid #e9ecef',
                         padding: '1rem 0'
@@ -150,7 +150,7 @@ const Profile = () => {
                     <Container>
                         <div className="d-flex justify-content-center">
                             <ButtonGroup 
-                                className="flex-nowrap overflow-auto" 
+                                className="flex-nowrap" 
                                 role="group"
                                 style={{
                                     gap: isMobile ? '0.5rem' : '0.75rem',
@@ -245,7 +245,7 @@ const Profile = () => {
                 {/* Contenido del perfil */}
                 <Container className="py-4">
                     {profile.loading ? (
-                        <div className="text-center py-5">
+                        <div className="text-center py-3">
                             <img 
                                 className="d-block mx-auto" 
                                 src={LoadIcon} 

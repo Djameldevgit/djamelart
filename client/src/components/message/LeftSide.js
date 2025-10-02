@@ -114,7 +114,7 @@ const LeftSide = () => {
               : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           }}
         >
-          <Card.Body className="p-3">
+          <Card.Body className="p-2">
             <Form onSubmit={handleSearch}>
               <InputGroup>
                 <Form.Control
@@ -158,22 +158,7 @@ const LeftSide = () => {
             </Form>
 
             {/* Badge con contador de conversaciones */}
-            {message.users.length > 0 && (
-              <div className="mt-2 text-center">
-                <Badge 
-                  bg="light" 
-                  text="dark"
-                  style={{
-                    fontSize: '0.8rem',
-                    padding: '6px 12px',
-                    borderRadius: '20px',
-                    fontWeight: '600'
-                  }}
-                >
-                  {message.users.length} {message.users.length === 1 ? 'conversación' : 'conversaciones'}
-                </Badge>
-              </div>
-            )}
+           
           </Card.Body>
         </Card>
       )}
