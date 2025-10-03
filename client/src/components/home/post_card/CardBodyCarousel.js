@@ -31,7 +31,24 @@ const CardBodyCarousel = ({ post }) => {
   const lang = languageReducer.language || 'en';
   const history = useHistory();
   const dispatch = useDispatch();
+  // En la parte de estados de tu componente
+  const [showInfo, setShowInfo] = useState(false);
+  const [isTouching, setIsTouching] = useState(false);
 
+  // Handlers para mostrar/ocultar información
+  const handleImageClick = () => {
+    setShowInfo(prev => !prev);
+  };
+
+  const handleTouchStart = () => {
+    setIsTouching(true);
+  };
+
+  const handleTouchEnd = () => {
+    setIsTouching(false);
+    // Pequeño delay para mejor UX
+    setTimeout(() => setShowInfo(prev => !prev), 100);
+  };
   const canProceed = () => {
     if (!auth.token || !auth.user) {
       setShowModal(true);
@@ -140,344 +157,485 @@ const CardBodyCarousel = ({ post }) => {
 
   return (
     <div>
-      <div className="card_body">
-        {post.images.length > 0 && (
-          <div className="carousel-container" style={{ 
-            position: "relative",
-            height: "400px",
-            maxHeight: "80vh",
-            overflow:'hidden'
-          }}>
-            {/* Fecha de publicación (parte superior) */}
-            <div style={{
-              position: "absolute",
-              top: "10px",
-              left: "10px",
-              zIndex: 2,
-              backgroundColor: "rgba(0, 0, 0, 0.6)",
-              color: "white",
-              padding: "4px 8px",
-              borderRadius: "12px",
-              fontSize: "clamp(10px, 1.5vh, 12px)",
-              fontWeight: "500"
-            }}>
-              <small className="textmuted">
-                <span className="mr-1"><i className='far fa-clock'></i>  </span>
-                {moment(post.createdAt).fromNow()}
-              </small>
-            </div>
+   <div className="card_body">
+  {post.images.length > 0 && (
+    <div 
+      className="carousel-container" 
+      style={{ 
+        position: "relative",
+        height: "400px",
+        maxHeight: "80vh",
+        overflow: 'hidden',
+        cursor: 'pointer'
+      }}
+      onClick={handleImageClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Fecha de publicación (parte superior) - También ocultable */}
+      <div style={{
+        position: "absolute",
+        top: "10px",
+        left: "10px",
+        zIndex: 2,
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        color: "white",
+        padding: "4px 8px",
+        borderRadius: "12px",
+        fontSize: "clamp(10px, 1.5vh, 12px)",
+        fontWeight: "500",
+        opacity: showInfo ? 1 : 0,
+        transform: showInfo ? 'translateY(0)' : 'translateY(-10px)',
+        transition: 'all 0.3s ease'
+      }}>
+        
+      </div>
 
-            {/* Información del artista y título (parte inferior) */}
+      {/* Información del artista (ocultable con animación) */}
+      <div style={{
+        position: "absolute",
+        bottom: "0",
+        left: "0",
+        right: "0",
+        zIndex: 2,
+        color: "white",
+        background: showInfo 
+          ? "linear-gradient(transparent 0%, rgba(0, 0, 0, 0.8) 100%)"
+          : "transparent",
+        padding: showInfo ? "16px 12px 12px 12px" : "0px 12px",
+        backdropFilter: showInfo ? "blur(10px)" : "none",
+        borderTop: showInfo ? "1px solid rgba(255, 255, 255, 0.1)" : "none",
+        height: showInfo ? "auto" : "0px",
+        opacity: showInfo ? 1 : 0,
+        transform: showInfo ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        overflow: 'hidden'
+      }}>
+        {/* Primera línea: Usuario y fecha */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          marginBottom: showInfo ? "8px" : "0px",
+          transition: 'margin-bottom 0.3s ease'
+        }}>
+          <div style={{ flex: 1 }}>
             <div style={{
-              position: "absolute",
-              bottom: "0",
-              left: "0",
-              right: "0",
-              zIndex: 2,
-              color: "white",
-              backgroundColor: "rgba(0, 0, 0, 0.6)",
-              padding: "12px",
-              backdropFilter: "blur(5px)",
-            }}>
-              <div className='card-title' style={{
-                fontSize: "clamp(14px, 2vh, 18px)",
-                fontWeight: "bold",
-                marginBottom: "4px",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis"
-              }}>
-                {post.user?.username || "Artista"}
-              </div>
-              {post.title && (
-                <div style={{
-                  fontSize: "clamp(12px, 1.5vh, 14px)",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis"
-                }}>
-                  {post.title}
-                </div>
-              )}
-            </div>
-
-            {/* Contenedor de iconos al estilo TikTok (derecha) */}
-            <div style={{
-              position: "absolute",
-              right: "10px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              zIndex: 2,
+              fontSize: "clamp(14px, 2vh, 18px)",
+              fontWeight: "bold",
+              marginBottom: "2px",
               display: "flex",
-              flexDirection: "column",
               alignItems: "center",
-              gap: "clamp(6px, 2vh, 16px)", // Gap dinámico
-              justifyContent: "center", // Centrado vertical
-              maxHeight: "calc(100% - 140px)",
-              paddingTop: "10px",
-              paddingBottom: "10px"
+              gap: "8px",
+              opacity: showInfo ? 1 : 0,
+              transform: showInfo ? 'translateX(0)' : 'translateX(-10px)',
+              transition: 'all 0.3s ease 0.1s'
             }}>
-              {/* Avatar del usuario */}
-              <div 
-                style={{ 
-                  display: "flex", 
-                  flexDirection: "column", 
-                  alignItems: "center",
-                  gap: "2px", // Gap interno optimizado
-                  cursor: "pointer"
-                }}
-                onClick={() => history.push(`/profile/${post.user._id}`)}
-              >
-                <div style={{
-                  width: "clamp(36px, 6vh, 48px)",
-                  height: "clamp(36px, 6vh, 48px)",
-                  borderRadius: "50%",
-                  border: "2px solid white",
-                  overflow: "hidden",
-                  backgroundColor: "#333",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.3)"
+              <span>{post.user?.username || "Artista"}</span>
+              {post.user?.isVerified && (
+                <span className="material-icons" style={{ 
+                  fontSize: "16px", 
+                  color: "#0095f6" 
                 }}>
-                  {post.user?.avatar ? (
-                    <img 
-                      src={post.user.avatar} 
-                      alt={post.user.username}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover"
-                      }}
-                    />
-                  ) : (
-                    <div style={{
-                      width: "100%",
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "#667eea",
-                      color: "white",
-                      fontSize: "clamp(14px, 2.5vh, 18px)",
-                      fontWeight: "bold"
-                    }}>
-                      {post.user?.username?.charAt(0).toUpperCase() || "A"}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Botón de like */}
-              <div style={{ 
-                display: "flex", 
-                flexDirection: "column", 
-                alignItems: "center",
-                gap: "2px" // Gap interno optimizado
-              }}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    borderRadius: "50%",
-                    padding: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: loadLike ? 0.7 : 1,
-                    width: "clamp(32px, 5vh, 40px)",
-                    height: "clamp(32px, 5vh, 40px)",
-                    transition: "transform 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                  onClick={isLike ? handleUnLike : handleLike}
-                >
-                  <span
-                    className="material-icons"
-                    style={{
-                      fontSize: "clamp(18px, 3vh, 24px)",
-                      color: isLike ? "#F91880" : "white"
-                    }}
-                  >
-                    {loadLike ? "hourglass_empty" : "favorite"}
-                  </span>
-                </div>
-                <span style={{
-                  fontSize: "clamp(10px, 1.5vh, 12px)",
-                  fontWeight: "bold",
-                  color: "white",
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
-                }}>
-                  {post.likes.length}
+                  verified
                 </span>
-              </div>
-
-              {/* Botón de guardar */}
-              <div style={{ 
-                display: "flex", 
-                flexDirection: "column", 
-                alignItems: "center",
-                gap: "2px" // Gap interno optimizado
-              }}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    borderRadius: "50%",
-                    padding: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "clamp(32px, 5vh, 40px)",
-                    height: "clamp(32px, 5vh, 40px)",
-                    transition: "transform 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                  onClick={saved ? handleUnSavePost : handleSavePost}
-                >
-                  <span
-                    className="material-icons"
-                    style={{
-                      fontSize: "clamp(18px, 3vh, 24px)",
-                      color: saved ? "#ff8c00" : "white",
-                      opacity: saveLoad ? 0.5 : 1
-                    }}
-                  >
-                    {saveLoad ? "hourglass_empty" : "bookmark"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Botón de comprar */}
-              <div style={{ 
-                display: "flex", 
-                flexDirection: "column", 
-                alignItems: "center",
-                gap: "2px" // Gap interno optimizado
-              }}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    borderRadius: "50%",
-                    padding: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: `2px solid ${inCart ? "#F44336" : "#4CAF50"}`,
-                    opacity: buyLoad ? 0.7 : 1,
-                    width: "clamp(32px, 5vh, 40px)",
-                    height: "clamp(32px, 5vh, 40px)",
-                    transition: "transform 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                  onClick={handleBuyProduct}
-                  title={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
-                >
-                  <span className="material-icons" style={{
-                    fontSize: "clamp(18px, 3vh, 24px)",
-                    color: inCart ? "#F44336" : "#4CAF50"
-                  }}>
-                    {buyLoad ? "hourglass_empty" : "shopping_cart"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Contador de vistas */}
-              <div style={{ 
-                display: "flex", 
-                flexDirection: "column", 
-                alignItems: "center",
-                gap: "2px" // Gap interno optimizado
-              }}>
-                <div style={{
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  borderRadius: "50%",
-                  padding: "8px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "clamp(32px, 5vh, 40px)",
-                  height: "clamp(32px, 5vh, 40px)"
-                }}>
-                  <span className="material-icons" style={{ 
-                    fontSize: "clamp(18px, 3vh, 24px)", 
-                    color: "white" 
-                  }}>
-                    visibility
-                  </span>
-                </div>
-                <span style={{
-                  fontSize: "clamp(10px, 1.5vh, 12px)",
-                  fontWeight: "bold",
-                  color: "white",
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
-                }}>
-                  {post.views || 0}
-                </span>
-              </div>
-
-              {isShare && (
-                <div className="share-modal-container" ref={shareModalRef}>
-                  <ShareModal
-                    url={`${process.env.REACT_APP_BASE_URL}/post/${post._id}`}
-                    onClose={() => setIsShare(false)}
-                  />
-                </div>
               )}
-
-              {/* Botón de compartir */}
-              <div style={{ 
-                display: "flex", 
-                flexDirection: "column", 
-                alignItems: "center",
-                gap: "2px" // Gap interno optimizado
-              }}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    borderRadius: "50%",
-                    padding: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "clamp(32px, 5vh, 40px)",
-                    height: "clamp(32px, 5vh, 40px)",
-                    transition: "transform 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                  onClick={handleShare}
-                >
-                  <span className="material-icons" style={{ 
-                    fontSize: "clamp(18px, 3vh, 24px)", 
-                    color: "white" 
-                  }}>
-                    share
-                  </span>
-                </div>
-              </div>
             </div>
-
-            {/* Carousel con height fijo */}
-            <div className="card" style={{ height: "100%" }}>
-              <div 
-                className="card__image" 
-                onClick={() => history.push(`/post/${post._id}`)}
-                style={{
-                  height: "100%",
-                  cursor: "pointer"
-                }}
-              >
-                <div style={{ height: "100%" }}>
-                  <Carousel images={post.images} id={post._id} />
-                </div>
-              </div>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              fontSize: "clamp(10px, 1.5vh, 12px)",
+              opacity: showInfo ? 0.9 : 0,
+              transform: showInfo ? 'translateX(0)' : 'translateX(-10px)',
+              transition: 'all 0.3s ease 0.15s'
+            }}>
+              <span className="material-icons" style={{ fontSize: "12px" }}>
+                schedule
+              </span>
+              <span>{moment(post.createdAt).fromNow()}</span>
             </div>
+          </div>
+          
+          {/* Botón Más Detalles */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              history.push(`/post/${post._id}`);
+            }}
+            style={{
+              background: "rgba(255, 255, 255, 0.2)",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
+              color: "white",
+              padding: "6px 12px",
+              borderRadius: "20px",
+              fontSize: "clamp(10px, 1.5vh, 12px)",
+              fontWeight: "500",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              transition: "all 0.3s ease",
+              backdropFilter: "blur(10px)",
+              opacity: showInfo ? 1 : 0,
+              transform: showInfo ? 'translateX(0)' : 'translateX(10px)',
+              transition: 'all 0.3s ease 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = "rgba(255, 255, 255, 0.3)";
+              e.target.style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = "rgba(255, 255, 255, 0.2)";
+              e.target.style.transform = "scale(1)";
+            }}
+          >
+            <span>Detalles</span>
+            <span className="material-icons" style={{ fontSize: "14px" }}>
+              arrow_forward
+            </span>
+          </button>
+        </div>
+
+        {/* Título de la obra */}
+        {post.title && (
+          <div style={{
+            fontSize: "clamp(12px, 1.5vh, 14px)",
+            opacity: showInfo ? 0.95 : 0,
+            lineHeight: "1.3",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            marginTop: showInfo ? "4px" : "0px",
+            transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'all 0.3s ease 0.25s'
+          }}>
+            {post.title}
           </div>
         )}
       </div>
+
+      {/* Indicador visual cuando la información está oculta */}
+      {!showInfo && (
+        <div style={{
+          position: "absolute",
+          bottom: "10px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1,
+          background: "rgba(0, 0, 0, 0.5)",
+          color: "white",
+          padding: "4px 12px",
+          borderRadius: "15px",
+          fontSize: "11px",
+          fontWeight: "500",
+          backdropFilter: "blur(5px)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          animation: "pulse 2s infinite",
+          cursor: "pointer"
+        }}>
+          <span className="material-icons" style={{ 
+            fontSize: "14px",
+            marginRight: "4px"
+          }}>
+            touch_app
+          </span>
+          Toca para ver info
+        </div>
+      )}
+
+      {/* Contenedor de iconos al estilo TikTok (derecha) */}
+      <div style={{
+        position: "absolute",
+        right: "10px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 2,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "clamp(6px, 2vh, 16px)",
+        justifyContent: "center",
+        maxHeight: "calc(100% - 140px)",
+        paddingTop: "10px",
+        paddingBottom: "10px"
+      }}>
+        {/* Avatar del usuario */}
+        <div 
+          style={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center",
+            gap: "2px",
+            cursor: "pointer"
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            history.push(`/profile/${post.user._id}`);
+          }}
+        >
+          <div style={{
+            width: "clamp(36px, 6vh, 48px)",
+            height: "clamp(36px, 6vh, 48px)",
+            borderRadius: "50%",
+            border: "2px solid white",
+            overflow: "hidden",
+            backgroundColor: "#333",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+            transition: "transform 0.2s ease"
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+          onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+          >
+            {post.user?.avatar ? (
+              <img 
+                src={post.user.avatar} 
+                alt={post.user.username}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover"
+                }}
+              />
+            ) : (
+              <div style={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#667eea",
+                color: "white",
+                fontSize: "clamp(14px, 2.5vh, 18px)",
+                fontWeight: "bold"
+              }}>
+                {post.user?.username?.charAt(0).toUpperCase() || "A"}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Botón de like */}
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: "center",
+          gap: "2px"
+        }}>
+          <div
+            style={{
+              cursor: "pointer",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              borderRadius: "50%",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: loadLike ? 0.7 : 1,
+              width: "clamp(32px, 5vh, 40px)",
+              height: "clamp(32px, 5vh, 40px)",
+              transition: "transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+            onClick={(e) => {
+              e.stopPropagation();
+              isLike ? handleUnLike() : handleLike();
+            }}
+          >
+            <span
+              className="material-icons"
+              style={{
+                fontSize: "clamp(18px, 3vh, 24px)",
+                color: isLike ? "#F91880" : "white"
+              }}
+            >
+              {loadLike ? "hourglass_empty" : "favorite"}
+            </span>
+          </div>
+          <span style={{
+            fontSize: "clamp(10px, 1.5vh, 12px)",
+            fontWeight: "bold",
+            color: "white",
+            textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
+          }}>
+            {post.likes.length}
+          </span>
+        </div>
+
+        {/* Botón de guardar */}
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: "center",
+          gap: "2px"
+        }}>
+          <div
+            style={{
+              cursor: "pointer",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              borderRadius: "50%",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "clamp(32px, 5vh, 40px)",
+              height: "clamp(32px, 5vh, 40px)",
+              transition: "transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+            onClick={(e) => {
+              e.stopPropagation();
+              saved ? handleUnSavePost() : handleSavePost();
+            }}
+          >
+            <span
+              className="material-icons"
+              style={{
+                fontSize: "clamp(18px, 3vh, 24px)",
+                color: saved ? "#ff8c00" : "white",
+                opacity: saveLoad ? 0.5 : 1
+              }}
+            >
+              {saveLoad ? "hourglass_empty" : "bookmark"}
+            </span>
+          </div>
+        </div>
+
+        {/* Botón de comprar */}
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: "center",
+          gap: "2px"
+        }}>
+          <div
+            style={{
+              cursor: "pointer",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              borderRadius: "50%",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: `2px solid ${inCart ? "#F44336" : "#4CAF50"}`,
+              opacity: buyLoad ? 0.7 : 1,
+              width: "clamp(32px, 5vh, 40px)",
+              height: "clamp(32px, 5vh, 40px)",
+              transition: "transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleBuyProduct();
+            }}
+            title={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
+          >
+            <span className="material-icons" style={{
+              fontSize: "clamp(18px, 3vh, 24px)",
+              color: inCart ? "#F44336" : "#4CAF50"
+            }}>
+              {buyLoad ? "hourglass_empty" : "shopping_cart"}
+            </span>
+          </div>
+        </div>
+
+        {/* Contador de vistas */}
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: "center",
+          gap: "2px"
+        }}>
+          <div style={{
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            borderRadius: "50%",
+            padding: "8px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "clamp(32px, 5vh, 40px)",
+            height: "clamp(32px, 5vh, 40px)"
+          }}>
+            <span className="material-icons" style={{ 
+              fontSize: "clamp(18px, 3vh, 24px)", 
+              color: "white" 
+            }}>
+              visibility
+            </span>
+          </div>
+          <span style={{
+            fontSize: "clamp(10px, 1.5vh, 12px)",
+            fontWeight: "bold",
+            color: "white",
+            textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
+          }}>
+            {post.views || 0}
+          </span>
+        </div>
+
+        {/* Botón de compartir */}
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: "center",
+          gap: "2px"
+        }}>
+          <div
+            style={{
+              cursor: "pointer",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              borderRadius: "50%",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "clamp(32px, 5vh, 40px)",
+              height: "clamp(32px, 5vh, 40px)",
+              transition: "transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleShare();
+            }}
+          >
+            <span className="material-icons" style={{ 
+              fontSize: "clamp(18px, 3vh, 24px)", 
+              color: "white" 
+            }}>
+              share
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Carousel */}
+      <div className="card" style={{ height: "100%" }}>
+        <div 
+          className="card__image" 
+          onClick={(e) => {
+            e.stopPropagation();
+            history.push(``);
+          }}
+          style={{
+            height: "100%",
+            cursor: "pointer"
+          }}
+        >
+          <div style={{ height: "100%" }}>
+            <Carousel images={post.images} id={post._id} />
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
 
       {/* Resto de los modales... */}
       {showShareOptions && (

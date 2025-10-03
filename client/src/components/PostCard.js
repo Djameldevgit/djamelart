@@ -38,9 +38,10 @@ const PostCard = ({ post, isDetail = false  }) => {
             {isPostDetailPage && <Location post={post} />}
 
             {isAuthenticated && isPostDetailPage && (
-                <>
+                <> 
+                {isPostDetailPage && <InputComment post={post} />}
                     {isPostDetailPage && <Comments post={post} />}
-                    {isPostDetailPage && <InputComment post={post} />}
+                   
                 </>
             )}
         </div>
