@@ -19,8 +19,6 @@ import { getPosts } from './redux/actions/postAction'
 import { GLOBALTYPES } from './redux/actions/globalTypes'
 import SocketClient from './SocketClient'
 
-import { getNotifies } from './redux/actions/notifyAction'
-
  
 
 import LanguageSelectorandroid from './components/LanguageSelectorandroid'
@@ -38,6 +36,9 @@ import Accordionn from './pages/Accordionn'
  
 import video from './pages/video';
 import { getPrivacySettings } from './redux/actions/privacyAction';
+import infoaplicacionn from './pages/infoaplicacionn';
+import bloginfo from './pages/bloginfo';
+import InfoAplicacion from './components/blogInfoComment/InfoAplicacion';
 
 
 
@@ -58,9 +59,9 @@ function App() {
     dispatch(refreshToken())
 
     const socket = io()
-    dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
+    dispatch({type: GLOBALTYPES.SOCKET, payload: socket})
     return () => socket.close()
-  }, [dispatch])
+  },[dispatch])
 
   useEffect(() => {
     if (language) {
@@ -154,7 +155,9 @@ function App() {
   <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
   <Route exact path="/register" component={Register} />
   <Route exact path="/login" component={Login} />
-  <Route exact path="/bloginfo" component={Accordionn} />
+  <Route exact path="/bloginfo" component={bloginfo} />
+  <Route exact path="/infoaplicacionn" component={infoaplicacionn} />
+  <Route exact path="/infoAplicacionn" component={InfoAplicacion} />
   <Route exact path="/video/:obraId" component={video} />
   <Route exact path="/forgot_password" component={ForgotPassword} />
   <Route path="/user/reset/:token" component={ResetPassword} exact />

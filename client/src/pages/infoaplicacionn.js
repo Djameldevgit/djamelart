@@ -1,7 +1,7 @@
 import React from 'react'
 import InfoAplicacion from '../components/blogInfoComment/InfoAplicacion'
 
-const infoAplicacion = () => {
+const infoaplicacionn = () => {
   return (
     <div>
       <InfoAplicacion/>
@@ -9,4 +9,4 @@ const infoAplicacion = () => {
   )
 }
 
-export default infoAplicacion
+export default infoaplicacionn

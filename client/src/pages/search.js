@@ -96,7 +96,7 @@ export default function search() {
           setFilteredPosts(homePosts.posts);
         } else {
           // Si no hay posts, cargarlos
-          const res = await getDataAPI('posts?limit=12', auth.token);
+          const res = await getDataAPI('posts?limit=9', auth.token);
           setFilteredPosts(res.data.posts || []);
           
           // También actualizar Redux store

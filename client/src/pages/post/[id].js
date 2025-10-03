@@ -1,10 +1,10 @@
+// DetailPost.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import LoadIcon from '../../images/loading.gif';
-import PostCard from '../../components/PostCard';
-
+import DetailPostCard from '../../components/DetailPostCard'; // Nuevo componente
 import { getPost, viewPost } from "../../redux/actions/postAction";
 
 const DetailPost = () => {
@@ -12,7 +12,7 @@ const DetailPost = () => {
   const dispatch = useDispatch();
 
   const auth = useSelector(state => state.auth);
-  const detailPost = useSelector(state => state.detailPost.detailPost); // array de posts
+  const detailPost = useSelector(state => state.detailPost.detailPost);
 
   const [post, setPost] = useState(null);
 
@@ -23,7 +23,7 @@ const DetailPost = () => {
     }
   }, [dispatch, id, auth, detailPost]);
 
-  // aumentar views (solo una vez por sesión)
+  // aumentar views
   useEffect(() => {
     if (id && auth?.token) {
       const viewed = localStorage.getItem("viewed_posts") || "[]";
@@ -46,14 +46,12 @@ const DetailPost = () => {
   }, [detailPost, id]);
 
   if (!post) return (
-    <img src={LoadIcon} alt="loading" className="d-block mx-auto my-4" />
-  );
-
-  return (
-    <div className="detail-post">
-      <PostCard key={post._id} post={post}   />
+    <div className="loading-container">
+      <img src={LoadIcon} alt="loading" className="loading-spinner" />
     </div>
   );
+
+  return <DetailPostCard post={post} />;
 };
 
 export default DetailPost;

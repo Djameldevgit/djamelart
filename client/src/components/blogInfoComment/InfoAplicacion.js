@@ -27,10 +27,16 @@ const InfoAplicacion = () => {
 
   // Cargar traducciones árabes si no están ya cargadas
   useEffect(() => {
-    if (!i18n.hasResourceBundle('ar', 'info')) {
-      i18n.addResourceBundle('ar', 'info', arabicTranslations.info);
-    }
-  }, [i18n]);
+    const changeLanguage = async () => {
+      if (i18n.language !== lang) {
+        await i18n.changeLanguage(lang);
+      }
+     
+    };
+    
+    changeLanguage();
+  }, [lang, i18n]);
+
 
   // Refs para cada sección
   const introRef = useRef(null);
@@ -87,11 +93,13 @@ const InfoAplicacion = () => {
   };
 
   // Aplicar estilos RTL si el idioma es árabe
-  const isRTL = lang === "ar";
-
+  
   return (
     <div   >
-      <Container className="my-4 mt-4" dir={isRTL ? "rtl" : "ltr"}  >
+      <Container className="my-4 mt-4"  style={{
+      direction: lang === 'ar' ? 'rtl' : 'ltr',
+      textAlign: lang === 'ar' ? 'right' : 'left'
+    }} >
  
         <Form className="bg-light p-3 rounded shadow-sm mb-4">
           <Form.Group className="mb-3">

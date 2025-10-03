@@ -41,7 +41,6 @@ io.on('connection', socket => {
     SocketServer(socket)
 })
 
- 
 
 // --- Rutas de API ---
 app.get('/api/set-language', (req, res) => {
@@ -70,7 +69,7 @@ app.use('/api', require('./routes/reportRouter'));
 app.use('/api/blog/comments', require('./routes/blogCommentRoutes'));
 app.use("/api/forms", require("./routes/formRouter"));
 app.use("/api", require("./routes/privacysettingsRouter"));
- 
+app.use("/api", require("./routes/settingsRouter"));
 
 // --- Auto desbloqueo de usuarios cada 5 min ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);

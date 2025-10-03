@@ -28,7 +28,7 @@ const PostCard = ({ post, isDetail = false  }) => {
     };*/
 
     return (
-        <div className="card">
+        <div className="">
             <CardHeader post={post} />
 
        

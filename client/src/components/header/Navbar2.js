@@ -638,6 +638,10 @@ const Navbar2 = () => {
                     <MenuItem icon={FaInfoCircle} iconColor="#6c757d" to="/bloginfo">
                       {t('appInfo')}
                     </MenuItem>
+                    <MenuItem icon={FaInfoCircle} iconColor="#6c757d" to="/infoaplicacionn">
+                      {t('appInfo')}
+                    </MenuItem>
+
                     <MenuItem icon={FaShareAlt} iconColor="#ffc107" onClick={() => setShowShareModal(true)}>
                       Compartir Aplicación
                     </MenuItem>

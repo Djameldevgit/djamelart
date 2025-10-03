@@ -5,47 +5,13 @@ const initialState = {
     users: [],
     resultUsers: 0,
     data: [],
-    typing: [] ,
     firstLoad: false
 }
 
 const messageReducer = (state = initialState, action) => {
-    switch (action.type) {
-       
-            case MESS_TYPES.TYPING_START:
-                return {
-                    ...state,
-                    typing: [...(state.typing || []).filter(item => item.sender !== action.payload.sender), 
-                            action.payload]
-                };
-                
-                case MESS_TYPES.TYPING_STOP:
-                    return {
-                        ...state,
-                        typing: (state.typing || []).filter(item =>
-                            !(item.sender === action.payload.sender && item.chatId === action.payload.chatId)
-                        )
-                    };
-                
-                
-            case MESS_TYPES.SET_TYPING:
-                return {
-                    ...state,
-                    typing: action.payload
-                };
-       
-        case MESS_TYPES.SET_LAST_CONNECTION:
-            return {
-                ...state,
-                users: state.users.map(user =>
-                    user._id === action.payload.userId
-                        ? { ...user, lastConnection: action.payload.time }
-                        : user
-                )
-            }
-
+    switch (action.type){
         case MESS_TYPES.ADD_USER:
-            if (state.users.every(item => item._id !== action.payload._id)) {
+            if(state.users.every(item => item._id !== action.payload._id)){
                 return {
                     ...state,
                     users: [action.payload, ...state.users]
@@ -55,24 +21,24 @@ const messageReducer = (state = initialState, action) => {
         case MESS_TYPES.ADD_MESSAGE:
             return {
                 ...state,
-                data: state.data.map(item =>
-                    item._id === action.payload.recipient || item._id === action.payload.sender
-                        ? {
-                            ...item,
-                            messages: [...item.messages, action.payload],
-                            result: item.result + 1
-                        }
-                        : item
+                data: state.data.map(item => 
+                    item._id === action.payload.recipient || item._id === action.payload.sender 
+                    ? {
+                        ...item,
+                        messages: [...item.messages, action.payload],
+                        result: item.result + 1
+                    }
+                    : item
                 ),
-                users: state.users.map(user =>
+                users: state.users.map(user => 
                     user._id === action.payload.recipient || user._id === action.payload.sender
-                        ? {
-                            ...user,
-                            text: action.payload.text,
-                            media: action.payload.media,
-                            call: action.payload.call
-                        }
-                        : user
+                    ? {
+                        ...user, 
+                        text: action.payload.text, 
+                        media: action.payload.media,
+                        call: action.payload.call
+                    }
+                    : user
                 )
             };
         case MESS_TYPES.GET_CONVERSATIONS:
@@ -95,10 +61,10 @@ const messageReducer = (state = initialState, action) => {
         case MESS_TYPES.DELETE_MESSAGES:
             return {
                 ...state,
-                data: state.data.map(item =>
+                data: state.data.map(item => 
                     item._id === action.payload._id
-                        ? { ...item, messages: action.payload.newData }
-                        : item
+                    ? {...item, messages: action.payload.newData}
+                    : item
                 )
             };
         case MESS_TYPES.DELETE_CONVERSATION:
@@ -110,10 +76,10 @@ const messageReducer = (state = initialState, action) => {
         case MESS_TYPES.CHECK_ONLINE_OFFLINE:
             return {
                 ...state,
-                users: state.users.map(user =>
+                users: state.users.map(user => 
                     action.payload.includes(user._id)
-                        ? { ...user, online: true }
-                        : { ...user, online: false }
+                    ? {...user, online: true}
+                    : {...user, online: false}
                 )
             };
         default:

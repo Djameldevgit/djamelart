@@ -144,8 +144,8 @@ const CardBodyCarousel = ({ post }) => {
         {post.images.length > 0 && (
           <div className="carousel-container" style={{ 
             position: "relative",
-            height: "400px", // Height fijo para el contenedor
-            maxHeight: "80vh", // Máximo 80% del viewport height
+            height: "400px",
+            maxHeight: "80vh",
             overflow:'hidden'
           }}>
             {/* Fecha de publicación (parte superior) */}
@@ -158,7 +158,7 @@ const CardBodyCarousel = ({ post }) => {
               color: "white",
               padding: "4px 8px",
               borderRadius: "12px",
-              fontSize: "12px",
+              fontSize: "clamp(10px, 1.5vh, 12px)",
               fontWeight: "500"
             }}>
               <small className="textmuted">
@@ -180,7 +180,7 @@ const CardBodyCarousel = ({ post }) => {
               backdropFilter: "blur(5px)",
             }}>
               <div className='card-title' style={{
-                fontSize: "16px",
+                fontSize: "clamp(14px, 2vh, 18px)",
                 fontWeight: "bold",
                 marginBottom: "4px",
                 whiteSpace: "nowrap",
@@ -191,7 +191,7 @@ const CardBodyCarousel = ({ post }) => {
               </div>
               {post.title && (
                 <div style={{
-                  fontSize: "14px",
+                  fontSize: "clamp(12px, 1.5vh, 14px)",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis"
@@ -206,14 +206,14 @@ const CardBodyCarousel = ({ post }) => {
               position: "absolute",
               right: "10px",
               top: "50%",
-              transform: "translateY(-50%)", // Centrado verticalmente
+              transform: "translateY(-50%)",
               zIndex: 2,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: "12px",
-              maxHeight: "calc(100% - 140px)", // Espacio para header y footer
-              overflowY: "auto",
+              gap: "clamp(6px, 2vh, 16px)", // Gap dinámico
+              justifyContent: "center", // Centrado vertical
+              maxHeight: "calc(100% - 140px)",
               paddingTop: "10px",
               paddingBottom: "10px"
             }}>
@@ -223,14 +223,14 @@ const CardBodyCarousel = ({ post }) => {
                   display: "flex", 
                   flexDirection: "column", 
                   alignItems: "center",
-                  marginBottom: "8px",
+                  gap: "2px", // Gap interno optimizado
                   cursor: "pointer"
                 }}
                 onClick={() => history.push(`/profile/${post.user._id}`)}
               >
                 <div style={{
-                  width: "48px",
-                  height: "48px",
+                  width: "clamp(36px, 6vh, 48px)",
+                  height: "clamp(36px, 6vh, 48px)",
                   borderRadius: "50%",
                   border: "2px solid white",
                   overflow: "hidden",
@@ -256,7 +256,7 @@ const CardBodyCarousel = ({ post }) => {
                       justifyContent: "center",
                       backgroundColor: "#667eea",
                       color: "white",
-                      fontSize: "18px",
+                      fontSize: "clamp(14px, 2.5vh, 18px)",
                       fontWeight: "bold"
                     }}>
                       {post.user?.username?.charAt(0).toUpperCase() || "A"}
@@ -266,7 +266,12 @@ const CardBodyCarousel = ({ post }) => {
               </div>
 
               {/* Botón de like */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center",
+                gap: "2px" // Gap interno optimizado
+              }}>
                 <div
                   style={{
                     cursor: "pointer",
@@ -277,8 +282,8 @@ const CardBodyCarousel = ({ post }) => {
                     alignItems: "center",
                     justifyContent: "center",
                     opacity: loadLike ? 0.7 : 1,
-                    width: "40px",
-                    height: "40px",
+                    width: "clamp(32px, 5vh, 40px)",
+                    height: "clamp(32px, 5vh, 40px)",
                     transition: "transform 0.2s ease",
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
@@ -288,7 +293,7 @@ const CardBodyCarousel = ({ post }) => {
                   <span
                     className="material-icons"
                     style={{
-                      fontSize: "24px",
+                      fontSize: "clamp(18px, 3vh, 24px)",
                       color: isLike ? "#F91880" : "white"
                     }}
                   >
@@ -296,10 +301,9 @@ const CardBodyCarousel = ({ post }) => {
                   </span>
                 </div>
                 <span style={{
-                  fontSize: "12px",
+                  fontSize: "clamp(10px, 1.5vh, 12px)",
                   fontWeight: "bold",
                   color: "white",
-                  marginTop: "4px",
                   textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
                 }}>
                   {post.likes.length}
@@ -307,7 +311,12 @@ const CardBodyCarousel = ({ post }) => {
               </div>
 
               {/* Botón de guardar */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center",
+                gap: "2px" // Gap interno optimizado
+              }}>
                 <div
                   style={{
                     cursor: "pointer",
@@ -317,8 +326,8 @@ const CardBodyCarousel = ({ post }) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: "40px",
-                    height: "40px",
+                    width: "clamp(32px, 5vh, 40px)",
+                    height: "clamp(32px, 5vh, 40px)",
                     transition: "transform 0.2s ease",
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
@@ -328,7 +337,7 @@ const CardBodyCarousel = ({ post }) => {
                   <span
                     className="material-icons"
                     style={{
-                      fontSize: "24px",
+                      fontSize: "clamp(18px, 3vh, 24px)",
                       color: saved ? "#ff8c00" : "white",
                       opacity: saveLoad ? 0.5 : 1
                     }}
@@ -339,7 +348,12 @@ const CardBodyCarousel = ({ post }) => {
               </div>
 
               {/* Botón de comprar */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center",
+                gap: "2px" // Gap interno optimizado
+              }}>
                 <div
                   style={{
                     cursor: "pointer",
@@ -351,8 +365,8 @@ const CardBodyCarousel = ({ post }) => {
                     justifyContent: "center",
                     border: `2px solid ${inCart ? "#F44336" : "#4CAF50"}`,
                     opacity: buyLoad ? 0.7 : 1,
-                    width: "40px",
-                    height: "40px",
+                    width: "clamp(32px, 5vh, 40px)",
+                    height: "clamp(32px, 5vh, 40px)",
                     transition: "transform 0.2s ease",
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
@@ -361,7 +375,7 @@ const CardBodyCarousel = ({ post }) => {
                   title={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
                 >
                   <span className="material-icons" style={{
-                    fontSize: "24px",
+                    fontSize: "clamp(18px, 3vh, 24px)",
                     color: inCart ? "#F44336" : "#4CAF50"
                   }}>
                     {buyLoad ? "hourglass_empty" : "shopping_cart"}
@@ -370,7 +384,12 @@ const CardBodyCarousel = ({ post }) => {
               </div>
 
               {/* Contador de vistas */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center",
+                gap: "2px" // Gap interno optimizado
+              }}>
                 <div style={{
                   backgroundColor: "rgba(0, 0, 0, 0.5)",
                   borderRadius: "50%",
@@ -378,18 +397,20 @@ const CardBodyCarousel = ({ post }) => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  width: "40px",
-                  height: "40px"
+                  width: "clamp(32px, 5vh, 40px)",
+                  height: "clamp(32px, 5vh, 40px)"
                 }}>
-                  <span className="material-icons" style={{ fontSize: "24px", color: "white" }}>
+                  <span className="material-icons" style={{ 
+                    fontSize: "clamp(18px, 3vh, 24px)", 
+                    color: "white" 
+                  }}>
                     visibility
                   </span>
                 </div>
                 <span style={{
-                  fontSize: "12px",
+                  fontSize: "clamp(10px, 1.5vh, 12px)",
                   fontWeight: "bold",
                   color: "white",
-                  marginTop: "4px",
                   textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
                 }}>
                   {post.views || 0}
@@ -406,7 +427,12 @@ const CardBodyCarousel = ({ post }) => {
               )}
 
               {/* Botón de compartir */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center",
+                gap: "2px" // Gap interno optimizado
+              }}>
                 <div
                   style={{
                     cursor: "pointer",
@@ -416,15 +442,18 @@ const CardBodyCarousel = ({ post }) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: "40px",
-                    height: "40px",
+                    width: "clamp(32px, 5vh, 40px)",
+                    height: "clamp(32px, 5vh, 40px)",
                     transition: "transform 0.2s ease",
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
                   onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
                   onClick={handleShare}
                 >
-                  <span className="material-icons" style={{ fontSize: "24px", color: "white" }}>
+                  <span className="material-icons" style={{ 
+                    fontSize: "clamp(18px, 3vh, 24px)", 
+                    color: "white" 
+                  }}>
                     share
                   </span>
                 </div>

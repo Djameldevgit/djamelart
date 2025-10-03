@@ -23,7 +23,7 @@ const AccordionTitles = () => {
   const { t } = useTranslation("info");
 
   const goToSection = (section) => {
-    history.push("/infoAplicacion", { scrollTo: section });
+    history.push("/infoaAplicacion", { scrollTo: section });
   };
 
   const mainTitles = [

@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
-import UserCard from '../UserCard'
+ 
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import MsgDisplay from './MsgDisplay'
-import Icons from '../Icons'
+ 
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import { imageShow, videoShow } from '../../utils/mediaShow'
 import { imageUpload } from '../../utils/imageUpload'
 import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '../../redux/actions/messageAction'
-import LoadIcon from '../../images/loading.gif'
+ 
 import { useTranslation } from 'react-i18next'
 import Avatar from '../Avatar'
 import { Card, Form, Button, Badge, Spinner, Alert, Container } from 'react-bootstrap'
