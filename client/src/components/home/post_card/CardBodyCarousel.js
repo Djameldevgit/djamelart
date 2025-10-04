@@ -1,48 +1,81 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Card } from 'react-bootstrap';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Card, Dropdown, Modal, Form, Alert, Button } from 'react-bootstrap';
 import Carousel from '../../Carousel';
-import { likePost, unLikePost, savePost, unSavePost } from '../../../redux/actions/postAction';
+import { likePost, unLikePost, savePost, unSavePost, deletePost } from '../../../redux/actions/postAction';
 import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import ShareModal from '../../ShareModal';
+import moment from 'moment';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
+// React Share imports
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  TelegramShareButton,
+  EmailShareButton,
+  FacebookIcon,
+  TwitterIcon,
+  WhatsappIcon,
+  TelegramIcon,
+  EmailIcon,
+  PinterestShareButton,
+  PinterestIcon
+} from 'react-share';
+
+import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
+import { MESS_TYPES } from '../../../redux/actions/messageAction';
+import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
+import { createReport } from '../../../redux/actions/reportUserAction';
+import FollowBtn from '../../FollowBtn';
+
+// Importar los modales
+import AuthModal from '../../authAndVerify/AuthModal';
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
-import moment from 'moment';
 
 const CardBodyCarousel = ({ post }) => {
-  const { languageReducer, auth, socket } = useSelector((state) => state);
+  const { languageReducer, auth, socket, homeUsers, profile } = useSelector((state) => state);
   const [isLike, setIsLike] = useState(false);
   const [loadLike, setLoadLike] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveLoad, setSaveLoad] = useState(false);
   const [buyLoad, setBuyLoad] = useState(false);
   const [inCart, setInCart] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [showBuyMessage, setShowBuyMessage] = useState(false);
+  
+  // Estados para modales
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
-  const [showShareOptions, setShowShareOptions] = useState(false);
-  const [isShare, setIsShare] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
-  const shareModalRef = useRef(null);
-  const optionsModalRef = useRef(null);
-
-  const { t } = useTranslation('cardbodycarousel');
-  const lang = languageReducer.language || 'en';
-  const history = useHistory();
-  const dispatch = useDispatch();
+  const [reportReason, setReportReason] = useState('');
+  const [copied, setCopied] = useState(false);
   
   // Estados locales que deben resetearse cuando cambia el post
   const [showInfo, setShowInfo] = useState(false);
   const [isTouching, setIsTouching] = useState(false);
+
+  const { t, i18n } = useTranslation('cardbodycarousel');
+  const lang = languageReducer.language || 'en';
+  const history = useHistory();
+  const dispatch = useDispatch();
+  
+  // Refs para manejar clicks fuera
+  const optionsModalRef = useRef(null);
+  const cardRef = useRef(null);
 
   // Resetear estados cuando cambia el post
   useEffect(() => {
     setShowInfo(false);
     setIsTouching(false);
     setShowOptionsModal(false);
+    setShowShareModal(false);
+    setShowReportModal(false);
   }, [post._id]);
 
   // Cerrar modal de opciones al hacer click fuera
@@ -62,23 +95,10 @@ const CardBodyCarousel = ({ post }) => {
     };
   }, [showOptionsModal]);
 
-  // Handlers para mostrar/ocultar información
-  const handleImageClick = () => {
-    setShowInfo(prev => !prev);
-  };
-
-  const handleTouchStart = () => {
-    setIsTouching(true);
-  };
-
-  const handleTouchEnd = () => {
-    setIsTouching(false);
-    setTimeout(() => setShowInfo(prev => !prev), 100);
-  };
-
-  const canProceed = () => {
+  // Función canProceed unificada
+  const canProceed = useCallback(() => {
     if (!auth.token || !auth.user) {
-      setShowModal(true);
+      setShowAuthModal(true);
       return false;
     }
 
@@ -93,14 +113,153 @@ const CardBodyCarousel = ({ post }) => {
     }
 
     return true;
-  };
+  }, [auth]);
+
+  // Handlers para mostrar/ocultar información
+  const handleImageClick = useCallback(() => {
+    setShowInfo(prev => !prev);
+  }, []);
+
+  const handleTouchStart = useCallback(() => {
+    setIsTouching(true);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    setIsTouching(false);
+    setTimeout(() => setShowInfo(prev => !prev), 100);
+  }, []);
+
+  // URL y texto para compartir
+  const shareUrl = `${window.location.origin}/post/${post._id}`;
+  const shareTitle = `🎨 Obra de arte por ${post.user?.username || 'Artista'}: "${post.content?.substring(0, 80)}..." - Mira más en Tassili Art`;
+  const imageUrl = post.images?.[0]?.url || post.user?.avatar;
+
+  // Encontrar usuario completo
+  const findCompleteUser = useCallback(() => {
+    const completeUser = profile.users?.find(u => u._id === post.user?._id);
+    return completeUser || post.user;
+  }, [post.user, profile.users]);
+
+  const user = findCompleteUser();
+
+  // Verificar si el usuario actual es el dueño del post o es admin
+  const isPostOwner = auth.user && post.user && auth.user._id === post.user._id;
+  const isAdmin = auth.user && auth.user.role === "admin";
+
+  // ========== FUNCIONES DEL COMPONENTE CARDHEADER ==========
+
+  const handleAprove = useCallback(() => {
+    if (window.confirm(t('confirmApprove'))) {
+      dispatch(aprovarPostPendiente(post, 'aprovado', auth));
+      history.push("/administration/homepostspendientes");
+    }
+  }, [post, auth, dispatch, history, t]);
+
+  const adminUser = homeUsers.users?.find(user => user.role === "admin");
+
+  const handleChatWithAdmin = useCallback(() => {
+    if (!canProceed()) return;
+
+    if (!adminUser) {
+      return dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: t('noAdminAvailable') }
+      });
+    }
+    handleAddUser(adminUser);
+  }, [canProceed, adminUser, dispatch, t]);
+
+  const handleEditPost = useCallback(() => {
+    if (!canProceed()) return;
+    dispatch({ type: GLOBALTYPES.STATUS, payload: { ...post, onEdit: true } });
+    setShowOptionsModal(false);
+  }, [canProceed, post, dispatch]);
+
+  const handleDeletePost = useCallback(() => {
+    if (!canProceed()) return;
+
+    if (window.confirm(t('confirmDelete'))) {
+      dispatch(deletePost({ post, auth, socket }));
+      setShowOptionsModal(false);
+    }
+  }, [canProceed, post, auth, socket, dispatch, t]);
+
+  const handleSubmitReport = useCallback(() => {
+    if (!canProceed()) return;
+
+    if (!reportReason.trim()) {
+      return dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: t('reportRequired') }
+      });
+    }
+
+    const reportData = {
+      postId: post._id,
+      userId: post.user._id,
+      reason: reportReason,
+    };
+
+    dispatch(createReport({ auth, reportData }));
+    setShowReportModal(false);
+    setReportReason('');
+    setShowOptionsModal(false);
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { success: t('reportSubmitted') }
+    });
+  }, [canProceed, reportReason, post, auth, dispatch, t]);
+
+  const handleAddUser = useCallback((user) => {
+    if (!canProceed()) return;
+
+    dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...user, text: '', media: [] } });
+    history.push(`/message/${user._id}`);
+  }, [canProceed, dispatch, history]);
+
+  const handleShare = useCallback(() => {
+    setShowShareModal(true);
+    setShowOptionsModal(false);
+  }, []);
+
+  const handleContactSeller = useCallback(() => {
+    if (!canProceed()) return;
+    handleAddUser(post.user);
+    setShowOptionsModal(false);
+  }, [canProceed, post.user, handleAddUser]);
+
+  const handleCopy = useCallback((message) => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { success: message }
+    });
+  }, [dispatch]);
+
+  const handleSavePostAction = useCallback(async () => {
+    if (!canProceed() || saveLoad) return;
+    
+    if (saved) {
+      setSaveLoad(true);
+      await dispatch(unSavePost({ post, auth }));
+      setSaveLoad(false);
+    } else {
+      setSaveLoad(true);
+      await dispatch(savePost({ post, auth }));
+      setSaveLoad(false);
+    }
+    setShowOptionsModal(false);
+  }, [canProceed, saveLoad, saved, dispatch, post, auth]);
+
+  // ========== FUNCIONES ORIGINALES DEL COMPONENTE ==========
 
   useEffect(() => {
     if (auth.token) dispatch(loadCart(auth.token));
   }, [auth.token, dispatch]);
 
   useEffect(() => {
-    if (auth.user && post.likes.find((like) => like._id === auth.user._id)) {
+    if (auth.user && post.likes?.find((like) => like._id === auth.user._id)) {
       setIsLike(true);
     } else {
       setIsLike(false);
@@ -120,7 +279,7 @@ const CardBodyCarousel = ({ post }) => {
     setInCart(cartItems.some(item => item.postId === post._id));
   }, [auth.user?.cart, post._id]);
 
-  const handleLike = async () => {
+  const handleLike = useCallback(async () => {
     if (!canProceed() || loadLike) return;
     
     if (isLike) {
@@ -132,16 +291,9 @@ const CardBodyCarousel = ({ post }) => {
       await dispatch(likePost({ post, auth, socket, t, languageReducer }));
       setLoadLike(false);
     }
-  };
+  }, [canProceed, loadLike, isLike, dispatch, post, auth, socket, t, languageReducer]);
 
-  const handleUnLike = async () => {
-    if (!canProceed() || loadLike) return;
-    setLoadLike(true);
-    await dispatch(unLikePost({ post, auth, socket, t, languageReducer }));
-    setLoadLike(false);
-  };
-
-  const handleSavePost = async () => {
+  const handleSavePost = useCallback(async () => {
     if (!canProceed() || saveLoad) return;
     
     if (saved) {
@@ -153,16 +305,9 @@ const CardBodyCarousel = ({ post }) => {
       await dispatch(savePost({ post, auth }));
       setSaveLoad(false);
     }
-  };
+  }, [canProceed, saveLoad, saved, dispatch, post, auth]);
 
-  const handleUnSavePost = async () => {
-    if (!canProceed() || saveLoad) return;
-    setSaveLoad(true);
-    await dispatch(unSavePost({ post, auth }));
-    setSaveLoad(false);
-  };
-
-  const handleBuyProduct = async () => {
+  const handleBuyProduct = useCallback(async () => {
     if (!canProceed() || buyLoad) return;
     setBuyLoad(true);
     try {
@@ -176,63 +321,53 @@ const CardBodyCarousel = ({ post }) => {
     } finally {
       setBuyLoad(false);
     }
-  };
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: post.title || 'Mira esta publicación',
-        text: post.content || 'Echa un vistazo a esta publicación',
-        url: window.location.href,
-      })
-        .catch((error) => console.log('Error sharing', error));
-    } else {
-      setShowShareOptions(true);
-    }
-  };
+  }, [canProceed, buyLoad, dispatch, post, auth]);
 
   // Handler para las opciones del modal
-  const handleOptionClick = (option) => {
-    setShowOptionsModal(false);
-    
+  const handleOptionClick = useCallback((option) => {
     switch (option) {
       case 'edit':
-        // Lógica para editar post
-        console.log('Editar post:', post._id);
+        handleEditPost();
         break;
       case 'delete':
-        // Lógica para eliminar post
-        console.log('Eliminar post:', post._id);
+        handleDeletePost();
         break;
       case 'contact':
-        // Lógica para contactar al artista
-        console.log('Contactar artista:', post.user?._id);
+        handleContactSeller();
         break;
       case 'report':
-        // Lógica para denunciar publicación
-        console.log('Denunciar publicación:', post._id);
+        setShowReportModal(true);
         break;
       case 'share':
         handleShare();
         break;
       case 'save':
-        handleSavePost();
+        handleSavePostAction();
+        break;
+      case 'follow':
+        // La lógica de follow está en el botón FollowBtn
         break;
       default:
         break;
     }
-  };
+  }, [handleEditPost, handleDeletePost, handleContactSeller, handleShare, handleSavePostAction]);
 
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
     return new Date(dateString).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', options);
-  };
-
-  // Verificar si el usuario actual es el dueño del post
-  const isPostOwner = auth.user && post.user && auth.user._id === post.user._id;
+  }, [lang]);
 
   return (
-    <div>
+    <div 
+      ref={cardRef}
+      style={{
+        marginBottom: '24px',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        background: '#ffffff'
+      }}
+    >
       <div className="card_body">
         {post.images.length > 0 && (
           <>
@@ -262,8 +397,8 @@ const CardBodyCarousel = ({ post }) => {
                       width: "44px",
                       height: "44px",
                       borderRadius: "50%",
-                      background: post.user?.avatar 
-                        ? `url(${post.user.avatar}) center/cover`
+                      background: user?.avatar 
+                        ? `url(${user.avatar}) center/cover`
                         : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                       border: "2px solid #f0f0f0",
                       cursor: "pointer",
@@ -271,7 +406,7 @@ const CardBodyCarousel = ({ post }) => {
                     }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      history.push(`/profile/${post.user?._id}`);
+                      history.push(`/profile/${user?._id}`);
                     }}
                   />
                   
@@ -291,9 +426,9 @@ const CardBodyCarousel = ({ post }) => {
                         overflow: "hidden",
                         textOverflow: "ellipsis"
                       }}>
-                        {post.user?.username || "Artista"}
+                        {user?.username || "Usuario"}
                       </span>
-                      {post.user?.isVerified && (
+                      {user?.isVerified && (
                         <span className="material-icons" style={{ 
                           fontSize: "16px", 
                           color: "#0095f6",
@@ -307,7 +442,7 @@ const CardBodyCarousel = ({ post }) => {
                       fontSize: "13px",
                       color: "#666"
                     }}>
-                      {post.user?.followers?.length || 0} seguidores
+                      {user?.followers?.length || 0} seguidores
                     </div>
                   </div>
                 </div>
@@ -319,43 +454,15 @@ const CardBodyCarousel = ({ post }) => {
                   gap: "8px"
                 }}>
                   {/* Botón Seguir */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Aquí iría la lógica para seguir al usuario
-                      console.log("Seguir usuario:", post.user?._id);
-                    }}
-                    style={{
-                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      border: "none",
-                      color: "white",
-                      padding: "8px 20px",
-                      borderRadius: "20px",
-                      fontSize: "14px",
-                      fontWeight: "600",
-                      cursor: "pointer",
+                  {auth.user && auth.user._id !== user?._id && (
+                    <div style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "6px",
-                      transition: "all 0.3s ease",
-                      minWidth: "100px",
-                      justifyContent: "center",
-                      flexShrink: 0
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.background = "linear-gradient(135deg, #764ba2 0%, #667eea 100%)";
-                      e.target.style.transform = "scale(1.05)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.background = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
-                      e.target.style.transform = "scale(1)";
-                    }}
-                  >
-                    <span className="material-icons" style={{ fontSize: "16px" }}>
-                      person_add
-                    </span>
-                    <span>Seguir</span>
-                  </button>
+                      gap: "6px"
+                    }}>
+                      <FollowBtn user={user} />
+                    </div>
+                  )}
 
                   {/* Icono de tres puntos */}
                   <button
@@ -398,7 +505,7 @@ const CardBodyCarousel = ({ post }) => {
                 gap: "8px",
                 fontSize: "13px",
                 color: "#888",
-                paddingLeft: "56px" // Para alinear con el avatar
+                paddingLeft: "56px"
               }}>
                 <span className="material-icons" style={{ 
                   fontSize: "14px",
@@ -445,8 +552,8 @@ const CardBodyCarousel = ({ post }) => {
                     flexDirection: 'column',
                     gap: '8px'
                   }}>
-                    {/* Opciones para el dueño del post */}
-                    {isPostOwner && (
+                    {/* Opciones para admin */}
+                    {isAdmin && (
                       <>
                         <button
                           onClick={() => handleOptionClick('edit')}
@@ -463,11 +570,32 @@ const CardBodyCarousel = ({ post }) => {
                             gap: '12px',
                             transition: 'background-color 0.2s ease'
                           }}
-                          onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = 'transparent';
+                        >
+                          <span className="material-icons" style={{ color: '#666' }}>
+                            check_circle
+                          </span>
+                          Aprobar publicación
+                        </button>
+                      </>
+                    )}
+
+                    {/* Opciones para el dueño del post o admin */}
+                    {(isPostOwner || isAdmin) && (
+                      <>
+                        <button
+                          onClick={() => handleOptionClick('edit')}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: '16px 24px',
+                            textAlign: 'left',
+                            fontSize: '16px',
+                            color: '#333',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            transition: 'background-color 0.2s ease'
                           }}
                         >
                           <span className="material-icons" style={{ color: '#666' }}>
@@ -490,12 +618,6 @@ const CardBodyCarousel = ({ post }) => {
                             alignItems: 'center',
                             gap: '12px',
                             transition: 'background-color 0.2s ease'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = 'transparent';
                           }}
                         >
                           <span className="material-icons" style={{ color: '#e74c3c' }}>
@@ -522,12 +644,6 @@ const CardBodyCarousel = ({ post }) => {
                         gap: '12px',
                         transition: 'background-color 0.2s ease'
                       }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = 'transparent';
-                      }}
                     >
                       <span className="material-icons" style={{ color: '#666' }}>
                         chat
@@ -549,12 +665,6 @@ const CardBodyCarousel = ({ post }) => {
                         alignItems: 'center',
                         gap: '12px',
                         transition: 'background-color 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = 'transparent';
                       }}
                     >
                       <span className="material-icons" style={{ color: '#666' }}>
@@ -578,17 +688,34 @@ const CardBodyCarousel = ({ post }) => {
                         gap: '12px',
                         transition: 'background-color 0.2s ease'
                       }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = 'transparent';
-                      }}
                     >
                       <span className="material-icons" style={{ color: '#666' }}>
                         {saved ? 'bookmark' : 'bookmark_border'}
                       </span>
                       {saved ? 'Guardado' : 'Guardar publicación'}
+                    </button>
+
+                    {/* Contactar con Admin */}
+                    <button
+                      onClick={handleChatWithAdmin}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '16px 24px',
+                        textAlign: 'left',
+                        fontSize: '16px',
+                        color: '#333',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        transition: 'background-color 0.2s ease'
+                      }}
+                    >
+                      <span className="material-icons" style={{ color: '#666' }}>
+                        admin_panel_settings
+                      </span>
+                      Contactar con Admin
                     </button>
 
                     {/* Opción de denuncia (si no es el dueño) */}
@@ -607,12 +734,6 @@ const CardBodyCarousel = ({ post }) => {
                           alignItems: 'center',
                           gap: '12px',
                           transition: 'background-color 0.2s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = 'transparent';
                         }}
                       >
                         <span className="material-icons" style={{ color: '#e74c3c' }}>
@@ -638,12 +759,6 @@ const CardBodyCarousel = ({ post }) => {
                           fontWeight: '600',
                           transition: 'background-color 0.2s ease'
                         }}
-                        onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-                        }}
                       >
                         Cancelar
                       </button>
@@ -663,13 +778,13 @@ const CardBodyCarousel = ({ post }) => {
                 maxHeight: "80vh",
                 overflow: 'hidden',
                 cursor: 'pointer',
-                borderRadius: "0 0 12px 12px"
+                borderRadius: "0 0 12px 12px",
+                background: '#f8f9fa' // Fondo para imágenes cortas
               }}
               onClick={handleImageClick}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
             >
-              {/* ... (el resto del código del carousel se mantiene igual) */}
               {/* Información del artista (ocultable con animación) */}
               <div style={{
                 position: "absolute",
@@ -693,7 +808,171 @@ const CardBodyCarousel = ({ post }) => {
                 flexDirection: 'column',
                 gap: '12px'
               }}>
-                {/* ... (contenido del card footer) */}
+                
+                {/* Contenido de la información */}
+                {post.title && (
+                  <div style={{
+                    fontSize: "clamp(16px, 2.5vh, 20px)",
+                    opacity: showInfo ? 0.95 : 0,
+                    lineHeight: "1.4",
+                    fontWeight: "600",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
+                    transition: 'all 0.3s ease 0.1s'
+                  }}>
+                    {post.title}
+                  </div>
+                )}
+
+                {post.content && (
+                  <div style={{
+                    fontSize: "clamp(14px, 2vh, 16px)",
+                    opacity: showInfo ? 0.8 : 0,
+                    lineHeight: "1.4",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
+                    transition: 'all 0.3s ease 0.2s'
+                  }}>
+                    {post.content}
+                  </div>
+                )}
+
+                {/* Estadísticas */}
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingTop: "8px",
+                  borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+                  opacity: showInfo ? 1 : 0,
+                  transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
+                  transition: 'all 0.3s ease 0.3s'
+                }}>
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "20px",
+                    flexWrap: "wrap"
+                  }}>
+                    {/* Like */}
+                    <div 
+                      style={{ 
+                        display: "flex", 
+                        alignItems: "center", 
+                        gap: "6px",
+                        cursor: "pointer",
+                        padding: "6px 12px",
+                        borderRadius: "20px",
+                        background: "rgba(255, 255, 255, 0.1)",
+                        transition: "all 0.2s ease"
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleLike();
+                      }}
+                    >
+                      <span 
+                        className="material-icons" 
+                        style={{ 
+                          fontSize: "18px", 
+                          color: isLike ? "#ff3040" : "white"
+                        }}
+                      >
+                        {isLike ? "favorite" : "favorite_border"}
+                      </span>
+                      <span style={{ 
+                        fontSize: "13px", 
+                        color: "white", 
+                        fontWeight: "500"
+                      }}>
+                        {post.likes?.length || 0}
+                      </span>
+                    </div>
+
+                    {/* Comment */}
+                    <div 
+                      style={{ 
+                        display: "flex", 
+                        alignItems: "center", 
+                        gap: "6px",
+                        cursor: "pointer",
+                        padding: "6px 12px",
+                        borderRadius: "20px",
+                        background: "rgba(255, 255, 255, 0.1)"
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        history.push(`/post/${post._id}#comments`);
+                      }}
+                    >
+                      <span className="material-icons" style={{ fontSize: "18px" }}>
+                        chat_bubble_outline
+                      </span>
+                      <span style={{ fontSize: "13px", fontWeight: "500" }}>
+                        {post.comments?.length || 0}
+                      </span>
+                    </div>
+
+                    {/* Share */}
+                    <div 
+                      style={{ 
+                        display: "flex", 
+                        alignItems: "center", 
+                        gap: "6px",
+                        cursor: "pointer",
+                        padding: "6px 12px",
+                        borderRadius: "20px",
+                        background: "rgba(255, 255, 255, 0.1)"
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShare();
+                      }}
+                    >
+                      <span className="material-icons" style={{ fontSize: "18px" }}>
+                        share
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Botón Más Detalles */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      history.push(`/post/${post._id}`);
+                    }}
+                    style={{
+                      background: "rgba(255, 255, 255, 0.2)",
+                      border: "1px solid rgba(255, 255, 255, 0.3)",
+                      color: "white",
+                      padding: "8px 16px",
+                      borderRadius: "20px",
+                      fontSize: "clamp(11px, 1.5vh, 13px)",
+                      fontWeight: "500",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      transition: "all 0.3s ease",
+                      backdropFilter: "blur(10px)",
+                      opacity: showInfo ? 1 : 0,
+                      transform: showInfo ? 'translateX(0)' : 'translateX(10px)'
+                    }}
+                  >
+                    <span>Detalles</span>
+                    <span className="material-icons" style={{ fontSize: "16px" }}>
+                      arrow_forward
+                    </span>
+                  </button>
+                </div>
               </div>
 
               {/* Indicador visual cuando la información está oculta */}
@@ -715,32 +994,23 @@ const CardBodyCarousel = ({ post }) => {
                   animation: "pulse 2s infinite",
                   cursor: "pointer"
                 }}>
-                  <span className="material-icons" style={{ 
-                    fontSize: "14px",
-                    marginRight: "4px"
-                  }}>
+                  <span className="material-icons" style={{ fontSize: "14px", marginRight: "4px" }}>
                     touch_app
                   </span>
                   Toca para ver info
                 </div>
               )}
 
-              {/* Carousel */}
-              <div className="card" style={{ height: "100%" }}>
-                <div 
-                  className="card__image" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    history.push(``);
-                  }}
-                  style={{
-                    height: "100%",
-                    cursor: "pointer"
-                  }}
-                >
-                  <div style={{ height: "100%" }}>
-                    <Carousel images={post.images} id={post._id} />
-                  </div>
+              {/* Carousel con fondo */}
+              <div className="card" style={{ 
+                height: "100%",
+                background: '#f8f9fa',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <div className="card__image" style={{ height: "100%", width: "100%" }}>
+                  <Carousel images={post.images} id={post._id} />
                 </div>
               </div>
             </div>
@@ -748,7 +1018,7 @@ const CardBodyCarousel = ({ post }) => {
         )}
       </div>
 
-      {/* Agregar estilos CSS para las animaciones */}
+      {/* Estilos CSS */}
       <style>
         {`
           @keyframes fadeIn {
@@ -760,57 +1030,166 @@ const CardBodyCarousel = ({ post }) => {
             from { transform: translateY(100%); }
             to { transform: translateY(0); }
           }
+          
+          @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+          }
         `}
       </style>
 
-      {/* Resto de los modales... */}
-      {showShareOptions && (
-        <ShareModal 
-          show={showShareOptions} 
-          onClose={() => setShowShareOptions(false)}
-          post={post}
-        />
-      )}
+      {/* Modal para Compartir */}
+      <Modal 
+        show={showShareModal} 
+        onHide={() => setShowShareModal(false)} 
+        centered 
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>🎨 Compartir Arte</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {copied && (
+            <Alert variant="success" className="py-2" dismissible onClose={() => setCopied(false)}>
+              ✅ Enlace copiado al portapapeles
+            </Alert>
+          )}
 
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content" style={{ position: 'relative' }}>
-            <button
-              onClick={() => setShowModal(false)}
-              style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                background: 'none',
-                border: 'none',
-                fontSize: '1.8rem',
-                color: '#333',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                lineHeight: '1',
-              }}
-              aria-label="Cerrar"
-            >
-              ×
-            </button>
+          <h6 className="mb-3">Compartir en redes sociales</h6>
+          <div className="d-flex justify-content-around flex-wrap mb-4">
+            <FacebookShareButton url={shareUrl} quote={shareTitle} className="mx-2 my-2">
+              <FacebookIcon size={45} round />
+              <div className="small mt-1 text-center">Facebook</div>
+            </FacebookShareButton>
 
-            <h4>{t("title2", { lng: languageReducer.language })}</h4>
-            <p>{t("message2", { lng: languageReducer.language })}</p>
-            <div className="modal-buttons">
-              <button onClick={() => history.push("/login")}>
-                {t("login2", { lng: languageReducer.language })}
-              </button>
-              <button onClick={() => history.push("/register")}>
-                {t("register2", { lng: languageReducer.language })}
-              </button>
-              <button onClick={() => setShowModal(false)}>
-                {t("close2", { lng: languageReducer.language })}
-              </button>
-            </div>
+            <TwitterShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
+              <TwitterIcon size={45} round />
+              <div className="small mt-1 text-center">Twitter</div>
+            </TwitterShareButton>
+
+            <WhatsappShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
+              <WhatsappIcon size={45} round />
+              <div className="small mt-1 text-center">WhatsApp</div>
+            </WhatsappShareButton>
+
+            {imageUrl && (
+              <PinterestShareButton
+                url={shareUrl}
+                media={imageUrl}
+                description={shareTitle}
+                className="mx-2 my-2"
+              >
+                <PinterestIcon size={45} round />
+                <div className="small mt-1 text-center">Pinterest</div>
+              </PinterestShareButton>
+            )}
+
+            <TelegramShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
+              <TelegramIcon size={45} round />
+              <div className="small mt-1 text-center">Telegram</div>
+            </TelegramShareButton>
+
+            <EmailShareButton url={shareUrl} subject="Obra de Arte" body={shareTitle} className="mx-2 my-2">
+              <EmailIcon size={45} round />
+              <div className="small mt-1 text-center">Email</div>
+            </EmailShareButton>
           </div>
-        </div>
-      )}
 
+          <h6 className="mb-3">Compartir manualmente</h6>
+          <Form.Group className="mb-3">
+            <Form.Label>Texto para compartir</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={shareTitle}
+              readOnly
+              className="mb-2"
+            />
+            <CopyToClipboard
+              text={shareTitle}
+              onCopy={() => handleCopy('Texto copiado al portapapeles')}
+            >
+              <Button variant="outline-primary" size="sm">
+                📋 Copiar texto
+              </Button>
+            </CopyToClipboard>
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Enlace de la publicación</Form.Label>
+            <div className="input-group">
+              <Form.Control
+                type="text"
+                value={shareUrl}
+                readOnly
+              />
+              <CopyToClipboard
+                text={shareUrl}
+                onCopy={() => handleCopy('Enlace copiado al portapapeles')}
+              >
+                <Button variant="outline-secondary" type="button">
+                  📋
+                </Button>
+              </CopyToClipboard>
+            </div>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowShareModal(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal de Reporte */}
+      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Reportar Publicación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="reportReason">
+            <Form.Label>Motivo del reporte</Form.Label>
+            <Form.Select
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+            >
+              <option value="">Selecciona un motivo</option>
+              <option value="abuse">Acoso o abuso</option>
+              <option value="spam">Spam</option>
+              <option value="terms">Violación de términos</option>
+              <option value="offensive">Contenido ofensivo</option>
+              <option value="fraud">Fraude o estafa</option>
+              <option value="impersonation">Suplantación de identidad</option>
+              <option value="inappropriate">Contenido inapropiado</option>
+              <option value="privacy">Violación de privacidad</option>
+              <option value="disruption">Alteración del servicio</option>
+              <option value="suspicious">Actividad sospechosa</option>
+              <option value="other">Otro</option>
+            </Form.Select>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setShowReportModal(false);
+              setReportReason('');
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="danger"
+            disabled={!reportReason}
+            onClick={handleSubmitReport}
+          >
+            Enviar Reporte
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Mensaje de compra */}
       {showBuyMessage && (
         <div className="buy-message" style={{
           position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
@@ -827,10 +1206,19 @@ const CardBodyCarousel = ({ post }) => {
         </div>
       )}
 
-      {showVerifyModal && (
-        <VerifyModal show={showVerifyModal} onClose={() => setShowVerifyModal(false)} />
-      )}
-      <DesactivateModal show={showDeactivatedModal} onClose={() => setShowDeactivatedModal(false)} />
+      {/* Modales de verificación */}
+      <AuthModal
+        show={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
+      <VerifyModal
+        show={showVerifyModal}
+        onClose={() => setShowVerifyModal(false)}
+      />
+      <DesactivateModal
+        show={showDeactivatedModal}
+        onClose={() => setShowDeactivatedModal(false)}
+      />
     </div>
   );
 };
