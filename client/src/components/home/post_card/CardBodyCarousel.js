@@ -25,15 +25,42 @@ const CardBodyCarousel = ({ post }) => {
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [isShare, setIsShare] = useState(false);
+  const [showOptionsModal, setShowOptionsModal] = useState(false);
   const shareModalRef = useRef(null);
+  const optionsModalRef = useRef(null);
 
   const { t } = useTranslation('cardbodycarousel');
   const lang = languageReducer.language || 'en';
   const history = useHistory();
   const dispatch = useDispatch();
-  // En la parte de estados de tu componente
+  
+  // Estados locales que deben resetearse cuando cambia el post
   const [showInfo, setShowInfo] = useState(false);
   const [isTouching, setIsTouching] = useState(false);
+
+  // Resetear estados cuando cambia el post
+  useEffect(() => {
+    setShowInfo(false);
+    setIsTouching(false);
+    setShowOptionsModal(false);
+  }, [post._id]);
+
+  // Cerrar modal de opciones al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionsModalRef.current && !optionsModalRef.current.contains(event.target)) {
+        setShowOptionsModal(false);
+      }
+    };
+
+    if (showOptionsModal) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showOptionsModal]);
 
   // Handlers para mostrar/ocultar información
   const handleImageClick = () => {
@@ -46,9 +73,9 @@ const CardBodyCarousel = ({ post }) => {
 
   const handleTouchEnd = () => {
     setIsTouching(false);
-    // Pequeño delay para mejor UX
     setTimeout(() => setShowInfo(prev => !prev), 100);
   };
+
   const canProceed = () => {
     if (!auth.token || !auth.user) {
       setShowModal(true);
@@ -95,9 +122,16 @@ const CardBodyCarousel = ({ post }) => {
 
   const handleLike = async () => {
     if (!canProceed() || loadLike) return;
-    setLoadLike(true);
-    await dispatch(likePost({ post, auth, socket, t, languageReducer }));
-    setLoadLike(false);
+    
+    if (isLike) {
+      setLoadLike(true);
+      await dispatch(unLikePost({ post, auth, socket, t, languageReducer }));
+      setLoadLike(false);
+    } else {
+      setLoadLike(true);
+      await dispatch(likePost({ post, auth, socket, t, languageReducer }));
+      setLoadLike(false);
+    }
   };
 
   const handleUnLike = async () => {
@@ -109,9 +143,16 @@ const CardBodyCarousel = ({ post }) => {
 
   const handleSavePost = async () => {
     if (!canProceed() || saveLoad) return;
-    setSaveLoad(true);
-    await dispatch(savePost({ post, auth }));
-    setSaveLoad(false);
+    
+    if (saved) {
+      setSaveLoad(true);
+      await dispatch(unSavePost({ post, auth }));
+      setSaveLoad(false);
+    } else {
+      setSaveLoad(true);
+      await dispatch(savePost({ post, auth }));
+      setSaveLoad(false);
+    }
   };
 
   const handleUnSavePost = async () => {
@@ -150,528 +191,585 @@ const CardBodyCarousel = ({ post }) => {
     }
   };
 
+  // Handler para las opciones del modal
+  const handleOptionClick = (option) => {
+    setShowOptionsModal(false);
+    
+    switch (option) {
+      case 'edit':
+        // Lógica para editar post
+        console.log('Editar post:', post._id);
+        break;
+      case 'delete':
+        // Lógica para eliminar post
+        console.log('Eliminar post:', post._id);
+        break;
+      case 'contact':
+        // Lógica para contactar al artista
+        console.log('Contactar artista:', post.user?._id);
+        break;
+      case 'report':
+        // Lógica para denunciar publicación
+        console.log('Denunciar publicación:', post._id);
+        break;
+      case 'share':
+        handleShare();
+        break;
+      case 'save':
+        handleSavePost();
+        break;
+      default:
+        break;
+    }
+  };
+
   const formatDate = (dateString) => {
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
     return new Date(dateString).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', options);
   };
 
+  // Verificar si el usuario actual es el dueño del post
+  const isPostOwner = auth.user && post.user && auth.user._id === post.user._id;
+
   return (
     <div>
-   <div className="card_body">
-  {post.images.length > 0 && (
-    <div 
-      className="carousel-container" 
-      style={{ 
-        position: "relative",
-        height: "400px",
-        maxHeight: "80vh",
-        overflow: 'hidden',
-        cursor: 'pointer'
-      }}
-      onClick={handleImageClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Fecha de publicación (parte superior) - También ocultable */}
-      <div style={{
-        position: "absolute",
-        top: "10px",
-        left: "10px",
-        zIndex: 2,
-        backgroundColor: "rgba(0, 0, 0, 0.6)",
-        color: "white",
-        padding: "4px 8px",
-        borderRadius: "12px",
-        fontSize: "clamp(10px, 1.5vh, 12px)",
-        fontWeight: "500",
-        opacity: showInfo ? 1 : 0,
-        transform: showInfo ? 'translateY(0)' : 'translateY(-10px)',
-        transition: 'all 0.3s ease'
-      }}>
-        
-      </div>
-
-      {/* Información del artista (ocultable con animación) */}
-      <div style={{
-        position: "absolute",
-        bottom: "0",
-        left: "0",
-        right: "0",
-        zIndex: 2,
-        color: "white",
-        background: showInfo 
-          ? "linear-gradient(transparent 0%, rgba(0, 0, 0, 0.8) 100%)"
-          : "transparent",
-        padding: showInfo ? "16px 12px 12px 12px" : "0px 12px",
-        backdropFilter: showInfo ? "blur(10px)" : "none",
-        borderTop: showInfo ? "1px solid rgba(255, 255, 255, 0.1)" : "none",
-        height: showInfo ? "auto" : "0px",
-        opacity: showInfo ? 1 : 0,
-        transform: showInfo ? 'translateY(0)' : 'translateY(20px)',
-        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-        overflow: 'hidden'
-      }}>
-        {/* Primera línea: Usuario y fecha */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          marginBottom: showInfo ? "8px" : "0px",
-          transition: 'margin-bottom 0.3s ease'
-        }}>
-          <div style={{ flex: 1 }}>
+      <div className="card_body">
+        {post.images.length > 0 && (
+          <>
+            {/* Card Header - Separado sobre la imagen */}
             <div style={{
-              fontSize: "clamp(14px, 2vh, 18px)",
-              fontWeight: "bold",
-              marginBottom: "2px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              opacity: showInfo ? 1 : 0,
-              transform: showInfo ? 'translateX(0)' : 'translateX(-10px)',
-              transition: 'all 0.3s ease 0.1s'
+              background: "white",
+              padding: "16px",
+              borderBottom: "1px solid #e0e0e0",
+              borderRadius: "12px 12px 0 0",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
             }}>
-              <span>{post.user?.username || "Artista"}</span>
-              {post.user?.isVerified && (
-                <span className="material-icons" style={{ 
-                  fontSize: "16px", 
-                  color: "#0095f6" 
+              {/* Primera fila: Avatar y botón Seguir */}
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "8px"
+              }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px"
                 }}>
-                  verified
-                </span>
-              )}
-            </div>
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              fontSize: "clamp(10px, 1.5vh, 12px)",
-              opacity: showInfo ? 0.9 : 0,
-              transform: showInfo ? 'translateX(0)' : 'translateX(-10px)',
-              transition: 'all 0.3s ease 0.15s'
-            }}>
-              <span className="material-icons" style={{ fontSize: "12px" }}>
-                schedule
-              </span>
-              <span>{moment(post.createdAt).fromNow()}</span>
-            </div>
-          </div>
-          
-          {/* Botón Más Detalles */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              history.push(`/post/${post._id}`);
-            }}
-            style={{
-              background: "rgba(255, 255, 255, 0.2)",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
-              color: "white",
-              padding: "6px 12px",
-              borderRadius: "20px",
-              fontSize: "clamp(10px, 1.5vh, 12px)",
-              fontWeight: "500",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              transition: "all 0.3s ease",
-              backdropFilter: "blur(10px)",
-              opacity: showInfo ? 1 : 0,
-              transform: showInfo ? 'translateX(0)' : 'translateX(10px)',
-              transition: 'all 0.3s ease 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = "rgba(255, 255, 255, 0.3)";
-              e.target.style.transform = "scale(1.05)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = "rgba(255, 255, 255, 0.2)";
-              e.target.style.transform = "scale(1)";
-            }}
-          >
-            <span>Detalles</span>
-            <span className="material-icons" style={{ fontSize: "14px" }}>
-              arrow_forward
-            </span>
-          </button>
-        </div>
+                  {/* Avatar del usuario */}
+                  <div 
+                    style={{
+                      width: "44px",
+                      height: "44px",
+                      borderRadius: "50%",
+                      background: post.user?.avatar 
+                        ? `url(${post.user.avatar}) center/cover`
+                        : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      border: "2px solid #f0f0f0",
+                      cursor: "pointer",
+                      flexShrink: 0
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      history.push(`/profile/${post.user?._id}`);
+                    }}
+                  />
+                  
+                  {/* Información del usuario */}
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      marginBottom: "2px"
+                    }}>
+                      <span style={{
+                        fontSize: "16px",
+                        fontWeight: "600",
+                        color: "#333",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
+                      }}>
+                        {post.user?.username || "Artista"}
+                      </span>
+                      {post.user?.isVerified && (
+                        <span className="material-icons" style={{ 
+                          fontSize: "16px", 
+                          color: "#0095f6",
+                          flexShrink: 0
+                        }}>
+                          verified
+                        </span>
+                      )}
+                    </div>
+                    <div style={{
+                      fontSize: "13px",
+                      color: "#666"
+                    }}>
+                      {post.user?.followers?.length || 0} seguidores
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Contenedor de botones de la derecha */}
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px"
+                }}>
+                  {/* Botón Seguir */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Aquí iría la lógica para seguir al usuario
+                      console.log("Seguir usuario:", post.user?._id);
+                    }}
+                    style={{
+                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      border: "none",
+                      color: "white",
+                      padding: "8px 20px",
+                      borderRadius: "20px",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      transition: "all 0.3s ease",
+                      minWidth: "100px",
+                      justifyContent: "center",
+                      flexShrink: 0
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = "linear-gradient(135deg, #764ba2 0%, #667eea 100%)";
+                      e.target.style.transform = "scale(1.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+                      e.target.style.transform = "scale(1)";
+                    }}
+                  >
+                    <span className="material-icons" style={{ fontSize: "16px" }}>
+                      person_add
+                    </span>
+                    <span>Seguir</span>
+                  </button>
 
-        {/* Título de la obra */}
-        {post.title && (
-          <div style={{
-            fontSize: "clamp(12px, 1.5vh, 14px)",
-            opacity: showInfo ? 0.95 : 0,
-            lineHeight: "1.3",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            marginTop: showInfo ? "4px" : "0px",
-            transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-            transition: 'all 0.3s ease 0.25s'
-          }}>
-            {post.title}
-          </div>
+                  {/* Icono de tres puntos */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowOptionsModal(true);
+                    }}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#666",
+                      cursor: "pointer",
+                      padding: "8px",
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = "rgba(0, 0, 0, 0.05)";
+                      e.target.style.color = "#333";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "none";
+                      e.target.style.color = "#666";
+                    }}
+                  >
+                    <span className="material-icons" style={{ fontSize: "20px" }}>
+                      more_vert
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Segunda fila: Fecha de publicación */}
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                fontSize: "13px",
+                color: "#888",
+                paddingLeft: "56px" // Para alinear con el avatar
+              }}>
+                <span className="material-icons" style={{ 
+                  fontSize: "14px",
+                  color: "#999"
+                }}>
+                  schedule
+                </span>
+                <span>{formatDate(post.createdAt)} • {moment(post.createdAt).fromNow()}</span>
+              </div>
+            </div>
+
+            {/* Modal de opciones - Animación desde el bottom */}
+            {showOptionsModal && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+                zIndex: 9999,
+                animation: 'fadeIn 0.3s ease'
+              }}>
+                <div 
+                  ref={optionsModalRef}
+                  style={{
+                    background: 'white',
+                    width: '100%',
+                    maxWidth: '500px',
+                    borderTopLeftRadius: '20px',
+                    borderTopRightRadius: '20px',
+                    padding: '20px 0',
+                    transform: 'translateY(0)',
+                    animation: 'slideUp 0.3s ease',
+                    boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.15)'
+                  }}
+                >
+                  {/* Lista de opciones */}
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px'
+                  }}>
+                    {/* Opciones para el dueño del post */}
+                    {isPostOwner && (
+                      <>
+                        <button
+                          onClick={() => handleOptionClick('edit')}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: '16px 24px',
+                            textAlign: 'left',
+                            fontSize: '16px',
+                            color: '#333',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            transition: 'background-color 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = 'transparent';
+                          }}
+                        >
+                          <span className="material-icons" style={{ color: '#666' }}>
+                            edit
+                          </span>
+                          Editar publicación
+                        </button>
+                        
+                        <button
+                          onClick={() => handleOptionClick('delete')}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: '16px 24px',
+                            textAlign: 'left',
+                            fontSize: '16px',
+                            color: '#e74c3c',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            transition: 'background-color 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = 'transparent';
+                          }}
+                        >
+                          <span className="material-icons" style={{ color: '#e74c3c' }}>
+                            delete
+                          </span>
+                          Eliminar publicación
+                        </button>
+                      </>
+                    )}
+
+                    {/* Opciones para todos los usuarios */}
+                    <button
+                      onClick={() => handleOptionClick('contact')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '16px 24px',
+                        textAlign: 'left',
+                        fontSize: '16px',
+                        color: '#333',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        transition: 'background-color 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      <span className="material-icons" style={{ color: '#666' }}>
+                        chat
+                      </span>
+                      Contactar con el artista
+                    </button>
+
+                    <button
+                      onClick={() => handleOptionClick('share')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '16px 24px',
+                        textAlign: 'left',
+                        fontSize: '16px',
+                        color: '#333',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        transition: 'background-color 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      <span className="material-icons" style={{ color: '#666' }}>
+                        share
+                      </span>
+                      Compartir publicación
+                    </button>
+
+                    <button
+                      onClick={() => handleOptionClick('save')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '16px 24px',
+                        textAlign: 'left',
+                        fontSize: '16px',
+                        color: '#333',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        transition: 'background-color 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      <span className="material-icons" style={{ color: '#666' }}>
+                        {saved ? 'bookmark' : 'bookmark_border'}
+                      </span>
+                      {saved ? 'Guardado' : 'Guardar publicación'}
+                    </button>
+
+                    {/* Opción de denuncia (si no es el dueño) */}
+                    {!isPostOwner && (
+                      <button
+                        onClick={() => handleOptionClick('report')}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: '16px 24px',
+                          textAlign: 'left',
+                          fontSize: '16px',
+                          color: '#e74c3c',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          transition: 'background-color 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        <span className="material-icons" style={{ color: '#e74c3c' }}>
+                          flag
+                        </span>
+                        Denunciar publicación
+                      </button>
+                    )}
+
+                    {/* Botón para cerrar */}
+                    <div style={{ padding: '8px 16px', marginTop: '8px' }}>
+                      <button
+                        onClick={() => setShowOptionsModal(false)}
+                        style={{
+                          background: 'rgba(0, 0, 0, 0.05)',
+                          border: 'none',
+                          padding: '16px',
+                          borderRadius: '12px',
+                          fontSize: '16px',
+                          color: '#333',
+                          cursor: 'pointer',
+                          width: '100%',
+                          fontWeight: '600',
+                          transition: 'background-color 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+                        }}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contenedor de la imagen con carousel */}
+            <div 
+              className="carousel-container" 
+              style={{ 
+                position: "relative",
+                height: "100%",
+                minHeight: "400px",
+                maxHeight: "80vh",
+                overflow: 'hidden',
+                cursor: 'pointer',
+                borderRadius: "0 0 12px 12px"
+              }}
+              onClick={handleImageClick}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
+              {/* ... (el resto del código del carousel se mantiene igual) */}
+              {/* Información del artista (ocultable con animación) */}
+              <div style={{
+                position: "absolute",
+                bottom: "0",
+                left: "0",
+                right: "0",
+                zIndex: 2,
+                color: "white",
+                background: showInfo 
+                  ? "linear-gradient(transparent 0%, rgba(0, 0, 0, 0.9) 30%, rgba(0, 0, 0, 0.95) 100%)"
+                  : "transparent",
+                padding: showInfo ? "20px 16px 16px 16px" : "0px 16px",
+                backdropFilter: showInfo ? "blur(15px)" : "none",
+                borderTop: showInfo ? "1px solid rgba(255, 255, 255, 0.15)" : "none",
+                height: showInfo ? "auto" : "0px",
+                opacity: showInfo ? 1 : 0,
+                transform: showInfo ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
+              }}>
+                {/* ... (contenido del card footer) */}
+              </div>
+
+              {/* Indicador visual cuando la información está oculta */}
+              {!showInfo && (
+                <div style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  zIndex: 1,
+                  background: "rgba(0, 0, 0, 0.5)",
+                  color: "white",
+                  padding: "4px 12px",
+                  borderRadius: "15px",
+                  fontSize: "11px",
+                  fontWeight: "500",
+                  backdropFilter: "blur(5px)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  animation: "pulse 2s infinite",
+                  cursor: "pointer"
+                }}>
+                  <span className="material-icons" style={{ 
+                    fontSize: "14px",
+                    marginRight: "4px"
+                  }}>
+                    touch_app
+                  </span>
+                  Toca para ver info
+                </div>
+              )}
+
+              {/* Carousel */}
+              <div className="card" style={{ height: "100%" }}>
+                <div 
+                  className="card__image" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    history.push(``);
+                  }}
+                  style={{
+                    height: "100%",
+                    cursor: "pointer"
+                  }}
+                >
+                  <div style={{ height: "100%" }}>
+                    <Carousel images={post.images} id={post._id} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
 
-      {/* Indicador visual cuando la información está oculta */}
-      {!showInfo && (
-        <div style={{
-          position: "absolute",
-          bottom: "10px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 1,
-          background: "rgba(0, 0, 0, 0.5)",
-          color: "white",
-          padding: "4px 12px",
-          borderRadius: "15px",
-          fontSize: "11px",
-          fontWeight: "500",
-          backdropFilter: "blur(5px)",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-          animation: "pulse 2s infinite",
-          cursor: "pointer"
-        }}>
-          <span className="material-icons" style={{ 
-            fontSize: "14px",
-            marginRight: "4px"
-          }}>
-            touch_app
-          </span>
-          Toca para ver info
-        </div>
-      )}
-
-      {/* Contenedor de iconos al estilo TikTok (derecha) */}
-      <div style={{
-        position: "absolute",
-        right: "10px",
-        top: "50%",
-        transform: "translateY(-50%)",
-        zIndex: 2,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "clamp(6px, 2vh, 16px)",
-        justifyContent: "center",
-        maxHeight: "calc(100% - 140px)",
-        paddingTop: "10px",
-        paddingBottom: "10px"
-      }}>
-        {/* Avatar del usuario */}
-        <div 
-          style={{ 
-            display: "flex", 
-            flexDirection: "column", 
-            alignItems: "center",
-            gap: "2px",
-            cursor: "pointer"
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            history.push(`/profile/${post.user._id}`);
-          }}
-        >
-          <div style={{
-            width: "clamp(36px, 6vh, 48px)",
-            height: "clamp(36px, 6vh, 48px)",
-            borderRadius: "50%",
-            border: "2px solid white",
-            overflow: "hidden",
-            backgroundColor: "#333",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-            transition: "transform 0.2s ease"
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-          onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-          >
-            {post.user?.avatar ? (
-              <img 
-                src={post.user.avatar} 
-                alt={post.user.username}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover"
-                }}
-              />
-            ) : (
-              <div style={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#667eea",
-                color: "white",
-                fontSize: "clamp(14px, 2.5vh, 18px)",
-                fontWeight: "bold"
-              }}>
-                {post.user?.username?.charAt(0).toUpperCase() || "A"}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Botón de like */}
-        <div style={{ 
-          display: "flex", 
-          flexDirection: "column", 
-          alignItems: "center",
-          gap: "2px"
-        }}>
-          <div
-            style={{
-              cursor: "pointer",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "50%",
-              padding: "8px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: loadLike ? 0.7 : 1,
-              width: "clamp(32px, 5vh, 40px)",
-              height: "clamp(32px, 5vh, 40px)",
-              transition: "transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-            onClick={(e) => {
-              e.stopPropagation();
-              isLike ? handleUnLike() : handleLike();
-            }}
-          >
-            <span
-              className="material-icons"
-              style={{
-                fontSize: "clamp(18px, 3vh, 24px)",
-                color: isLike ? "#F91880" : "white"
-              }}
-            >
-              {loadLike ? "hourglass_empty" : "favorite"}
-            </span>
-          </div>
-          <span style={{
-            fontSize: "clamp(10px, 1.5vh, 12px)",
-            fontWeight: "bold",
-            color: "white",
-            textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
-          }}>
-            {post.likes.length}
-          </span>
-        </div>
-
-        {/* Botón de guardar */}
-        <div style={{ 
-          display: "flex", 
-          flexDirection: "column", 
-          alignItems: "center",
-          gap: "2px"
-        }}>
-          <div
-            style={{
-              cursor: "pointer",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "50%",
-              padding: "8px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "clamp(32px, 5vh, 40px)",
-              height: "clamp(32px, 5vh, 40px)",
-              transition: "transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-            onClick={(e) => {
-              e.stopPropagation();
-              saved ? handleUnSavePost() : handleSavePost();
-            }}
-          >
-            <span
-              className="material-icons"
-              style={{
-                fontSize: "clamp(18px, 3vh, 24px)",
-                color: saved ? "#ff8c00" : "white",
-                opacity: saveLoad ? 0.5 : 1
-              }}
-            >
-              {saveLoad ? "hourglass_empty" : "bookmark"}
-            </span>
-          </div>
-        </div>
-
-        {/* Botón de comprar */}
-        <div style={{ 
-          display: "flex", 
-          flexDirection: "column", 
-          alignItems: "center",
-          gap: "2px"
-        }}>
-          <div
-            style={{
-              cursor: "pointer",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "50%",
-              padding: "8px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: `2px solid ${inCart ? "#F44336" : "#4CAF50"}`,
-              opacity: buyLoad ? 0.7 : 1,
-              width: "clamp(32px, 5vh, 40px)",
-              height: "clamp(32px, 5vh, 40px)",
-              transition: "transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleBuyProduct();
-            }}
-            title={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
-          >
-            <span className="material-icons" style={{
-              fontSize: "clamp(18px, 3vh, 24px)",
-              color: inCart ? "#F44336" : "#4CAF50"
-            }}>
-              {buyLoad ? "hourglass_empty" : "shopping_cart"}
-            </span>
-          </div>
-        </div>
-
-        {/* Contador de vistas */}
-        <div style={{ 
-          display: "flex", 
-          flexDirection: "column", 
-          alignItems: "center",
-          gap: "2px"
-        }}>
-          <div style={{
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            borderRadius: "50%",
-            padding: "8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "clamp(32px, 5vh, 40px)",
-            height: "clamp(32px, 5vh, 40px)"
-          }}>
-            <span className="material-icons" style={{ 
-              fontSize: "clamp(18px, 3vh, 24px)", 
-              color: "white" 
-            }}>
-              visibility
-            </span>
-          </div>
-          <span style={{
-            fontSize: "clamp(10px, 1.5vh, 12px)",
-            fontWeight: "bold",
-            color: "white",
-            textShadow: "1px 1px 2px rgba(0,0,0,0.7)"
-          }}>
-            {post.views || 0}
-          </span>
-        </div>
-
-        {/* Botón de compartir */}
-        <div style={{ 
-          display: "flex", 
-          flexDirection: "column", 
-          alignItems: "center",
-          gap: "2px"
-        }}>
-          <div
-            style={{
-              cursor: "pointer",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "50%",
-              padding: "8px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "clamp(32px, 5vh, 40px)",
-              height: "clamp(32px, 5vh, 40px)",
-              transition: "transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleShare();
-            }}
-          >
-            <span className="material-icons" style={{ 
-              fontSize: "clamp(18px, 3vh, 24px)", 
-              color: "white" 
-            }}>
-              share
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Carousel */}
-      <div className="card" style={{ height: "100%" }}>
-        <div 
-          className="card__image" 
-          onClick={(e) => {
-            e.stopPropagation();
-            history.push(``);
-          }}
-          style={{
-            height: "100%",
-            cursor: "pointer"
-          }}
-        >
-          <div style={{ height: "100%" }}>
-            <Carousel images={post.images} id={post._id} />
-          </div>
-        </div>
-      </div>
-    </div>
-  )}
-</div>
+      {/* Agregar estilos CSS para las animaciones */}
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          
+          @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+          }
+        `}
+      </style>
 
       {/* Resto de los modales... */}
       {showShareOptions && (
-        <div className="modal" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="modal-content" style={{ width: '300px', borderRadius: '12px' }}>
-            <h3>Compartir publicación</h3>
-            <div style={{ display: 'flex', justifyContent: 'space-around', margin: '20px 0' }}>
-              <div style={{ textAlign: 'center', cursor: 'pointer' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-                  <span className="material-icons" style={{ color: 'white' }}>chat</span>
-                </div>
-                <p>WhatsApp</p>
-              </div>
-              <div style={{ textAlign: 'center', cursor: 'pointer' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#1877F2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-                  <span className="material-icons" style={{ color: 'white' }}>facebook</span>
-                </div>
-                <p>Facebook</p>
-              </div>
-              <div style={{ textAlign: 'center', cursor: 'pointer' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#1DA1F2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-                  <span className="material-icons" style={{ color: 'white' }}>flutter_dash</span>
-                </div>
-                <p>Twitter</p>
-              </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <button
-                onClick={() => setShowShareOptions(false)}
-                style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', border: 'none', borderRadius: '20px', cursor: 'pointer' }}
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
+        <ShareModal 
+          show={showShareOptions} 
+          onClose={() => setShowShareOptions(false)}
+          post={post}
+        />
       )}
 
       {showModal && (

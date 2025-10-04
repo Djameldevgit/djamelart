@@ -29,9 +29,7 @@ const PostCard = ({ post, isDetail = false  }) => {
 
     return (
         <div className="">
-            <CardHeader post={post} />
-
-       
+          
                  < CardBodyCarousel post={post} />
            
             {isPostDetailPage && <DescriptionPost post={post} />}

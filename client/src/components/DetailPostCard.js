@@ -83,7 +83,8 @@ const DetailPostCard = ({ post }) => {
                         <div className="comments-section">
                             {isAuthenticated ? (
                                 <>
-                                    <InputComment 
+                                     <Comments post={post} />
+                                     <InputComment 
                                         post={post} 
                                         onCommentAttempt={() => {
                                             if (!canProceed()) {
@@ -92,7 +93,7 @@ const DetailPostCard = ({ post }) => {
                                             return true;
                                         }}
                                     />
-                                    <Comments post={post} />
+                                   
                                 </>
                             ) : (
                                 <div className="login-prompt" style={{
