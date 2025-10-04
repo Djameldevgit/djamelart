@@ -4,7 +4,7 @@ import { logout } from '../redux/actions/authAction';
 import { GLOBALTYPES } from '../redux/actions/globalTypes';
 import { useTranslation } from 'react-i18next';
 import { Link, useHistory } from 'react-router-dom';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import {
   FaUserCircle, FaEnvelope, FaInfoCircle, FaComments, FaShareAlt,
   FaTools, FaShieldAlt, FaCog, FaBlog, FaUsers, FaClipboardList,
@@ -92,13 +92,18 @@ const UserSettingsPage = () => {
   const { auth, theme, cart, notify, settings } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
-  const { t, i18n } = useTranslation('navbar');
+  const { t, i18n } = useTranslation('settings');
   const lang = languageReducer.language || 'es';
   const history = useHistory();
   const notifyDropdownRef = useRef(null);
 
   const [userRole, setUserRole] = useState(auth.user?.role);
- 
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showFeaturesModal, setShowFeaturesModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
+  const [showNotifyDropdown, setShowNotifyDropdown] = useState(false);
+
   useEffect(() => {
     if (lang && lang !== i18n.language) {
       i18n.changeLanguage(lang);
@@ -128,14 +133,6 @@ const UserSettingsPage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  if (!settings) {
-    return (
-      <nav className="navbar navbar-light bg-light">
-        <span className="navbar-brand">Cargando...</span>
-      </nav>
-    );
-  }
-
   const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true });
 
   const handleLogout = () => {
@@ -144,9 +141,38 @@ const UserSettingsPage = () => {
 
   const toggleTheme = () => dispatch({ type: GLOBALTYPES.THEME, payload: !theme });
 
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    setShowLanguageModal(false);
+  };
+
+  if (!settings) {
+    return (
+      <nav className="navbar navbar-light bg-light">
+        <span className="navbar-brand">{t('loading', 'Cargando...')}</span>
+      </nav>
+    );
+  }
+
+  const getRoleDisplay = () => {
+    switch(userRole) {
+      case 'admin':
+        return t('adminRole', '👑 Admin');
+      case 'Moderateur':
+        return t('moderatorRole', '🛡️ Moderador');
+      case 'Super-utilisateur':
+        return t('superUserRole', '⭐ Super User');
+      default:
+        return t('userRole', '👤 Usuario');
+    }
+  };
+
   return (
     <div>
-      <Container className="py-4">
+      <Container className="py-4"style={{
+      direction: lang === 'ar' ? 'rtl' : 'ltr',
+      textAlign: lang === 'ar' ? 'right' : 'left'
+    }}>
         <Row className="justify-content-center">
           <Col lg={10} xl={8}>
             {/* Header del Usuario */}
@@ -194,10 +220,7 @@ const UserSettingsPage = () => {
                         fontWeight: '600'
                       }}
                     >
-                      {userRole === 'admin' ? '👑 Admin' :
-                        userRole === 'Moderateur' ? '🛡️ Moderador' :
-                          userRole === 'Super-utilisateur' ? '⭐ Super User' :
-                            '👤 Usuario'}
+                      {getRoleDisplay()}
                     </div>
                   </div>
                 </div>
@@ -218,7 +241,7 @@ const UserSettingsPage = () => {
                       }}
                     >
                       <FaCheckCircle className="me-2" size={18} />
-                      {t('verified', 'Cuenta Verificada')}
+                      {t('verifiedAccount', 'Cuenta Verificada')}
                     </div>
                   ) : (
                     <Button 
@@ -226,7 +249,7 @@ const UserSettingsPage = () => {
                       className="w-100"
                       style={{ borderRadius: '10px', fontWeight: '600' }}
                     >
-                      Verificar Cuenta
+                      {t('verifyAccount', 'Verificar Cuenta')}
                     </Button>
                   )}
                 </div>
@@ -264,11 +287,11 @@ const UserSettingsPage = () => {
                 )}
 
                 {/* Menú Principal */}
-                <Section title="📱 Principal">
+                <Section title={t('mainSection', '📱 Principal')}>
                   <MenuOption
                     icon={FaEnvelope}
                     iconColor="#17a2b8"
-                    title="Encargos"
+                    title={t('commissions', 'Encargos')}
                     to="/encargos"
                   />
                   <MenuOption
@@ -286,7 +309,7 @@ const UserSettingsPage = () => {
                   <MenuOption
                     icon={FaUserCircle}
                     iconColor="#667eea"
-                    title="Notificaciones"
+                    title={t('notifications', 'Notificaciones')}
                     to="/notify"
                   />
                   <MenuOption
@@ -304,7 +327,7 @@ const UserSettingsPage = () => {
                   <MenuOption
                     icon={FaShareAlt}
                     iconColor="#ffc107"
-                    title="Compartir Aplicación"
+                    title={t('shareApp', 'Compartir Aplicación')}
                     onClick={() => setShowModal(true)}
                   />
                   <MenuOption
@@ -329,13 +352,13 @@ const UserSettingsPage = () => {
                     <MenuOption
                       icon={FaCog}
                       iconColor="#6c757d"
-                      title="Ajustes de privacidad"
+                      title={t('privacySettings', 'Ajustes de privacidad')}
                       to="/users/privacidad"
                     />
                     <MenuOption
                       icon={FaCog}
                       iconColor="#6c757d"
-                      title="Configuración global"
+                      title={t('globalSettings', 'Configuración global')}
                       onClick={() => setShowFeaturesModal(true)}
                     />
                     <MenuOption
@@ -377,13 +400,13 @@ const UserSettingsPage = () => {
                     <MenuOption
                       icon={FaFlag}
                       iconColor="#ff6b6b"
-                      title={t('usariosdenunciados', 'Usuarios Denunciados')}
+                      title={t('reportedUsers', 'Usuarios Denunciados')}
                       to="/listausariosdenunciadoss"
                     />
                     <MenuOption
                       icon={FaBan}
                       iconColor="#6c757d"
-                      title={t('estadodeusuariosrespectoalbloqueo', 'Estado de Bloqueos')}
+                      title={t('blockStatus', 'Estado de Bloqueos')}
                       to="/bloqueos"
                     />
                     <MenuOption
@@ -410,6 +433,84 @@ const UserSettingsPage = () => {
           </Col>
         </Row>
       </Container>
+
+      {/* Modal de Idioma */}
+      <Modal show={showLanguageModal} onHide={() => setShowLanguageModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{t('selectLanguage', 'Seleccionar Idioma')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="d-grid gap-2">
+            <Button 
+              variant={lang === 'es' ? 'primary' : 'outline-primary'}
+              onClick={() => changeLanguage('es')}
+              size="lg"
+            >
+              🇪🇸 Español
+            </Button>
+            <Button 
+              variant={lang === 'ar' ? 'primary' : 'outline-primary'}
+              onClick={() => changeLanguage('ar')}
+              size="lg"
+            >
+              🇦🇪 العربية
+            </Button>
+            <Button 
+              variant={lang === 'en' ? 'primary' : 'outline-primary'}
+              onClick={() => changeLanguage('en')}
+              size="lg"
+            >
+              🇺🇸 English
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+      {/* Modal de Compartir */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{t('shareApp', 'Compartir Aplicación')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{t('shareAppDescription', 'Comparte esta increíble aplicación con tus amigos y familiares.')}</p>
+          <div className="d-grid gap-2">
+            <Button variant="primary" onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: 'Tassili Art',
+                  text: t('shareAppText', '¡Mira esta increíble aplicación de arte!'),
+                  url: window.location.origin,
+                });
+              } else {
+                navigator.clipboard.writeText(window.location.origin);
+                alert(t('linkCopied', 'Enlace copiado al portapapeles'));
+              }
+              setShowModal(false);
+            }}>
+              {t('shareNow', 'Compartir Ahora')}
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+      {/* Modal de Configuración Global */}
+      <Modal show={showFeaturesModal} onHide={() => setShowFeaturesModal(false)} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>{t('globalSettings', 'Configuración Global')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{t('globalSettingsDescription', 'Configura las características globales de la aplicación.')}</p>
+          {/* Aquí puedes agregar más opciones de configuración global */}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowFeaturesModal(false)}>
+            {t('close', 'Cerrar')}
+          </Button>
+          <Button variant="primary">
+            {t('saveChanges', 'Guardar Cambios')}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

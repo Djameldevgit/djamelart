@@ -13,7 +13,7 @@ const Contact = () => {
   const [isTranslationsReady, setIsTranslationsReady] = useState(false);
 
   const { auth, languageReducer } = useSelector(state => state);
-  const { t, i18n, ready } = useTranslation('contact');
+  const { t, i18n  } = useTranslation('contact');
   const location = useLocation();
 
   // Cambiar el idioma activamente si es diferente

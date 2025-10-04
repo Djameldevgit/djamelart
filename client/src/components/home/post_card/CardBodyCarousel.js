@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Card, Dropdown, Modal, Form, Alert, Button } from 'react-bootstrap';
+import { Modal, Form, Alert, Button } from 'react-bootstrap';
 import Carousel from '../../Carousel';
 import { likePost, unLikePost, savePost, unSavePost, deletePost } from '../../../redux/actions/postAction';
 import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
@@ -29,7 +29,6 @@ import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
 import { MESS_TYPES } from '../../../redux/actions/messageAction';
 import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
 import { createReport } from '../../../redux/actions/reportUserAction';
-import FollowBtn from '../../FollowBtn';
 
 // Importar los modales
 import AuthModal from '../../authAndVerify/AuthModal';
@@ -45,7 +44,7 @@ const CardBodyCarousel = ({ post }) => {
   const [buyLoad, setBuyLoad] = useState(false);
   const [inCart, setInCart] = useState(false);
   const [showBuyMessage, setShowBuyMessage] = useState(false);
-  
+
   // Estados para modales
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
@@ -55,7 +54,7 @@ const CardBodyCarousel = ({ post }) => {
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [copied, setCopied] = useState(false);
-  
+
   // Estados locales que deben resetearse cuando cambia el post
   const [showInfo, setShowInfo] = useState(false);
   const [isTouching, setIsTouching] = useState(false);
@@ -64,7 +63,7 @@ const CardBodyCarousel = ({ post }) => {
   const lang = languageReducer.language || 'en';
   const history = useHistory();
   const dispatch = useDispatch();
-  
+
   // Refs para manejar clicks fuera
   const optionsModalRef = useRef(null);
   const cardRef = useRef(null);
@@ -131,7 +130,7 @@ const CardBodyCarousel = ({ post }) => {
 
   // URL y texto para compartir
   const shareUrl = `${window.location.origin}/post/${post._id}`;
-  const shareTitle = `🎨 Obra de arte por ${post.user?.username || 'Artista'}: "${post.content?.substring(0, 80)}..." - Mira más en Tassili Art`;
+  const shareTitle = `${t('artworkBy')} ${post.user?.username || t('artist')}: "${post.content?.substring(0, 80)}..." - ${t('seeMoreAt')} Tassili Art`;
   const imageUrl = post.images?.[0]?.url || post.user?.avatar;
 
   // Encontrar usuario completo
@@ -239,7 +238,7 @@ const CardBodyCarousel = ({ post }) => {
 
   const handleSavePostAction = useCallback(async () => {
     if (!canProceed() || saveLoad) return;
-    
+
     if (saved) {
       setSaveLoad(true);
       await dispatch(unSavePost({ post, auth }));
@@ -281,7 +280,7 @@ const CardBodyCarousel = ({ post }) => {
 
   const handleLike = useCallback(async () => {
     if (!canProceed() || loadLike) return;
-    
+
     if (isLike) {
       setLoadLike(true);
       await dispatch(unLikePost({ post, auth, socket, t, languageReducer }));
@@ -295,7 +294,7 @@ const CardBodyCarousel = ({ post }) => {
 
   const handleSavePost = useCallback(async () => {
     if (!canProceed() || saveLoad) return;
-    
+
     if (saved) {
       setSaveLoad(true);
       await dispatch(unSavePost({ post, auth }));
@@ -354,11 +353,11 @@ const CardBodyCarousel = ({ post }) => {
 
   const formatDate = useCallback((dateString) => {
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', options);
+    return new Date(dateString).toLocaleDateString(lang === 'es' ? 'es-ES' : lang === 'ar' ? 'ar-AR' : 'en-US', options);
   }, [lang]);
 
   return (
-    <div 
+    <div
       ref={cardRef}
       style={{
         marginBottom: '24px',
@@ -392,12 +391,12 @@ const CardBodyCarousel = ({ post }) => {
                   gap: "12px"
                 }}>
                   {/* Avatar del usuario */}
-                  <div 
+                  <div
                     style={{
                       width: "44px",
                       height: "44px",
                       borderRadius: "50%",
-                      background: user?.avatar 
+                      background: user?.avatar
                         ? `url(${user.avatar}) center/cover`
                         : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                       border: "2px solid #f0f0f0",
@@ -409,7 +408,7 @@ const CardBodyCarousel = ({ post }) => {
                       history.push(`/profile/${user?._id}`);
                     }}
                   />
-                  
+
                   {/* Información del usuario */}
                   <div style={{ minWidth: 0 }}>
                     <div style={{
@@ -426,11 +425,12 @@ const CardBodyCarousel = ({ post }) => {
                         overflow: "hidden",
                         textOverflow: "ellipsis"
                       }}>
-                        {user?.username || "Usuario"}
+                        {user?.username || t('user')}
                       </span>
+
                       {user?.isVerified && (
-                        <span className="material-icons" style={{ 
-                          fontSize: "16px", 
+                        <span className="material-icons" style={{
+                          fontSize: "16px",
                           color: "#0095f6",
                           flexShrink: 0
                         }}>
@@ -442,27 +442,17 @@ const CardBodyCarousel = ({ post }) => {
                       fontSize: "13px",
                       color: "#666"
                     }}>
-                      {user?.followers?.length || 0} seguidores
+                      {user?.followers?.length || 0} {t('followers')}
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Contenedor de botones de la derecha */}
                 <div style={{
                   display: "flex",
                   alignItems: "center",
                   gap: "8px"
                 }}>
-                  {/* Botón Seguir */}
-                  {auth.user && auth.user._id !== user?._id && (
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px"
-                    }}>
-                      <FollowBtn user={user} />
-                    </div>
-                  )}
 
                   {/* Icono de tres puntos */}
                   <button
@@ -475,7 +465,7 @@ const CardBodyCarousel = ({ post }) => {
                       border: "none",
                       color: "#666",
                       cursor: "pointer",
-                      padding: "8px",
+                      padding: "10px",
                       borderRadius: "50%",
                       display: "flex",
                       alignItems: "center",
@@ -500,20 +490,11 @@ const CardBodyCarousel = ({ post }) => {
 
               {/* Segunda fila: Fecha de publicación */}
               <div style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
                 fontSize: "13px",
                 color: "#888",
                 paddingLeft: "56px"
               }}>
-                <span className="material-icons" style={{ 
-                  fontSize: "14px",
-                  color: "#999"
-                }}>
-                  schedule
-                </span>
-                <span>{formatDate(post.createdAt)} • {moment(post.createdAt).fromNow()}</span>
+                {formatDate(post.createdAt)} • {moment(post.createdAt).fromNow()}
               </div>
             </div>
 
@@ -532,7 +513,7 @@ const CardBodyCarousel = ({ post }) => {
                 zIndex: 9999,
                 animation: 'fadeIn 0.3s ease'
               }}>
-                <div 
+                <div
                   ref={optionsModalRef}
                   style={{
                     background: 'white',
@@ -574,7 +555,7 @@ const CardBodyCarousel = ({ post }) => {
                           <span className="material-icons" style={{ color: '#666' }}>
                             check_circle
                           </span>
-                          Aprobar publicación
+                          {t('approvePublication')}
                         </button>
                       </>
                     )}
@@ -601,9 +582,9 @@ const CardBodyCarousel = ({ post }) => {
                           <span className="material-icons" style={{ color: '#666' }}>
                             edit
                           </span>
-                          Editar publicación
+                          {t('editPublication')}
                         </button>
-                        
+
                         <button
                           onClick={() => handleOptionClick('delete')}
                           style={{
@@ -623,7 +604,7 @@ const CardBodyCarousel = ({ post }) => {
                           <span className="material-icons" style={{ color: '#e74c3c' }}>
                             delete
                           </span>
-                          Eliminar publicación
+                          {t('deletePublication')}
                         </button>
                       </>
                     )}
@@ -648,7 +629,7 @@ const CardBodyCarousel = ({ post }) => {
                       <span className="material-icons" style={{ color: '#666' }}>
                         chat
                       </span>
-                      Contactar con el artista
+                      {t('contactArtist')}
                     </button>
 
                     <button
@@ -670,7 +651,7 @@ const CardBodyCarousel = ({ post }) => {
                       <span className="material-icons" style={{ color: '#666' }}>
                         share
                       </span>
-                      Compartir publicación
+                      {t('sharePublication')}
                     </button>
 
                     <button
@@ -692,7 +673,7 @@ const CardBodyCarousel = ({ post }) => {
                       <span className="material-icons" style={{ color: '#666' }}>
                         {saved ? 'bookmark' : 'bookmark_border'}
                       </span>
-                      {saved ? 'Guardado' : 'Guardar publicación'}
+                      {saved ? t('saved') : t('savePublication')}
                     </button>
 
                     {/* Contactar con Admin */}
@@ -715,7 +696,7 @@ const CardBodyCarousel = ({ post }) => {
                       <span className="material-icons" style={{ color: '#666' }}>
                         admin_panel_settings
                       </span>
-                      Contactar con Admin
+                      {t('contactAdmin')}
                     </button>
 
                     {/* Opción de denuncia (si no es el dueño) */}
@@ -739,7 +720,7 @@ const CardBodyCarousel = ({ post }) => {
                         <span className="material-icons" style={{ color: '#e74c3c' }}>
                           flag
                         </span>
-                        Denunciar publicación
+                        {t('reportPublication')}
                       </button>
                     )}
 
@@ -760,7 +741,7 @@ const CardBodyCarousel = ({ post }) => {
                           transition: 'background-color 0.2s ease'
                         }}
                       >
-                        Cancelar
+                        {t('cancel')}
                       </button>
                     </div>
                   </div>
@@ -769,9 +750,9 @@ const CardBodyCarousel = ({ post }) => {
             )}
 
             {/* Contenedor de la imagen con carousel */}
-            <div 
-              className="carousel-container" 
-              style={{ 
+            <div
+              className="carousel-container"
+              style={{
                 position: "relative",
                 height: "100%",
                 minHeight: "400px",
@@ -779,7 +760,7 @@ const CardBodyCarousel = ({ post }) => {
                 overflow: 'hidden',
                 cursor: 'pointer',
                 borderRadius: "0 0 12px 12px",
-                background: '#f8f9fa' // Fondo para imágenes cortas
+                background: '#f8f9fa'
               }}
               onClick={handleImageClick}
               onTouchStart={handleTouchStart}
@@ -793,7 +774,7 @@ const CardBodyCarousel = ({ post }) => {
                 right: "0",
                 zIndex: 2,
                 color: "white",
-                background: showInfo 
+                background: showInfo
                   ? "linear-gradient(transparent 0%, rgba(0, 0, 0, 0.9) 30%, rgba(0, 0, 0, 0.95) 100%)"
                   : "transparent",
                 padding: showInfo ? "20px 16px 16px 16px" : "0px 16px",
@@ -808,9 +789,7 @@ const CardBodyCarousel = ({ post }) => {
                 flexDirection: 'column',
                 gap: '12px'
               }}>
-                
-                {/* Contenido de la información */}
-                {post.title && (
+                {post.user.username && (
                   <div style={{
                     fontSize: "clamp(16px, 2.5vh, 20px)",
                     opacity: showInfo ? 0.95 : 0,
@@ -824,10 +803,41 @@ const CardBodyCarousel = ({ post }) => {
                     transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
                     transition: 'all 0.3s ease 0.1s'
                   }}>
-                    {post.title}
+                    {post.user.username}
                   </div>
                 )}
+                <div style={{
+                    fontSize: "clamp(10px, 2vh, 20px)",
+                    opacity: showInfo ? 0.95 : 0,
+                    lineHeight: "1.4",
+                    fontWeight: "400",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
+                    transition: 'all 0.3s ease 0.1s'
+                  }} >
+                  {post.title}
+                </div>
 
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  fontSize: "13px",
+                  color: "#888",
+                  paddingLeft: "00px"
+                }}>
+                  <span className="material-icons" style={{
+                    fontSize: "14px",
+                    color: "#999"
+                  }}>
+                    schedule
+                  </span>
+                  <span>{formatDate(post.createdAt)} • {moment(post.createdAt).fromNow()}</span>
+                </div>
                 {post.content && (
                   <div style={{
                     fontSize: "clamp(14px, 2vh, 16px)",
@@ -863,10 +873,10 @@ const CardBodyCarousel = ({ post }) => {
                     flexWrap: "wrap"
                   }}>
                     {/* Like */}
-                    <div 
-                      style={{ 
-                        display: "flex", 
-                        alignItems: "center", 
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
                         gap: "6px",
                         cursor: "pointer",
                         padding: "6px 12px",
@@ -879,18 +889,18 @@ const CardBodyCarousel = ({ post }) => {
                         handleLike();
                       }}
                     >
-                      <span 
-                        className="material-icons" 
-                        style={{ 
-                          fontSize: "18px", 
+                      <span
+                        className="material-icons"
+                        style={{
+                          fontSize: "18px",
                           color: isLike ? "#ff3040" : "white"
                         }}
                       >
                         {isLike ? "favorite" : "favorite_border"}
                       </span>
-                      <span style={{ 
-                        fontSize: "13px", 
-                        color: "white", 
+                      <span style={{
+                        fontSize: "13px",
+                        color: "white",
                         fontWeight: "500"
                       }}>
                         {post.likes?.length || 0}
@@ -898,10 +908,10 @@ const CardBodyCarousel = ({ post }) => {
                     </div>
 
                     {/* Comment */}
-                    <div 
-                      style={{ 
-                        display: "flex", 
-                        alignItems: "center", 
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
                         gap: "6px",
                         cursor: "pointer",
                         padding: "6px 12px",
@@ -922,10 +932,10 @@ const CardBodyCarousel = ({ post }) => {
                     </div>
 
                     {/* Share */}
-                    <div 
-                      style={{ 
-                        display: "flex", 
-                        alignItems: "center", 
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
                         gap: "6px",
                         cursor: "pointer",
                         padding: "6px 12px",
@@ -967,7 +977,7 @@ const CardBodyCarousel = ({ post }) => {
                       transform: showInfo ? 'translateX(0)' : 'translateX(10px)'
                     }}
                   >
-                    <span>Detalles</span>
+                    <span>{t('details')}</span>
                     <span className="material-icons" style={{ fontSize: "16px" }}>
                       arrow_forward
                     </span>
@@ -997,12 +1007,12 @@ const CardBodyCarousel = ({ post }) => {
                   <span className="material-icons" style={{ fontSize: "14px", marginRight: "4px" }}>
                     touch_app
                   </span>
-                  Toca para ver info
+                  {t('tapToSeeInfo')}
                 </div>
               )}
 
               {/* Carousel con fondo */}
-              <div className="card" style={{ 
+              <div className="card" style={{
                 height: "100%",
                 background: '#f8f9fa',
                 display: 'flex',
@@ -1040,23 +1050,23 @@ const CardBodyCarousel = ({ post }) => {
       </style>
 
       {/* Modal para Compartir */}
-      <Modal 
-        show={showShareModal} 
-        onHide={() => setShowShareModal(false)} 
-        centered 
+      <Modal
+        show={showShareModal}
+        onHide={() => setShowShareModal(false)}
+        centered
         size="lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title>🎨 Compartir Arte</Modal.Title>
+          <Modal.Title>🎨 {t('shareArt')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {copied && (
             <Alert variant="success" className="py-2" dismissible onClose={() => setCopied(false)}>
-              ✅ Enlace copiado al portapapeles
+              ✅ {t('linkCopied')}
             </Alert>
           )}
 
-          <h6 className="mb-3">Compartir en redes sociales</h6>
+          <h6 className="mb-3">{t('shareOnSocial')}</h6>
           <div className="d-flex justify-content-around flex-wrap mb-4">
             <FacebookShareButton url={shareUrl} quote={shareTitle} className="mx-2 my-2">
               <FacebookIcon size={45} round />
@@ -1090,15 +1100,15 @@ const CardBodyCarousel = ({ post }) => {
               <div className="small mt-1 text-center">Telegram</div>
             </TelegramShareButton>
 
-            <EmailShareButton url={shareUrl} subject="Obra de Arte" body={shareTitle} className="mx-2 my-2">
+            <EmailShareButton url={shareUrl} subject={t('artwork')} body={shareTitle} className="mx-2 my-2">
               <EmailIcon size={45} round />
               <div className="small mt-1 text-center">Email</div>
             </EmailShareButton>
           </div>
 
-          <h6 className="mb-3">Compartir manualmente</h6>
+          <h6 className="mb-3">{t('manualShare')}</h6>
           <Form.Group className="mb-3">
-            <Form.Label>Texto para compartir</Form.Label>
+            <Form.Label>{t('shareText')}</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
@@ -1108,16 +1118,16 @@ const CardBodyCarousel = ({ post }) => {
             />
             <CopyToClipboard
               text={shareTitle}
-              onCopy={() => handleCopy('Texto copiado al portapapeles')}
+              onCopy={() => handleCopy(t('textCopied'))}
             >
               <Button variant="outline-primary" size="sm">
-                📋 Copiar texto
+                📋 {t('copyText')}
               </Button>
             </CopyToClipboard>
           </Form.Group>
 
           <Form.Group>
-            <Form.Label>Enlace de la publicación</Form.Label>
+            <Form.Label>{t('postLink')}</Form.Label>
             <div className="input-group">
               <Form.Control
                 type="text"
@@ -1126,7 +1136,7 @@ const CardBodyCarousel = ({ post }) => {
               />
               <CopyToClipboard
                 text={shareUrl}
-                onCopy={() => handleCopy('Enlace copiado al portapapeles')}
+                onCopy={() => handleCopy(t('linkCopied'))}
               >
                 <Button variant="outline-secondary" type="button">
                   📋
@@ -1137,7 +1147,7 @@ const CardBodyCarousel = ({ post }) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowShareModal(false)}>
-            Cerrar
+            {t('close')}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -1145,27 +1155,27 @@ const CardBodyCarousel = ({ post }) => {
       {/* Modal de Reporte */}
       <Modal show={showReportModal} onHide={() => setShowReportModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Reportar Publicación</Modal.Title>
+          <Modal.Title>{t('reportPublication')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group controlId="reportReason">
-            <Form.Label>Motivo del reporte</Form.Label>
+            <Form.Label>{t('reportReason')}</Form.Label>
             <Form.Select
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
             >
-              <option value="">Selecciona un motivo</option>
-              <option value="abuse">Acoso o abuso</option>
-              <option value="spam">Spam</option>
-              <option value="terms">Violación de términos</option>
-              <option value="offensive">Contenido ofensivo</option>
-              <option value="fraud">Fraude o estafa</option>
-              <option value="impersonation">Suplantación de identidad</option>
-              <option value="inappropriate">Contenido inapropiado</option>
-              <option value="privacy">Violación de privacidad</option>
-              <option value="disruption">Alteración del servicio</option>
-              <option value="suspicious">Actividad sospechosa</option>
-              <option value="other">Otro</option>
+              <option value="">{t('selectReason')}</option>
+              <option value="abuse">{t('harassmentOrAbuse')}</option>
+              <option value="spam">{t('spam')}</option>
+              <option value="terms">{t('termsViolation')}</option>
+              <option value="offensive">{t('offensiveContent')}</option>
+              <option value="fraud">{t('fraudOrScam')}</option>
+              <option value="impersonation">{t('identityTheft')}</option>
+              <option value="inappropriate">{t('inappropriateContent')}</option>
+              <option value="privacy">{t('privacyViolation')}</option>
+              <option value="disruption">{t('serviceDisruption')}</option>
+              <option value="suspicious">{t('suspiciousActivity')}</option>
+              <option value="other">{t('other')}</option>
             </Form.Select>
           </Form.Group>
         </Modal.Body>
@@ -1177,14 +1187,14 @@ const CardBodyCarousel = ({ post }) => {
               setReportReason('');
             }}
           >
-            Cancelar
+            {t('cancel')}
           </Button>
           <Button
             variant="danger"
             disabled={!reportReason}
             onClick={handleSubmitReport}
           >
-            Enviar Reporte
+            {t('submitReport')}
           </Button>
         </Modal.Footer>
       </Modal>

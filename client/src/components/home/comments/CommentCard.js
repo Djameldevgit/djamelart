@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Avatar from '../../Avatar'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
+import { useTranslation } from 'react-i18next'
 
 import LikeButton from '../../LikeButton'
 import { useSelector, useDispatch } from 'react-redux'
@@ -10,8 +11,10 @@ import { updateComment, likeComment, unLikeComment } from '../../../redux/action
 import InputComment from '../InputComment'
 
 const CommentCard = ({children, comment, post, commentId}) => {
-    const { auth, theme } = useSelector(state => state)
+    const { auth, theme, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
+    const { t, i18n } = useTranslation('comments')
+    const lang = languageReducer.language || 'es'
 
     const [content, setContent] = useState('')
     const [readMore, setReadMore] = useState(false)
@@ -22,7 +25,6 @@ const CommentCard = ({children, comment, post, commentId}) => {
 
     const [onReply, setOnReply] = useState(false)
 
-
     useEffect(() => {
         setContent(comment.content)
         setIsLike(false)
@@ -32,6 +34,13 @@ const CommentCard = ({children, comment, post, commentId}) => {
         }
     },[comment, auth.user._id])
 
+    // Cambiar idioma cuando cambie la configuración
+    useEffect(() => {
+        if (lang && lang !== i18n.language) {
+            i18n.changeLanguage(lang);
+        }
+    }, [lang, i18n]);
+
     const handleUpdate = () => {
         if(comment.content !== content){
             dispatch(updateComment({comment, post, content, auth}))
@@ -40,7 +49,6 @@ const CommentCard = ({children, comment, post, commentId}) => {
             setOnEdit(false)
         }
     }
-
 
     const handleLike = async () => {
         if(loadLike) return;
@@ -59,7 +67,6 @@ const CommentCard = ({children, comment, post, commentId}) => {
         await dispatch(unLikeComment({comment, post, auth}))
         setLoadLike(false)
     }
-
 
     const handleReply = () => {
         if(onReply) return setOnReply(false)
@@ -86,8 +93,12 @@ const CommentCard = ({children, comment, post, commentId}) => {
                 }}>
                     {
                         onEdit 
-                        ? <textarea rows="5" value={content}
-                        onChange={e => setContent(e.target.value)} />
+                        ? <textarea 
+                            rows="5" 
+                            value={content}
+                            onChange={e => setContent(e.target.value)}
+                            placeholder={t('editCommentPlaceholder', 'Edit your comment...')}
+                          />
 
                         : <div>
                             {
@@ -104,8 +115,17 @@ const CommentCard = ({children, comment, post, commentId}) => {
                             </span>
                             {
                                 content.length > 100 &&
-                                <span className="readMore" onClick={() => setReadMore(!readMore)}>
-                                    {readMore ? 'Hide content' : 'Read more'}
+                                <span 
+                                    className="readMore" 
+                                    onClick={() => setReadMore(!readMore)}
+                                    style={{
+                                        color: '#007bff',
+                                        cursor: 'pointer',
+                                        fontWeight: '500',
+                                        marginLeft: '5px'
+                                    }}
+                                >
+                                    {readMore ? t('hideContent', 'Hide content') : t('readMore', 'Read more')}
                                 </span>
                             }
                         </div>
@@ -118,26 +138,35 @@ const CommentCard = ({children, comment, post, commentId}) => {
                         </small>
 
                         <small className="font-weight-bold mr-3">
-                            {comment.likes.length} likes
+                            {comment.likes.length} {comment.likes.length === 1 ? t('like', 'like') : t('likes', 'likes')}
                         </small>
 
                         {
                             onEdit
                             ? <>
-                                <small className="font-weight-bold mr-3"
-                                onClick={handleUpdate}>
-                                    update
+                                <small 
+                                    className="font-weight-bold mr-3"
+                                    onClick={handleUpdate}
+                                    style={{color: '#28a745', cursor: 'pointer'}}
+                                >
+                                    {t('update', 'update')}
                                 </small>
-                                <small className="font-weight-bold mr-3"
-                                onClick={() => setOnEdit(false)}>
-                                    cancel
+                                <small 
+                                    className="font-weight-bold mr-3"
+                                    onClick={() => setOnEdit(false)}
+                                    style={{color: '#dc3545', cursor: 'pointer'}}
+                                >
+                                    {t('cancel', 'cancel')}
                                 </small>
                             </>
 
-                            : <small className="font-weight-bold mr-3"
-                            onClick={handleReply}>
-                                {onReply ? 'cancel' :'reply'}
-                            </small>
+                            : <small 
+                                className="font-weight-bold mr-3"
+                                onClick={handleReply}
+                                style={{color: '#007bff', cursor: 'pointer'}}
+                              >
+                                {onReply ? t('cancel', 'cancel') : t('reply', 'reply')}
+                              </small>
                         }
                         
                     </div>
@@ -147,7 +176,11 @@ const CommentCard = ({children, comment, post, commentId}) => {
 
                 <div className="d-flex align-items-center mx-2" style={{cursor: 'pointer'}}>
                     <CommentMenu post={post} comment={comment} setOnEdit={setOnEdit} />
-                    <LikeButton isLike={isLike} handleLike={handleLike} handleUnLike={handleUnLike} />
+                    <LikeButton 
+                        isLike={isLike} 
+                        handleLike={handleLike} 
+                        handleUnLike={handleUnLike} 
+                    />
                 </div>
             </div> 
             
