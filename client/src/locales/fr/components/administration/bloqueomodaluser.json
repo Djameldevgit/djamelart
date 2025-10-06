@@ -1,0 +1,43 @@
+{
+  "header": {
+    "title": "Bloquer l'utilisateur"
+  },
+  "userInfo": {
+    "title": "Informations de l'utilisateur",
+    "username": "Utilisateur",
+    "email": "E-mail"
+  },
+  "form": {
+    "reasonLabel": "Raison du blocage",
+    "selectReason": "Choisir la raison",
+    "detailsLabel": "Détails supplémentaires",
+    "detailsPlaceholder": "Fournir des détails spécifiques sur la raison du blocage...",
+    "detailsHelp": "Ces informations seront visibles par l'utilisateur et les administrateurs",
+    "blockDuration": "Durée du blocage",
+    "dateLabel": "Date de levée",
+    "timeLabel": "Heure de levée",
+    "durationHelp": "Spécifiez la date et l'heure auxquelles le blocage de l'utilisateur sera automatiquement levé"
+  },
+  "reasons": {
+    "abusiveBehavior": "Comportement abusif",
+    "spam": "Spam",
+    "termsViolation": "Violation des conditions d'utilisation",
+    "offensiveLanguage": "Langage offensant",
+    "fraud": "Fraude",
+    "identityTheft": "Usurpation d'identité",
+    "inappropriateContent": "Contenu inapproprié",
+    "privacyViolation": "Violation de la vie privée",
+    "serviceDisruption": "Perturbation du service",
+    "suspiciousActivity": "Activité suspecte",
+    "other": "Autre"
+  },
+  "actions": {
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "confirmBlock": "Confirmer le blocage"
+  },
+  "errors": {
+    "missingFields": "Veuillez remplir tous les champs obligatoires",
+    "futureDate": "La date et l'heure doivent être dans le futur"
+  }
+}

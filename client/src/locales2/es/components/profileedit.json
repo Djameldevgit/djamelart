@@ -1,0 +1,35 @@
+{
+ 
+      "editProfile": "Editar Perfil",
+      "updatePersonalInfo": "Actualiza tu información personal",
+      "backToProfile": "Volver al Perfil",
+      "presentacion": "Presentación",
+      "presentacionPlaceholder": "Escribe una breve presentación...",
+      "fullname": "Nombre Completo",
+      "fullnamePlaceholder": "Tu nombre completo",
+      "fullnameRequired": "El nombre completo es requerido",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "emailOptionalHint": "Opcional - Déjalo vacío para mantener tu email actual",
+      "address": "Dirección",
+      "addressPlaceholder": "Tu dirección",
+      "mobile": "Teléfono",
+      "mobilePlaceholder": "Tu número de teléfono",
+      "website": "Sitio Web",
+      "websitePlaceholder": "https://tusitio.com",
+      "bio": "Biografía",
+      "bioPlaceholder": "Cuéntanos sobre ti...",
+      "characters": "caracteres",
+      "changeAvatarHint": "Haz clic en la cámara para cambiar tu foto",
+      "saveChanges": "Guardar Cambios",
+      "saving": "Guardando...",
+      "cancel": "Cancelar",
+      "invalidEmail": "Por favor ingresa un email válido",
+      "invalidWebsite": "Por favor ingresa una URL válida",
+      "emailAlreadyExists": "Este email ya está en uso",
+      "updateError": "Error al actualizar el perfil",
+      "profileUpdated": "Perfil actualizado exitosamente",
+      "accessDenied": "Acceso denegado"
+  
+     
+}

@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect,  useRef } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import i18n from './i18n';
-
+import { io } from 'socket.io-client';
 import PageRender from './customRouter/PageRender'
 import PrivateRouter from './customRouter/PrivateRouter'
 import Home from './pages/home'
@@ -27,12 +27,12 @@ import LanguageSelectorandroid from './components/LanguageSelectorandroid'
 import ForgotPassword from './auth/ForgotPassword';
 import ResetPassword from './auth/ResetPassword';
 
-import { io } from 'socket.io-client';
+
 
 import { getUsers } from './redux/actions/userAction';
  
 import Navbar2 from './components/header/Navbar2'
-import Accordionn from './pages/Accordionn'
+ 
  
 import video from './pages/video';
 import { getPrivacySettings } from './redux/actions/privacyAction';
@@ -46,15 +46,7 @@ function App() {
   const { auth, status, modal, languageReducer, notify } = useSelector(state => state)
   const dispatch = useDispatch()
   const language = languageReducer?.language || localStorage.getItem("lang") || "en";
-  const [filters, setFilters] = useState({
-    category: '',
-    title: '',
-    theme: '',
-    style: '',
-    minPrice: '',
-    maxPrice: '',
-  });  
-
+ 
   useEffect(() => {
     dispatch(refreshToken())
 
@@ -145,14 +137,14 @@ function App() {
         <LanguageSelectorandroid />
         <div className="main">
 
-          <Navbar2 onFiltersChange={setFilters} />
+          <Navbar2 />
 
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
 
           <Switch>
   {/* públicas */}
-  <Route exact path="/" render={(props) => <Home {...props} filters={filters} />} />
+  <Route exact path="/" component={Home} />
   <Route exact path="/register" component={Register} />
   <Route exact path="/login" component={Login} />
   <Route exact path="/bloginfo" component={bloginfo} />

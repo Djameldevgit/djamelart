@@ -1,0 +1,25 @@
+{
+  "category": "Categoría",
+  "title": "Título",
+  "theme": "Tema",
+  "technique": "Técnica",
+  "support": "Soporte",
+  "art_style": "Estilo artístico",
+  "packaging": "Embalaje",
+  "copyright": "Derechos de autor",
+  "measurements": "Medidas",
+  "unit": "Unidad",
+  "sale_option": "Opción de venta",
+  "price": "Precio",
+  "availability": "Disponibilidad",
+  "size": "Tamaño",
+  "description": "Descripción",
+  "region": "Región",
+  "city": "Ciudad",
+
+  "subcategory": "Subcategoría",
+  "photographie_argentique": "Fotografía analógica",
+  "huile": "Óleo",
+  "huilee": "Óleo (variante)"
+
+}

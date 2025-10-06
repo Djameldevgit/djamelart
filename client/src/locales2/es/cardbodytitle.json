@@ -1,0 +1,198 @@
+{
+  "title": "Título",
+  "theme": "Tema",
+  "technique": "Técnica",
+  "support": "Soporte",
+  "art_style": "Estilo artístico",
+  "packaging": "Embalaje",
+  "copyright": "Derechos de autor",
+  "measurements": "Medidas",
+  "unit": "Unidad",
+  "sale_option": "Opción de venta",
+  "price": "Precio",
+  "availability": "Disponibilidad",
+  "size": "Tamaño",
+  "description": "Descripción",
+  "region": "Región",
+  "city": "Ciudad",
+  "category": "Categoría",
+  "Painting": "Pintura",
+  "photography": "Fotografía",
+  "Photography": "Fotografía",
+  "Drawing": "Dibujo",
+  "Engraving": "Grabado",
+  "Digital_art": "Arte digital",
+  "Collage": "Collage",
+  "Textile_art": "Arte textil",
+  
+  "photo_paper": "Papel fotográfico",
+  "aluminum_dibond": "Aluminio Dibond",
+  
+  "subcategory": "Subcategoría",
+  
+  "acrylique": "Acrílico",
+  "huile": "Óleo",
+  "aerographe": "Aerografía",
+  "aquarelle": "Acuarela",
+  "autre": "Otro",
+  "bombe_aerosol": "Spray",
+  "carte_a_gratter": "Grabado al cartón",
+  "cire": "Cera",
+  "conte": "Conté",
+  "craie": "Tiza",
+  "crayon": "Lápiz",
+  "email": "Esmalte",
+  "encaustique": "Encáustica",
+  "encre": "Tinta",
+  "fusain": "Carbón",
+  "gouache": "Gouache",
+  "graphite": "Grafito",
+  "laque": "Laca",
+  "marqueur": "Marcador",
+  "pastel": "Pastel",
+  "peinture_vitrail": "Pintura para vitrales",
+  "pigments": "Pigmentos",
+  "pochoir": "Estarcido",
+  "pointe_d_argent": "Punta de plata",
+  "stylo_bille": "Bolígrafo",
+  "stylo_gel": "Rotulador",
+  "tempera": "Témpera",
+  
+  "acier_inoxydable": "Acero inoxidable",
+  "aluminium": "Aluminio",
+  "argile": "Arcilla",
+  "beton": "Hormigón",
+  "beton_cellulaire": "Hormigón celular",
+  "bois": "Madera",
+  "bronze": "Bronce",
+  "carton": "Cartón",
+  "ceramique": "Cerámica",
+  "ciment": "Cemento",
+  "coulage": "Fundición",
+  "cuir": "Cuero",
+  "fil_de_fer": "Alambre",
+  "glace": "Hielo",
+  "metaux": "Metales",
+  "mosaique": "Mosaico",
+  "os": "Hueso",
+  "papier": "Papel",
+  "papier_mache": "Papel maché",
+  "pate_polymere": "Pasta polimérica",
+  "pierre": "Piedra",
+  "plastique": "Plástico",
+  "platre": "Yeso",
+  "resine": "Resina",
+  "sable": "Arena",
+  "savon": "Jabón",
+  "terre_cuite": "Terracota",
+  "verre": "Vidrio",
+  
+  "light_painting": "Pintura luminosa",
+  "photographie_argentique": "Fotografía analógica",
+  "photographie_manipulee": "Fotografía manipulada",
+  "photographie_non_manipulee": "Fotografía no manipulada",
+  "photographie_numerique": "Fotografía digital",
+  
+  "collagraphie": "Collagraphie",
+  "eau_forte": "Aguafuerte",
+  "embossage": "Repujado",
+  "gravure": "Grabado",
+  "impression_numerique": "Impresión digital",
+  "linogravures": "Linograbado",
+  "lithographie": "Litografía",
+  "monotype": "Monotipo",
+  "serigraphie": "Serigrafía",
+  "tirage_argentique": "Copia en gelatina de plata",
+  "xylographie": "Xilografía",
+  
+  "broderie": "Bordado",
+  "fibre_textile": "Fibra textil",
+  "fil": "Hilo",
+  "patchwork": "Patchwork",
+  "string_art": "Arte con cuerdas",
+  "tapisserie": "Tapiz",
+  "tissu": "Tela",
+  
+  "theme.select_label": "Tema de la obra",
+  "select_label": "Seleccione soporte de la obra",
+  "canvas": "Lienzo",
+  "wood_panel": "Panel de madera",
+  "paper": "Papel",
+  "metal": "Metal",
+  "cardboard": "Cartón",
+  
+  "acrylic": {
+    "linen_canvas": "Lienzo de lino (acrílico)",
+    "mdf_board": "Tablero de MDF",
+    "cotton_canvas": "Lienzo de algodón"
+  },
+  "oil": {
+    "linen_canvas": "Lienzo de lino (óleo)",
+    "copper_plate": "Plancha de cobre",
+    "wood_mounted": "Montado en madera"
+  },
+  "watercolor": {
+    "paper": "Papel para acuarela",
+    "arches": "Papel Arches"
+  },
+  "sculpture": {
+    "bronze": "Bronce",
+    "marble": "Mármol",
+    "resin": "Resina",
+    "wood": "Madera",
+    "ceramic": "Cerámica"
+  },
+  "Potography": {
+    "photo_paper": "Papel fotográfico",
+    "aluminum_dibond": "Aluminio Dibond",
+    "acrylic": "Acrílico"
+  },
+  "drawing": {
+    "paper": "Papel para dibujo",
+    "parchment": "Pergamino",
+    "vellum": "Vitela"
+  },
+  "digital": {
+    "file": "Archivo digital",
+    "canvas_print": "Impresión sobre lienzo",
+    "acrylic_print": "Impresión en acrílico"
+  },
+  "textile": {
+    "fabric": "Tejido",
+    "tapestry": "Tapiz",
+    "embroidery": "Bordado"
+  },
+  "other": "Otro",
+  "mixed": "Mixto",
+  
+  "theme_groups": {
+    "styles": "Estilos",
+    "nature": "Naturaleza",
+    "animaux": "Animales",
+    "culture": "Cultura",
+    "urbain": "Urbano",
+    "personnages": "Personajes",
+    "fantastique": "Fantástico",
+    "divers": "Diverso"
+  },
+  
+  "categorias": {
+    "painting": "Pintura",
+    "sculpture": "Escultura",
+    "photography": "Fotografía",
+    "drawing": "Dibujo",
+    "engraving": "Grabado e impresiones",
+    "digital_art": "Arte digital",
+    "collage": "Collage",
+    "textile_art": "Arte textil"
+  }
+
+
+
+
+
+
+
+
+  
+}

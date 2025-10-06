@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCookies } from 'react-cookie';
 import { useTranslation } from 'react-i18next';
 import * as languageActions from '../redux/actions/languageAction';
-import { Dropdown, ButtonGroup } from 'react-bootstrap';
+import { Dropdown, ButtonGroup, Container, Row, Col } from 'react-bootstrap';
 
 const LanguageSelectorandroid = () => {
   const dispatch = useDispatch();
@@ -15,23 +15,16 @@ const LanguageSelectorandroid = () => {
   const handleLanguageChange = useCallback((language) => {
     if (language === lang) return;
 
-    dispatch(languageActions.changeLanguage(language)); // ✅ única función
-
+    dispatch(languageActions.changeLanguage(language));
     setCookie('language', language, { path: '/' });
   }, [dispatch, setCookie, lang]);
 
-
   useEffect(() => {
     const defaultLanguage = cookies.language || 'fr';
-
     if (defaultLanguage !== languageReducer?.language) {
       handleLanguageChange(defaultLanguage);
     }
   }, [cookies.language, languageReducer?.language, handleLanguageChange]);
-
-
-
-
 
   const flagPath = (lang) => `/flags/${lang}.png`;
 
@@ -66,79 +59,74 @@ const LanguageSelectorandroid = () => {
       background: 'white',
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
     }}>
-      {/* CONTENEDOR PRINCIPAL CON DISTRIBUCIÓN 50/50 */}
-      <div style={{ 
-        display: 'flex', 
-        width: '100%', 
-        alignItems: 'center', // Centra verticalmente
-        justifyContent: 'space-between', // Distribuye el espacio
-        padding: '5px 10px', // Padding interno
-        boxSizing: 'border-box' // Incluye padding en el ancho
-      }}>
+      {/* USANDO REACT BOOTSTRAP GRID SYSTEM */}
+      <Container fluid className="px-4">
+        <Row className="align-items-center" style={{ minHeight: '60px' }}>
+          {/* TÍTULO DE LA APP - IZQUIERDA */}
+          <Col xs={6} className="ps-0">
+            <a href="/" style={{ textDecoration: 'none' }}>
+              <h3 style={{ 
+                margin: 0, 
+                fontSize: '1.3rem', 
+                fontWeight: 'bold',
+                color: '#333',
+                lineHeight: '1.2'
+              }}>
+                {t('Tassili', { lng: lang })}
+              </h3>
+            </a>
+          </Col>
 
-        {/* LOGO - 50% */}
-        <div style={{ 
-          flex: '0 0 50%', // Ocupa exactamente el 50% del ancho
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start' // Alinea a la izquierda
-        }}>
-          <a href="/" style={{ textDecoration: 'none' }}>
-            <h3 style={{ 
-              margin: 0, 
-              fontSize: '1.3rem', 
-              fontWeight: 'bold',
-              color: '#333'
-            }}>
-              {t('Tassili', { lng: lang })}
-            </h3>
-          </a>
-        </div>
-
-        {/* SELECTOR DE IDIOMA - 50% */}
-        <div style={{ 
-          flex: '0 0 50%', // Ocupa exactamente el 50% del ancho
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end' // Alinea a la derecha
-        }}>
-          <Dropdown as={ButtonGroup} className="w-100">
-            <Dropdown.Toggle 
-              variant="outline-secondary" 
-              id="dropdown-language" 
-              className="w-100"
-              style={{
-                padding: '6px 12px',
-                fontSize: '1rem',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
-              }}
-            >
-              <img src={flagPath(lang)} alt="flag" style={flagStyle} />
-              <span style={{ marginLeft: '5px' }}>
-                {languageNames[lang]}
-              </span>
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu className="w-100">
-              {['ar', 'fr', 'en', 'es', 'ru', 'kab', 'chino'].map((langCode) => (
-                <Dropdown.Item 
-                  key={langCode} 
-                  onClick={() => handleLanguageChange(langCode)}
-                  style={{ fontSize: '0.9rem' }}
+          {/* SELECTOR DE IDIOMA - DERECHA */}
+          <Col xs={6} className="pe-0">
+            <div className="d-flex justify-content-end">
+              <Dropdown as={ButtonGroup}>
+                <Dropdown.Toggle 
+                  variant="outline-secondary" 
+                  id="dropdown-language"
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '0.9rem',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    backgroundColor: 'white',
+                    minWidth: '120px',
+                    maxWidth: '140px'
+                  }}
                 >
-                  <img src={flagPath(langCode)} alt={`${langCode} flag`} style={flagStyle} />
-                  {languageNames[langCode]}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-      </div>
+                  <img src={flagPath(lang)} alt="flag" style={flagStyle} />
+                  <span style={{ marginLeft: '5px', fontSize: '0.85rem' }}>
+                    {languageNames[lang]}
+                  </span>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu style={{ minWidth: '140px' }}>
+                  {['ar', 'fr', 'en', 'es', 'ru', 'kab', 'chino'].map((langCode) => (
+                    <Dropdown.Item 
+                      key={langCode} 
+                      onClick={() => handleLanguageChange(langCode)}
+                      style={{ 
+                        fontSize: '0.85rem',
+                        padding: '8px 12px',
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <img src={flagPath(langCode)} alt={`${langCode} flag`} style={flagStyle} />
+                      {languageNames[langCode]}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 }
-
 
 export default LanguageSelectorandroid;

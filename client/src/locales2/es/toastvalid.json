@@ -1,0 +1,32 @@
+{
+   "errorTitle": "Error",
+"successTitle": "Éxito" ,
+
+
+
+
+ 
+   "validation": {
+     "username": {
+       "required": "Username is required.",
+       "length": "Username must be less than 25 characters."
+     },
+     "email": {
+       "required": "Email is required.",
+       "format": "Email format is invalid."
+     },
+     "password": {
+       "required": "Password is required.",
+       "length": "Password must be at least 6 characters long."
+     },
+     "cf_password": {
+       "mismatch": "Passwords do not match."
+     }
+   }
+ 
+ 
+
+
+
+
+}

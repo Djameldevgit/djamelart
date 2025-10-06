@@ -1,0 +1,33 @@
+{
+  "rightside": "rightside",
+  "chat": {
+    "placeholder": "Escribe tu mensaje...",
+    "send": "Enviar",
+    "loadMore": "Cargar más",
+    "deleteConfirm": "¿Estás seguro de que quieres eliminar esta conversación?",
+    "maxChars": "Máximo 1000 caracteres permitidos",
+    "invalidChars": "Caracteres no permitidos detectados",
+    "tooManySpecial": "Demasiados caracteres especiales",
+    "fileNotFound": "El archivo no existe.",
+    "onlyImages": "Solo se permiten archivos de imagen (JPEG, JPG, PNG, GIF).",
+    "fileTooLarge": "La imagen no puede ser mayor a 5MB.",
+    "invalidFileName": "El nombre \"{{fileName}}\" contiene caracteres no permitidos.",
+    "maxFiles": "Máximo {{max}} archivos permitidos. {{extraInfo}}",
+    "superAdminInfo": "Super-usuarios y Admins pueden subir hasta 4 archivos.",
+    "loading": "Cargando...",
+    "charCount": "{{count}}/1000",
+    "validationError": "⚠️ {{error}}"
+  },
+  "leftside": "leftside",
+  "message": {
+    "searchPlaceholder": "Buscar usuarios...",
+    "searchButton": "Buscar",
+    "loadMore": "Cargar más",
+    "online": "En línea",
+    "offline": "Desconectado",
+    "noUsersFound": "No se encontraron usuarios",
+    "searchError": "Error en la búsqueda",
+    "noConversations": "No tienes conversaciones aún",
+    "searching": "Buscando..."
+  }
+}

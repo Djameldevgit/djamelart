@@ -1,0 +1,57 @@
+{
+  "accountStatus": "Statut du compte",
+  "activeAccount": "Compte actif",
+  "noRestrictions": "Votre compte n'a actuellement aucune restriction.",
+  "backToHome": "Retour à la page d'accueil",
+  "blockedAccount": "Compte bloqué",
+  "blockSystem": "Système de blocage",
+  "accountSuspended": "Votre compte a été temporairement suspendu. Veuillez consulter les informations ci-dessous.",
+  "username": "Nom d'utilisateur",
+  "blockReason": "Raison du blocage",
+  "notSpecified": "Non spécifié",
+  "details": "Détails",
+  "noAdditionalDetails": "Aucun détail supplémentaire fourni",
+  "blockDate": "Date du blocage",
+  "expectedUnblock": "Date de déblocage prévue",
+  "indeterminate": "Indéterminé",
+  "requestUnblock": "Demander le déblocage",
+  "contactSupport": "Contacter l'administration",
+  "blockSystemReghaia": "Système de blocage Tassili pour les Arts",
+  
+  "contactSupportMessage": "Veuillez nous contacter si vous pensez que votre blocage est une erreur. Nous examinerons votre situation rapidement.",
+  "yourEmail": "Notre e-mail",
+  "ourPhone": "Notre téléphone",
+  "yourMessage": "Votre message",
+  "messagePlaceholder": "Expliquez pourquoi vous pensez que votre compte devrait être débloqué...",
+  "cancel": "Annuler",
+  "sendMessage": "Envoyer le message",
+  "adminEmail": "E-mail de l'administration",
+  "subject": "Demande de support pour compte bloqué - Utilisateur : %s",
+  "title": "Demande de révision du blocage",
+  "userInfo": "Informations utilisateur",
+  "userMessage": "Message de l'utilisateur",
+  "reviewAccount": "Examiner ce compte",
+  "footer": "Ceci est un e-mail automatique. Veuillez ne pas répondre directement à ce message",
+  
+  "blockSupport": {
+    "subject": "Demande de support pour compte bloqué - Utilisateur : %s",
+    "title": "Demande de révision du blocage",
+    "userInfo": "Informations utilisateur",
+    "blockDate": "Date du blocage",
+    "userMessage": "Message de l'utilisateur",
+    "reviewAccount": "Examiner ce compte",
+    "footer": "Ceci est un e-mail automatique. Veuillez ne pas répondre directement à ce message."
+  },
+  
+  "ourContactInfo": "Vous pouvez nous contacter via :",
+  "messageRequired": "Veuillez écrire votre message avant l'envoi",
+  "messageSentSuccess": "Votre message a été envoyé avec succès",
+  "messageSentError": "Erreur lors de l'envoi du message. Veuillez réessayer",
+  
+  "support": {
+    "subject": "Nouveau message de contact d'un utilisateur bloqué",
+    "title": "Message de contact reçu",
+    "from": "E-mail de l'utilisateur",
+    "message": "Message"
+  }
+}

@@ -1,0 +1,29 @@
+{
+    
+   
+    "art_painting": "بيع الفن",
+  
+   
+  
+ "registro" :"registrooooooooooooooooooooooooooooooooooooo",
+  "imagenesDeRegistro": "Imágenes de registro",
+  "cerrar": "Cerrar",
+  "pasoNumero": "Paso {{paso}}",
+  "contadorImagenes": "{{actual}} de {{total}}",
+  "comoRegistrarme": "¿Cómo registrarme?",
+  "descripcionIntro": "Para aprovechar todas las funciones de la aplicación el sistema te permite registrarse con",
+  "tresFormasDiferentes": "3 formas diferentes",
+  "crearCuentaManual": "Crear una cuenta manualmente",
+  "descripcionManual": "Necesitas crear una cuenta gratuita con tu correo, nombre de usuario y una contraseña.",
+  "verImagenes": "ver imágenes",
+  "usandoGoogle": "Usando el botón Google",
+  "descripcionGoogle": "Si tienes cuenta de Google simplemente hacer click sobre el botón de Google y estarás en un momento dentro de la aplicación.",
+  "usandoFacebook": "Usando el botón de Facebook",
+  "descripcionFacebook": "Si tienes una cuenta de Facebook simplemente hacer click sobre el botón de login con Facebook.",
+  "olvidasteContrasena": "¿Olvidaste la contraseña?",
+  "recuperacionContrasena": "Recuperación de contraseña",
+  "descripcionRecuperacion": "Puedes recuperar tu contraseña siguiendo los pasos en el formulario de recuperación."
+ 
+  
+  
+  }

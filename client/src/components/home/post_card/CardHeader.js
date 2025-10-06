@@ -1,46 +1,30 @@
-import React, { useState } from 'react';
-import { Card, Dropdown, Modal, Form, Alert, Button } from 'react-bootstrap';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import Avatar from '../../Avatar';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-// React Share imports
-import {
-  FacebookShareButton,
-  TwitterShareButton,
-  WhatsappShareButton,
-  TelegramShareButton,
-  EmailShareButton,
-  FacebookIcon,
-  TwitterIcon,
-  WhatsappIcon,
-  TelegramIcon,
-  EmailIcon,
-  PinterestShareButton,
-  PinterestIcon
-} from 'react-share';
+// Importar los modales personalizados
+import ShareModal from './ShareModal';
+import ReportModal from './ReportModal';
+
+// Importar los modales de autenticación
+import AuthModal from '../../authAndVerify/AuthModal';
+import VerifyModal from '../../authAndVerify/VerifyModal';
+import DesactivateModal from '../../authAndVerify/DesactivateModal';
 
 import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
 import { MESS_TYPES } from '../../../redux/actions/messageAction';
 import { deletePost } from '../../../redux/actions/postAction';
 import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
-import { createReport } from '../../../redux/actions/reportUserAction';
 import FollowBtn from '../../FollowBtn';
-
-// Importar los modales
-import AuthModal from '../../authAndVerify/AuthModal';
-import VerifyModal from '../../authAndVerify/VerifyModal';
-import DesactivateModal from '../../authAndVerify/DesactivateModal';
 
 const CardHeader = ({ post }) => {
   const { auth, homeUsers, socket, languageReducer, profile } = useSelector((state) => state);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [reportReason, setReportReason] = useState('');
-  const [copied, setCopied] = useState(false);
+  const [showOptionsModal, setShowOptionsModal] = useState(false);
 
   // Estados para los modales de verificación
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -50,6 +34,24 @@ const CardHeader = ({ post }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { t, i18n } = useTranslation('cardheader');
+  const optionsRef = useRef(null);
+
+  const lang = languageReducer.language || 'es';
+  if (i18n.language !== lang) i18n.changeLanguage(lang);
+
+  // Cerrar modal al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setShowOptionsModal(false);
+      }
+    };
+
+    if (showOptionsModal) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showOptionsModal]);
 
   // Función canProceed
   const canProceed = () => {
@@ -57,34 +59,28 @@ const CardHeader = ({ post }) => {
       setShowAuthModal(true);
       return false;
     }
-
     if (!auth.user.isVerified) {
       setShowVerifyModal(true);
       return false;
     }
-
     if (auth.user.isActive === false) {
       setShowDeactivatedModal(true);
       return false;
     }
-
     return true;
   };
 
   const findCompleteUser = () => {
-    const completeUser = profile.users.find(u => u._id === post.user._id);
+    const completeUser = profile.users?.find(u => u._id === post.user._id);
     return completeUser || post.user;
   };
 
   const user = findCompleteUser();
-  const lang = languageReducer.language || 'es';
-  if (i18n.language !== lang) i18n.changeLanguage(lang);
+  const adminUser = homeUsers.users?.find(user => user.role === "admin");
+  const isPostOwner = auth.user && post.user && auth.user._id === post.user._id;
+  const isAdmin = auth.user && auth.user.role === "admin";
 
-  // URL y texto para compartir
-  const shareUrl = `${window.location.origin}/post/${post._id}`;
-  const shareTitle = `🎨 Obra de arte por ${post.user.username}: "${post.content?.substring(0, 80)}..." - Mira más en Tassili Art`;
-  const imageUrl = post.images?.[0]?.url || post.user.avatar;
-
+  // Handlers
   const handleAprove = () => {
     if (window.confirm(t('confirmApprove'))) {
       dispatch(aprovarPostPendiente(post, 'aprovado', auth));
@@ -92,11 +88,8 @@ const CardHeader = ({ post }) => {
     }
   };
 
-  const adminUser = homeUsers.users.find(user => user.role === "admin");
-
   const handleChatWithAdmin = () => {
     if (!canProceed()) return;
-
     if (!adminUser) {
       return dispatch({
         type: GLOBALTYPES.ALERT,
@@ -109,36 +102,27 @@ const CardHeader = ({ post }) => {
   const handleEditPost = () => {
     if (!canProceed()) return;
     dispatch({ type: GLOBALTYPES.STATUS, payload: { ...post, onEdit: true } });
+    setShowOptionsModal(false);
   };
 
   const handleDeletePost = () => {
     if (!canProceed()) return;
-
     if (window.confirm(t('confirmDelete'))) {
       dispatch(deletePost({ post, auth, socket }));
       history.push("/");
     }
   };
 
-  const handleSubmitReport = () => {
+  const handleSubmitReport = (reason) => {
     if (!canProceed()) return;
-
-    if (!reportReason.trim()) {
-      return dispatch({
-        type: GLOBALTYPES.ALERT,
-        payload: { error: t('reportRequired') }
-      });
-    }
-
     const reportData = {
       postId: post._id,
       userId: post.user._id,
-      reason: reportReason,
+      reason: reason,
     };
-
     dispatch(createReport({ auth, reportData }));
     setShowReportModal(false);
-    setReportReason('');
+    setShowOptionsModal(false);
     dispatch({
       type: GLOBALTYPES.ALERT,
       payload: { success: t('reportSubmitted') }
@@ -147,320 +131,356 @@ const CardHeader = ({ post }) => {
 
   const handleAddUser = (user) => {
     if (!canProceed()) return;
-
     dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...user, text: '', media: [] } });
-    return history.push(`/message/${user._id}`);
+    history.push(`/message/${user._id}`);
   };
 
   const handleShare = () => {
     setShowShareModal(true);
+    setShowOptionsModal(false);
   };
 
   const handleContactSeller = () => {
     if (!canProceed()) return;
     handleAddUser(post.user);
+    setShowOptionsModal(false);
   };
 
-  const handleCopy = (message) => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    dispatch({
-      type: GLOBALTYPES.ALERT,
-      payload: { success: message }
-    });
-  };
+ 
 
   return (
     <>
-      <Card.Header className="d-flex justify-content-between align-items-center p-3">
-        <div className='mt-0'></div>
+      {/* Header Principal */}
+      
 
-        {auth.user && (
-          <Dropdown align="end">
-            <Dropdown.Toggle variant="light" id="dropdown-actions" className="p-0 border-0">
-              <span className="material-icons">more_horiz</span>
-            </Dropdown.Toggle>
+      {/* Modal de Opciones - Estilo Bottom Sheet para móvil */}
+      {showOptionsModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'center',
+          zIndex: 9999,
+          animation: 'fadeIn 0.2s ease'
+        }}
+        onClick={() => setShowOptionsModal(false)}
+        >
+          <div
+            ref={optionsRef}
+            style={{
+              background: 'white',
+              width: '100%',
+              maxWidth: '500px',
+              borderTopLeftRadius: '16px',
+              borderTopRightRadius: '16px',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              animation: 'slideUp 0.3s ease',
+              boxShadow: '0 -2px 20px rgba(0, 0, 0, 0.1)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Handle visual */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '12px 0 8px'
+            }}>
+              <div style={{
+                width: '40px',
+                height: '4px',
+                backgroundColor: '#dbdbdb',
+                borderRadius: '2px'
+              }} />
+            </div>
 
-            <Dropdown.Menu
-              style={{
-                direction: lang === 'ar' ? 'rtl' : 'ltr',
-                textAlign: lang === 'ar' ? 'right' : 'left',
-              }}
-            >
-              {auth.user.role === 'admin' && (
+            {/* Opciones */}
+            <div style={{ paddingBottom: '8px' }}>
+              {/* Admin Options */}
+              {isAdmin && (
+                <button
+                  onClick={handleAprove}
+                  style={{
+                    width: '100%',
+                    padding: '14px 20px',
+                    border: 'none',
+                    background: 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    fontSize: '15px',
+                    color: '#262626',
+                    transition: 'background-color 0.15s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fafafa'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <span className="material-icons" style={{ fontSize: '20px', color: '#0095f6' }}>
+                    check_circle
+                  </span>
+                  <span>{t('approve')}</span>
+                </button>
+              )}
+
+              {/* Owner/Admin Edit & Delete */}
+              {(isPostOwner || isAdmin) && (
                 <>
-                  <Dropdown.Item onClick={handleAprove}>
-                    ✅ {t('approve')}
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={handleEditPost}>
-                    ✏️ {t('edit')}
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={handleDeletePost}>
-                    🗑️ {t('delete')}
-                  </Dropdown.Item>
-                  <Dropdown.Divider />
+                  <button
+                    onClick={handleEditPost}
+                    style={{
+                      width: '100%',
+                      padding: '14px 20px',
+                      border: 'none',
+                      background: 'none',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      fontSize: '15px',
+                      color: '#262626',
+                      transition: 'background-color 0.15s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fafafa'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <span className="material-icons" style={{ fontSize: '20px' }}>edit</span>
+                    <span>{t('edit')}</span>
+                  </button>
+
+                  <button
+                    onClick={handleDeletePost}
+                    style={{
+                      width: '100%',
+                      padding: '14px 20px',
+                      border: 'none',
+                      background: 'none',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      fontSize: '15px',
+                      color: '#ed4956',
+                      transition: 'background-color 0.15s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fafafa'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <span className="material-icons" style={{ fontSize: '20px' }}>delete</span>
+                    <span>{t('delete')}</span>
+                  </button>
+
+                  <div style={{
+                    height: '1px',
+                    backgroundColor: '#efefef',
+                    margin: '8px 0'
+                  }} />
                 </>
               )}
 
-              {auth.user._id === post.user._id && (
-                <>
-                  <Dropdown.Item onClick={handleEditPost}>
-                    ✏️ {t('edit')}
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={handleDeletePost}>
-                    🗑️ {t('delete')}
-                  </Dropdown.Item>
-                  <Dropdown.Divider />
-                </>
-              )}
-
-              <Dropdown.Item onClick={handleContactSeller}>
-                💬 {t('contactSeller')}
-              </Dropdown.Item>
-
-              <Dropdown.Item onClick={handleChatWithAdmin}>
-                🛡️ {t('contactAdmin')}
-              </Dropdown.Item>
-
+              {/* Follow Button */}
               {auth.user._id !== user._id && (
                 <>
-                  <Dropdown.Divider />
-                  <Dropdown.Item
-                    as="div"
-                    className="p-2"
-                    style={{ cursor: 'default' }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="d-flex align-items-center">
-                      <span className="me-2">👤</span>
-                      <FollowBtn user={user} />
-                    </div>
-                  </Dropdown.Item>
+                  <div style={{
+                    padding: '8px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}>
+                    <span className="material-icons" style={{ fontSize: '20px', color: '#8e8e8e' }}>
+                      person_add
+                    </span>
+                    <FollowBtn user={user} />
+                  </div>
+                  <div style={{
+                    height: '1px',
+                    backgroundColor: '#efefef',
+                    margin: '8px 0'
+                  }} />
                 </>
               )}
 
-              <Dropdown.Divider />
-
-              <Dropdown.Item onClick={handleShare}>
-                📤 {t('share')}
-              </Dropdown.Item>
-
-              <Dropdown.Item onClick={() => {
-                if (!canProceed()) return;
-                setShowReportModal(true);
-              }}>
-                🚩 {t('report')}
-              </Dropdown.Item>
-
-              <Dropdown.Item>
-                🔖 {t('save')}
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        )}
-      </Card.Header>
-
-      {/* Modal para Compartir */}
-      <Modal 
-        show={showShareModal} 
-        onHide={() => setShowShareModal(false)} 
-        centered 
-        size="lg"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>🎨 {t('shareArt')}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {copied && (
-            <Alert variant="success" className="py-2" dismissible onClose={() => setCopied(false)}>
-              ✅ {t('copiedToClipboard')}
-            </Alert>
-          )}
-
-          <h6 className="mb-3">{t('shareOnSocial')}</h6>
-          <div className="d-flex justify-content-around flex-wrap mb-4">
-            <FacebookShareButton url={shareUrl} quote={shareTitle} className="mx-2 my-2">
-              <FacebookIcon size={45} round />
-              <div className="small mt-1 text-center">Facebook</div>
-            </FacebookShareButton>
-
-            <TwitterShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
-              <TwitterIcon size={45} round />
-              <div className="small mt-1 text-center">Twitter</div>
-            </TwitterShareButton>
-
-            <WhatsappShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
-              <WhatsappIcon size={45} round />
-              <div className="small mt-1 text-center">WhatsApp</div>
-            </WhatsappShareButton>
-
-            {imageUrl && (
-              <PinterestShareButton
-                url={shareUrl}
-                media={imageUrl}
-                description={shareTitle}
-                className="mx-2 my-2"
+              {/* Common Options */}
+              <button
+                onClick={handleContactSeller}
+                style={{
+                  width: '100%',
+                  padding: '14px 20px',
+                  border: 'none',
+                  background: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  fontSize: '15px',
+                  color: '#262626',
+                  transition: 'background-color 0.15s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fafafa'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
-                <PinterestIcon size={45} round />
-                <div className="small mt-1 text-center">Pinterest</div>
-              </PinterestShareButton>
-            )}
+                <span className="material-icons" style={{ fontSize: '20px' }}>chat</span>
+                <span>{t('contactSeller')}</span>
+              </button>
 
-            <div 
-              className="mx-2 my-2 text-center" 
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                navigator.clipboard.writeText(shareTitle);
-                handleCopy(t('copiedForTikTok'));
-              }}
-            >
-              <div style={{
-                width: 45,
-                height: 45,
-                borderRadius: '50%',
-                background: '#000',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto'
-              }}>
-                <span style={{ color: '#fff', fontWeight: 'bold' }}>TK</span>
+              <button
+                onClick={handleChatWithAdmin}
+                style={{
+                  width: '100%',
+                  padding: '14px 20px',
+                  border: 'none',
+                  background: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  fontSize: '15px',
+                  color: '#262626',
+                  transition: 'background-color 0.15s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fafafa'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <span className="material-icons" style={{ fontSize: '20px' }}>admin_panel_settings</span>
+                <span>{t('contactAdmin')}</span>
+              </button>
+
+              <button
+                onClick={handleShare}
+                style={{
+                  width: '100%',
+                  padding: '14px 20px',
+                  border: 'none',
+                  background: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  fontSize: '15px',
+                  color: '#262626',
+                  transition: 'background-color 0.15s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fafafa'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <span className="material-icons" style={{ fontSize: '20px' }}>share</span>
+                <span>{t('share')}</span>
+              </button>
+
+              {!isPostOwner && (
+                <button
+                  onClick={() => {
+                    if (!canProceed()) return;
+                    setShowReportModal(true);
+                    setShowOptionsModal(false);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '14px 20px',
+                    border: 'none',
+                    background: 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    fontSize: '15px',
+                    color: '#ed4956',
+                    transition: 'background-color 0.15s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fafafa'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <span className="material-icons" style={{ fontSize: '20px' }}>flag</span>
+                  <span>{t('report')}</span>
+                </button>
+              )}
+
+              {/* Botón Cancelar */}
+              <div style={{ padding: '8px 16px', marginTop: '8px' }}>
+                <button
+                  onClick={() => setShowOptionsModal(false)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '1px solid #dbdbdb',
+                    background: 'white',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#262626',
+                    transition: 'background-color 0.15s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fafafa'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                >
+                  {t('cancel')}
+                </button>
               </div>
-              <div className="small mt-1">TikTok</div>
             </div>
-
-            <div 
-              className="mx-2 my-2 text-center" 
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                navigator.clipboard.writeText(shareTitle);
-                handleCopy(t('copiedForInstagram'));
-              }}
-            >
-              <div style={{
-                width: 45,
-                height: 45,
-                borderRadius: '50%',
-                background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto'
-              }}>
-                <span style={{ color: '#fff', fontWeight: 'bold' }}>IG</span>
-              </div>
-              <div className="small mt-1">Instagram</div>
-            </div>
-
-            <TelegramShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
-              <TelegramIcon size={45} round />
-              <div className="small mt-1 text-center">Telegram</div>
-            </TelegramShareButton>
-
-            <EmailShareButton url={shareUrl} subject={t('artWork')} body={shareTitle} className="mx-2 my-2">
-              <EmailIcon size={45} round />
-              <div className="small mt-1 text-center">Email</div>
-            </EmailShareButton>
           </div>
+        </div>
+      )}
 
-          <h6 className="mb-3">{t('manualShare')}</h6>
-          <Form.Group className="mb-3">
-            <Form.Label>{t('copyTextForSocial')}</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={shareTitle}
-              readOnly
-              className="mb-2"
-            />
-            <CopyToClipboard
-              text={shareTitle}
-              onCopy={() => handleCopy(t('textCopied'))}
-            >
-              <Button variant="outline-primary" size="sm">
-                📋 {t('copyText')}
-              </Button>
-            </CopyToClipboard>
-          </Form.Group>
+      {/* CSS Animations */}
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          
+          @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+          }
 
-          <Form.Group>
-            <Form.Label>{t('copyLink')}</Form.Label>
-            <div className="input-group">
-              <Form.Control
-                type="text"
-                value={shareUrl}
-                readOnly
-              />
-              <CopyToClipboard
-                text={shareUrl}
-                onCopy={() => handleCopy(t('linkCopied'))}
-              >
-                <Button variant="outline-secondary" type="button">
-                  📋
-                </Button>
-              </CopyToClipboard>
-            </div>
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowShareModal(false)}>
-            {t('close')}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          /* Estilos para avatares */
+          .medium-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
 
-      {/* Modal de Reporte */}
-      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{t('reportTitle')}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group controlId="reportReason">
-            <Form.Label>{t('reportLabel')}</Form.Label>
-            <Form.Select
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}
-              style={{
-                direction: lang === 'ar' ? 'rtl' : 'ltr',
-                textAlign: lang === 'ar' ? 'right' : 'left',
-              }}
-            >
-              <option value="">{t('selectReason')}</option>
-              <option value="abuse">{t('reasons.abuse')}</option>
-              <option value="spam">{t('reasons.spam')}</option>
-              <option value="terms">{t('reasons.terms')}</option>
-              <option value="offensive">{t('reasons.offensive')}</option>
-              <option value="fraud">{t('reasons.fraud')}</option>
-              <option value="impersonation">{t('reasons.impersonation')}</option>
-              <option value="inappropriate">{t('reasons.inappropriate')}</option>
-              <option value="privacy">{t('reasons.privacy')}</option>
-              <option value="disruption">{t('reasons.disruption')}</option>
-              <option value="suspicious">{t('reasons.suspicious')}</option>
-              <option value="other">{t('reasons.other')}</option>
-            </Form.Select>
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setShowReportModal(false);
-              setReportReason('');
-            }}
-          >
-            {t('cancel')}
-          </Button>
-          <Button
-            variant="danger"
-            disabled={!reportReason}
-            onClick={handleSubmitReport}
-          >
-            {t('submitReport')}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          /* Optimización para pantallas pequeñas */
+          @media (max-width: 480px) {
+            .medium-avatar {
+              width: 32px;
+              height: 32px;
+            }
+          }
+        `}
+      </style>
 
-      {/* Modales de verificación */}
+      {/* Modales */}
+      <ShareModal
+        show={showShareModal}
+        onHide={() => setShowShareModal(false)}
+        post={post}
+        t={t}
+      />
+
+      <ReportModal
+        show={showReportModal}
+        onHide={() => setShowReportModal(false)}
+        onSubmit={handleSubmitReport}
+        t={t}
+        initialReason=""
+      />
+
       <AuthModal
         show={showAuthModal}
         onClose={() => setShowAuthModal(false)}

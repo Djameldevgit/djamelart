@@ -1,0 +1,46 @@
+{
+    "privacysettings":"configuración de privacidad",
+    "userNotFound":"Usuario no encontado",
+    "back":"Atras",
+    "numerodeposts":"posts",
+    "numerodelikes":"likes",
+    "posts": "Publicaciones",
+    "saved": "Guardados",
+    "info": "Información",
+    "followers": "Seguidores",
+    "following": "Siguiendo",
+    "editProfile": "Editar Perfil",
+    "about": "Acerca de",
+    "userInfo": "Información del Usuario",
+    "username": "Usuario",
+    "email": "Correo",
+    "totalPosts": "Publicaciones Totales",
+    "totalLikes": "Likes Totales",
+    "role": "Rol",
+    "verification": "Verificación",
+    "accountStatus": "Estado de Cuenta",
+    "verified": "Verificado",
+    "pending": "Pendiente",
+    "active": "Activa",
+    "inactive": "Inactiva",
+    "memberSince": "Miembro desde",
+    "lastLogin": "Último acceso",
+    "close": "Cerrar",
+
+    "profileInfo": "Información del Perfil",
+    "accessDenied": "Acceso Denegado",
+    "accessDeniedMessage": "Solo puedes ver tu propia información privada.",
+    "viewMyInfo": "Ver Mi Información",
+  
+    "backToHome": "Volver al Inicio",
+   
+    "likes": "Me gusta",
+    "mobile": "Teléfono",
+    "personalInfo": "Información Personal",
+    "userID": "ID de Usuario",
+    "address": "Dirección",
+    "website": "Sitio Web",
+    "gender": "Género"
+    
+  
+}

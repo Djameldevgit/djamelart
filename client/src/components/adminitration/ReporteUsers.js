@@ -23,7 +23,7 @@ import {
   EyeFill
 } from "react-bootstrap-icons";
 
-const ReportedUsers = () => {
+const ReporteUsers = () => {
   const { auth, languageReducer } = useSelector((state) => state);
   const { reports, loading } = useSelector((state) => state.reportReducer);
   const dispatch = useDispatch();
@@ -355,4 +355,4 @@ const UserInfo = ({ user, lang }) => {
   );
 };
 
-export default ReportedUsers;
+export default ReporteUsers;
