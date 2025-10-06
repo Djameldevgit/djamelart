@@ -293,7 +293,9 @@ const Navbar2 = () => {
                       borderRadius: '10px',
                       objectFit: 'cover',
                       width: '100%',
-                      height: '100%'
+                      height: '100%',
+                      margin:'3px',
+                      pading:'3px'
                     }}
                   />
                 </div>

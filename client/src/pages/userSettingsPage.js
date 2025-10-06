@@ -194,9 +194,10 @@ const UserSettingsPage = () => {
                       border: '4px solid white',
                       padding: '3px',
                       background: 'white'
-                    }}
-                  >
-                    <img 
+                    }} >
+                   
+                  <Link  to={`/profile/${auth.user?._id}`}>
+                     <img 
                       src={auth.user?.avatar} 
                       alt="Avatar"
                       style={{
@@ -204,8 +205,9 @@ const UserSettingsPage = () => {
                         height: '100%',
                         borderRadius: '50%',
                         objectFit: 'cover'
-                      }}
-                    />
+                      }} />
+                  </Link> 
+                 
                   </div>
                   <div className="flex-grow-1">
                     <h3 className="text-white mb-2">{auth.user?.username}</h3>

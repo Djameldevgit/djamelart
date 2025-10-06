@@ -97,7 +97,7 @@ const ImagesPost = ({
           opacity: showInfo ? 0.95 : 0,
           transition: 'all 0.3s ease 0.1s'
         }}>
-          {post.title}
+          {post.category}: {post.title}
         </div>
         <div style={{
           display: "flex",
