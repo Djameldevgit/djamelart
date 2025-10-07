@@ -24,7 +24,7 @@ const LeftSide = () => {
   const pageEnd = useRef()
   const [page, setPage] = useState(0)
 
-  const { t } = useTranslation('chat')
+  const { t } = useTranslation('message')
   const lang = languageReducer.language || 'es'
 
   useEffect(() => {
@@ -120,10 +120,10 @@ const LeftSide = () => {
                 <Form.Control
                   type="text"
                   value={search}
-                  placeholder={t('message.searchPlaceholder', { lng: lang }) || 'Buscar usuarios...'}
+                  placeholder={t('message.searchPlaceholder')}
                   onChange={e => setSearch(e.target.value)}
                   style={{
-                    borderRadius: '25px 0 0 25px',
+                    borderRadius: lang === 'ar' ? '0 25px 25px 0' : '25px 0 0 25px',
                     border: 'none',
                     padding: '12px 20px',
                     background: 'rgba(255, 255, 255, 0.95)',
@@ -135,7 +135,7 @@ const LeftSide = () => {
                 <Button
                   type="submit"
                   style={{
-                    borderRadius: '0 25px 25px 0',
+                    borderRadius: lang === 'ar' ? '25px 0 0 25px' : '0 25px 25px 0',
                     border: 'none',
                     background: 'rgba(255, 255, 255, 0.2)',
                     padding: '0 20px',
@@ -158,7 +158,18 @@ const LeftSide = () => {
             </Form>
 
             {/* Badge con contador de conversaciones */}
-           
+            <div className="d-flex justify-content-between align-items-center mt-2">
+              <Badge 
+                bg="light" 
+                text="dark"
+                style={{
+                  fontSize: '0.75rem',
+                  padding: '4px 8px'
+                }}
+              >
+                {t('message.conversations')}: {message.users.length}
+              </Badge>
+            </div>
           </Card.Body>
         </Card>
       )}
@@ -184,7 +195,7 @@ const LeftSide = () => {
                 fontWeight: '600'
               }}
             >
-              Resultados de búsqueda ({searchUsers.length})
+              {t('message.searchResults')} ({searchUsers.length})
             </div>
             <ListGroup variant="flush">
               {searchUsers.map(user => (
@@ -205,7 +216,7 @@ const LeftSide = () => {
                     e.currentTarget.style.background = theme 
                       ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
                       : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)';
-                    e.currentTarget.style.transform = 'translateX(4px)';
+                    e.currentTarget.style.transform = lang === 'ar' ? 'translateX(-4px)' : 'translateX(4px)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = theme ? '#16213e' : 'white';
@@ -249,10 +260,10 @@ const LeftSide = () => {
                   <FaInbox size={35} style={{ color: '#667eea' }} />
                 </div>
                 <h6 style={{ fontWeight: '600', marginBottom: '8px' }}>
-                  {t('message.noUsersFound', { lng: lang }) || 'No hay conversaciones'}
+                  {t('message.noUsersFound')}
                 </h6>
                 <small style={{ opacity: 0.7 }}>
-                  Busca usuarios para iniciar una conversación
+                  {t('message.startConversation')}
                 </small>
               </div>
             ) : (
@@ -284,7 +295,7 @@ const LeftSide = () => {
                         e.currentTarget.style.background = theme 
                           ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
                           : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)';
-                        e.currentTarget.style.transform = 'translateX(4px)';
+                        e.currentTarget.style.transform = lang === 'ar' ? 'translateX(-4px)' : 'translateX(4px)';
                       }
                     }}
                     onMouseLeave={(e) => {
@@ -312,18 +323,22 @@ const LeftSide = () => {
                               }}
                             >
                               <FaCircle size={6} />
-                              En línea
+                              {t('message.online')}
                             </Badge>
                           ) : (
                             auth.user.following.find(item => item._id === user._id) && (
-                              <FaCircle 
-                                size={8} 
-                                style={{ 
-                                  color: theme ? '#555' : '#ccc',
-                                  opacity: 0.6
-                                }}
-                                title={t('message.offline', { lng: lang }) || 'Desconectado'}
-                              />
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <FaCircle 
+                                  size={8} 
+                                  style={{ 
+                                    color: theme ? '#555' : '#ccc',
+                                    opacity: 0.6
+                                  }}
+                                />
+                                <span style={{ fontSize: '0.65rem', color: theme ? '#aaa' : '#666' }}>
+                                  {t('message.offline')}
+                                </span>
+                              </div>
                             )
                           )}
                         </div>
@@ -337,12 +352,13 @@ const LeftSide = () => {
                           style={{
                             position: 'absolute',
                             top: '8px',
-                            right: '8px',
+                            [lang === 'ar' ? 'left' : 'right']: '8px',
                             fontSize: '0.7rem',
                             padding: '4px 8px',
                             minWidth: '24px',
                             boxShadow: '0 2px 8px rgba(220, 53, 69, 0.4)'
                           }}
+                          title={`${user.unread} ${t('message.unreadMessages')}`}
                         >
                           {user.unread > 9 ? '9+' : user.unread}
                         </Badge>
@@ -364,9 +380,9 @@ const LeftSide = () => {
             border: 'none',
             background: 'transparent'
           }}
-          aria-label={t('message.loadMore2', { lng: lang })}
+          aria-label={t('message.loadMore2')}
         >
-          {t('message.loadMore2', { lng: lang })}
+          {t('message.loadMore2')}
         </button>
       </div>
 

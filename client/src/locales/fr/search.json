@@ -1,0 +1,145 @@
+{
+  "header": {
+    "title": "Recherche",
+    "filtersActive": "Filtres actifs"
+  },
+  "search": {
+    "placeholder": "Rechercher par titre, description, artiste..."
+  },
+  "buttons": {
+    "search": "🔍 Rechercher",
+    "filters": "Filtres",
+    "hide": "Masquer",
+    "advanced": "Avancé",
+    "searching": "Recherche en cours...",
+    "applyFilters": "Appliquer les filtres",
+    "clearAll": "Tout effacer"
+  },
+  "users": {
+    "title": "Utilisateurs trouvés"
+  },
+  "categories": {
+    "title": "Catégories",
+    "painting": "Peinture",
+    "sculpture": "Sculpture",
+    "photography": "Photographie",
+    "drawing": "Dessin",
+    "engraving": "Gravure",
+    "digital_art": "Art numérique",
+    "collage": "Collage",
+    "textile_art": "Art textile"
+  },
+  "filters": {
+    "theme": "Thème",
+    "style": "Style",
+    "minPrice": "Prix minimum",
+    "maxPrice": "Prix maximum",
+    "location": "Localisation",
+    "allThemes": "Tous les thèmes",
+    "allStyles": "Tous les styles",
+    "pricePlaceholder": "0 dinars",
+    "maxPricePlaceholder": "10000 dinars",
+    "locationPlaceholder": "Ex: Algérie",
+    "themes": {
+      "abstract": "Abstrait",
+      "landscape": "Paysage",
+      "portrait": "Portrait",
+      "still_life": "Nature morte",
+      "urban": "Urbain",
+      "surreal": "Surréaliste"
+    },
+    "styles": {
+      "realism": "Réalisme",
+      "impressionism": "Impressionnisme",
+      "expressionism": "Expressionnisme",
+      "cubism": "Cubisme",
+      "surrealism": "Surréalisme",
+      "abstract": "Abstrait"
+    }
+  },
+  "advancedFilters": {
+    "title": "Filtres avancés",
+    "artType": "Type d'art",
+    "material": "Matériau",
+    "technique": "Technique",
+    "orientation": "Orientation",
+    "size": "Taille",
+    "year": "Année",
+    "tags": "Étiquettes",
+    "sortBy": "Trier par",
+    "order": "Ordre",
+    "allTypes": "Tous les types",
+    "allMaterials": "Tous les matériaux",
+    "allTechniques": "Toutes les techniques",
+    "allOrientations": "Toutes les orientations",
+    "allSizes": "Toutes les tailles",
+    "tagsPlaceholder": "abstrait, moderne, coloré...",
+    "artTypes": {
+      "oil_painting": "Peinture à l'huile",
+      "watercolor": "Aquarelle",
+      "acrylic": "Acrylique",
+      "digital_art": "Art numérique",
+      "sculpture": "Sculpture",
+      "photography": "Photographie",
+      "drawing": "Dessin",
+      "mixed_media": "Technique mixte"
+    },
+    "materials": {
+      "canvas": "Toile",
+      "paper": "Papier",
+      "wood": "Bois",
+      "metal": "Métal",
+      "clay": "Argile",
+      "stone": "Pierre",
+      "fabric": "Tissu",
+      "digital": "Numérique"
+    },
+    "techniques": {
+      "oil_painting": "Peinture à l'huile",
+      "watercolor": "Aquarelle",
+      "acrylic": "Acrylique",
+      "digital_painting": "Peinture numérique",
+      "sculpting": "Sculpture",
+      "carving": "Sculpture sur bois",
+      "photography_digital": "Photographie numérique",
+      "collage": "Collage"
+    },
+    "orientations": {
+      "horizontal": "Horizontal",
+      "vertical": "Vertical",
+      "square": "Carré"
+    },
+    "sizes": {
+      "small": "Petit",
+      "medium": "Moyen",
+      "large": "Grand",
+      "extra_large": "Très grand"
+    },
+    "sortOptions": {
+      "createdAt": "Plus récent",
+      "price": "Prix",
+      "title": "Titre",
+      "likesCount": "Plus populaire"
+    },
+    "orderOptions": {
+      "desc": "Descendant",
+      "asc": "Ascendant"
+    }
+  },
+  "results": {
+    "title": "Résultats",
+    "top": "Top",
+    "loadingPosts": "Chargement des publications...",
+    "searching": "Recherche en cours...",
+    "noResults": {
+      "title": "Aucun résultat trouvé",
+      "withFilters": "Essayez d'utiliser d'autres filtres ou termes de recherche.",
+      "withoutFilters": "Aucune publication disponible pour le moment."
+    }
+  },
+  "errors": {
+    "loadingPosts": "Erreur de chargement des publications",
+    "searchError": "Erreur de recherche",
+    "userSearchError": "Erreur de recherche d'utilisateurs"
+  }
+}

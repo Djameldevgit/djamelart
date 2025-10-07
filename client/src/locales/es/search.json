@@ -1,7 +1,7 @@
 {
   "header": {
     "title": "Buscar",
-    "filtersActive": "filtros activos"
+    "filtersActive": "Filtros activos"
   },
   "search": {
     "placeholder": "Buscar por título, descripción, artista..."
@@ -12,8 +12,8 @@
     "hide": "Ocultar",
     "advanced": "Avanzado",
     "searching": "Buscando...",
-    "applyFilters": "Aplicar Filtros",
-    "clearAll": "Limpiar Todo"
+    "applyFilters": "Aplicar filtros",
+    "clearAll": "Limpiar todo"
   },
   "users": {
     "title": "Usuarios encontrados"
@@ -25,26 +25,26 @@
     "photography": "Fotografía",
     "drawing": "Dibujo",
     "engraving": "Grabado",
-    "digital_art": "Arte Digital",
+    "digital_art": "Arte digital",
     "collage": "Collage",
-    "textile_art": "Arte Textil"
+    "textile_art": "Arte textil"
   },
   "filters": {
     "theme": "Tema",
     "style": "Estilo",
-    "minPrice": "Precio Mín",
-    "maxPrice": "Precio Máx",
+    "minPrice": "Precio mínimo",
+    "maxPrice": "Precio máximo",
     "location": "Ubicación",
     "allThemes": "Todos los temas",
     "allStyles": "Todos los estilos",
-    "pricePlaceholder": "0 DZD",
-    "maxPricePlaceholder": "10000 DZD",
-    "locationPlaceholder": "Ej: Alger",
+    "pricePlaceholder": "0 dinares",
+    "maxPricePlaceholder": "10000 dinares",
+    "locationPlaceholder": "Ej: Argelia",
     "themes": {
       "abstract": "Abstracto",
       "landscape": "Paisaje",
       "portrait": "Retrato",
-      "still_life": "Naturaleza Muerta",
+      "still_life": "Naturaleza muerta",
       "urban": "Urbano",
       "surreal": "Surrealista"
     },
@@ -58,8 +58,8 @@
     }
   },
   "advancedFilters": {
-    "title": "Filtros Avanzados",
-    "artType": "Tipo de Arte",
+    "title": "Filtros avanzados",
+    "artType": "Tipo de arte",
     "material": "Material",
     "technique": "Técnica",
     "orientation": "Orientación",
@@ -73,7 +73,7 @@
     "allTechniques": "Todas las técnicas",
     "allOrientations": "Todas las orientaciones",
     "allSizes": "Todos los tamaños",
-    "tagsPlaceholder": "abstract, modern, colorful...",
+    "tagsPlaceholder": "abstracto, moderno, colorido...",
     "artTypes": {
       "oil_painting": "Pintura al óleo",
       "watercolor": "Acuarela",
@@ -99,7 +99,7 @@
       "watercolor": "Acuarela",
       "acrylic": "Acrílico",
       "digital_painting": "Pintura digital",
-      "sculpting": "Esculpido",
+      "sculpting": "Escultura",
       "carving": "Tallado",
       "photography_digital": "Fotografía digital",
       "collage": "Collage"
@@ -113,13 +113,13 @@
       "small": "Pequeño",
       "medium": "Mediano",
       "large": "Grande",
-      "extra_large": "Extra Grande"
+      "extra_large": "Muy grande"
     },
     "sortOptions": {
       "createdAt": "Más reciente",
       "price": "Precio",
       "title": "Título",
-      "likesCount": "Más populares"
+      "likesCount": "Más popular"
     },
     "orderOptions": {
       "desc": "Descendente",
@@ -129,16 +129,16 @@
   "results": {
     "title": "Resultados",
     "top": "Top",
-    "loadingPosts": "Cargando posts...",
+    "loadingPosts": "Cargando publicaciones...",
     "searching": "Buscando...",
     "noResults": {
       "title": "No se encontraron resultados",
-      "withFilters": "Intenta con otros filtros o términos de búsqueda.",
-      "withoutFilters": "No hay posts disponibles en este momento."
+      "withFilters": "Intenta usar otros filtros o términos de búsqueda.",
+      "withoutFilters": "No hay publicaciones disponibles en este momento."
     }
   },
   "errors": {
-    "loadingPosts": "Error al cargar posts",
+    "loadingPosts": "Error al cargar publicaciones",
     "searchError": "Error en la búsqueda",
     "userSearchError": "Error al buscar usuarios"
   }

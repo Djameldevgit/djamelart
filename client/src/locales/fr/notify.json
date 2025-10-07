@@ -1,0 +1,28 @@
+{
+ 
+    "title": "Notifications",
+    "notification": "notification",
+    "notifications": "notifications",
+    "disableSound": "Désactiver le son",
+    "enableSound": "Activer le son",
+    "markAllAsRead": "Tout marquer comme lu",
+    "deleteAll": "Tout supprimer",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer {{count}} notifications ?",
+    "all": "Toutes",
+    "unread": "Non lues",
+    "read": "Lues",
+    "noNotifications": "Vous n'avez pas de notifications",
+    "noNotificationsInCategory": "Aucune notification dans cette catégorie",
+    "new": "Nouvelle",
+    "markAsRead": "Marquer comme lue",
+    "markAsUnread": "Marquer comme non lue",
+    "viewDetails": "Voir les détails",
+    "delete": "Supprimer",
+    "likePost": "a aimé votre publication",
+    "commentPost": "a commenté votre publication",
+    "followUser": "vous suit maintenant",
+    "sharePost": "a partagé votre publication",
+    "mentionPost": "vous a mentionné dans une publication",
+    "mentionComment": "vous a mentionné dans un commentaire"
+  }
+ 

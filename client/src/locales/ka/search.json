@@ -1,0 +1,145 @@
+{
+  "header": {
+    "title": "Nadi",
+    "filtersActive": "Imizwiren urmiden"
+  },
+  "search": {
+    "placeholder": "Nadi s uzwel, aglam, amasal..."
+  },
+  "buttons": {
+    "search": "🔍 Nadi",
+    "filters": "Imizwiren",
+    "hide": "Ffer",
+    "advanced": "Aɛlayen",
+    "searching": "Tunḍit tetteddu...",
+    "applyFilters": "Snes imizwiren",
+    "clearAll": "Sfeḍ kulec"
+  },
+  "users": {
+    "title": "Iseqdasen yettwafen"
+  },
+  "categories": {
+    "title": "Tigawin",
+    "painting": "Tneẓruft",
+    "sculpture": "Taseɣẓant",
+    "photography": "Taswilt",
+    "drawing": "Tugna",
+    "engraving": "Tineɣzi",
+    "digital_art": "Tneẓruft tanumidit",
+    "collage": "Tkemlit",
+    "textile_art": "Tneẓruft n tseṭṭa"
+  },
+  "filters": {
+    "theme": "Asentel",
+    "style": "Aɣanib",
+    "minPrice": "Sermed aẓar aneggaru",
+    "maxPrice": "Sermed aẓar ameqran",
+    "location": "Adig",
+    "allThemes": "Akken sentalen",
+    "allStyles": "Akken iɣaniben",
+    "pricePlaceholder": "0 n ddnr",
+    "maxPricePlaceholder": "10000 n ddnr",
+    "locationPlaceholder": "Amedya: Lezzayer",
+    "themes": {
+      "abstract": "Abstrait",
+      "landscape": "Talɣa n tmurt",
+      "portrait": "Tugna n udem",
+      "still_life": "Tudert tasebɣant",
+      "urban": "Amdan",
+      "surreal": "Surréaliste"
+    },
+    "styles": {
+      "realism": "Réalisme",
+      "impressionism": "Impressionnisme",
+      "expressionism": "Expressionnisme",
+      "cubism": "Cubisme",
+      "surrealism": "Surréalisme",
+      "abstract": "Abstrait"
+    }
+  },
+  "advancedFilters": {
+    "title": "Imizwiren aɛlayen",
+    "artType": "Anaw n tneẓruft",
+    "material": "Taɣbalut",
+    "technique": "Tafawt",
+    "orientation": "Taɣda",
+    "size": "Tiddi",
+    "year": "Asseggas",
+    "tags": "Tibzimin",
+    "sortBy": "Smizzwer s",
+    "order": "Amizzwer",
+    "allTypes": "Akken tinawin",
+    "allMaterials": "Akken tiɣbalutin",
+    "allTechniques": "Akken tifawin",
+    "allOrientations": "Akken tiɣdayin",
+    "allSizes": "Akken tiddiwin",
+    "tagsPlaceholder": "abstrait, aɛlayen, yessεan yini...",
+    "artTypes": {
+      "oil_painting": "Tneẓruft s yezzi",
+      "watercolor": "Amidad",
+      "acrylic": "Acrylique",
+      "digital_art": "Tneẓruft tanumidit",
+      "sculpture": "Taseɣẓant",
+      "photography": "Taswilt",
+      "drawing": "Tugna",
+      "mixed_media": "Tafawt temcalt"
+    },
+    "materials": {
+      "canvas": "Taseṭṭa",
+      "paper": "Lkaɣeḍ",
+      "wood": "Tuzzuft",
+      "metal": "Lḥadid",
+      "clay": "Taqa",
+      "stone": "Ajejji",
+      "fabric": "Taseṭṭa",
+      "digital": "Anumidi"
+    },
+    "techniques": {
+      "oil_painting": "Tneẓruft s yezzi",
+      "watercolor": "Amidad",
+      "acrylic": "Acrylique",
+      "digital_painting": "Tneẓruft tanumidit",
+      "sculpting": "Taseɣẓant",
+      "carving": "Tineɣzi",
+      "photography_digital": "Taswilt tanumidit",
+      "collage": "Tkemlit"
+    },
+    "orientations": {
+      "horizontal": "Agrawal",
+      "vertical": "Aḍebsi",
+      "square": "Amkuẓ"
+    },
+    "sizes": {
+      "small": "Ameẓyan",
+      "medium": "Alemmas",
+      "large": "Ameqqran",
+      "extra_large": "Mequṛṛen"
+    },
+    "sortOptions": {
+      "createdAt": "Aneggaru",
+      "price": "Aẓar",
+      "title": "Azwel",
+      "likesCount": "Yettwaɛqel s wugar"
+    },
+    "orderOptions": {
+      "desc": "Ad yernu",
+      "asc": "Ad yesser"
+    }
+  },
+  "results": {
+    "title": "Igma",
+    "top": "Uksel",
+    "loadingPosts": "Asali n yineɣmisen...",
+    "searching": "Tunḍit tetteddu...",
+    "noResults": {
+      "title": "Ulac igma yettwafen",
+      "withFilters": "Ɛreḍ seqdec imizwiren-nniḍen neɣ wawalen n unadi.",
+      "withoutFilters": "Ulac ineqmisen i yellan akka tura."
+    }
+  },
+  "errors": {
+    "loadingPosts": "Tuccḍa deg usali n yineɣmisen",
+    "searchError": "Tuccḍa deg unadi",
+    "userSearchError": "Tuccḍa deg unadi n yiseqdasen"
+  }
+}

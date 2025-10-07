@@ -271,7 +271,7 @@ const Navbar2 = () => {
             {auth.user ? (
               // Usuario AUTENTICADO: Avatar clickeable que redirige a página de configuración
               <Link
-                to="/userSettingsPage"
+                to="/profileinfouser"
                 className="text-decoration-none"
               >
                 <div

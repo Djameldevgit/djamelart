@@ -19,7 +19,7 @@ import {
 const Profile = () => {
     const { profile, auth, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
-    const { t } = useTranslation('profile')
+    const { t } = useTranslation('profileid')
     const history = useHistory()
     const lang = languageReducer?.language || 'en'
 

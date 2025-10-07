@@ -11,15 +11,24 @@ import { useTranslation } from 'react-i18next'
 const NotificationsPage = () => {
   const { auth, notify, languageReducer } = useSelector(state => state)
   const dispatch = useDispatch()
-  const { t } = useTranslation('notify')
-  const lang = languageReducer.language || 'en'
+  const { t, i18n } = useTranslation('notify')
+  const lang = languageReducer.language || 'es'
   const [filter, setFilter] = useState('all') // all, unread, read
+
+  // Detectar dirección del texto
+  const isRTL = lang === 'ar'
 
   useEffect(() => {
     if (auth.token) {
       dispatch(getNotifies(auth.token))
     }
   }, [dispatch, auth.token])
+
+  useEffect(() => {
+    if (lang && lang !== i18n.language) {
+      i18n.changeLanguage(lang)
+    }
+  }, [lang, i18n])
 
   const handleIsRead = (msg) => {
     dispatch(isReadNotify({ msg, auth }))
@@ -45,9 +54,7 @@ const NotificationsPage = () => {
     const newArr = notify.data.filter(item => item.isRead === false)
     if (newArr.length === 0) return dispatch(deleteAllNotifies(auth.token))
 
-    if (window.confirm(
-      t('confirmDelete', { count: newArr.length, lng: lang })
-    )) {
+    if (window.confirm(t('confirmDelete', { count: newArr.length }))) {
       return dispatch(deleteAllNotifies(auth.token))
     }
   }
@@ -67,22 +74,23 @@ const NotificationsPage = () => {
   })
 
   const unreadCount = notify.data.filter(msg => !msg.isRead).length
+  const readCount = notify.data.length - unreadCount
 
   return (
-    <Container className="py-4">
+    <Container className="py-4" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
       <Row className="mb-4">
         <Col>
           <div className="d-flex justify-content-between align-items-center">
             <div>
               <h2 className="mb-1">
-                {t('title', { lng: lang })}
+                {t('title')}
                 {unreadCount > 0 && (
-                  <Badge bg="danger" className="ms-2">{unreadCount}</Badge>
+                  <Badge bg="danger" className={isRTL ? "me-2" : "ms-2"}>{unreadCount}</Badge>
                 )}
               </h2>
               <p className="text-muted mb-0">
-                {notify.data.length} {notify.data.length === 1 ? 'notificación' : 'notificaciones'}
+                {notify.data.length} {notify.data.length === 1 ? t('notification') : t('notifications')}
               </p>
             </div>
             
@@ -91,7 +99,7 @@ const NotificationsPage = () => {
               <Button 
                 variant={notify.sound ? "danger" : "outline-danger"}
                 onClick={handleSound}
-                title={notify.sound ? "Desactivar sonido" : "Activar sonido"}
+                title={notify.sound ? t('disableSound') : t('enableSound')}
               >
                 <i className={`fas fa-bell${notify.sound ? '' : '-slash'}`} />
               </Button>
@@ -102,7 +110,7 @@ const NotificationsPage = () => {
                   variant="outline-primary"
                   onClick={handleMarkAllAsRead}
                 >
-                  Marcar todas como leídas
+                  {t('markAllAsRead')}
                 </Button>
               )}
 
@@ -112,7 +120,7 @@ const NotificationsPage = () => {
                   variant="outline-danger"
                   onClick={handleDeleteAll}
                 >
-                  {t('deleteAll', { lng: lang })}
+                  {t('deleteAll')}
                 </Button>
               )}
             </div>
@@ -130,21 +138,21 @@ const NotificationsPage = () => {
                 className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline-primary'}`}
                 onClick={() => setFilter('all')}
               >
-                Todas ({notify.data.length})
+                {t('all')} ({notify.data.length})
               </button>
               <button
                 type="button"
                 className={`btn ${filter === 'unread' ? 'btn-primary' : 'btn-outline-primary'}`}
                 onClick={() => setFilter('unread')}
               >
-                No leídas ({unreadCount})
+                {t('unread')} ({unreadCount})
               </button>
               <button
                 type="button"
                 className={`btn ${filter === 'read' ? 'btn-primary' : 'btn-outline-primary'}`}
                 onClick={() => setFilter('read')}
               >
-                Leídas ({notify.data.length - unreadCount})
+                {t('read')} ({readCount})
               </button>
             </div>
           </Col>
@@ -158,13 +166,13 @@ const NotificationsPage = () => {
             <Card className="text-center py-5">
               <Card.Body>
                 <Image src={NoNotice} alt="NoNotice" style={{ maxWidth: '200px' }} />
-                <p className="text-muted mt-3">{t('noNotifications', { lng: lang })}</p>
+                <p className="text-muted mt-3">{t('noNotifications')}</p>
               </Card.Body>
             </Card>
           ) : filteredNotifications.length === 0 ? (
             <Card className="text-center py-5">
               <Card.Body>
-                <p className="text-muted">No hay notificaciones en esta categoría</p>
+                <p className="text-muted">{t('noNotificationsInCategory')}</p>
               </Card.Body>
             </Card>
           ) : (
@@ -185,16 +193,19 @@ const NotificationsPage = () => {
                         to={msg.url}
                         className="d-flex align-items-center text-decoration-none text-dark flex-grow-1"
                         onClick={() => handleIsRead(msg)}
-                        style={{ minWidth: 0 }}
+                        style={{ 
+                          minWidth: 0,
+                          flexDirection: isRTL ? 'row-reverse' : 'row'
+                        }}
                       >
                         <Avatar src={msg.user.avatar} size="big-avatar" />
 
-                        <div className="mx-3 flex-grow-1" style={{ minWidth: 0 }}>
+                        <div className={isRTL ? "me-3" : "mx-3"} style={{ minWidth: 0, textAlign: isRTL ? 'right' : 'left' }}>
                           <div className="mb-1">
-                            <strong className="me-2">{msg.user.username}</strong>
+                            <strong className={isRTL ? "ms-2" : "me-2"}>{msg.user.username}</strong>
                             <span>
                               {msg.text
-                                ? t(msg.text, { ns: msg.textNs || 'notify', lng: lang })
+                                ? t(msg.text, { ns: msg.textNs || 'notify' })
                                 : ''}
                             </span>
                           </div>
@@ -205,19 +216,19 @@ const NotificationsPage = () => {
                             </small>
                           )}
 
-                          <div className="d-flex align-items-center gap-2 mt-2">
+                          <div className={`d-flex align-items-center gap-2 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <small className="text-muted">
                               {moment(msg.createdAt).fromNow()}
                             </small>
                             {!msg.isRead && (
-                              <Badge bg="primary" pill>Nueva</Badge>
+                              <Badge bg="primary" pill>{t('new')}</Badge>
                             )}
                           </div>
                         </div>
 
                         {/* Imagen/Video preview */}
                         {msg.image && (
-                          <div style={{ width: '50px', height: '50px' }} className="ms-2 flex-shrink-0">
+                          <div style={{ width: '50px', height: '50px' }} className={isRTL ? "me-2" : "ms-2"}>
                             {msg.image.match(/video/i) ? (
                               <video 
                                 src={msg.image} 
@@ -235,7 +246,7 @@ const NotificationsPage = () => {
                       </Link>
 
                       {/* Menú de tres puntos */}
-                      <Dropdown align="end" className="ms-2">
+                      <Dropdown align={isRTL ? "start" : "end"} className={isRTL ? "me-2" : "ms-2"}>
                         <Dropdown.Toggle 
                           variant="link" 
                           bsPrefix="p-0"
@@ -252,26 +263,26 @@ const NotificationsPage = () => {
                         <Dropdown.Menu>
                           {!msg.isRead ? (
                             <Dropdown.Item onClick={() => handleMarkAsRead(msg)}>
-                              <i className="fas fa-check me-2" />
-                              Marcar como leída
+                              <i className={`fas fa-check ${isRTL ? 'ms-2' : 'me-2'}`} />
+                              {t('markAsRead')}
                             </Dropdown.Item>
                           ) : (
                             <Dropdown.Item onClick={() => handleMarkAsUnread(msg)}>
-                              <i className="fas fa-envelope me-2" />
-                              Marcar como no leída
+                              <i className={`fas fa-envelope ${isRTL ? 'ms-2' : 'me-2'}`} />
+                              {t('markAsUnread')}
                             </Dropdown.Item>
                           )}
                           
                           <Dropdown.Item as={Link} to={msg.url}>
-                            <i className="fas fa-external-link-alt me-2" />
-                            Ver detalles
+                            <i className={`fas fa-external-link-alt ${isRTL ? 'ms-2' : 'me-2'}`} />
+                            {t('viewDetails')}
                           </Dropdown.Item>
                           
                           <Dropdown.Divider />
                           
                           <Dropdown.Item className="text-danger">
-                            <i className="fas fa-trash me-2" />
-                            Eliminar
+                            <i className={`fas fa-trash ${isRTL ? 'ms-2' : 'me-2'}`} />
+                            {t('delete')}
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>

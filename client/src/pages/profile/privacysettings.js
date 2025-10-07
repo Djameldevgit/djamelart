@@ -10,7 +10,7 @@ const PrivacySettings = () => {
     const { auth, privacy, languageReducer } = useSelector(state => state);
     const dispatch = useDispatch();
     const history = useHistory();
-    const { t } = useTranslation('profileprivacy');
+    const { t } = useTranslation('settings');
     const lang = languageReducer?.language || 'es';
 
     const initialSettings = {
