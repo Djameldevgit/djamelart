@@ -1,25 +1,24 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { likePost, unLikePost, savePost, unSavePost, deletePost } from '../../../redux/actions/postAction';
-import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
+import { loadCart } from '../../../redux/actions/cartAction';
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import moment from 'moment';
 
-// Importar componentes
 import CardUser from './CardUser';
 import ImagesPost from './ImagesPost';
-import OptionsModal from './OptionsModal'; // ✅ Nuevo componente
 import ShareModal from './ShareModal';
 import ReportModal from './ReportModal';
 import AuthModal from '../../authAndVerify/AuthModal';
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
+import OptionsModal from './OptionsModal';
 
 import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
-import { MESS_TYPES } from '../../../redux/actions/messageAction';
 import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
 import { createReport } from '../../../redux/actions/reportUserAction';
+import { addUser } from '../../../redux/actions/messageAction';
 
 const CardBodyCarousel = ({ post }) => {
   const { languageReducer, auth, socket, homeUsers, profile } = useSelector((state) => state);
@@ -33,22 +32,21 @@ const CardBodyCarousel = ({ post }) => {
   const [loadLike, setLoadLike] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveLoad, setSaveLoad] = useState(false);
-  const [buyLoad, setBuyLoad] = useState(false);
-  const [inCart, setInCart] = useState(false);
-  const [showBuyMessage, setShowBuyMessage] = useState(false);
+
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDeactivatedModal, setShowDeactivatedModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
+
   const [showInfo, setShowInfo] = useState(false);
   const [isTouching, setIsTouching] = useState(false);
 
-  // Refs
+  const optionsModalRef = useRef(null);
   const cardRef = useRef(null);
 
-  // Efectos (se mantienen igual)
+  // Reset al cambiar post
   useEffect(() => {
     setShowInfo(false);
     setIsTouching(false);
@@ -57,9 +55,30 @@ const CardBodyCarousel = ({ post }) => {
     setShowReportModal(false);
   }, [post._id]);
 
-  // ... (otros useEffect se mantienen igual)
+  // Click fuera del modal
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionsModalRef.current && !optionsModalRef.current.contains(event.target)) {
+        setShowOptionsModal(false);
+      }
+    };
+    if (showOptionsModal) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showOptionsModal]);
 
-  // Función para verificar permisos
+  // Like
+  useEffect(() => {
+    setIsLike(post.likes?.some(like => like._id === auth.user?._id));
+  }, [post.likes, auth.user]);
+
+  // Guardado
+  useEffect(() => {
+    setSaved(auth.user?.saved?.includes(post._id));
+  }, [auth.user, post._id]);
+
+  // Verificar permisos
   const canProceed = useCallback(() => {
     if (!auth.token || !auth.user) {
       setShowAuthModal(true);
@@ -76,32 +95,14 @@ const CardBodyCarousel = ({ post }) => {
     return true;
   }, [auth]);
 
-  // Encontrar información completa del usuario
-  const findCompleteUser = useCallback(() => {
-    const completeUser = profile.users?.find(u => u._id === post.user?._id);
-    return completeUser || post.user;
-  }, [post.user, profile.users]);
-
-  const user = findCompleteUser();
+  // Información del usuario
+  const user = profile.users?.find(u => u._id === post.user?._id) || post.user;
   const isPostOwner = auth.user && post.user && auth.user._id === post.user._id;
   const isAdmin = auth.user && auth.user.role === "admin";
   const adminUser = homeUsers.users?.find(user => user.role === "admin");
 
-  // Handlers de UI
-  const handleImageClick = useCallback(() => {
-    setShowInfo(prev => !prev);
-  }, []);
+  // ✅ HANDLERS ACTUALIZADOS PARA PASAR AL HIJO
 
-  const handleTouchStart = useCallback(() => {
-    setIsTouching(true);
-  }, []);
-
-  const handleTouchEnd = useCallback(() => {
-    setIsTouching(false);
-    setTimeout(() => setShowInfo(prev => !prev), 100);
-  }, []);
-
-  // Handlers de acciones principales
   const handleLike = useCallback(async () => {
     if (!canProceed() || loadLike) return;
     setLoadLike(true);
@@ -113,7 +114,7 @@ const CardBodyCarousel = ({ post }) => {
     setLoadLike(false);
   }, [canProceed, loadLike, isLike, dispatch, post, auth, socket, t, languageReducer]);
 
-  const handleSavePost = useCallback(async () => {
+  const handleSavePostAction = useCallback(async () => {
     if (!canProceed() || saveLoad) return;
     setSaveLoad(true);
     if (saved) {
@@ -122,24 +123,14 @@ const CardBodyCarousel = ({ post }) => {
       await dispatch(savePost({ post, auth }));
     }
     setSaveLoad(false);
+    setShowOptionsModal(false);
   }, [canProceed, saveLoad, saved, dispatch, post, auth]);
 
-  const handleShare = useCallback(() => {
-    setShowShareModal(true);
-    setShowOptionsModal(false);
-  }, []);
-
-  const handleAddUser = useCallback((user) => {
-    if (!canProceed()) return;
-    dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...user, text: '', media: [] } });
-    history.push(`/message/${user._id}`);
-  }, [canProceed, dispatch, history]);
-
-  // Handlers del menú de opciones
   const handleAprove = useCallback(() => {
     if (window.confirm(t('confirmApprove'))) {
       dispatch(aprovarPostPendiente(post, 'aprovado', auth));
       history.push("/administration/homepostspendientes");
+      setShowOptionsModal(false);
     }
   }, [post, auth, dispatch, history, t]);
 
@@ -157,41 +148,17 @@ const CardBodyCarousel = ({ post }) => {
     }
   }, [canProceed, post, auth, socket, dispatch, t]);
 
-  const handleContactSeller = useCallback(() => {
-    if (!canProceed()) return;
-    handleAddUser(post.user);
+  const handleShare = useCallback(() => {
+    setShowShareModal(true);
     setShowOptionsModal(false);
-  }, [canProceed, post.user, handleAddUser]);
-
-  const handleChatWithAdmin = useCallback(() => {
-    if (!canProceed()) return;
-    if (!adminUser) {
-      return dispatch({
-        type: GLOBALTYPES.ALERT,
-        payload: { error: t('noAdminAvailable') }
-      });
-    }
-    handleAddUser(adminUser);
-  }, [canProceed, adminUser, dispatch, t, handleAddUser]);
-
-  const handleSavePostAction = useCallback(async () => {
-    if (!canProceed() || saveLoad) return;
-    setSaveLoad(true);
-    if (saved) {
-      await dispatch(unSavePost({ post, auth }));
-    } else {
-      await dispatch(savePost({ post, auth }));
-    }
-    setSaveLoad(false);
-    setShowOptionsModal(false);
-  }, [canProceed, saveLoad, saved, dispatch, post, auth]);
+  }, []);
 
   const handleSubmitReport = useCallback((reason) => {
     if (!canProceed()) return;
     const reportData = {
       postId: post._id,
       userId: post.user._id,
-      reason: reason,
+      reason,
     };
     dispatch(createReport({ auth, reportData }));
     setShowReportModal(false);
@@ -201,43 +168,6 @@ const CardBodyCarousel = ({ post }) => {
       payload: { success: t('reportSubmitted') }
     });
   }, [canProceed, post, auth, dispatch, t]);
-
-  const handleOptionClick = useCallback((option) => {
-    switch (option) {
-      case 'approve':
-        handleAprove();
-        setShowOptionsModal(false);
-        break;
-      case 'edit':
-        handleEditPost();
-        break;
-      case 'delete':
-        handleDeletePost();
-        break;
-      case 'contact':
-        handleContactSeller();
-        break;
-      case 'report':
-        setShowReportModal(true);
-        setShowOptionsModal(false);
-        break;
-      case 'share':
-        handleShare();
-        break;
-      case 'save':
-        handleSavePostAction();
-        break;
-      case 'adminChat':
-        handleChatWithAdmin();
-        break;
-      default:
-        break;
-    }
-  }, [
-    handleAprove, handleEditPost, handleDeletePost, 
-    handleContactSeller, handleShare, handleSavePostAction,
-    handleChatWithAdmin
-  ]);
 
   const formatDate = useCallback((dateString) => {
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -261,7 +191,6 @@ const CardBodyCarousel = ({ post }) => {
       <div className="card_body">
         {post.images.length > 0 && (
           <>
-            {/* CardUser */}
             <CardUser
               user={user}
               post={post}
@@ -270,24 +199,39 @@ const CardBodyCarousel = ({ post }) => {
               t={t}
             />
 
-            {/* ✅ OptionsModal separado */}
+            {/* ✅ OPTIONSMODAL ACTUALIZADO CON TODAS LAS PROPS */}
             <OptionsModal
               show={showOptionsModal}
               onClose={() => setShowOptionsModal(false)}
-              onOptionClick={handleOptionClick}
               isAdmin={isAdmin}
               isPostOwner={isPostOwner}
               saved={saved}
               t={t}
+              post={post}
+              auth={auth}
+              dispatch={dispatch}
+              history={history}
+              socket={socket}
+              homeUsers={homeUsers}
+              canProceed={canProceed}
+              // ✅ Nuevas props pasadas al hijo
+              handleAprove={handleAprove}
+              handleEditPost={handleEditPost}
+              handleDeletePost={handleDeletePost}
+              handleShare={handleShare}
+              handleSavePostAction={handleSavePostAction}
+              handleSubmitReport={handleSubmitReport}
             />
 
-            {/* ImagesPost */}
             <ImagesPost
               post={post}
               showInfo={showInfo}
-              onImageClick={handleImageClick}
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
+              onImageClick={() => setShowInfo(prev => !prev)}
+              onTouchStart={() => setIsTouching(true)}
+              onTouchEnd={() => {
+                setIsTouching(false);
+                setTimeout(() => setShowInfo(prev => !prev), 100);
+              }}
               onLike={handleLike}
               onShare={handleShare}
               isLike={isLike}
@@ -297,7 +241,7 @@ const CardBodyCarousel = ({ post }) => {
         )}
       </div>
 
-      {/* Otros modales */}
+      {/* Modales */}
       <ShareModal
         show={showShareModal}
         onHide={() => setShowShareModal(false)}
@@ -313,7 +257,9 @@ const CardBodyCarousel = ({ post }) => {
         initialReason=""
       />
 
-      {/* ... (resto de modales y mensajes) ... */}
+      <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <VerifyModal show={showVerifyModal} onClose={() => setShowVerifyModal(false)} />
+      <DesactivateModal show={showDeactivatedModal} onClose={() => setShowDeactivatedModal(false)} />
     </div>
   );
 };
