@@ -27,7 +27,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const Encargos = () => {
-  const { t, i18n } = useTranslation('galeriaencargos');
+  const { t, i18n } = useTranslation('encargos');
   const { auth, languageReducer } = useSelector(state => state);
  
   // Cambiar el idioma activamente si es diferente

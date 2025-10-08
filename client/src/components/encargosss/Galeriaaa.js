@@ -16,7 +16,7 @@ const Galeriaaa = () => {
   const [copySuccess, setCopySuccess] = useState('');
   const [obras, setObras] = useState([]);
   
-  const { t, i18n } = useTranslation('galeria');
+  const { t, i18n } = useTranslation('encargos');
   const { languageReducer } = useSelector(state => state);
   
   const lang = languageReducer?.language || 'es';

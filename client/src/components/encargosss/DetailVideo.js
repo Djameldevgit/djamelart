@@ -28,7 +28,7 @@ const DetailVideo = () => {
   const [showChatModal, setShowChatModal] = useState(false);
   
   // CORREGIDO: Usa el namespace correcto
-  const { t, i18n } = useTranslation('galeriademovideo');
+  const { t, i18n } = useTranslation('encargos');
   const { languageReducer } = useSelector(state => state);
   const lang = languageReducer?.language || 'es';
 

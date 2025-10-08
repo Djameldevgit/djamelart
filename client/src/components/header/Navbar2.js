@@ -98,7 +98,7 @@ const Navbar2 = () => {
           boxShadow: '0 2px 20px rgba(0,0,0,0.08)'
         }}
         className={settings.style ? "navbar-dark" : "navbar-light"}
-        dir={lang === 'ar' ? 'rtl' : 'ltr'}
+         
       >
         <Container fluid className="align-items-center justify-content-between">
           {/* Logo y título */}

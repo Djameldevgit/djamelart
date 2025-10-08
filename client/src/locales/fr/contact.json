@@ -1,41 +1,37 @@
 {
-  "contact_form": "نموذج الاتصال",
-  "subjectt": "الموضوع",
-  "messagee": "الرسالة",
-  "write_subject": "اكتب موضوع رسالتك",
-  "write_message": "اكتب رسالتك هنا...",
-  "sendingg": "جاري الإرسال...",
-  "send_message": "إرسال الرسالة",
-  "mensajeenviadoconexito": "✅ تم إرسال الرسالة بنجاح. سوف نرد عليك قريبًا.",
-  "erroralenviarmensaje": "❌ خطأ في إرسال الرسالة. يرجى المحاولة مرة أخرى.",
-  "commissionRequestSent": "✅ تم إرسال طلب التقدير بنجاح. سوف نتصل بك خلال 24 ساعة بتفاصيل عملك المخصص.",
+  "contact_form": "Formulaire de Contact",
+  "subjectt": "Sujet",
+  "messagee": "Message",
+  "write_subject": "Écrivez le sujet de votre message",
+  "write_message": "Écrivez votre message ici...",
+  "sendingg": "Envoi en cours...",
+  "send_message": "Envoyer le Message",
+  "mensajeenviadoconexito": "✅ Message envoyé avec succès. Nous vous répondrons bientôt.",
+  "erroralenviarmensaje": "❌ Erreur lors de l'envoi du message. Veuillez réessayer.",
+  "commissionRequestSent": "✅ Demande de devis envoyée avec succès. Nous vous contacterons dans les 24 heures avec les détails de votre œuvre personnalisée.",
   
-  "commissionHeader": "طلب تقدير سعر لعمل فني مخصص",
-  "commissionSubheader": "لقد قمنا بتعبئة النموذج مسبقًا بمعلومات أساسية. يرجى مراجعة واستكمال التفاصيل المحددة لعملك.",
-  "commissionTitle": "طلب تقدير السعر",
-  "commissionDefaultTitle": "طلب تقدير سعر لعمل فني مخصص",
+  "commissionHeader": "Demande de Devis pour une Œuvre d'Art Personnalisée",
+  "commissionSubheader": "Nous avons pré-rempli le formulaire avec des informations de base. Veuillez vérifier et compléter les détails spécifiques de votre œuvre.",
+  "commissionTitle": "Demande de Devis",
+  "commissionDefaultTitle": "Demande de devis pour une œuvre d'art personnalisée",
  
-  "emailLabel": "بريدك الإلكتروني",
-  "guestUser": "زائر (سيتم الاتصال بك عبر البريد الإلكتروني)",
-  "commissionEmailHelp": "سنتصل بك على هذا البريد الإلكتروني مع التقدير المفصل لعملك",
-  "regularEmailHelp": "سوف نستخدم هذا البريد الإلكتروني للرد عليك",
+  "emailLabel": "Votre Email",
+  "guestUser": "Visiteur (vous serez contacté par email)",
+  "commissionEmailHelp": "Nous vous contacterons sur cet email avec le devis détaillé de votre œuvre",
+  "regularEmailHelp": "Nous utiliserons cet email pour vous répondre",
   
-  "commissionPlaceholder": "صف بالتفصيل عملك المثالي...",
-  "commissionHelpText": "قم بتضمين: نوع العمل، القياسات، النمط، الألوان، الموضوع، موعد التسليم المطلوب وأي تفاصيل مهمة.",
+  "commissionPlaceholder": "Décrivez en détail votre œuvre idéale...",
+  "commissionHelpText": "Incluez : type d'œuvre, dimensions, style, couleurs, thème, délai de livraison souhaité et tout détail important.",
   
-  "sendingCommission": "جاري إرسال الطلب...",
-  "sendCommissionButton": "📨 إرسال طلب التقدير",
+  "sendingCommission": "Envoi de la demande en cours...",
+  "sendCommissionButton": "📨 Envoyer la Demande de Devis",
   
-  "commissionIncludesTitle": "ماذا يشمل التقدير؟",
-  "commissionIncludesPrice": "سعر مفصل للعمل",
-  "commissionIncludesMaterials": "تكلفة المواد",
-  "commissionIncludesDelivery": "موعد التسليم المقدر",
-  "commissionIncludesShipping": "خيارات الشحن والإطار",
-  "commissionIncludesModifications": "إمكانية التعديلات",
+  "commissionIncludesTitle": "Que comprend le devis ?",
+  "commissionIncludesPrice": "Prix détaillé de l'œuvre",
+  "commissionIncludesMaterials": "Coût des matériaux",
+  "commissionIncludesDelivery": "Délai de livraison estimé",
+  "commissionIncludesShipping": "Options d'expédition et de cadre",
+  "commissionIncludesModifications": "Possibilité de modifications",
 
-
-  "commissionDefaultMessage": "مرحبًا، أنا مهتم/مهتمة بطلب تقدير سعر لعمل فني مخصص. لقد راجعت صفحة الطلبات وأود مناقشة التفاصيل التالية:\n\n• نوع العمل الذي أريده:\n• القياسات التقريبية: \n• النمط الفني المفضل:\n• الموضوع أو الفكرة الرئيسية:\n• الميزانية التقريبية التي لدي في الاعتبار:\n• موعد التسليم المطلوب:\n\nهل يمكنكم مساعدتي بمزيد من المعلومات وتقدير سعر مفصل؟"
-
-
-
+  "commissionDefaultMessage": "Bonjour, je suis intéressé(e) par une demande de devis pour une œuvre d'art personnalisée. J'ai consulté la page des commandes et j'aimerais discuter des détails suivants :\n\n• Type d'œuvre que je souhaite :\n• Dimensions approximatives : \n• Style artistique préféré :\n• Thème ou idée principale :\n• Budget approximatif que j'envisage :\n• Délai de livraison souhaité :\n\nPouvez-vous m'aider avec plus d'informations et un devis détaillé ?"
 }

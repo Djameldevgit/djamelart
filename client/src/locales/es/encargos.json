@@ -134,10 +134,16 @@
     }
   },
   
-  "cta": {
-    "title": "¿Listo para comenzar tu encargo?",
-    "description": "Contáctanos hoy mismo y daremos vida a tu visión artística",
-    "buttonContact": "Solicitar Presupuesto",
-    "buttonGallery": "Ver Galería de Obras"
-  }
+ 
+    "cta": {
+      "title": "¿Listo para comenzar tu proyecto artístico?",
+      "description": "Contáctanos hoy para obtener un presupuesto gratuito y discutir tu visión",
+      "emailButton": "Solicitar presupuesto por correo",
+      "chatButton": "Chat directo con el artista", 
+      "loginButton": "Iniciar sesión para chatear",
+      "galleryButton": "Galería de obras para inspiración",
+      "responseTime": "Respuesta en 24 horas",
+      "freeQuote": "Presupuesto gratuito"
+    }
+  
 }

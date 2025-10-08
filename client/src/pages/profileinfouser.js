@@ -300,7 +300,7 @@ const profileinfouser = () => {
                     icon={FaInfoCircle}
                     iconColor="#6c757d"
                     title={t('appInfo', 'Información')}
-                    to="/bloginfo"
+                    to="/infoaplicacionn"
                   />
                   <MenuOption
                     icon={FaUserCircle}
@@ -363,12 +363,7 @@ const profileinfouser = () => {
                       title={t('globalSettings', 'Configuración global')}
                       onClick={() => setShowFeaturesModal(true)}
                     />
-                    <MenuOption
-                      icon={FaBlog}
-                      iconColor="#667eea"
-                      title={t('blog', 'Blog')}
-                      to="/blog"
-                    />
+                   
                     <MenuOption
                       icon={FaEnvelope}
                       iconColor="#17a2b8"

@@ -48,41 +48,31 @@ const ActionButton = ({ icon, gradient, onClick, isActive, isLoading, tooltip })
           background: gradient,
           border: 'none',
           color: 'white',
-          padding: '8px 16px',
-          borderRadius: '20px',
+          padding: '8px',
+          borderRadius: '50%',
           fontSize: '13px',
           fontWeight: '500',
           cursor: isLoading ? 'not-allowed' : 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: '6px',
+          justifyContent: 'center',
           transition: 'all 0.3s ease',
           opacity: isLoading ? 0.7 : 1,
-          minWidth: '100px',
-          justifyContent: 'center'
+          width: '40px',
+          height: '40px',
+          minWidth: '40px'
         }}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >
         {isLoading ? (
-          <>
-            <span className="material-icons" style={{ fontSize: '16px', animation: 'spin 1s linear infinite' }}>
-              refresh
-            </span>
-            <span>{icon === 'shopping_cart' ? 'Adding...' : 'Loading...'}</span>
-          </>
+          <span className="material-icons" style={{ fontSize: '20px', animation: 'spin 1s linear infinite' }}>
+            refresh
+          </span>
         ) : (
-          <>
-            <span className="material-icons" style={{ fontSize: '16px' }}>
-              {icon}
-            </span>
-            <span>
-              {icon === 'shopping_cart' 
-                ? (gradient === '#FF416C,#FF4B2B' ? 'Remove' : 'Add to Cart')
-                : 'Action'
-              }
-            </span>
-          </>
+          <span className="material-icons" style={{ fontSize: '20px' }}>
+            {icon}
+          </span>
         )}
       </button>
       
@@ -138,7 +128,7 @@ const CardBodyCarousel = ({ post }) => {
   const [showInfo, setShowInfo] = useState(false);
   const [isTouching, setIsTouching] = useState(false);
 
-  const { t, i18n } = useTranslation('cardbodycarousel');
+  const { t } = useTranslation('cardbodycarousel');
   const lang = languageReducer.language || 'en';
   const history = useHistory();
   const dispatch = useDispatch();
@@ -863,7 +853,7 @@ const CardBodyCarousel = ({ post }) => {
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
             >
-              {/* Información del artista (ocultable con animación) */}
+              {/* NUEVO CARD DE INFORMACIÓN CON DISEÑO SEPARADO POR FILAS */}
               <div style={{
                 position: "absolute",
                 bottom: "0",
@@ -872,10 +862,10 @@ const CardBodyCarousel = ({ post }) => {
                 zIndex: 2,
                 color: "white",
                 background: showInfo
-                  ? "linear-gradient(transparent 0%, rgba(0, 0, 0, 0.9) 30%, rgba(0, 0, 0, 0.95) 100%)"
+                  ? "linear-gradient(transparent 0%, rgba(0, 0, 0, 0.7) 30%, rgba(0, 0, 0, 0.8) 100%)"
                   : "transparent",
                 padding: showInfo ? "20px 16px 16px 16px" : "0px 16px",
-                backdropFilter: showInfo ? "blur(15px)" : "none",
+                backdropFilter: showInfo ? "blur(10px)" : "none",
                 borderTop: showInfo ? "1px solid rgba(255, 255, 255, 0.15)" : "none",
                 height: showInfo ? "auto" : "0px",
                 opacity: showInfo ? 1 : 0,
@@ -884,8 +874,10 @@ const CardBodyCarousel = ({ post }) => {
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '12px'
+                gap: '16px'
               }}>
+                
+                {/* FILA 1: Username */}
                 {post.user.username && (
                   <div style={{
                     fontSize: "clamp(16px, 2.5vh, 20px)",
@@ -893,7 +885,7 @@ const CardBodyCarousel = ({ post }) => {
                     lineHeight: "1.4",
                     fontWeight: "600",
                     display: "-webkit-box",
-                    WebkitLineClamp: 2,
+                    WebkitLineClamp: 1,
                     WebkitBoxOrient: "vertical",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -903,41 +895,48 @@ const CardBodyCarousel = ({ post }) => {
                     {post.user.username}
                   </div>
                 )}
+
+                {/* FILA 2: Title */}
                 <div style={{
-                  fontSize: "clamp(10px, 2vh, 20px)",
+                  fontSize: "clamp(14px, 2vh, 18px)",
                   opacity: showInfo ? 0.95 : 0,
                   lineHeight: "1.4",
-                  fontWeight: "400",
+                  fontWeight: "500",
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-                  transition: 'all 0.3s ease 0.1s'
+                  transition: 'all 0.3s ease 0.15s'
                 }} >
                   {post.title}
                 </div>
 
+                {/* FILA 3: Fecha */}
                 <div style={{
                   display: "flex",
                   alignItems: "center",
                   gap: "8px",
                   fontSize: "13px",
-                  color: "#888",
-                  paddingLeft: "00px"
+                  color: "rgba(255, 255, 255, 0.8)",
+                  opacity: showInfo ? 1 : 0,
+                  transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
+                  transition: 'all 0.3s ease 0.2s'
                 }}>
                   <span className="material-icons" style={{
                     fontSize: "14px",
-                    color: "#999"
+                    color: "rgba(255, 255, 255, 0.7)"
                   }}>
                     schedule
                   </span>
                   <span>{formatDate(post.createdAt)} • {moment(post.createdAt).fromNow()}</span>
                 </div>
+
+                {/* FILA 4: Contenido (si existe) */}
                 {post.content && (
                   <div style={{
-                    fontSize: "clamp(14px, 2vh, 16px)",
+                    fontSize: "clamp(13px, 1.8vh, 15px)",
                     opacity: showInfo ? 0.8 : 0,
                     lineHeight: "1.4",
                     display: "-webkit-box",
@@ -946,13 +945,13 @@ const CardBodyCarousel = ({ post }) => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-                    transition: 'all 0.3s ease 0.2s'
+                    transition: 'all 0.3s ease 0.25s'
                   }}>
                     {post.content}
                   </div>
                 )}
 
-                {/* Estadísticas */}
+                {/* FILA 5: Iconos de interacción */}
                 <div style={{
                   display: "flex",
                   alignItems: "center",
@@ -966,7 +965,7 @@ const CardBodyCarousel = ({ post }) => {
                   <div style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "20px",
+                    gap: "16px",
                     flexWrap: "wrap"
                   }}>
                     {/* Like */}
@@ -976,7 +975,7 @@ const CardBodyCarousel = ({ post }) => {
                         alignItems: "center",
                         gap: "6px",
                         cursor: "pointer",
-                        padding: "6px 12px",
+                        padding: "8px 12px",
                         borderRadius: "20px",
                         background: "rgba(255, 255, 255, 0.1)",
                         transition: "all 0.2s ease"
@@ -1011,7 +1010,7 @@ const CardBodyCarousel = ({ post }) => {
                         alignItems: "center",
                         gap: "6px",
                         cursor: "pointer",
-                        padding: "6px 12px",
+                        padding: "8px 12px",
                         borderRadius: "20px",
                         background: "rgba(255, 255, 255, 0.1)"
                       }}
@@ -1035,7 +1034,7 @@ const CardBodyCarousel = ({ post }) => {
                         alignItems: "center",
                         gap: "6px",
                         cursor: "pointer",
-                        padding: "6px 12px",
+                        padding: "8px 12px",
                         borderRadius: "20px",
                         background: "rgba(255, 255, 255, 0.1)"
                       }}
@@ -1050,7 +1049,7 @@ const CardBodyCarousel = ({ post }) => {
                     </div>
                   </div>
 
-                  {/* BOTÓN ADD TO CART CORREGIDO */}
+                  {/* BOTÓN ADD TO CART */}
                   <ActionButton
                     icon="shopping_cart"
                     gradient={inCart ? GRADIENTS.cartRemove : GRADIENTS.cartAdd}
@@ -1059,33 +1058,49 @@ const CardBodyCarousel = ({ post }) => {
                     isLoading={buyLoad}
                     tooltip={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
                   />
+                </div>
 
-                  {/* Botón Más Detalles */}
+                {/* FILA 6: Botón Detalles - SEPARADO EN SU PROPIO CARD */}
+                <div style={{
+                  opacity: showInfo ? 1 : 0,
+                  transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
+                  transition: 'all 0.3s ease 0.35s',
+                  marginTop: '8px'
+                }}>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       history.push(`/post/${post._id}`);
                     }}
                     style={{
-                      background: "rgba(255, 255, 255, 0.2)",
+                      background: "rgba(255, 255, 255, 0.15)",
                       border: "1px solid rgba(255, 255, 255, 0.3)",
                       color: "white",
-                      padding: "8px 16px",
-                      borderRadius: "20px",
-                      fontSize: "clamp(11px, 1.5vh, 13px)",
-                      fontWeight: "500",
+                      padding: "12px 20px",
+                      borderRadius: "12px",
+                      fontSize: "14px",
+                      fontWeight: "600",
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
-                      gap: "6px",
+                      justifyContent: "center",
+                      gap: "8px",
                       transition: "all 0.3s ease",
                       backdropFilter: "blur(10px)",
-                      opacity: showInfo ? 1 : 0,
-                      transform: showInfo ? 'translateX(0)' : 'translateX(10px)'
+                      width: "100%",
+                      textAlign: "center"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = "rgba(255, 255, 255, 0.25)";
+                      e.target.style.transform = "translateY(-2px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "rgba(255, 255, 255, 0.15)";
+                      e.target.style.transform = "translateY(0)";
                     }}
                   >
-                    <span>{t('details')}</span>
-                    <span className="material-icons" style={{ fontSize: "16px" }}>
+                    <span>{t('viewDetails')}</span>
+                    <span className="material-icons" style={{ fontSize: "18px" }}>
                       arrow_forward
                     </span>
                   </button>
@@ -1102,17 +1117,20 @@ const CardBodyCarousel = ({ post }) => {
                   zIndex: 1,
                   background: "rgba(0, 0, 0, 0.5)",
                   color: "white",
-                  padding: "4px 12px",
-                  borderRadius: "15px",
-                  fontSize: "11px",
+                  padding: "6px 14px",
+                  borderRadius: "20px",
+                  fontSize: "12px",
                   fontWeight: "500",
                   backdropFilter: "blur(5px)",
                   border: "1px solid rgba(255, 255, 255, 0.2)",
                   animation: "pulse 2s infinite",
-                  cursor: "pointer"
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px"
                 }}>
-                  <span className="material-icons" style={{ fontSize: "14px", marginRight: "4px" }}>
-                    touch_app
+                  <span className="material-icons" style={{ fontSize: "16px" }}>
+                    info
                   </span>
                   {t('tapToSeeInfo')}
                 </div>
@@ -1182,17 +1200,17 @@ const CardBodyCarousel = ({ post }) => {
           <div className="d-flex justify-content-around flex-wrap mb-4">
             <FacebookShareButton url={shareUrl} quote={shareTitle} className="mx-2 my-2">
               <FacebookIcon size={45} round />
-              <div className="small mt-1 text-center">Facebook</div>
+              <div className="small mt-1 text-center">{t('facebook')}</div>
             </FacebookShareButton>
 
             <TwitterShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
               <TwitterIcon size={45} round />
-              <div className="small mt-1 text-center">Twitter</div>
+              <div className="small mt-1 text-center">{t('twitter')}</div>
             </TwitterShareButton>
 
             <WhatsappShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
               <WhatsappIcon size={45} round />
-              <div className="small mt-1 text-center">WhatsApp</div>
+              <div className="small mt-1 text-center">{t('whatsapp')}</div>
             </WhatsappShareButton>
 
             {imageUrl && (
@@ -1203,18 +1221,18 @@ const CardBodyCarousel = ({ post }) => {
                 className="mx-2 my-2"
               >
                 <PinterestIcon size={45} round />
-                <div className="small mt-1 text-center">Pinterest</div>
+                <div className="small mt-1 text-center">{t('pinterest')}</div>
               </PinterestShareButton>
             )}
 
             <TelegramShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
               <TelegramIcon size={45} round />
-              <div className="small mt-1 text-center">Telegram</div>
+              <div className="small mt-1 text-center">{t('telegram')}</div>
             </TelegramShareButton>
 
             <EmailShareButton url={shareUrl} subject={t('artwork')} body={shareTitle} className="mx-2 my-2">
               <EmailIcon size={45} round />
-              <div className="small mt-1 text-center">Email</div>
+              <div className="small mt-1 text-center">{t('email')}</div>
             </EmailShareButton>
           </div>
 
@@ -1251,7 +1269,7 @@ const CardBodyCarousel = ({ post }) => {
                 onCopy={() => handleCopy(t('linkCopied'))}
               >
                 <Button variant="outline-secondary" type="button">
-                  📋
+                  📋 {t('copyLink')}
                 </Button>
               </CopyToClipboard>
             </div>
@@ -1315,9 +1333,9 @@ const CardBodyCarousel = ({ post }) => {
       {showBuyMessage && (
         <div className="buy-message" style={{
           position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
-          backgroundColor: inCart ? "#4CAF50" : "#F44336", color: "white", padding: "10px 20px",
-          borderRadius: "5px", zIndex: 9999, display: "flex", alignItems: "center",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.2)"
+          backgroundColor: inCart ? "#4CAF50" : "#F44336", color: "white", padding: "12px 24px",
+          borderRadius: "8px", zIndex: 9999, display: "flex", alignItems: "center",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.3)", fontSize: "14px", fontWeight: "500"
         }}>
           <span className="material-icons" style={{ marginRight: "8px" }}>
             {inCart ? "check_circle" : "shopping_cart"}
