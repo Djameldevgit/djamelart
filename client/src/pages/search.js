@@ -19,7 +19,17 @@ import {
 } from "react-bootstrap";
 
 import LoadIcon from "../images/loading.gif";
- 
+
+// 🔹 FUNCIÓN AUXILIAR PARA NORMALIZAR TEXTO (maneja mayúsculas, minúsculas y acentos)
+const normalizeText = (text) => {
+  if (!text) return '';
+  
+  return text
+    .trim()
+    .toLowerCase()
+    .normalize("NFD") // Separar acentos de letras
+    .replace(/[\u0300-\u036f]/g, ""); // Eliminar diacríticos
+};
 
 export default function search() {
   const { auth, languageReducer, homePosts } = useSelector(state => state);
@@ -124,7 +134,7 @@ export default function search() {
     }));
   };
 
-  // 🔹 Buscar posts con filtros (ACTUALIZADO)
+  // 🔹 BUSCAR POSTS CON FILTROS - ACTUALIZADO PARA MANEJAR MAYÚSCULAS Y ACENTOS
   const handleSearch = async (e) => {
     if (e) e.preventDefault();
     setError(null);
@@ -142,17 +152,18 @@ export default function search() {
       }
 
       const query = {
-        search: search || "",
-        theme: theme || "",
-        style: style || "",
-        wilaya: wilaya || "",
-        artType: artType || "",
-        material: material || "",
-        technique: technique || "",
-        orientation: orientation || "",
-        size: size || "",
+        // 🔹 NORMALIZAR EL TEXTO DE BÚSQUEDA
+        search: normalizeText(search) || "",
+        theme: normalizeText(theme) || "",
+        style: normalizeText(style) || "",
+        wilaya: normalizeText(wilaya) || "",
+        artType: normalizeText(artType) || "",
+        material: normalizeText(material) || "",
+        technique: normalizeText(technique) || "",
+        orientation: normalizeText(orientation) || "",
+        size: normalizeText(size) || "",
         year: year || "",
-        tags: tags || "",
+        tags: normalizeText(tags) || "",
         sortBy: sortBy || "createdAt",
         sortOrder: sortOrder || "desc",
         page: 1,
@@ -184,7 +195,7 @@ export default function search() {
     }
   };
 
-  // 🔹 Buscar usuarios en vivo
+  // 🔹 BUSCAR USUARIOS EN VIVO - ACTUALIZADO PARA MANEJAR MAYÚSCULAS Y ACENTOS
   const handleUserSearch = async (value) => {
     setSearch(value);
     if (!value) {
@@ -194,7 +205,9 @@ export default function search() {
 
     try {
       setUserLoading(true);
-      const res = await getDataAPI(`search?username=${value}`, auth.token);
+      // 🔹 NORMALIZAR EL TEXTO DE BÚSQUEDA PARA USUARIOS
+      const normalizedSearch = normalizeText(value);
+      const res = await getDataAPI(`search?username=${encodeURIComponent(normalizedSearch)}`, auth.token);
       setUsers(res.data.users || []);
     } catch (err) {
       dispatch({
@@ -310,6 +323,11 @@ export default function search() {
                         e.target.style.backgroundColor = 'rgba(255,255,255,0.95)';
                         e.target.style.boxShadow = 'none';
                       }}
+                      // 🔹 ATRIBUTOS PARA PREVENIR AUTOCAPITALIZE EN ANDROID
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="none"
+                      spellCheck="false"
                     />
                     <i 
                       className={`fas fa-search position-absolute`} 

@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 const Followers = ({ users, setShowFollowers }) => {
     const { auth } = useSelector(state => state);
-    const { t, i18n } = useTranslation('profilefollowers');
+    const { t, i18n } = useTranslation('profile');
 
     // Detectar dirección del texto para idiomas RTL
     const isRTL = i18n.language === 'ar';

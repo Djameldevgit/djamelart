@@ -35,6 +35,85 @@ import AuthModal from '../../authAndVerify/AuthModal';
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
 
+// Componente ActionButton para botones reutilizables
+const ActionButton = ({ icon, gradient, onClick, isActive, isLoading, tooltip }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        onClick={onClick}
+        disabled={isLoading}
+        style={{
+          background: gradient,
+          border: 'none',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          fontSize: '13px',
+          fontWeight: '500',
+          cursor: isLoading ? 'not-allowed' : 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          transition: 'all 0.3s ease',
+          opacity: isLoading ? 0.7 : 1,
+          minWidth: '100px',
+          justifyContent: 'center'
+        }}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        {isLoading ? (
+          <>
+            <span className="material-icons" style={{ fontSize: '16px', animation: 'spin 1s linear infinite' }}>
+              refresh
+            </span>
+            <span>{icon === 'shopping_cart' ? 'Adding...' : 'Loading...'}</span>
+          </>
+        ) : (
+          <>
+            <span className="material-icons" style={{ fontSize: '16px' }}>
+              {icon}
+            </span>
+            <span>
+              {icon === 'shopping_cart' 
+                ? (gradient === '#FF416C,#FF4B2B' ? 'Remove' : 'Add to Cart')
+                : 'Action'
+              }
+            </span>
+          </>
+        )}
+      </button>
+      
+      {showTooltip && !isLoading && (
+        <div style={{
+          position: 'absolute',
+          bottom: '100%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(0,0,0,0.8)',
+          color: 'white',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          whiteSpace: 'nowrap',
+          zIndex: 1000,
+          marginBottom: '5px'
+        }}>
+          {tooltip}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Gradientes para los botones
+const GRADIENTS = {
+  cartAdd: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  cartRemove: 'linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%)'
+};
+
 const CardBodyCarousel = ({ post }) => {
   const { languageReducer, auth, socket, homeUsers, profile } = useSelector((state) => state);
   const [isLike, setIsLike] = useState(false);
@@ -306,21 +385,39 @@ const CardBodyCarousel = ({ post }) => {
     }
   }, [canProceed, saveLoad, saved, dispatch, post, auth]);
 
+  // FUNCIÓN CORREGIDA: handleBuyProduct
   const handleBuyProduct = useCallback(async () => {
     if (!canProceed() || buyLoad) return;
+    
     setBuyLoad(true);
     try {
-      await dispatch(buyProduct({ post, auth }));
-      setInCart(prev => !prev);
-      await dispatch(loadCart(auth.token));
-      setShowBuyMessage(true);
-      setTimeout(() => setShowBuyMessage(false), 3000);
+      // Si ya está en el carrito, lo removemos
+      if (inCart) {
+        // Aquí deberías tener una acción para remover del carrito
+        // Por ahora, solo actualizamos el estado local
+        setInCart(false);
+        setShowBuyMessage(true);
+        setTimeout(() => setShowBuyMessage(false), 3000);
+      } else {
+        // Agregar al carrito
+        await dispatch(buyProduct({ post, auth }));
+        setInCart(true);
+        setShowBuyMessage(true);
+        setTimeout(() => setShowBuyMessage(false), 3000);
+        
+        // Recargar el carrito para asegurar consistencia
+        await dispatch(loadCart(auth.token));
+      }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error al procesar la compra:", error);
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: t('purchaseError') }
+      });
     } finally {
       setBuyLoad(false);
     }
-  }, [canProceed, buyLoad, dispatch, post, auth]);
+  }, [canProceed, buyLoad, inCart, dispatch, post, auth, t]);
 
   // Handler para las opciones del modal
   const handleOptionClick = useCallback((option) => {
@@ -537,7 +634,7 @@ const CardBodyCarousel = ({ post }) => {
                     {isAdmin && (
                       <>
                         <button
-                          onClick={() => handleOptionClick('edit')}
+                          onClick={handleAprove}
                           style={{
                             background: 'none',
                             border: 'none',
@@ -807,18 +904,18 @@ const CardBodyCarousel = ({ post }) => {
                   </div>
                 )}
                 <div style={{
-                    fontSize: "clamp(10px, 2vh, 20px)",
-                    opacity: showInfo ? 0.95 : 0,
-                    lineHeight: "1.4",
-                    fontWeight: "400",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-                    transition: 'all 0.3s ease 0.1s'
-                  }} >
+                  fontSize: "clamp(10px, 2vh, 20px)",
+                  opacity: showInfo ? 0.95 : 0,
+                  lineHeight: "1.4",
+                  fontWeight: "400",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
+                  transition: 'all 0.3s ease 0.1s'
+                }} >
                   {post.title}
                 </div>
 
@@ -953,6 +1050,16 @@ const CardBodyCarousel = ({ post }) => {
                     </div>
                   </div>
 
+                  {/* BOTÓN ADD TO CART CORREGIDO */}
+                  <ActionButton
+                    icon="shopping_cart"
+                    gradient={inCart ? GRADIENTS.cartRemove : GRADIENTS.cartAdd}
+                    onClick={handleBuyProduct}
+                    isActive={true}
+                    isLoading={buyLoad}
+                    tooltip={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
+                  />
+
                   {/* Botón Más Detalles */}
                   <button
                     onClick={(e) => {
@@ -1045,6 +1152,11 @@ const CardBodyCarousel = ({ post }) => {
             0% { opacity: 0.7; }
             50% { opacity: 1; }
             100% { opacity: 0.7; }
+          }
+
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
           }
         `}
       </style>

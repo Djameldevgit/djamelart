@@ -30,7 +30,7 @@ const EditProfilePage = () => {
     const dispatch = useDispatch()
     const history = useHistory()
     const { id } = useParams()
-    const { t } = useTranslation('profileedit')
+    const { t } = useTranslation('profile')
     const lang = languageReducer?.language || 'es'
 
     // Verificar que el usuario solo pueda editar su propio perfil

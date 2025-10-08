@@ -92,7 +92,7 @@ const profileinfouser = () => {
   const { auth, theme, cart, notify, settings } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
-  const { t, i18n } = useTranslation('profileinfouser');
+  const { t, i18n } = useTranslation('profile');
   const lang = languageReducer.language || 'es';
   const history = useHistory();
   const notifyDropdownRef = useRef(null);

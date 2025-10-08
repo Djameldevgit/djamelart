@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Info from '../../components/profile/Info'
+import Info from './Info'
 import Posts from '../../components/profile/Posts'
 import Saved from '../../components/profile/Saved'
 import { useSelector, useDispatch } from 'react-redux'
@@ -19,7 +19,7 @@ import {
 const Profile = () => {
     const { profile, auth, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
-    const { t } = useTranslation('profileid')
+    const { t } = useTranslation('profile')
     const history = useHistory()
     const lang = languageReducer?.language || 'en'
 

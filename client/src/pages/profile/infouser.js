@@ -17,7 +17,7 @@ import {
   Clock,
   XCircle,
   CheckCircle,
-  ArrowLeft,
+ 
   Calendar,
   Activity,
   JournalText,
@@ -29,7 +29,7 @@ import { getProfileUsers } from '../../redux/actions/profileAction'
 const infouser = () => {
   const { profile, auth, languageReducer } = useSelector(state => state)
   const dispatch = useDispatch()
-  const { t } = useTranslation('profileinfouser')
+  const { t } = useTranslation('profile')
   const history = useHistory()
   const lang = languageReducer?.language || 'en'
   const { id } = useParams()

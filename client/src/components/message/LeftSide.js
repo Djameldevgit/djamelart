@@ -35,11 +35,19 @@ const LeftSide = () => {
 
   const handleSearch = async e => {
     e.preventDefault()
-    if (!search) return setSearchUsers([])
+    
+    // Normalización más completa
+    const normalizedSearch = search
+      .trim()
+      .toLowerCase()
+      .normalize("NFD") // Separar acentos de letras
+      .replace(/[\u0300-\u036f]/g, "") // Eliminar diacríticos
+
+    if (!normalizedSearch) return setSearchUsers([])
 
     try {
       setIsSearching(true)
-      const res = await getDataAPI(`search?username=${search}`, auth.token)
+      const res = await getDataAPI(`search?username=${encodeURIComponent(normalizedSearch)}`, auth.token)
       setSearchUsers(res.data.users)
     } catch (err) {
       dispatch({

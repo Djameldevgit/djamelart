@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import Avatar from '../Avatar'
-import FollowBtn from '../FollowBtn'
-import Followers from './Followers'
-import Following from './Following'
+ import Avatar from '../../components/Avatar'
+ import Followers from '../../components/profile/Followers'
+import Following from '../../components/profile/Following'
+
+import FollowBtn from '../../components/FollowBtn'
+ 
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
-import { Card, Row, Col, Button, Spinner, Badge, OverlayTrigger, Tooltip, Container } from 'react-bootstrap'
-import { Person, Link45deg, Journal, Pencil, GeoAlt, Envelope, Telephone, Eye, EyeSlash, People, Shield, Heart, Grid3x3, ChatDots } from 'react-bootstrap-icons'
+import { Card, Row, Col, Button, Spinner, Container } from 'react-bootstrap'
+import { Person, Link45deg, Journal, Pencil, GeoAlt, Envelope, Telephone,  EyeSlash, People,  Heart, Grid3x3, ChatDots } from 'react-bootstrap-icons'
 import { useTranslation } from 'react-i18next'
+
 
 const Info = ({ id, auth, profile, dispatch }) => {
     const [userData, setUserData] = useState(null)
@@ -17,7 +20,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
     const [isMobile, setIsMobile] = useState(false)
 
     const { theme, privacy } = useSelector(state => state)
-    const { t, i18n } = useTranslation('profileinfo')
+    const { t, i18n } = useTranslation('profile')
     const lang = i18n.language || 'es'
 
     // Detectar si es móvil
@@ -658,7 +661,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                                                 <Envelope size={16} style={{
                                                                     color: getPrivacyColor(currentPrivacy.email)
                                                                 }} />
-                                                                <small className="text-muted fw-medium">Email</small>
+                                                                <small className="text-muted fw-medium">{t('email')}</small>
                                                             </div>
 
                                                         </div>
@@ -685,7 +688,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                                                 <Telephone size={16} style={{
                                                                     color: getPrivacyColor(currentPrivacy.mobile)
                                                                 }} />
-                                                                <small className="text-muted fw-medium">Teléfono</small>
+                                                                <small className="text-muted fw-medium">{t('mobile')}</small>
                                                             </div>
 
                                                         </div>
@@ -711,7 +714,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                                                 <GeoAlt size={16} style={{
                                                                     color: getPrivacyColor(currentPrivacy.address)
                                                                 }} />
-                                                                <small className="text-muted fw-medium">Dirección</small>
+                                                                <small className="text-muted fw-medium"> {t('address')} </small>
                                                             </div>
 
                                                         </div>

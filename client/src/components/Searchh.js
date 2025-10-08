@@ -12,23 +12,31 @@ const searchI = () => {
     const { auth } = useSelector(state => state)
     const dispatch = useDispatch()
     const [load, setLoad] = useState(false)
-
-
-    const handleSearch = async (e) => {
+    const handleSearch = async e => {
         e.preventDefault()
-        if(!search) return;
-
+        
+        // Normalización más completa
+        const normalizedSearch = search
+          .trim()
+          .toLowerCase()
+          .normalize("NFD") // Separar acentos de letras
+          .replace(/[\u0300-\u036f]/g, "") // Eliminar diacríticos
+    
+        if (!normalizedSearch) return setSearchUsers([])
+    
         try {
-            setLoad(true)
-            const res = await getDataAPI(`search?username=${search}`, auth.token)
-            setUsers(res.data.users)
-            setLoad(false)
+          setIsSearching(true)
+          const res = await getDataAPI(`search?username=${encodeURIComponent(normalizedSearch)}`, auth.token)
+          setSearchUsers(res.data.users)
         } catch (err) {
-            dispatch({
-                type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}
-            })
+          dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: { error: err.response?.data?.msg || t('message.searchError') }
+          })
+        } finally {
+          setIsSearching(false)
         }
-    }
+      }
 
     const handleClose = () => {
         setSearch('')

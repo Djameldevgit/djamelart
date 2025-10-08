@@ -7,7 +7,7 @@ const FollowBtn = ({user}) => {
 
     const { auth, profile, socket,languageReducer } = useSelector(state => state)
 
-    const { t, i18n } = useTranslation('follow');
+    const { t, i18n } = useTranslation('profile');
 
     // Cambiar el idioma activamente si es diferente
     const lang = languageReducer.language || 'es';

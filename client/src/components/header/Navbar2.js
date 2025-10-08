@@ -19,13 +19,12 @@ import { Navbar, Container, NavDropdown, Badge } from 'react-bootstrap';
 import { BsCartFill } from 'react-icons/bs';
 import { GLOBALTYPES } from '../../redux/actions/globalTypes';
 import LanguageSelectorpc from '../LanguageSelectorpc';
-import ShareAppModal from '../shareAppModal';
 
 const Navbar2 = () => {
   const { auth, cart, notify, settings } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
-  const { t, i18n } = useTranslation('navbar');
+  const { t, i18n } = useTranslation('navbar2');
   const lang = languageReducer.language || 'es';
   
   const [showShareModal, setShowShareModal] = useState(false);
@@ -53,7 +52,7 @@ const Navbar2 = () => {
   if (!settings) {
     return (
       <nav className="navbar navbar-light bg-light">
-        <span className="navbar-brand">Cargando...</span>
+        <span className="navbar-brand">{t('loading')}</span>
       </nav>
     );
   }
@@ -75,10 +74,12 @@ const Navbar2 = () => {
         margin: '2px 8px',
         display: 'flex',
         alignItems: 'center',
-        fontWeight: '500'
+        fontWeight: '500',
+        direction: lang === 'ar' ? 'rtl' : 'ltr',
+        textAlign: lang === 'ar' ? 'right' : 'left'
       }}
     >
-      <Icon className="me-3" style={{ color: iconColor, fontSize: '1.1rem' }} />
+      <Icon className={lang === 'ar' ? "ms-3" : "me-3"} style={{ color: iconColor, fontSize: '1.1rem' }} />
       <span>{children}</span>
     </NavDropdown.Item>
   );
@@ -97,6 +98,7 @@ const Navbar2 = () => {
           boxShadow: '0 2px 20px rgba(0,0,0,0.08)'
         }}
         className={settings.style ? "navbar-dark" : "navbar-light"}
+        dir={lang === 'ar' ? 'rtl' : 'ltr'}
       >
         <Container fluid className="align-items-center justify-content-between">
           {/* Logo y título */}
@@ -110,9 +112,9 @@ const Navbar2 = () => {
                 justifyContent: 'center',
                 width: isMobile ? '45px' : '55px',
                 height: isMobile ? '45px' : '55px',
-                marginLeft: '8px',
+                marginLeft: lang === 'ar' ? '0' : '8px',
+                marginRight: lang === 'ar' ? '8px' : (isMobile ? '8px' : '12px'),
                 padding: '0',
-                marginRight: isMobile ? '8px' : '12px',
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 border: 'none',
                 borderRadius: '12px',
@@ -165,11 +167,11 @@ const Navbar2 = () => {
                 transition: 'all 0.3s ease',
                 backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)'
               }}
+              title={t('search')}
             >
               <FaSearch
                 size={isMobile ? 18 : 20}
                 style={{ color: '#667eea' }}
-                title={t('search')}
               />
             </Link>
 
@@ -187,11 +189,11 @@ const Navbar2 = () => {
                   transition: 'all 0.3s ease',
                   boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
                 }}
+                title={t('addPost')}
               >
                 <FaPlus
                   size={isMobile ? 18 : 20}
                   style={{ color: 'white' }}
-                  title={t('addPost')}
                 />
               </div>
             )}
@@ -208,6 +210,7 @@ const Navbar2 = () => {
                   backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
                   transition: 'all 0.3s ease',
                 }}
+                title={t('notifications')}
               >
                 <FaBell
                   size={isMobile ? 20 : 22}
@@ -220,7 +223,7 @@ const Navbar2 = () => {
                       fontSize: '0.65rem',
                       position: 'absolute',
                       top: '-2px',
-                      right: '-2px',
+                      [lang === 'ar' ? 'left' : 'right']: '-2px',
                       padding: '4px 7px',
                       background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
                       border: '2px solid white',
@@ -245,6 +248,7 @@ const Navbar2 = () => {
                   backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
                   transition: 'all 0.3s ease'
                 }}
+                title={t('cart')}
               >
                 <BsCartFill size={isMobile ? 20 : 22} style={{ color: '#667eea' }} />
                 {cart.items?.length > 0 && (
@@ -254,7 +258,7 @@ const Navbar2 = () => {
                       fontSize: '0.65rem',
                       position: 'absolute',
                       top: '-2px',
-                      right: '-2px',
+                      [lang === 'ar' ? 'left' : 'right']: '-2px',
                       padding: '4px 7px',
                       background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
                       border: '2px solid white',
@@ -273,6 +277,7 @@ const Navbar2 = () => {
               <Link
                 to="/profileinfouser"
                 className="text-decoration-none"
+                title={t('profile')}
               >
                 <div
                   className="dropdown-avatar icon-button"
@@ -280,22 +285,27 @@ const Navbar2 = () => {
                     width: isMobile ? '40px' : '45px',
                     height: isMobile ? '40px' : '45px',
                     borderRadius: '12px',
-                    padding: '2px',
+                    padding: '0', // 🔥 CORREGIDO: Sin padding interno
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden' // 🔥 IMPORTANTE: Para que la imagen no se salga del contenedor
                   }}
                 >
                   <Avatar
                     src={auth.user.avatar}
                     size="medium-avatar"
                     style={{
-                      borderRadius: '10px',
+                      borderRadius: '10px', // 🔥 Mismo border radius que los otros iconos
                       objectFit: 'cover',
-                      width: '100%',
-                      height: '100%',
-                      margin:'3px',
-                      pading:'3px'
+                      width: '100%', // 🔥 Ocupa todo el espacio disponible
+                      height: '100%', // 🔥 Ocupa todo el espacio disponible
+                      margin: '0', // 🔥 CORREGIDO: Sin margen interno
+                      padding: '0', // 🔥 CORREGIDO: Sin padding interno
+                      display: 'block'
                     }}
                   />
                 </div>
@@ -303,7 +313,7 @@ const Navbar2 = () => {
             ) : (
               // Usuario NO AUTENTICADO: Dropdown simple
               <NavDropdown
-                align="end"
+                align={lang === 'ar' ? "start" : "end"}
                 title={
                   <div
                     style={{
@@ -335,7 +345,7 @@ const Navbar2 = () => {
                   {t('appInfo')}
                 </MenuItem>
                 <MenuItem icon={FaShareAlt} iconColor="#ffc107" onClick={() => setShowShareModal(true)}>
-                  {t('shareApp', 'Compartir Aplicación')}
+                  {t('shareApp')}
                 </MenuItem>
               </NavDropdown>
             )}
@@ -352,19 +362,17 @@ const Navbar2 = () => {
 
         .custom-menu-item:hover {
           background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
-          transform: translateX(4px);
+          transform: ${lang === 'ar' ? 'translateX(-4px)' : 'translateX(4px)'};
         }
 
         .dropdown-menu {
           border: none !important;
           box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
           border-radius: 15px !important;
-        }import Navbar2 from './Navbar2';
-
+        }
       `}</style>
     </div>
   );
 };
 
- 
-   export default  Navbar2
+export default Navbar2;
