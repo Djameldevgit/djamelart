@@ -1,5 +1,4 @@
 {
-   
     "confirmApprove": "¿Estás seguro de que quieres aprobar esta publicación?",
     "noAdminAvailable": "No hay administradores disponibles en este momento",
     "confirmDelete": "¿Estás seguro de que quieres eliminar esta publicación?",
@@ -47,6 +46,17 @@
     "other": "Otro",
     "submitReport": "Enviar Reporte",
     "productAddedToCart": "Producto añadido al carrito",
-    "thanksForPurchase": "¡Gracias por tu compra!"
-  
+    "thanksForPurchase": "¡Gracias por tu compra!",
+    "viewDetails": "Ver detalles",
+    "save": "Guardar",
+    "removeFromCart": "Quitar del carrito",
+    "addToCart": "Añadir al carrito",
+    "purchaseError": "Error en la compra",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "whatsapp": "WhatsApp",
+    "pinterest": "Pinterest",
+    "telegram": "Telegram",
+    "email": "Email",
+    "copyLink": "Copiar enlace"
 }

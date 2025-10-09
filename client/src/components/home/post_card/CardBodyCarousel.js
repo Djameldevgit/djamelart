@@ -1,29 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Modal, Form, Alert, Button } from 'react-bootstrap';
+ 
 import Carousel from '../../Carousel';
 import { likePost, unLikePost, savePost, unSavePost, deletePost } from '../../../redux/actions/postAction';
 import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import moment from 'moment';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-
-// React Share imports
-import {
-  FacebookShareButton,
-  TwitterShareButton,
-  WhatsappShareButton,
-  TelegramShareButton,
-  EmailShareButton,
-  FacebookIcon,
-  TwitterIcon,
-  WhatsappIcon,
-  TelegramIcon,
-  EmailIcon,
-  PinterestShareButton,
-  PinterestIcon
-} from 'react-share';
+ 
+ 
+// Importar componentes ya separados
+import ShareModal from './ShareModal';
+import OptionsModal from './OptionsModal';
+import ReportModal from './ReportModal';
+import ImageOverlay from './ImageOverlay';
 
 import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
 import { MESS_TYPES } from '../../../redux/actions/messageAction';
@@ -35,75 +24,8 @@ import AuthModal from '../../authAndVerify/AuthModal';
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
 
-// Componente ActionButton para botones reutilizables
-const ActionButton = ({ icon, gradient, onClick, isActive, isLoading, tooltip }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-
-  return (
-    <div style={{ position: 'relative' }}>
-      <button
-        onClick={onClick}
-        disabled={isLoading}
-        style={{
-          background: gradient,
-          border: 'none',
-          color: 'white',
-          padding: '8px',
-          borderRadius: '50%',
-          fontSize: '13px',
-          fontWeight: '500',
-          cursor: isLoading ? 'not-allowed' : 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transition: 'all 0.3s ease',
-          opacity: isLoading ? 0.7 : 1,
-          width: '40px',
-          height: '40px',
-          minWidth: '40px'
-        }}
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-      >
-        {isLoading ? (
-          <span className="material-icons" style={{ fontSize: '20px', animation: 'spin 1s linear infinite' }}>
-            refresh
-          </span>
-        ) : (
-          <span className="material-icons" style={{ fontSize: '20px' }}>
-            {icon}
-          </span>
-        )}
-      </button>
-      
-      {showTooltip && !isLoading && (
-        <div style={{
-          position: 'absolute',
-          bottom: '100%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: 'rgba(0,0,0,0.8)',
-          color: 'white',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          whiteSpace: 'nowrap',
-          zIndex: 1000,
-          marginBottom: '5px'
-        }}>
-          {tooltip}
-        </div>
-      )}
-    </div>
-  );
-};
-
-// Gradientes para los botones
-const GRADIENTS = {
-  cartAdd: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  cartRemove: 'linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%)'
-};
-
+ 
+ 
 const CardBodyCarousel = ({ post }) => {
   const { languageReducer, auth, socket, homeUsers, profile } = useSelector((state) => state);
   const [isLike, setIsLike] = useState(false);
@@ -122,13 +44,12 @@ const CardBodyCarousel = ({ post }) => {
   const [showReportModal, setShowReportModal] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
-  const [copied, setCopied] = useState(false);
 
   // Estados locales que deben resetearse cuando cambia el post
   const [showInfo, setShowInfo] = useState(false);
   const [isTouching, setIsTouching] = useState(false);
 
-  const { t } = useTranslation('cardbodycarousel');
+  const { t, i18n } = useTranslation('cardbodycarousel');
   const lang = languageReducer.language || 'en';
   const history = useHistory();
   const dispatch = useDispatch();
@@ -182,6 +103,50 @@ const CardBodyCarousel = ({ post }) => {
 
     return true;
   }, [auth]);
+
+  // ========== LÓGICA DE GUARDADO ==========
+
+  // Actualizar estado de guardado
+  useEffect(() => {
+    if (auth.user?.saved) {
+      setSaved(auth.user.saved.includes(post._id));
+    } else {
+      setSaved(false);
+    }
+  }, [auth.user?.saved, post._id]);
+
+  // Handler para guardar post
+  const handleSavePost = useCallback(async () => {
+    if (!canProceed() || saveLoad) return;
+
+    setSaveLoad(true);
+    try {
+      await dispatch(savePost({ post, auth }));
+    } finally {
+      setSaveLoad(false);
+    }
+  }, [canProceed, saveLoad, dispatch, post, auth]);
+
+  // Handler para desguardar post
+  const handleUnSavePost = useCallback(async () => {
+    if (!canProceed() || saveLoad) return;
+
+    setSaveLoad(true);
+    try {
+      await dispatch(unSavePost({ post, auth }));
+    } finally {
+      setSaveLoad(false);
+    }
+  }, [canProceed, saveLoad, dispatch, post, auth]);
+
+  // Handler para guardar/desguardar
+  const handleSaveToggle = useCallback(async () => {
+    if (saved) {
+      await handleUnSavePost();
+    } else {
+      await handleSavePost();
+    }
+  }, [saved, handleSavePost, handleUnSavePost]);
 
   // Handlers para mostrar/ocultar información
   const handleImageClick = useCallback(() => {
@@ -296,15 +261,6 @@ const CardBodyCarousel = ({ post }) => {
     setShowOptionsModal(false);
   }, [canProceed, post.user, handleAddUser]);
 
-  const handleCopy = useCallback((message) => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    dispatch({
-      type: GLOBALTYPES.ALERT,
-      payload: { success: message }
-    });
-  }, [dispatch]);
-
   const handleSavePostAction = useCallback(async () => {
     if (!canProceed() || saveLoad) return;
 
@@ -335,14 +291,6 @@ const CardBodyCarousel = ({ post }) => {
   }, [post.likes, auth.user]);
 
   useEffect(() => {
-    if (auth.user?.saved?.includes(post._id)) {
-      setSaved(true);
-    } else {
-      setSaved(false);
-    }
-  }, [auth.user, post._id]);
-
-  useEffect(() => {
     const cartItems = auth.user?.cart?.items || [];
     setInCart(cartItems.some(item => item.postId === post._id));
   }, [auth.user?.cart, post._id]);
@@ -360,20 +308,6 @@ const CardBodyCarousel = ({ post }) => {
       setLoadLike(false);
     }
   }, [canProceed, loadLike, isLike, dispatch, post, auth, socket, t, languageReducer]);
-
-  const handleSavePost = useCallback(async () => {
-    if (!canProceed() || saveLoad) return;
-
-    if (saved) {
-      setSaveLoad(true);
-      await dispatch(unSavePost({ post, auth }));
-      setSaveLoad(false);
-    } else {
-      setSaveLoad(true);
-      await dispatch(savePost({ post, auth }));
-      setSaveLoad(false);
-    }
-  }, [canProceed, saveLoad, saved, dispatch, post, auth]);
 
   // FUNCIÓN CORREGIDA: handleBuyProduct
   const handleBuyProduct = useCallback(async () => {
@@ -581,260 +515,24 @@ const CardBodyCarousel = ({ post }) => {
                 color: "#888",
                 paddingLeft: "56px"
               }}>
-                {formatDate(post.createdAt)} • {moment(post.createdAt).fromNow()}
+                {formatDate(post.createdAt)}  
               </div>
             </div>
 
-            {/* Modal de opciones - Animación desde el bottom */}
-            {showOptionsModal && (
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                display: 'flex',
-                alignItems: 'flex-end',
-                justifyContent: 'center',
-                zIndex: 9999,
-                animation: 'fadeIn 0.3s ease'
-              }}>
-                <div
-                  ref={optionsModalRef}
-                  style={{
-                    background: 'white',
-                    width: '100%',
-                    maxWidth: '500px',
-                    borderTopLeftRadius: '20px',
-                    borderTopRightRadius: '20px',
-                    padding: '20px 0',
-                    transform: 'translateY(0)',
-                    animation: 'slideUp 0.3s ease',
-                    boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  {/* Lista de opciones */}
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '8px'
-                  }}>
-                    {/* Opciones para admin */}
-                    {isAdmin && (
-                      <>
-                        <button
-                          onClick={handleAprove}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            padding: '16px 24px',
-                            textAlign: 'left',
-                            fontSize: '16px',
-                            color: '#333',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px',
-                            transition: 'background-color 0.2s ease'
-                          }}
-                        >
-                          <span className="material-icons" style={{ color: '#666' }}>
-                            check_circle
-                          </span>
-                          {t('approvePublication')}
-                        </button>
-                      </>
-                    )}
-
-                    {/* Opciones para el dueño del post o admin */}
-                    {(isPostOwner || isAdmin) && (
-                      <>
-                        <button
-                          onClick={() => handleOptionClick('edit')}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            padding: '16px 24px',
-                            textAlign: 'left',
-                            fontSize: '16px',
-                            color: '#333',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px',
-                            transition: 'background-color 0.2s ease'
-                          }}
-                        >
-                          <span className="material-icons" style={{ color: '#666' }}>
-                            edit
-                          </span>
-                          {t('editPublication')}
-                        </button>
-
-                        <button
-                          onClick={() => handleOptionClick('delete')}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            padding: '16px 24px',
-                            textAlign: 'left',
-                            fontSize: '16px',
-                            color: '#e74c3c',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px',
-                            transition: 'background-color 0.2s ease'
-                          }}
-                        >
-                          <span className="material-icons" style={{ color: '#e74c3c' }}>
-                            delete
-                          </span>
-                          {t('deletePublication')}
-                        </button>
-                      </>
-                    )}
-
-                    {/* Opciones para todos los usuarios */}
-                    <button
-                      onClick={() => handleOptionClick('contact')}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: '16px 24px',
-                        textAlign: 'left',
-                        fontSize: '16px',
-                        color: '#333',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        transition: 'background-color 0.2s ease'
-                      }}
-                    >
-                      <span className="material-icons" style={{ color: '#666' }}>
-                        chat
-                      </span>
-                      {t('contactArtist')}
-                    </button>
-
-                    <button
-                      onClick={() => handleOptionClick('share')}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: '16px 24px',
-                        textAlign: 'left',
-                        fontSize: '16px',
-                        color: '#333',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        transition: 'background-color 0.2s ease'
-                      }}
-                    >
-                      <span className="material-icons" style={{ color: '#666' }}>
-                        share
-                      </span>
-                      {t('sharePublication')}
-                    </button>
-
-                    <button
-                      onClick={() => handleOptionClick('save')}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: '16px 24px',
-                        textAlign: 'left',
-                        fontSize: '16px',
-                        color: '#333',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        transition: 'background-color 0.2s ease'
-                      }}
-                    >
-                      <span className="material-icons" style={{ color: '#666' }}>
-                        {saved ? 'bookmark' : 'bookmark_border'}
-                      </span>
-                      {saved ? t('saved') : t('savePublication')}
-                    </button>
-
-                    {/* Contactar con Admin */}
-                    <button
-                      onClick={handleChatWithAdmin}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: '16px 24px',
-                        textAlign: 'left',
-                        fontSize: '16px',
-                        color: '#333',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        transition: 'background-color 0.2s ease'
-                      }}
-                    >
-                      <span className="material-icons" style={{ color: '#666' }}>
-                        admin_panel_settings
-                      </span>
-                      {t('contactAdmin')}
-                    </button>
-
-                    {/* Opción de denuncia (si no es el dueño) */}
-                    {!isPostOwner && (
-                      <button
-                        onClick={() => handleOptionClick('report')}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          padding: '16px 24px',
-                          textAlign: 'left',
-                          fontSize: '16px',
-                          color: '#e74c3c',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          transition: 'background-color 0.2s ease'
-                        }}
-                      >
-                        <span className="material-icons" style={{ color: '#e74c3c' }}>
-                          flag
-                        </span>
-                        {t('reportPublication')}
-                      </button>
-                    )}
-
-                    {/* Botón para cerrar */}
-                    <div style={{ padding: '8px 16px', marginTop: '8px' }}>
-                      <button
-                        onClick={() => setShowOptionsModal(false)}
-                        style={{
-                          background: 'rgba(0, 0, 0, 0.05)',
-                          border: 'none',
-                          padding: '16px',
-                          borderRadius: '12px',
-                          fontSize: '16px',
-                          color: '#333',
-                          cursor: 'pointer',
-                          width: '100%',
-                          fontWeight: '600',
-                          transition: 'background-color 0.2s ease'
-                        }}
-                      >
-                        {t('cancel')}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Modal de opciones usando el componente separado */}
+            <OptionsModal
+              show={showOptionsModal}
+              onClose={() => setShowOptionsModal(false)}
+              innerRef={optionsModalRef}
+              isAdmin={isAdmin}
+              isPostOwner={isPostOwner}
+              saved={saved}
+              saveLoad={saveLoad}
+              t={t}
+              onOptionClick={handleOptionClick}
+              onAprove={handleAprove}
+              onChatWithAdmin={handleChatWithAdmin}
+            />
 
             {/* Contenedor de la imagen con carousel */}
             <div
@@ -853,259 +551,25 @@ const CardBodyCarousel = ({ post }) => {
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
             >
-              {/* NUEVO CARD DE INFORMACIÓN CON DISEÑO SEPARADO POR FILAS */}
-              <div style={{
-                position: "absolute",
-                bottom: "0",
-                left: "0",
-                right: "0",
-                zIndex: 2,
-                color: "white",
-                background: showInfo
-                  ? "linear-gradient(transparent 0%, rgba(0, 0, 0, 0.7) 30%, rgba(0, 0, 0, 0.8) 100%)"
-                  : "transparent",
-                padding: showInfo ? "20px 16px 16px 16px" : "0px 16px",
-                backdropFilter: showInfo ? "blur(10px)" : "none",
-                borderTop: showInfo ? "1px solid rgba(255, 255, 255, 0.15)" : "none",
-                height: showInfo ? "auto" : "0px",
-                opacity: showInfo ? 1 : 0,
-                transform: showInfo ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px'
-              }}>
-                
-                {/* FILA 1: Username */}
-                {post.user.username && (
-                  <div style={{
-                    fontSize: "clamp(16px, 2.5vh, 20px)",
-                    opacity: showInfo ? 0.95 : 0,
-                    lineHeight: "1.4",
-                    fontWeight: "600",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 1,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-                    transition: 'all 0.3s ease 0.1s'
-                  }}>
-                    {post.user.username}
-                  </div>
-                )}
-
-                {/* FILA 2: Title */}
-                <div style={{
-                  fontSize: "clamp(14px, 2vh, 18px)",
-                  opacity: showInfo ? 0.95 : 0,
-                  lineHeight: "1.4",
-                  fontWeight: "500",
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-                  transition: 'all 0.3s ease 0.15s'
-                }} >
-                  {post.title}
-                </div>
-
-                {/* FILA 3: Fecha */}
-                <div style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  fontSize: "13px",
-                  color: "rgba(255, 255, 255, 0.8)",
-                  opacity: showInfo ? 1 : 0,
-                  transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-                  transition: 'all 0.3s ease 0.2s'
-                }}>
-                  <span className="material-icons" style={{
-                    fontSize: "14px",
-                    color: "rgba(255, 255, 255, 0.7)"
-                  }}>
-                    schedule
-                  </span>
-                  <span>{formatDate(post.createdAt)} • {moment(post.createdAt).fromNow()}</span>
-                </div>
-
-                {/* FILA 4: Contenido (si existe) */}
-                {post.content && (
-                  <div style={{
-                    fontSize: "clamp(13px, 1.8vh, 15px)",
-                    opacity: showInfo ? 0.8 : 0,
-                    lineHeight: "1.4",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-                    transition: 'all 0.3s ease 0.25s'
-                  }}>
-                    {post.content}
-                  </div>
-                )}
-
-                {/* FILA 5: Iconos de interacción */}
-                <div style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingTop: "8px",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-                  opacity: showInfo ? 1 : 0,
-                  transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-                  transition: 'all 0.3s ease 0.3s'
-                }}>
-                  <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "16px",
-                    flexWrap: "wrap"
-                  }}>
-                    {/* Like */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        cursor: "pointer",
-                        padding: "8px 12px",
-                        borderRadius: "20px",
-                        background: "rgba(255, 255, 255, 0.1)",
-                        transition: "all 0.2s ease"
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleLike();
-                      }}
-                    >
-                      <span
-                        className="material-icons"
-                        style={{
-                          fontSize: "18px",
-                          color: isLike ? "#ff3040" : "white"
-                        }}
-                      >
-                        {isLike ? "favorite" : "favorite_border"}
-                      </span>
-                      <span style={{
-                        fontSize: "13px",
-                        color: "white",
-                        fontWeight: "500"
-                      }}>
-                        {post.likes?.length || 0}
-                      </span>
-                    </div>
-
-                    {/* Comment */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        cursor: "pointer",
-                        padding: "8px 12px",
-                        borderRadius: "20px",
-                        background: "rgba(255, 255, 255, 0.1)"
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        history.push(`/post/${post._id}#comments`);
-                      }}
-                    >
-                      <span className="material-icons" style={{ fontSize: "18px" }}>
-                        chat_bubble_outline
-                      </span>
-                      <span style={{ fontSize: "13px", fontWeight: "500" }}>
-                        {post.comments?.length || 0}
-                      </span>
-                    </div>
-
-                    {/* Share */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        cursor: "pointer",
-                        padding: "8px 12px",
-                        borderRadius: "20px",
-                        background: "rgba(255, 255, 255, 0.1)"
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleShare();
-                      }}
-                    >
-                      <span className="material-icons" style={{ fontSize: "18px" }}>
-                        share
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* BOTÓN ADD TO CART */}
-                  <ActionButton
-                    icon="shopping_cart"
-                    gradient={inCart ? GRADIENTS.cartRemove : GRADIENTS.cartAdd}
-                    onClick={handleBuyProduct}
-                    isActive={true}
-                    isLoading={buyLoad}
-                    tooltip={inCart ? t("removeFromCart", { lng: lang }) : t("addToCart", { lng: lang })}
-                  />
-                </div>
-
-                {/* FILA 6: Botón Detalles - SEPARADO EN SU PROPIO CARD */}
-                <div style={{
-                  opacity: showInfo ? 1 : 0,
-                  transform: showInfo ? 'translateY(0)' : 'translateY(10px)',
-                  transition: 'all 0.3s ease 0.35s',
-                  marginTop: '8px'
-                }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      history.push(`/post/${post._id}`);
-                    }}
-                    style={{
-                      background: "rgba(255, 255, 255, 0.15)",
-                      border: "1px solid rgba(255, 255, 255, 0.3)",
-                      color: "white",
-                      padding: "12px 20px",
-                      borderRadius: "12px",
-                      fontSize: "14px",
-                      fontWeight: "600",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "8px",
-                      transition: "all 0.3s ease",
-                      backdropFilter: "blur(10px)",
-                      width: "100%",
-                      textAlign: "center"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.background = "rgba(255, 255, 255, 0.25)";
-                      e.target.style.transform = "translateY(-2px)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.background = "rgba(255, 255, 255, 0.15)";
-                      e.target.style.transform = "translateY(0)";
-                    }}
-                  >
-                    <span>{t('viewDetails')}</span>
-                    <span className="material-icons" style={{ fontSize: "18px" }}>
-                      arrow_forward
-                    </span>
-                  </button>
-                </div>
-              </div>
+              {/* ImageOverlay usando el componente separado */}
+              <ImageOverlay
+                showInfo={showInfo}
+                post={post}
+                t={t}
+                formatDate={formatDate}
+                isLike={isLike}
+                loadLike={loadLike}
+                saved={saved}
+                saveLoad={saveLoad}
+                inCart={inCart}
+                buyLoad={buyLoad}
+                onLike={handleLike}
+                onSaveToggle={handleSaveToggle}
+                onShare={handleShare}
+                onViewDetails={() => history.push(`/post/${post._id}`)}
+                onBuyProduct={handleBuyProduct}
+                onCommentClick={() => history.push(`/post/${post._id}#comments`)}
+              />
 
               {/* Indicador visual cuando la información está oculta */}
               {!showInfo && (
@@ -1179,155 +643,25 @@ const CardBodyCarousel = ({ post }) => {
         `}
       </style>
 
-      {/* Modal para Compartir */}
-      <Modal
+      {/* Modal para Compartir - Ahora usando el componente separado */}
+      <ShareModal
         show={showShareModal}
         onHide={() => setShowShareModal(false)}
-        centered
-        size="lg"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>🎨 {t('shareArt')}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {copied && (
-            <Alert variant="success" className="py-2" dismissible onClose={() => setCopied(false)}>
-              ✅ {t('linkCopied')}
-            </Alert>
-          )}
+        post={post}
+        shareUrl={shareUrl}
+        shareTitle={shareTitle}
+        imageUrl={imageUrl}
+      />
 
-          <h6 className="mb-3">{t('shareOnSocial')}</h6>
-          <div className="d-flex justify-content-around flex-wrap mb-4">
-            <FacebookShareButton url={shareUrl} quote={shareTitle} className="mx-2 my-2">
-              <FacebookIcon size={45} round />
-              <div className="small mt-1 text-center">{t('facebook')}</div>
-            </FacebookShareButton>
-
-            <TwitterShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
-              <TwitterIcon size={45} round />
-              <div className="small mt-1 text-center">{t('twitter')}</div>
-            </TwitterShareButton>
-
-            <WhatsappShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
-              <WhatsappIcon size={45} round />
-              <div className="small mt-1 text-center">{t('whatsapp')}</div>
-            </WhatsappShareButton>
-
-            {imageUrl && (
-              <PinterestShareButton
-                url={shareUrl}
-                media={imageUrl}
-                description={shareTitle}
-                className="mx-2 my-2"
-              >
-                <PinterestIcon size={45} round />
-                <div className="small mt-1 text-center">{t('pinterest')}</div>
-              </PinterestShareButton>
-            )}
-
-            <TelegramShareButton url={shareUrl} title={shareTitle} className="mx-2 my-2">
-              <TelegramIcon size={45} round />
-              <div className="small mt-1 text-center">{t('telegram')}</div>
-            </TelegramShareButton>
-
-            <EmailShareButton url={shareUrl} subject={t('artwork')} body={shareTitle} className="mx-2 my-2">
-              <EmailIcon size={45} round />
-              <div className="small mt-1 text-center">{t('email')}</div>
-            </EmailShareButton>
-          </div>
-
-          <h6 className="mb-3">{t('manualShare')}</h6>
-          <Form.Group className="mb-3">
-            <Form.Label>{t('shareText')}</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={shareTitle}
-              readOnly
-              className="mb-2"
-            />
-            <CopyToClipboard
-              text={shareTitle}
-              onCopy={() => handleCopy(t('textCopied'))}
-            >
-              <Button variant="outline-primary" size="sm">
-                📋 {t('copyText')}
-              </Button>
-            </CopyToClipboard>
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>{t('postLink')}</Form.Label>
-            <div className="input-group">
-              <Form.Control
-                type="text"
-                value={shareUrl}
-                readOnly
-              />
-              <CopyToClipboard
-                text={shareUrl}
-                onCopy={() => handleCopy(t('linkCopied'))}
-              >
-                <Button variant="outline-secondary" type="button">
-                  📋 {t('copyLink')}
-                </Button>
-              </CopyToClipboard>
-            </div>
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowShareModal(false)}>
-            {t('close')}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Modal de Reporte */}
-      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{t('reportPublication')}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group controlId="reportReason">
-            <Form.Label>{t('reportReason')}</Form.Label>
-            <Form.Select
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}
-            >
-              <option value="">{t('selectReason')}</option>
-              <option value="abuse">{t('harassmentOrAbuse')}</option>
-              <option value="spam">{t('spam')}</option>
-              <option value="terms">{t('termsViolation')}</option>
-              <option value="offensive">{t('offensiveContent')}</option>
-              <option value="fraud">{t('fraudOrScam')}</option>
-              <option value="impersonation">{t('identityTheft')}</option>
-              <option value="inappropriate">{t('inappropriateContent')}</option>
-              <option value="privacy">{t('privacyViolation')}</option>
-              <option value="disruption">{t('serviceDisruption')}</option>
-              <option value="suspicious">{t('suspiciousActivity')}</option>
-              <option value="other">{t('other')}</option>
-            </Form.Select>
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setShowReportModal(false);
-              setReportReason('');
-            }}
-          >
-            {t('cancel')}
-          </Button>
-          <Button
-            variant="danger"
-            disabled={!reportReason}
-            onClick={handleSubmitReport}
-          >
-            {t('submitReport')}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {/* Modal de Reporte usando el componente separado */}
+      <ReportModal
+        show={showReportModal}
+        onHide={() => setShowReportModal(false)}
+        reportReason={reportReason}
+        setReportReason={setReportReason}
+        onSubmitReport={handleSubmitReport}
+        t={t}
+      />
 
       {/* Mensaje de compra */}
       {showBuyMessage && (

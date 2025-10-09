@@ -11,10 +11,10 @@ const DetailPostCard = ({ post }) => {
 
     return (
         <div>
+             
             <DescriptionPost post={post} />
           
-            <Comments post={post} /> 
-            <InputComment post={post} />
+        
         </div>
 
     );
