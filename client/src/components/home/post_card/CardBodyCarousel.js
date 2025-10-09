@@ -568,7 +568,7 @@ const CardBodyCarousel = ({ post }) => {
               onTouchEnd={handleTouchEnd}
             >
               {/* ImageOverlay usando el componente separado */}
-              // En CardBodyCarousel.js - donde usas ImageOverlay
+           
               <ImageOverlay
                 showInfo={showInfo}
                 post={post}
