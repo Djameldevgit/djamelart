@@ -1,4 +1,6 @@
 {
+    "comments": "Comentarios",
+
     "confirmApprove": "¿Estás seguro de que quieres aprobar esta publicación?",
     "noAdminAvailable": "No hay administradores disponibles en este momento",
     "confirmDelete": "¿Estás seguro de que quieres eliminar esta publicación?",

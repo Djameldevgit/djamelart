@@ -4,8 +4,9 @@ import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import LoadIcon from '../../images/loading.gif';
-import DetailPostCard from '../../components/DetailPostCard'; // Nuevo componente
+import DetailPostCard from '../../components/DetailPostCard'; // Solo imagen + descripción
 import { getPost, viewPost } from "../../redux/actions/postAction";
+// ELIMINA los imports de InputComment y Comments
 
 const DetailPost = () => {
   const { id } = useParams();
@@ -13,10 +14,10 @@ const DetailPost = () => {
 
   const auth = useSelector(state => state.auth);
   const detailPost = useSelector(state => state.detailPost.detailPost);
-
+  
+  
   const [post, setPost] = useState(null);
 
-  // cargar post
   useEffect(() => {
     if (id) {
       dispatch(getPost({ detailPost, id, auth }));
@@ -51,7 +52,15 @@ const DetailPost = () => {
     </div>
   );
 
-  return <DetailPostCard post={post} />;
+  return (
+    <div>
+      {/* SOLO el DetailPostCard - que incluye CardBodyCarousel + DescriptionPost */}
+      <DetailPostCard post={post} />
+      
+      {/* NO renderizar InputComment y Comments aquí */}
+      {/* Los comentarios se manejan exclusivamente a través del modal en CardBodyCarousel */}
+    </div>
+  );
 };
 
 export default DetailPost;

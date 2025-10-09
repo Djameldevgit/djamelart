@@ -1,25 +1,13 @@
- 
-  {     "artwork_details": "Detalles de la obra",
-    "title": "Título",
-    "category": "Categoría",
-    "description": "Descripción",
-    "theme": "Tema",
-    "technique": "Técnica",
-    "support": "Soporte",
-    "art_style": "Estilo artístico",
-    "packaging": "Embalaje",
-    "copyright": "Derechos de autor",
-    "measurements": "Medidas",
-    "unit": "Unidad",
-    "sale_option": "Opción de venta",
-    "price": "Precio",
-    "size": "Tamaño",
-    "region": "Región",
-    "city": "Ciudad",
-    "last_updated": "Última actualización",
-    "print": "Imprimir",
-    "read_more": "Leer más",
-    "show_less": "Mostrar menos"
-  }
- 
- 
+{
+  "views": "Vistas",
+  "likes": "Me gusta", 
+  "comments": "Comentarios",
+  "published": "Publicado",
+  "updated": "Actualizado",
+  "basic_info": "Información Básica",
+  "technical_details": "Detalles Técnicos",
+  "commercial_info": "Información Comercial", 
+  "location_rights": "Ubicación y Derechos",
+  "read_more": "Leer más",
+  "read_less": "Leer menos"
+}

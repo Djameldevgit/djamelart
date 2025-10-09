@@ -1,26 +1,13 @@
- 
 {
- 
-    "artwork_details": "تفاصيل العمل الفني",
-    "title": "العنوان",
-    "category": "الفئة",
-    "description": "الوصف",
-    "theme": "الموضوع",
-    "technique": "التقنية",
-    "support": "الدعم",
-    "art_style": "النمط الفني",
-    "packaging": "التغليف",
-    "copyright": "حقوق النشر",
-    "measurements": "القياسات",
-    "unit": "الوحدة",
-    "sale_option": "خيار البيع",
-    "price": "السعر",
-    "size": "الحجم",
-    "region": "المنطقة",
-    "city": "المدينة",
-    "last_updated": "آخر تحديث",
-    "print": "طباعة",
-    "read_more": "قراءة المزيد",
-    "show_less": "عرض أقل"
-  }
- 
+  "views": "Timselɣatin",
+  "likes": "Timenɣivin", 
+  "comments": "Timselṭatin",
+  "published": "Yettwasebded",
+  "updated": "Yettwaleqqem",
+  "basic_info": "Talɣut tagejdant",
+  "technical_details": "Iḍarren itechniquiyen",
+  "commercial_info": "Talɣut tusrigt", 
+  "location_rights": "Adeg d yizerfan",
+  "read_more": "Ɣer ugar",
+  "read_less": "Ɣer drus"
+}

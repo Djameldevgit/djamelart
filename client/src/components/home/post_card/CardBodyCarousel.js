@@ -1,31 +1,30 @@
+// components/home/post_card/CardBodyCarousel.js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
- 
+import { useHistory, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
+
 import Carousel from '../../Carousel';
 import { likePost, unLikePost, savePost, unSavePost, deletePost } from '../../../redux/actions/postAction';
 import { buyProduct, loadCart } from '../../../redux/actions/cartAction';
-import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
- 
- 
-// Importar componentes ya separados
+
+// Importar componentes modales separados
 import ShareModal from './ShareModal';
 import OptionsModal from './OptionsModal';
 import ReportModal from './ReportModal';
 import ImageOverlay from './ImageOverlay';
+import CommentsModal from './CommentsModal'; // ✅ Nuevo modal separado
 
 import { GLOBALTYPES } from '../../../redux/actions/globalTypes';
 import { MESS_TYPES } from '../../../redux/actions/messageAction';
 import { aprovarPostPendiente } from '../../../redux/actions/postAproveAction';
 import { createReport } from '../../../redux/actions/reportUserAction';
 
-// Importar los modales
+// Importar los modales de autenticación
 import AuthModal from '../../authAndVerify/AuthModal';
 import VerifyModal from '../../authAndVerify/VerifyModal';
 import DesactivateModal from '../../authAndVerify/DesactivateModal';
 
- 
- 
 const CardBodyCarousel = ({ post }) => {
   const { languageReducer, auth, socket, homeUsers, profile } = useSelector((state) => state);
   const [isLike, setIsLike] = useState(false);
@@ -44,6 +43,7 @@ const CardBodyCarousel = ({ post }) => {
   const [showReportModal, setShowReportModal] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
+  const [showCommentsModal, setShowCommentsModal] = useState(false); // ✅ Estado para el modal separado
 
   // Estados locales que deben resetearse cuando cambia el post
   const [showInfo, setShowInfo] = useState(false);
@@ -52,9 +52,11 @@ const CardBodyCarousel = ({ post }) => {
   const { t, i18n } = useTranslation('cardbodycarousel');
   const lang = languageReducer.language || 'en';
   const history = useHistory();
+
   const dispatch = useDispatch();
 
-  // Refs para manejar clicks fuera
+  const location = useLocation();
+  const isPostDetailPage = location.pathname === `/post/${post._id}`; // ✅ Ya tienes esto
   const optionsModalRef = useRef(null);
   const cardRef = useRef(null);
 
@@ -65,6 +67,7 @@ const CardBodyCarousel = ({ post }) => {
     setShowOptionsModal(false);
     setShowShareModal(false);
     setShowReportModal(false);
+    setShowCommentsModal(false); // ✅ Resetear modal de comentarios también
   }, [post._id]);
 
   // Cerrar modal de opciones al hacer click fuera
@@ -139,7 +142,6 @@ const CardBodyCarousel = ({ post }) => {
     }
   }, [canProceed, saveLoad, dispatch, post, auth]);
 
-  // Handler para guardar/desguardar
   const handleSaveToggle = useCallback(async () => {
     if (saved) {
       await handleUnSavePost();
@@ -147,6 +149,30 @@ const CardBodyCarousel = ({ post }) => {
       await handleSavePost();
     }
   }, [saved, handleSavePost, handleUnSavePost]);
+
+  // ✅ FUNCIÓN MEJORADA: handleCommentClick
+  const handleCommentClick = useCallback(() => {
+    if (!canProceed()) return;
+
+    const currentPath = window.location.pathname;
+    const isOnPostDetail = currentPath === `/post/${post._id}`;
+
+    console.log("📍 Comment Click - Path:", currentPath, "Is Detail:", isOnPostDetail);
+
+    if (isOnPostDetail) {
+      // Si YA estás en el detalle, scroll a comentarios en la página
+      const commentsSection = document.getElementById('comments-section');
+      if (commentsSection) {
+        commentsSection.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    } else {
+      // Si estás en el HOME, mostrar modal DIRECTAMENTE
+      setShowCommentsModal(true);
+    }
+  }, [canProceed, post._id]);
 
   // Handlers para mostrar/ocultar información
   const handleImageClick = useCallback(() => {
@@ -309,27 +335,20 @@ const CardBodyCarousel = ({ post }) => {
     }
   }, [canProceed, loadLike, isLike, dispatch, post, auth, socket, t, languageReducer]);
 
-  // FUNCIÓN CORREGIDA: handleBuyProduct
   const handleBuyProduct = useCallback(async () => {
     if (!canProceed() || buyLoad) return;
-    
+
     setBuyLoad(true);
     try {
-      // Si ya está en el carrito, lo removemos
       if (inCart) {
-        // Aquí deberías tener una acción para remover del carrito
-        // Por ahora, solo actualizamos el estado local
         setInCart(false);
         setShowBuyMessage(true);
         setTimeout(() => setShowBuyMessage(false), 3000);
       } else {
-        // Agregar al carrito
         await dispatch(buyProduct({ post, auth }));
         setInCart(true);
         setShowBuyMessage(true);
         setTimeout(() => setShowBuyMessage(false), 3000);
-        
-        // Recargar el carrito para asegurar consistencia
         await dispatch(loadCart(auth.token));
       }
     } catch (error) {
@@ -364,9 +383,6 @@ const CardBodyCarousel = ({ post }) => {
       case 'save':
         handleSavePostAction();
         break;
-      case 'follow':
-        // La lógica de follow está en el botón FollowBtn
-        break;
       default:
         break;
     }
@@ -392,133 +408,133 @@ const CardBodyCarousel = ({ post }) => {
         {post.images.length > 0 && (
           <>
             {/* Card Header - Separado sobre la imagen */}
-            <div style={{
-              background: "white",
-              padding: "16px",
-              borderBottom: "1px solid #e0e0e0",
-              borderRadius: "12px 12px 0 0",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-            }}>
-              {/* Primera fila: Avatar y botón Seguir */}
+            {!isPostDetailPage && (
               <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "8px"
+                background: "white",
+                padding: "16px",
+                borderBottom: "1px solid #e0e0e0",
+                borderRadius: "12px 12px 0 0",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
               }}>
+                {/* Primera fila: Avatar y botón Seguir */}
                 <div style={{
                   display: "flex",
+                  justifyContent: "space-between",
                   alignItems: "center",
-                  gap: "12px"
+                  marginBottom: "8px"
                 }}>
-                  {/* Avatar del usuario */}
-                  <div
-                    style={{
-                      width: "44px",
-                      height: "44px",
-                      borderRadius: "50%",
-                      background: user?.avatar
-                        ? `url(${user.avatar}) center/cover`
-                        : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      border: "2px solid #f0f0f0",
-                      cursor: "pointer",
-                      flexShrink: 0
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      history.push(`/profile/${user?._id}`);
-                    }}
-                  />
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px"
+                  }}>
+                    {/* Avatar del usuario */}
+                    <div
+                      style={{
+                        width: "44px",
+                        height: "44px",
+                        borderRadius: "50%",
+                        background: user?.avatar
+                          ? `url(${user.avatar}) center/cover`
+                          : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        border: "2px solid #f0f0f0",
+                        cursor: "pointer",
+                        flexShrink: 0
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        history.push(`/profile/${user?._id}`);
+                      }}
+                    />
 
-                  {/* Información del usuario */}
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      marginBottom: "2px"
-                    }}>
-                      <span style={{
-                        fontSize: "16px",
-                        fontWeight: "600",
-                        color: "#333",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis"
+                    {/* Información del usuario */}
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        marginBottom: "2px"
                       }}>
-                        {user?.username || t('user')}
-                      </span>
-
-                      {user?.isVerified && (
-                        <span className="material-icons" style={{
+                        <span style={{
                           fontSize: "16px",
-                          color: "#0095f6",
-                          flexShrink: 0
+                          fontWeight: "600",
+                          color: "#333",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
                         }}>
-                          verified
+                          {user?.username || t('user')}
                         </span>
-                      )}
+
+                        {user?.isVerified && (
+                          <span className="material-icons" style={{
+                            fontSize: "16px",
+                            color: "#0095f6",
+                            flexShrink: 0
+                          }}>
+                            verified
+                          </span>
+                        )}
+                      </div>
+                      <div style={{
+                        fontSize: "13px",
+                        color: "#666"
+                      }}>
+                        {user?.followers?.length || 0} {t('followers')}
+                      </div>
                     </div>
-                    <div style={{
-                      fontSize: "13px",
-                      color: "#666"
-                    }}>
-                      {user?.followers?.length || 0} {t('followers')}
-                    </div>
+                  </div>
+
+                  {/* Contenedor de botones de la derecha */}
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px"
+                  }}>
+                    {/* Icono de tres puntos */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowOptionsModal(true);
+                      }}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#666",
+                        cursor: "pointer",
+                        padding: "10px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        transition: "all 0.3s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = "rgba(0, 0, 0, 0.05)";
+                        e.target.style.color = "#333";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = "none";
+                        e.target.style.color = "#666";
+                      }}
+                    >
+                      <span className="material-icons" style={{ fontSize: "20px" }}>
+                        more_vert
+                      </span>
+                    </button>
                   </div>
                 </div>
 
-                {/* Contenedor de botones de la derecha */}
+                {/* Segunda fila: Fecha de publicación */}
                 <div style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px"
+                  fontSize: "13px",
+                  color: "#888",
+                  paddingLeft: "56px"
                 }}>
-
-                  {/* Icono de tres puntos */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowOptionsModal(true);
-                    }}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#666",
-                      cursor: "pointer",
-                      padding: "10px",
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      transition: "all 0.3s ease"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.background = "rgba(0, 0, 0, 0.05)";
-                      e.target.style.color = "#333";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.background = "none";
-                      e.target.style.color = "#666";
-                    }}
-                  >
-                    <span className="material-icons" style={{ fontSize: "20px" }}>
-                      more_vert
-                    </span>
-                  </button>
+                  {formatDate(post.createdAt)}
                 </div>
               </div>
-
-              {/* Segunda fila: Fecha de publicación */}
-              <div style={{
-                fontSize: "13px",
-                color: "#888",
-                paddingLeft: "56px"
-              }}>
-                {formatDate(post.createdAt)}  
-              </div>
-            </div>
-
+            )}
             {/* Modal de opciones usando el componente separado */}
             <OptionsModal
               show={showOptionsModal}
@@ -552,6 +568,7 @@ const CardBodyCarousel = ({ post }) => {
               onTouchEnd={handleTouchEnd}
             >
               {/* ImageOverlay usando el componente separado */}
+              // En CardBodyCarousel.js - donde usas ImageOverlay
               <ImageOverlay
                 showInfo={showInfo}
                 post={post}
@@ -568,9 +585,9 @@ const CardBodyCarousel = ({ post }) => {
                 onShare={handleShare}
                 onViewDetails={() => history.push(`/post/${post._id}`)}
                 onBuyProduct={handleBuyProduct}
-                onCommentClick={() => history.push(`/post/${post._id}#comments`)}
+                onCommentClick={handleCommentClick}
+                isPostDetailPage={isPostDetailPage} // ✅ Pasar esta prop al ImageOverlay
               />
-
               {/* Indicador visual cuando la información está oculta */}
               {!showInfo && (
                 <div style={{
@@ -635,15 +652,18 @@ const CardBodyCarousel = ({ post }) => {
             50% { opacity: 1; }
             100% { opacity: 0.7; }
           }
-
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
         `}
       </style>
 
-      {/* Modal para Compartir - Ahora usando el componente separado */}
+      {/* ✅ CommentsModal separado */}
+      <CommentsModal
+        show={showCommentsModal}
+        onHide={() => setShowCommentsModal(false)}
+        post={post}
+        t={t}
+      />
+
+      {/* Modal para Compartir */}
       <ShareModal
         show={showShareModal}
         onHide={() => setShowShareModal(false)}
@@ -653,7 +673,7 @@ const CardBodyCarousel = ({ post }) => {
         imageUrl={imageUrl}
       />
 
-      {/* Modal de Reporte usando el componente separado */}
+      {/* Modal de Reporte */}
       <ReportModal
         show={showReportModal}
         onHide={() => setShowReportModal(false)}
