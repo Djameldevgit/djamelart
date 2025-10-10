@@ -81,7 +81,7 @@ export const updateProfileUser = ({userData, avatar, auth}) => async (dispatch) 
             updateData.email = userData.email;
         }
 
-        console.log('🟢 Enviando al backend:', updateData);
+    
 
         const res = await patchDataAPI("user", updateData, auth.token)
 
@@ -137,7 +137,9 @@ export const follow = ({users, user, auth, socket}) => async (dispatch) => {
         // Notify
         const msg = {
             id: auth.user._id,
-            text: 'has started to follow you.',
+            text: 'hasstartedtofollowyou',
+            textNs: 'notify', 
+         
             recipients: [newUser._id],
             url: `/profile/${auth.user._id}`,
         }
@@ -187,7 +189,7 @@ export const unfollow = ({users, user, auth, socket}) => async (dispatch) => {
         // Notify
         const msg = {
             id: auth.user._id,
-            text: 'has started to follow you.',
+            text: 'hasstartedtounfollowyou',
             recipients: [newUser._id],
             url: `/profile/${auth.user._id}`,
         }

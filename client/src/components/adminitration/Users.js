@@ -84,7 +84,16 @@ const Users = () => {
       
       try {
         setIsSearching(true);
-        const query = `users/search?username=${encodeURIComponent(searchTerm)}&page=${page}&limit=9`;
+        
+        // ✅ Normalizar el término de búsqueda - eliminar espacios y hacer lowercase
+        const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+        
+        if (normalizedSearchTerm.length === 0) {
+          setSearchResults([]);
+          return;
+        }
+        
+        const query = `users/search?username=${encodeURIComponent(normalizedSearchTerm)}&page=${page}&limit=9&caseInsensitive=true`;
         const res = await getDataAPI(query, auth.token);
         
         if (page === 1) {
@@ -97,13 +106,17 @@ const Users = () => {
         setHasMoreSearch(res.data.users && res.data.users.length === 9);
       } catch (err) {
         console.error("Error searching users:", err);
+        // ✅ Opcional: Mostrar mensaje de error al usuario
+        dispatch({
+          type: GLOBALTYPES.ALERT,
+          payload: { error: "Ereur a la recherche de ulitlizaterur" }
+        });
       } finally {
         setIsSearching(false);
       }
     }, 500),
-    [auth.token]
+    [auth.token, dispatch] // ✅ Agregar dispatch si usas la opción de error
   );
-
   // 🔹 Efecto para realizar búsqueda cuando el término cambia
   useEffect(() => {
     if (search.trim() !== "") {

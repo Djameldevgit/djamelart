@@ -23,7 +23,9 @@ export const createComment = ({post, newComment, auth, socket}) => async (dispat
         // Notify
         const msg = {
             id: res.data.newComment._id,
-            text: newComment.reply ? 'mentioned you in a comment.' : 'has commented on your post.',
+            text: 'hasstartedtofollowyou',
+            textNs: 'notify', 
+            text: newComment.reply ? 'mentionedyouinacomment' : 'hascommentedonyourpost',
             recipients: newComment.reply ? [newComment.tag._id] : [post.user._id],
             url: `/post/${post._id}`,
             content: post.content, 
@@ -99,7 +101,8 @@ export const deleteComment = ({post, comment, auth, socket}) => async (dispatch)
 
             const msg = {
                 id: item._id,
-                text: comment.reply ? 'mentioned you in a comment.' : 'has commented on your post.',
+                textNs: 'notify', 
+                text: comment.reply ? 'mentionedyouinacomment' : 'hascommentedonyourpost',
                 recipients: comment.reply ? [comment.tag._id] : [post.user._id],
                 url: `/post/${post._id}`,
             }

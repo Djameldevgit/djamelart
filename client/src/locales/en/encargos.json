@@ -1,143 +1,143 @@
 {
-  "title": "طلبات الأعمال الفنية المخصصة",
-  "subtitle": "حول رؤيتك إلى عمل فني فريد تم إنشاؤه خصيصًا لك",
-  "specialOffer": "تقدير مجاني وبدون التزام!",
+  "title": "Custom Art Commission",
+  "subtitle": "Transform your vision into official artwork created personally for you",
+  "specialOffer": "Special offer - no legal fees!",
   
-  "importantNote": "معلومات مهمة لطلبك",
-  "importantDescription": "لضمان حصولك على ما تتخيله بالضبط، من الضروري أن تزودنا بأكبر قدر ممكن من التفاصيل.",
+  "importantNote": "Important information for your project",
+  "importantDescription": "To create exactly what you envision personally, you need to have clear specifications so we can deliver to you.",
   
   "welcome": {
-    "title": "مرحبًا بك في خدمة الطلبات المخصصة",
-    "description1": "هل لديك فكرة محددة في ذهنك أو ترغب في نسخة من عمل فني رأيته؟ تتيح لك خدمة الطلبات لدينا التعاون مباشرة مع الفنان لإنشاء قطعة فريدة تناسب احتياجاتك وتفضيلاتك تمامًا.",
-    "description2": "سواء كنت ترغب في نسخة طبق الأصل من عمل موجود أو عمل أصلي تمامًا، نحن هنا لتحقيق رؤيتك الفنية."
+    "title": "Welcome to the Custom Commission Service",
+    "description1": "Do you have a specific vision for a large space or want to own a unique piece of art? Our commission service allows you to collaborate personally with the artist to create an official piece that reflects your personal tastes and preferences in a grand way.",
+    "description2": "Whether you want a unique existing artwork or a custom creation, we are here to bring your artistic vision to life."
   },
   
   "guarantee": {
-    "title": "ضمان الرضا",
-    "description": "نعمل معك في كل مرحلة من العملية لضمان أن تتجاوز النتيجة النهائية توقعاتك"
+    "title": "Satisfaction Guarantee",
+    "description": "We work with you at every stage of the process to ensure the final result meets your expectations"
   },
   
-  "specificationRequirements": "التفاصيل المطلوبة لطلبك",
-  "specificationDescription": "يرجى تقديم المعلومات التالية حتى نتمكن من إنشاء عملك المثالي:",
+  "specificationRequirements": "Specifications required for your project",
+  "specificationDescription": "Please provide the following information so we can create your perfect artwork:",
   
   "requirements": {
     "style": {
-      "title": "النمط الفني",
-      "items": ["واقعي أو تجريدي", "حديث أو كلاسيكي", "نمط محدد (انطباعية، تكعيبية، إلخ)", "ملون أو أحادي اللون"]
+      "title": "Art Style",
+      "items": ["Realistic or abstract", "Modern or classical", "Specific style (impressionist, cubist, etc.)", "Has meaning or specific theme"]
     },
     "measurements": {
-      "title": "القياسات والشكل",
-      "items": ["الطول والعرض الدقيقين", "الشكل (أفقي، عمودي، مربع)", "سمك الإطار إذا كان ينطبق", "المساحة المتاحة حيث ستعلق العمل"]
+      "title": "Dimensions and Format",
+      "items": ["Exact width and height", "Format (horizontal, vertical, square)", "Frame size if applicable", "Available space where you plan to place the artwork"]
     },
     "technique": {
-      "title": "التقنية والمواد",
-      "items": ["زيتي، أكريليك، ألوان مائية", "تقنيات مختلطة", "نوع ضربات الفرشاة المطلوبة", "قوام محدد"]
+      "title": "Technique and Materials",
+      "items": ["Oil, acrylic, watercolor", "Mixed techniques", "Type of brushwork you prefer", "Specific textures"]
     },
     "theme": {
-      "title": "الموضوع والمحتوى",
-      "items": ["الموضوع الرئيسي للعمل", "عناصر محددة لتضمينها", "الحالة المزاجية أو الجو", "قصة أو معنى شخصي"]
+      "title": "Subject and Content",
+      "items": ["Main theme of the artwork", "Specific elements to include", "Background or foreground", "Specific mood or atmosphere"]
     },
     "support": {
-      "title": "السطح والتشطيب",
-      "items": ["قماش، خشب، ورق", "نوع الإطار المطلوب", "التشطيب (لامع، غير لامع)", "حماية من الأشعة فوق البنفسجية إذا لزم الأمر"]
+      "title": "Medium and Frame",
+      "items": ["Canvas, wood, paper", "Type of frame you prefer", "Finish (glossy, matte)", "UV protection if needed"]
     },
     "reference": {
-      "title": "مواد مرجعية",
-      "items": ["صور إلهامية", "روابط لأعمال مماثلة", "رسومات أو رسومات أولية", "ألوان محددة لاستخدامها"]
+      "title": "Reference Material",
+      "items": ["Photos of the subject", "Links to similar artworks", "Sketches or preliminary drawings", "Specific colors to incorporate"]
     }
   },
   
   "process": {
-    "title": "عملية الطلب",
+    "title": "Creation Process",
     "consultation": {
-      "title": "استشارة أولية",
-      "description": "نناقش رؤيتك ومتطلباتك وتفضيلاتك الفنية"
+      "title": "Initial Consultation",
+      "description": "We discuss your vision, tastes and artistic preferences"
     },
     "quote": {
-      "title": "تقدير مفصل",
-      "description": "ستتلقى تقديرًا كاملاً مع التكاليف ومواعيد التسليم"
+      "title": "Detailed Quote",
+      "description": "You receive a custom quote with prices and delivery details"
     },
     "deposit": {
-      "title": "دفعة مقدمة 30%",
-      "description": "مطلوب دفعة مقدمة لبدء العملية الإبداعية وشراء المواد"
+      "title": "30% Deposit",
+      "description": "Deposit required to begin the creation process and purchase materials"
     },
     "creation": {
-      "title": "عملية الإبداع",
-      "description": "ينشئ الفنان عملك مع إبقائك على اطلاع بالتقدم"
+      "title": "Creation Phase",
+      "description": "The artist creates your artwork while maintaining communication about progress"
     },
     "approval": {
-      "title": "الموافقة النهائية",
-      "description": "تراجع العمل المنتهي وتعطي موافقتك النهائية"
+      "title": "Final Approval",
+      "description": "You review the completed artwork and give final approval"
     },
     "payment": {
-      "title": "دفع الرصيد",
-      "description": "تقوم بدفع 70% المتبقية قبل الشحن"
+      "title": "Balance Payment",
+      "description": "You pay the remaining 70% of the balance before shipping"
     },
     "shipping": {
-      "title": "الشحن والتسليم",
-      "description": "يتم تغليف عملك بشكل احترافي وشحنه بأمان"
+      "title": "Packaging and Shipping",
+      "description": "Your artwork is professionally packaged and carefully shipped"
     }
   },
   
   "payment": {
-    "title": "معلومات الدفع",
+    "title": "Payment Information",
     "deposit": {
-      "title": "الدفعة المقدمة (30%)",
-      "description": "الدفعة المقدمة ضرورية ل:",
+      "title": "Deposit (30%)",
+      "description": "Deposit required for:",
       "points": {
-        "secure": "تأمين مكانك في جدول الفنان",
-        "materials": "شراء مواد عالية الجودة",
-        "reservation": "بدء العملية الإبداعية فورًا"
+        "secure": "Securing your spot in the artist's schedule",
+        "materials": "Purchase of high-quality materials",
+        "reservation": "The creation process begins immediately"
       }
     },
     "final": {
-      "title": "الدفع النهائي (70%)",
-      "description": "يتم دفع الرصيد عندما:",
+      "title": "Final Payment (70%)",
+      "description": "Balance paid when:",
       "points": {
-        "balance": "ينتهي العمل ويتم الموافقة عليه",
-        "shipping": "قبل الشحن أو التسليم",
-        "secure": "يضمن أمان الطرفين"
+        "balance": "Artwork is completed and approved",
+        "shipping": "Before shipping or delivery",
+        "secure": "Security for both parties is ensured"
       }
     },
     "guarantee": {
-      "title": "ضمان الاسترداد",
-      "description": "إذا لم تكن راضيًا عن النتيجة، نقدم تعديلات أو استرداد جزئي حسب الحالة"
+      "title": "Satisfaction Guarantee",
+      "description": "If you're not satisfied with the result, we offer revisions or partial refund during the creation process"
     }
   },
   
   "delivery": {
-    "title": "مواعيد التسليم",
-    "description": "تختلف مواعيد التسليم حسب تعقيد العمل:",
+    "title": "Delivery Options",
+    "description": "Delivery times vary depending on the artwork:",
     "standard": {
-      "title": "تسليم قياسي",
-      "time": "2-4 أسابيع حسب التقنية والحجم"
+      "title": "International Delivery",
+      "time": "2-4 weeks depending on technique and distance"
     },
     "express": {
-      "title": "تسليم سريع",
-      "time": "1-2 أسبوع (تطبق تكلفة إضافية)"
+      "title": "Express Delivery",
+      "time": "1-2 weeks (additional charges apply)"
     }
   },
   
   "faq": {
-    "title": "الأسئلة الشائعة",
+    "title": "Frequently Asked Questions",
     "q1": {
-      "question": "هل يمكنني طلب تعديلات أثناء العملية؟",
-      "answer": "نعم، خلال المراحل الأولى يمكنك طلب تعديلات. بمجرد تقدم العمل، قد تتسبب التعديلات الكبيرة في تكاليف إضافية."
+      "question": "Can I request changes during the process?",
+      "answer": "Yes, in the early stages, you can request changes. As the work progresses, major changes may incur additional costs."
     },
     "q2": {
-      "question": "ماذا لو لم يعجبني النتيجة النهائية؟",
-      "answer": "نعمل معك خلال العملية بأكملها لضمان رضاك. إذا لم تكن راضيًا في النهاية، نقيم خيارات التعديل أو الاسترداد الجزئي حسب تقدم العمل."
+      "question": "What happens if I don't like the final result?",
+      "answer": "We work with you throughout the process to ensure your satisfaction. If you're not satisfied at the end, we offer revision options or partial refund during the artwork development."
     },
     "q3": {
-      "question": "هل يشمل السعر الإطار والشحن؟",
-      "answer": "يشمل السعر الأساسي العمل المنتهي. الإطار والشحن يتم تقديرهما بشكل منفصل حسب تفضيلاتك المحددة."
+      "question": "Are framing and shipping included in the price?",
+      "answer": "The base price includes the completed artwork. Framing and shipping are calculated separately based on your specific preferences."
     }
   },
   
   "cta": {
-    "title": "مستعد لبدء طلبك؟",
-    "description": "اتصل بنا اليوم وسنحقق رؤيتك الفنية",
-    "buttonContact": "طلب تقدير السعر",
-    "buttonGallery": "معرض الأعمال"
+    "title": "Ready to start your project?",
+    "description": "Contact us today to discuss your artistic vision",
+    "buttonContact": "Request a Quote",
+    "buttonGallery": "View Gallery"
   }
 }

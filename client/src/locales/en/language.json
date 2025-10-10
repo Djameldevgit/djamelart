@@ -1,18 +1,12 @@
 {
-    "Tassili":"الطاسيلي",
-    
-
+    "Tassili": "Tassili",
     "language": {
-
-        "en": "الإنجليزية",
-        "fr": "الفرنسية",
-        "ar": "العربية",
-        "es": "الإسبانية",
-        "ru": "الروسية",
-        "kab": "القبائلية",
-        "chino": "الصينية"
+        "en": "English",
+        "fr": "French",
+        "ar": "Arabic",
+        "es": "Spanish",
+        "ru": "Russian",
+        "kab": "Kabyle",
+        "chino": "Chinese"
     }
-     
-
-
 }

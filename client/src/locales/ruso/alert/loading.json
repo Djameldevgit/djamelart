@@ -1,13 +1,9 @@
 {
-
-    "error": "خطأ",
-    "success": "نجاح",
-    "login_failed": "فشل تسجيل الدخول",
-    "update_success": "تم التحديث بنجاح",
-   
-    "loading": "...تحميل",
-   
-    "errorTitle": "خطأ",
-    "successTitle": "نجاح"
-
+    "error": "Ошибка",
+    "success": "Успех",
+    "login_failed": "Ошибка входа",
+    "update_success": "Обновление успешно",
+    "loading": "Загрузка...",
+    "errorTitle": "Ошибка",
+    "successTitle": "Успех"
 }

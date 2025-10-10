@@ -1,13 +1,9 @@
 {
-
-    "error": "خطأ",
-    "success": "نجاح",
-    "login_failed": "فشل تسجيل الدخول",
-    "update_success": "تم التحديث بنجاح",
-   
-    "loading": "...تحميل",
-   
-    "errorTitle": "خطأ",
-    "successTitle": "نجاح"
-
+    "error": "Erreur",
+    "success": "Succès",
+    "login_failed": "Échec de la connexion",
+    "update_success": "Mise à jour réussie",
+    "loading": "Chargement...",
+    "errorTitle": "Erreur",
+    "successTitle": "Succès"
 }

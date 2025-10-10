@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { login } from '../redux/actions/authAction'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,6 +16,10 @@ const Login = () => {
     const history = useHistory()
     const { t, i18n } = useTranslation('auth');
     const lang = languageReducer.language || 'es';
+    
+    // Referencia para el contenedor del formulario
+    const formContainerRef = useRef(null);
+
     if (i18n.language !== lang) i18n.changeLanguage(lang);
    
     useEffect(() => {
@@ -32,6 +36,15 @@ const Login = () => {
         dispatch(login(userData))
     }
 
+    // Prevenir propagación de eventos en los inputs
+    const handleInputFocus = (e) => {
+        e.stopPropagation();
+    }
+
+    const handleInputClick = (e) => {
+        e.stopPropagation();
+    }
+
     const isRTL = lang === "ar"
 
     return (
@@ -42,18 +55,21 @@ const Login = () => {
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 display: 'flex',
                 alignItems: 'center',
-                padding: '1rem 0.5rem'
+                padding: '1rem 0.5rem',
+                direction: isRTL ? 'rtl' : 'ltr' // ← Añadir dirección aquí
             }}
         >
             <Container>
                 <Row className="justify-content-center">
                     <Col xs={12} sm={10} md={8} lg={6} xl={5}>
                         <Card 
+                            ref={formContainerRef}
                             className="shadow-lg border-0"
                             style={{
                                 borderRadius: '20px',
                                 overflow: 'hidden',
-                                background: 'rgba(255, 255, 255, 0.98)'
+                                background: 'rgba(255, 255, 255, 0.98)',
+                                direction: isRTL ? 'rtl' : 'ltr' // ← Añadir dirección aquí también
                             }}
                         >
                             {/* Header elegante */}
@@ -106,8 +122,11 @@ const Login = () => {
                             <Card.Body className="p-3 p-md-4">
                                 <Form onSubmit={handleSubmit}>
                                     
-                                    {/* Login con Facebook/Google */}
-                                    <Form.Group className="mb-4">
+                                    {/* Login con Facebook/Google - Añadir contenedor con prevención */}
+                                    <Form.Group 
+                                        className="mb-4"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
                                         <Loginfacegoogle />
                                     </Form.Group>
 
@@ -118,7 +137,7 @@ const Login = () => {
                                             borderTop: '1px solid #e2e8f0'
                                         }} />
                                         <span 
-                                            className="position-absolute top-50 start-50 translate-middle px-3"
+                                            className={`position-absolute top-50 ${isRTL ? 'end-0 translate-middle-x' : 'start-50 translate-middle'} px-3`}
                                             style={{
                                                 background: 'white',
                                                 color: '#a0aec0',
@@ -126,8 +145,9 @@ const Login = () => {
                                                 fontWeight: '500'
                                             }}
                                         >
-                                            {t('orContinueWith', { lng: lang }) || 'O continúa con'}
+                                            {t('orContinueWith' ) }
                                         </span>
+                                       
                                     </div>
 
                                     {/* Email */}
@@ -143,7 +163,7 @@ const Login = () => {
                                                 style={{
                                                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                     border: 'none',
-                                                    borderRadius: '12px 0 0 12px'
+                                                    borderRadius: isRTL ? '0 12px 12px 0' : '12px 0 0 12px'
                                                 }}
                                             >
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
@@ -156,14 +176,18 @@ const Login = () => {
                                                 id="exampleInputEmail1"
                                                 name="email"
                                                 onChange={handleChangeInput}
+                                                onFocus={handleInputFocus}
+                                                onClick={handleInputClick}
                                                 value={email}
                                                 placeholder="john@example.com"
                                                 style={{
-                                                    borderLeft: 'none',
-                                                    borderRadius: '0 12px 12px 0',
+                                                    borderLeft: isRTL ? '2px solid #e2e8f0' : 'none',
+                                                    borderRight: isRTL ? 'none' : '2px solid #e2e8f0',
+                                                    borderRadius: isRTL ? '12px 0 0 12px' : '0 12px 12px 0',
                                                     padding: '0.75rem 1rem',
                                                     fontSize: '1rem',
-                                                    border: '2px solid #e2e8f0'
+                                                    border: '2px solid #e2e8f0',
+                                                    direction: 'ltr' // ← Mantener dirección ltr para emails
                                                 }}
                                             />
                                         </InputGroup>
@@ -178,64 +202,129 @@ const Login = () => {
                                             {t('password', { lng: lang })}
                                         </Form.Label>
                                         <InputGroup>
-                                            <InputGroup.Text 
-                                                style={{
-                                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                                    border: 'none',
-                                                    borderRadius: '12px 0 0 0'
-                                                }}
-                                            >
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                                                </svg>
-                                            </InputGroup.Text>
-                                            <Form.Control
-                                                type={typePass ? "text" : "password"}
-                                                id="exampleInputPassword1"
-                                                name="password"
-                                                onChange={handleChangeInput}
-                                                value={password}
-                                                placeholder="••••••••"
-                                                style={{
-                                                    borderLeft: 'none',
-                                                    borderRight: 'none',
-                                                    borderRadius: '0',
-                                                    padding: '0.75rem 1rem',
-                                                    fontSize: '1rem',
-                                                    border: '2px solid #e2e8f0',
-                                                    borderLeft: 'none !important',
-                                                    borderRight: 'none !important'
-                                                }}
-                                            />
-                                            <Button
-                                                variant="outline-secondary"
-                                                onClick={() => setTypePass(!typePass)}
-                                                style={{
-                                                    borderRadius: '0 12px 12px 0',
-                                                    border: '2px solid #e2e8f0',
-                                                    borderLeft: 'none',
-                                                    background: 'white',
-                                                    color: '#667eea'
-                                                }}
-                                            >
-                                                {typePass ? (
-                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                                                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                                                    </svg>
-                                                ) : (
-                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                        <circle cx="12" cy="12" r="3"></circle>
-                                                    </svg>
-                                                )}
-                                            </Button>
+                                            {isRTL ? (
+                                                // Orden RTL: Botón → Input → Icono
+                                                <>
+                                                    <Button
+                                                        variant="outline-secondary"
+                                                        onClick={() => setTypePass(!typePass)}
+                                                        style={{
+                                                            borderRadius: '12px 0 0 12px',
+                                                            border: '2px solid #e2e8f0',
+                                                            borderRight: 'none',
+                                                            background: 'white',
+                                                            color: '#667eea',
+                                                            order: 1
+                                                        }}
+                                                    >
+                                                        {typePass ? (
+                                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                                                            </svg>
+                                                        ) : (
+                                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                                <circle cx="12" cy="12" r="3"></circle>
+                                                            </svg>
+                                                        )}
+                                                    </Button>
+                                                    <Form.Control
+                                                        type={typePass ? "text" : "password"}
+                                                        id="exampleInputPassword1"
+                                                        name="password"
+                                                        onChange={handleChangeInput}
+                                                        onFocus={handleInputFocus}
+                                                        onClick={handleInputClick}
+                                                        value={password}
+                                                        placeholder="••••••••"
+                                                        style={{
+                                                            borderLeft: 'none',
+                                                            borderRight: 'none',
+                                                            borderRadius: '0',
+                                                            padding: '0.75rem 1rem',
+                                                            fontSize: '1rem',
+                                                            border: '2px solid #e2e8f0',
+                                                            order: 2
+                                                        }}
+                                                    />
+                                                    <InputGroup.Text 
+                                                        style={{
+                                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                            border: 'none',
+                                                            borderRadius: '0 12px 12px 0',
+                                                            order: 3
+                                                        }}
+                                                    >
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                                                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                                        </svg>
+                                                    </InputGroup.Text>
+                                                </>
+                                            ) : (
+                                                // Orden LTR: Icono → Input → Botón
+                                                <>
+                                                    <InputGroup.Text 
+                                                        style={{
+                                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                            border: 'none',
+                                                            borderRadius: '12px 0 0 12px'
+                                                        }}
+                                                    >
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                                                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                                        </svg>
+                                                    </InputGroup.Text>
+                                                    <Form.Control
+                                                        type={typePass ? "text" : "password"}
+                                                        id="exampleInputPassword1"
+                                                        name="password"
+                                                        onChange={handleChangeInput}
+                                                        onFocus={handleInputFocus}
+                                                        onClick={handleInputClick}
+                                                        value={password}
+                                                        placeholder="••••••••"
+                                                        style={{
+                                                            borderLeft: 'none',
+                                                            borderRight: 'none',
+                                                            borderRadius: '0',
+                                                            padding: '0.75rem 1rem',
+                                                            fontSize: '1rem',
+                                                            border: '2px solid #e2e8f0'
+                                                        }}
+                                                    />
+                                                    <Button
+                                                        variant="outline-secondary"
+                                                        onClick={() => setTypePass(!typePass)}
+                                                        style={{
+                                                            borderRadius: '0 12px 12px 0',
+                                                            border: '2px solid #e2e8f0',
+                                                            borderLeft: 'none',
+                                                            background: 'white',
+                                                            color: '#667eea'
+                                                        }}
+                                                    >
+                                                        {typePass ? (
+                                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                                                            </svg>
+                                                        ) : (
+                                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                                <circle cx="12" cy="12" r="3"></circle>
+                                                            </svg>
+                                                        )}
+                                                    </Button>
+                                                </>
+                                            )}
                                         </InputGroup>
                                     </Form.Group>
 
                                     {/* Forgot Password Link */}
-                                    <div className="text-end mb-4">
+                                    <div className={`mb-4 ${isRTL ? 'text-start' : 'text-end'}`}>
                                         <Link 
                                             to="/forgot_password"
                                             style={{
@@ -326,7 +415,7 @@ const Login = () => {
                                     color: '#a0aec0'
                                 }}
                             >
-                                🔒 Conexión segura y encriptada
+                                🔒 {t('derechosdeautor')}
                             </div>
                         </Card>
                     </Col>

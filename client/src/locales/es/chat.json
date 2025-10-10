@@ -1,5 +1,34 @@
 {
     "chat": {
+
+      "rightside": "rightside",
+ 
+      "send": "Enviar",
+  
+      "loading": "Cargando...",
+      "charCount": "{{count}}/1000",
+      "validationError": "⚠️ {{error}}",
+    
+      
+      "leftside": "leftside",
+      "searchPlaceholder": "Buscar usuarios...",
+      "searchError": "Error al buscar usuarios",
+ 
+      "loadMore2": "Cargar más conversaciones",
+      "searchResults": "Resultados de búsqueda",
+   
+      "newConversation": "Nueva conversación",
+     
+      "sendMessage": "Enviar mensaje",
+      "typeMessage": "Escribe un mensaje...",
+      "conversationWith": "Conversación con",
+      "deleteConversation": "Eliminar conversación",
+      "confirmDelete": "¿Estás seguro de que quieres eliminar esta conversación?",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+
+
+
       "maxChars": "Máximo 1000 caracteres permitidos",
       "invalidChars": "Caracteres no válidos detectados",
       "tooManySpecial": "Demasiados caracteres especiales (máximo 40%)",

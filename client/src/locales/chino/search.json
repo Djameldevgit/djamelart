@@ -1,145 +1,145 @@
 {
   "header": {
-    "title": "بحث",
-    "filtersActive": "فلاتر نشطة"
+    "title": "搜索",
+    "filtersActive": "活动筛选器"
   },
   "search": {
-    "placeholder": "ابحث بالعنوان، الوصف، الفنان..."
+    "placeholder": "按标题、描述、艺术家搜索..."
   },
   "buttons": {
-    "search": "🔍 بحث",
-    "filters": "الفلاتر",
-    "hide": "إخفاء",
-    "advanced": "متقدم",
-    "searching": "جاري البحث...",
-    "applyFilters": "تطبيق الفلاتر",
-    "clearAll": "مسح الكل"
+    "search": "🔍 搜索",
+    "filters": "筛选器",
+    "hide": "隐藏",
+    "advanced": "高级",
+    "searching": "搜索中...",
+    "applyFilters": "应用筛选器",
+    "clearAll": "清除全部"
   },
   "users": {
-    "title": "المستخدمون الموجودون"
+    "title": "找到的用户"
   },
   "categories": {
-    "title": "الفئات",
-    "painting": "الرسم",
-    "sculpture": "النحت",
-    "photography": "التصوير الفوتوغرافي",
-    "drawing": "الرسم",
-    "engraving": "النقش",
-    "digital_art": "الفن الرقمي",
-    "collage": "كولاج",
-    "textile_art": "الفن النسيجي"
+    "title": "分类",
+    "painting": "绘画",
+    "sculpture": "雕塑",
+    "photography": "摄影",
+    "drawing": "素描",
+    "engraving": "版画",
+    "digital_art": "数字艺术",
+    "collage": "拼贴",
+    "textile_art": "纺织艺术"
   },
   "filters": {
-    "theme": "الموضوع",
-    "style": "النمط",
-    "minPrice": "أدنى سعر",
-    "maxPrice": "أعلى سعر",
-    "location": "الموقع",
-    "allThemes": "جميع المواضيع",
-    "allStyles": "جميع الأنماط",
-    "pricePlaceholder": "0 دينار",
-    "maxPricePlaceholder": "10000 دينار",
-    "locationPlaceholder": "مثال: الجزائر",
+    "theme": "主题",
+    "style": "风格",
+    "minPrice": "最低价格",
+    "maxPrice": "最高价格",
+    "location": "位置",
+    "allThemes": "所有主题",
+    "allStyles": "所有风格",
+    "pricePlaceholder": "0 第纳尔",
+    "maxPricePlaceholder": "10000 第纳尔",
+    "locationPlaceholder": "例如：阿尔及利亚",
     "themes": {
-      "abstract": "تجريدي",
-      "landscape": "مناظر طبيعية",
-      "portrait": "بورتريه",
-      "still_life": "طبيعة صامتة",
-      "urban": "حضري",
-      "surreal": "سريالي"
+      "abstract": "抽象",
+      "landscape": "风景",
+      "portrait": "肖像",
+      "still_life": "静物",
+      "urban": "城市",
+      "surreal": "超现实"
     },
     "styles": {
-      "realism": "واقعية",
-      "impressionism": "انطباعية",
-      "expressionism": "تعبيرية",
-      "cubism": "تكعيبية",
-      "surrealism": "سريالية",
-      "abstract": "تجريدي"
+      "realism": "现实主义",
+      "impressionism": "印象派",
+      "expressionism": "表现主义",
+      "cubism": "立体主义",
+      "surrealism": "超现实主义",
+      "abstract": "抽象"
     }
   },
   "advancedFilters": {
-    "title": "فلاتر متقدمة",
-    "artType": "نوع الفن",
-    "material": "المادة",
-    "technique": "التقنية",
-    "orientation": "الاتجاه",
-    "size": "الحجم",
-    "year": "السنة",
-    "tags": "الوسوم",
-    "sortBy": "ترتيب حسب",
-    "order": "الترتيب",
-    "allTypes": "جميع الأنواع",
-    "allMaterials": "جميع المواد",
-    "allTechniques": "جميع التقنيات",
-    "allOrientations": "جميع الاتجاهات",
-    "allSizes": "جميع الأحجام",
-    "tagsPlaceholder": "تجريدي، حديث، ملون...",
+    "title": "高级筛选器",
+    "artType": "艺术类型",
+    "material": "材料",
+    "technique": "技术",
+    "orientation": "方向",
+    "size": "尺寸",
+    "year": "年份",
+    "tags": "标签",
+    "sortBy": "排序方式",
+    "order": "顺序",
+    "allTypes": "所有类型",
+    "allMaterials": "所有材料",
+    "allTechniques": "所有技术",
+    "allOrientations": "所有方向",
+    "allSizes": "所有尺寸",
+    "tagsPlaceholder": "抽象、现代、多彩...",
     "artTypes": {
-      "oil_painting": "رسم زيتي",
-      "watercolor": "ألوان مائية",
-      "acrylic": "أكريليك",
-      "digital_art": "فن رقمي",
-      "sculpture": "نحت",
-      "photography": "تصوير فوتوغرافي",
-      "drawing": "رسم",
-      "mixed_media": "تقنية مختلطة"
+      "oil_painting": "油画",
+      "watercolor": "水彩",
+      "acrylic": "丙烯",
+      "digital_art": "数字艺术",
+      "sculpture": "雕塑",
+      "photography": "摄影",
+      "drawing": "素描",
+      "mixed_media": "混合媒体"
     },
     "materials": {
-      "canvas": "قماش",
-      "paper": "ورق",
-      "wood": "خشب",
-      "metal": "معدن",
-      "clay": "طين",
-      "stone": "حجر",
-      "fabric": "قماش",
-      "digital": "رقمي"
+      "canvas": "画布",
+      "paper": "纸张",
+      "wood": "木材",
+      "metal": "金属",
+      "clay": "粘土",
+      "stone": "石材",
+      "fabric": "织物",
+      "digital": "数字"
     },
     "techniques": {
-      "oil_painting": "رسم زيتي",
-      "watercolor": "ألوان مائية",
-      "acrylic": "أكريليك",
-      "digital_painting": "رسم رقمي",
-      "sculpting": "نحت",
-      "carving": "نقش",
-      "photography_digital": "تصوير رقمي",
-      "collage": "كولاج"
+      "oil_painting": "油画",
+      "watercolor": "水彩",
+      "acrylic": "丙烯",
+      "digital_painting": "数字绘画",
+      "sculpting": "雕塑",
+      "carving": "雕刻",
+      "photography_digital": "数字摄影",
+      "collage": "拼贴"
     },
     "orientations": {
-      "horizontal": "أفقي",
-      "vertical": "عمودي",
-      "square": "مربع"
+      "horizontal": "水平",
+      "vertical": "垂直",
+      "square": "正方形"
     },
     "sizes": {
-      "small": "صغير",
-      "medium": "متوسط",
-      "large": "كبير",
-      "extra_large": "كبير جداً"
+      "small": "小",
+      "medium": "中",
+      "large": "大",
+      "extra_large": "特大"
     },
     "sortOptions": {
-      "createdAt": "الأحدث",
-      "price": "السعر",
-      "title": "العنوان",
-      "likesCount": "الأكثر شعبية"
+      "createdAt": "最新",
+      "price": "价格",
+      "title": "标题",
+      "likesCount": "最受欢迎"
     },
     "orderOptions": {
-      "desc": "تنازلي",
-      "asc": "تصاعدي"
+      "desc": "降序",
+      "asc": "升序"
     }
   },
   "results": {
-    "title": "النتائج",
-    "top": "أعلى",
-    "loadingPosts": "جاري تحميل المنشورات...",
-    "searching": "جاري البحث...",
+    "title": "结果",
+    "top": "热门",
+    "loadingPosts": "加载帖子中...",
+    "searching": "搜索中...",
     "noResults": {
-      "title": "لم يتم العثور على نتائج",
-      "withFilters": "حاول استخدام فلاتر أو مصطلحات بحث أخرى.",
-      "withoutFilters": "لا توجد منشورات متاحة في الوقت الحالي."
+      "title": "未找到结果",
+      "withFilters": "尝试使用其他筛选器或搜索词。",
+      "withoutFilters": "目前没有可用的帖子。"
     }
   },
   "errors": {
-    "loadingPosts": "خطأ في تحميل المنشورات",
-    "searchError": "خطأ في البحث",
-    "userSearchError": "خطأ في البحث عن المستخدمين"
+    "loadingPosts": "加载帖子时出错",
+    "searchError": "搜索错误",
+    "userSearchError": "搜索用户时出错"
   }
 }

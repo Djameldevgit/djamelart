@@ -313,66 +313,66 @@ const Navbar2 = () => {
             ) : (
               // Usuario NO AUTENTICADO: Dropdown simple
               <NavDropdown
-                align={lang === 'ar' ? "start" : "end"}
-                title={
-                  <div
-                    style={{
-                      width: isMobile ? '40px' : '45px',
-                      height: isMobile ? '40px' : '45px',
-                      borderRadius: '12px',
-                      backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.3s ease'
-                    }}
-                    className="icon-button"
-                  >
-                    <FaUserCircle size={isMobile ? 24 : 28} style={{ color: '#667eea' }} />
-                  </div>
-                }
-                id="nav-guest-dropdown"
-                className="custom-dropdown"
-              >
-                <MenuItem icon={FaSignInAlt} iconColor="#28a745" to="/login">
-                  {t('login')}
-                </MenuItem>
-                <MenuItem icon={FaUserPlus} iconColor="#667eea" to="/register">
-                  {t('register')}
-                </MenuItem>
-                <NavDropdown.Divider style={{ margin: '8px 16px' }} />
-                <MenuItem icon={FaInfoCircle} iconColor="#6c757d" to="/bloginfo">
-                  {t('appInfo')}
-                </MenuItem>
-                <MenuItem icon={FaShareAlt} iconColor="#ffc107" onClick={() => setShowShareModal(true)}>
-                  {t('shareApp')}
-                </MenuItem>
-              </NavDropdown>
-            )}
-          </div>
-        </Container>
-      </Navbar>
+              align="end"
+              title={
+                <div
+                  style={{
+                    width: isMobile ? '40px' : '45px',
+                    height: isMobile ? '40px' : '45px',
+                    borderRadius: '12px',
+                    backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.3s ease'
+                  }}
+                  className="icon-button"
+                >
+                  <FaUserCircle size={isMobile ? 24 : 28} style={{ color: '#667eea' }} />
+                </div>
+              }
+              id="nav-guest-dropdown"
+              className="custom-dropdown"
+            >
+              <MenuItem icon={FaSignInAlt} iconColor="#28a745" to="/login">
+                {t('login')}
+              </MenuItem>
+              <MenuItem icon={FaUserPlus} iconColor="#667eea" to="/register">
+                {t('register')}
+              </MenuItem>
+              <NavDropdown.Divider style={{ margin: '8px 16px' }} />
+              <MenuItem icon={FaInfoCircle} iconColor="#6c757d"  to="/infoaplicacionn">
+                {t('appInfo')}
+              </MenuItem>
+             
+            </NavDropdown>
+          )}
+        </div>
+      </Container>
+    </Navbar>
 
-      {/* CSS personalizado */}
-      <style jsx>{`
-        .icon-button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
-        }
+    {/* CSS personalizado */}
+    <style jsx>{`
+      .icon-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+      }
 
-        .custom-menu-item:hover {
-          background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
-          transform: ${lang === 'ar' ? 'translateX(-4px)' : 'translateX(4px)'};
-        }
+      .custom-menu-item:hover {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+        transform: translateX(4px);
+      }
 
-        .dropdown-menu {
-          border: none !important;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
-          border-radius: 15px !important;
-        }
-      `}</style>
-    </div>
-  );
+      .dropdown-menu {
+        border: none !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
+        border-radius: 15px !important;
+      }import Navbar2 from './Navbar2';
+
+    `}</style>
+  </div>
+);
 };
 
-export default Navbar2;
+
+ export default  Navbar2

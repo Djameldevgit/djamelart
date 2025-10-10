@@ -1,13 +1,9 @@
 {
-
-    "error": "خطأ",
-    "success": "نجاح",
-    "login_failed": "فشل تسجيل الدخول",
-    "update_success": "تم التحديث بنجاح",
-   
-    "loading": "...تحميل",
-   
-    "errorTitle": "خطأ",
-    "successTitle": "نجاح"
-
+    "error": "错误",
+    "success": "成功",
+    "login_failed": "登录失败",
+    "update_success": "更新成功",
+    "loading": "加载中...",
+    "errorTitle": "错误",
+    "successTitle": "成功"
 }

@@ -395,147 +395,147 @@ const CardBodyCarousel = ({ post }) => {
 
   return (
     <div
-      ref={cardRef}
-      style={{
-        marginBottom: '24px',
-        borderRadius: '12px',
-        overflow: 'hidden',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        background: '#ffffff'
-      }}
-    >
-      <div className="card_body">
-        {post.images.length > 0 && (
+  ref={cardRef}
+  style={{
+    marginBottom: '24px',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    background: '#ffffff'
+  }}
+>
+  <div className="card_body">
+    {post.images.length > 0 && (
+      <>
+        {/* ✅ Solo mostrar header si NO es página de detalle */}
+        {!isPostDetailPage && (
           <>
-            {/* Card Header - Separado sobre la imagen */}
-            {!isPostDetailPage && (
+            {/* ✅ Card Header - MEJORADO Y OPTIMIZADO */}
+            <div style={{
+              background: "white",
+              padding: "12px 16px 8px 16px",
+              borderBottom: "1px solid #f0f0f0",
+              borderRadius: "12px 12px 0 0",
+            }}>
+              {/* ✅ Primera fila: Avatar y información - COMPACTA */}
               <div style={{
-                background: "white",
-                padding: "16px",
-                borderBottom: "1px solid #e0e0e0",
-                borderRadius: "12px 12px 0 0",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "12px"
               }}>
-                {/* Primera fila: Avatar y botón Seguir */}
                 <div style={{
                   display: "flex",
-                  justifyContent: "space-between",
                   alignItems: "center",
-                  marginBottom: "8px"
+                  gap: "10px",
+                  flex: 1,
+                  minWidth: 0
                 }}>
-                  <div style={{
+                  {/* ✅ Avatar del usuario - MEJORADO */}
+                  <div
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      background: user?.avatar
+                        ? `url(${user.avatar}) center/cover`
+                        : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      border: "2px solid #f8f8f8",
+                      cursor: "pointer",
+                      flexShrink: 0
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      history.push(`/profile/${user?._id}`);
+                    }}
+                  />
+
+                  {/* ✅ Información del usuario - COMPACTA */}
+                  <div style={{ 
+                    minWidth: 0, 
+                    flex: 1,
                     display: "flex",
-                    alignItems: "center",
-                    gap: "12px"
+                    flexDirection: "column",
+                    gap: "2px"
                   }}>
-                    {/* Avatar del usuario */}
-                    <div
-                      style={{
-                        width: "44px",
-                        height: "44px",
-                        borderRadius: "50%",
-                        background: user?.avatar
-                          ? `url(${user.avatar}) center/cover`
-                          : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                        border: "2px solid #f0f0f0",
-                        cursor: "pointer",
-                        flexShrink: 0
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        history.push(`/profile/${user?._id}`);
-                      }}
-                    />
-
-                    {/* Información del usuario */}
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        marginBottom: "2px"
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px"
+                    }}>
+                      <span style={{
+                        fontSize: "15px",
+                        fontWeight: "600",
+                        color: "#333",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
                       }}>
-                        <span style={{
-                          fontSize: "16px",
-                          fontWeight: "600",
-                          color: "#333",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis"
+                        {user?.username || t('user')}
+                      </span>
+
+                      {user?.isVerified && (
+                        <span className="material-icons" style={{
+                          fontSize: "15px",
+                          color: "#0095f6",
+                          flexShrink: 0
                         }}>
-                          {user?.username || t('user')}
+                          verified
                         </span>
-
-                        {user?.isVerified && (
-                          <span className="material-icons" style={{
-                            fontSize: "16px",
-                            color: "#0095f6",
-                            flexShrink: 0
-                          }}>
-                            verified
-                          </span>
-                        )}
-                      </div>
-                      <div style={{
-                        fontSize: "13px",
-                        color: "#666"
-                      }}>
-                        {user?.followers?.length || 0} {t('followers')}
-                      </div>
+                      )}
+                    </div>
+                    
+                    {/* ✅ Fecha de publicación */}
+                    <div style={{
+                      fontSize: "12px",
+                      color: "#888",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px"
+                    }}>
+                      <span>{formatDate(post.createdAt)}</span>
                     </div>
                   </div>
+                </div>
 
-                  {/* Contenedor de botones de la derecha */}
-                  <div style={{
+                {/* ✅ Icono de tres puntos - MEJORADO */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowOptionsModal(true);
+                  }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#666",
+                    cursor: "pointer",
+                    padding: "6px",
+                    borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
-                    gap: "8px"
+                    justifyContent: "center",
+                    transition: "all 0.2s ease",
+                    flexShrink: 0
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = "rgba(0, 0, 0, 0.04)";
+                    e.target.style.color = "#333";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = "none";
+                    e.target.style.color = "#666";
+                  }}
+                >
+                  <span className="material-icons" style={{ 
+                    fontSize: "18px"
                   }}>
-                    {/* Icono de tres puntos */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowOptionsModal(true);
-                      }}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "#666",
-                        cursor: "pointer",
-                        padding: "10px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transition: "all 0.3s ease"
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.background = "rgba(0, 0, 0, 0.05)";
-                        e.target.style.color = "#333";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.background = "none";
-                        e.target.style.color = "#666";
-                      }}
-                    >
-                      <span className="material-icons" style={{ fontSize: "20px" }}>
-                        more_vert
-                      </span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Segunda fila: Fecha de publicación */}
-                <div style={{
-                  fontSize: "13px",
-                  color: "#888",
-                  paddingLeft: "56px"
-                }}>
-                  {formatDate(post.createdAt)}
-                </div>
+                    more_vert
+                  </span>
+                </button>
               </div>
-            )}
-            {/* Modal de opciones usando el componente separado */}
+            </div>
+
+            {/* Modal de opciones */}
             <OptionsModal
               show={showOptionsModal}
               onClose={() => setShowOptionsModal(false)}
@@ -549,171 +549,172 @@ const CardBodyCarousel = ({ post }) => {
               onAprove={handleAprove}
               onChatWithAdmin={handleChatWithAdmin}
             />
-
-            {/* Contenedor de la imagen con carousel */}
-            <div
-              className="carousel-container"
-              style={{
-                position: "relative",
-                height: "100%",
-                minHeight: "400px",
-                maxHeight: "80vh",
-                overflow: 'hidden',
-                cursor: 'pointer',
-                borderRadius: "0 0 12px 12px",
-                background: '#f8f9fa'
-              }}
-              onClick={handleImageClick}
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-            >
-              {/* ImageOverlay usando el componente separado */}
-           
-              <ImageOverlay
-                showInfo={showInfo}
-                post={post}
-                t={t}
-                formatDate={formatDate}
-                isLike={isLike}
-                loadLike={loadLike}
-                saved={saved}
-                saveLoad={saveLoad}
-                inCart={inCart}
-                buyLoad={buyLoad}
-                onLike={handleLike}
-                onSaveToggle={handleSaveToggle}
-                onShare={handleShare}
-                onViewDetails={() => history.push(`/post/${post._id}`)}
-                onBuyProduct={handleBuyProduct}
-                onCommentClick={handleCommentClick}
-                isPostDetailPage={isPostDetailPage} // ✅ Pasar esta prop al ImageOverlay
-              />
-              {/* Indicador visual cuando la información está oculta */}
-              {!showInfo && (
-                <div style={{
-                  position: "absolute",
-                  bottom: "10px",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  zIndex: 1,
-                  background: "rgba(0, 0, 0, 0.5)",
-                  color: "white",
-                  padding: "6px 14px",
-                  borderRadius: "20px",
-                  fontSize: "12px",
-                  fontWeight: "500",
-                  backdropFilter: "blur(5px)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  animation: "pulse 2s infinite",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px"
-                }}>
-                  <span className="material-icons" style={{ fontSize: "16px" }}>
-                    info
-                  </span>
-                  {t('tapToSeeInfo')}
-                </div>
-              )}
-
-              {/* Carousel con fondo */}
-              <div className="card" style={{
-                height: "100%",
-                background: '#f8f9fa',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <div className="card__image" style={{ height: "100%", width: "100%" }}>
-                  <Carousel images={post.images} id={post._id} />
-                </div>
-              </div>
-            </div>
           </>
         )}
-      </div>
 
-      {/* Estilos CSS */}
-      <style>
-        {`
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-          
-          @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-          }
-          
-          @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-          }
-        `}
-      </style>
+        {/* Contenedor de la imagen con carousel */}
+        <div
+          className="carousel-container"
+          style={{
+            position: "relative",
+            height: "100%",
+            minHeight: "400px",
+            maxHeight: "80vh",
+            overflow: 'hidden',
+            cursor: isPostDetailPage ? 'default' : 'pointer',
+            borderRadius: isPostDetailPage ? "12px" : "0 0 12px 12px",
+            background: '#f8f9fa'
+          }}
+          onClick={isPostDetailPage ? undefined : handleImageClick}
+          onTouchStart={isPostDetailPage ? undefined : handleTouchStart}
+          onTouchEnd={isPostDetailPage ? undefined : handleTouchEnd}
+        >
+          <ImageOverlay
+            showInfo={showInfo}
+            post={post}
+            t={t}
+            formatDate={formatDate}
+            isLike={isLike}
+            loadLike={loadLike}
+            saved={saved}
+            saveLoad={saveLoad}
+            inCart={inCart}
+            buyLoad={buyLoad}
+            onLike={handleLike}
+            onSaveToggle={handleSaveToggle}
+            onShare={handleShare}
+            onViewDetails={() => history.push(`/post/${post._id}`)}
+            onBuyProduct={handleBuyProduct}
+            onCommentClick={handleCommentClick}
+            isPostDetailPage={isPostDetailPage}
+          />
 
-      {/* ✅ CommentsModal separado */}
-      <CommentsModal
-        show={showCommentsModal}
-        onHide={() => setShowCommentsModal(false)}
-        post={post}
-        t={t}
-      />
+          {/* ✅ Solo mostrar indicador si NO es página de detalle */}
+          {!isPostDetailPage && !showInfo && (
+            <div style={{
+              position: "absolute",
+              bottom: "10px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 1,
+              background: "rgba(0, 0, 0, 0.5)",
+              color: "white",
+              padding: "6px 14px",
+              borderRadius: "20px",
+              fontSize: "12px",
+              fontWeight: "500",
+              backdropFilter: "blur(5px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              animation: "pulse 2s infinite",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px"
+            }}>
+              <span className="material-icons" style={{ fontSize: "16px" }}>
+                info
+              </span>
+              {t('tapToSeeInfo')}
+            </div>
+          )}
 
-      {/* Modal para Compartir */}
-      <ShareModal
-        show={showShareModal}
-        onHide={() => setShowShareModal(false)}
-        post={post}
-        shareUrl={shareUrl}
-        shareTitle={shareTitle}
-        imageUrl={imageUrl}
-      />
-
-      {/* Modal de Reporte */}
-      <ReportModal
-        show={showReportModal}
-        onHide={() => setShowReportModal(false)}
-        reportReason={reportReason}
-        setReportReason={setReportReason}
-        onSubmitReport={handleSubmitReport}
-        t={t}
-      />
-
-      {/* Mensaje de compra */}
-      {showBuyMessage && (
-        <div className="buy-message" style={{
-          position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
-          backgroundColor: inCart ? "#4CAF50" : "#F44336", color: "white", padding: "12px 24px",
-          borderRadius: "8px", zIndex: 9999, display: "flex", alignItems: "center",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.3)", fontSize: "14px", fontWeight: "500"
-        }}>
-          <span className="material-icons" style={{ marginRight: "8px" }}>
-            {inCart ? "check_circle" : "shopping_cart"}
-          </span>
-          {inCart
-            ? t("productAddedToCart", { lng: lang })
-            : t("thanksForPurchase", { lng: lang })}
+          {/* Carousel con fondo */}
+          <div className="card" style={{
+            height: "100%",
+            background: '#f8f9fa',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <div className="card__image" style={{ height: "100%", width: "100%" }}>
+              <Carousel images={post.images} id={post._id} />
+            </div>
+          </div>
         </div>
-      )}
+      </>
+    )}
+  </div>
 
-      {/* Modales de verificación */}
-      <AuthModal
-        show={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-      />
-      <VerifyModal
-        show={showVerifyModal}
-        onClose={() => setShowVerifyModal(false)}
-      />
-      <DesactivateModal
-        show={showDeactivatedModal}
-        onClose={() => setShowDeactivatedModal(false)}
-      />
+  {/* Estilos CSS */}
+  <style>
+    {`
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+      
+      @keyframes pulse {
+        0% { opacity: 0.7; }
+        50% { opacity: 1; }
+        100% { opacity: 0.7; }
+      }
+    `}
+  </style>
+
+  {/* ✅ CommentsModal separado */}
+  <CommentsModal
+    show={showCommentsModal}
+    onHide={() => setShowCommentsModal(false)}
+    post={post}
+    t={t}
+  />
+
+  {/* Modal para Compartir */}
+  <ShareModal
+    show={showShareModal}
+    onHide={() => setShowShareModal(false)}
+    post={post}
+    shareUrl={shareUrl}
+    shareTitle={shareTitle}
+    imageUrl={imageUrl}
+  />
+
+  {/* Modal de Reporte */}
+  <ReportModal
+    show={showReportModal}
+    onHide={() => setShowReportModal(false)}
+    reportReason={reportReason}
+    setReportReason={setReportReason}
+    onSubmitReport={handleSubmitReport}
+    t={t}
+  />
+
+  {/* Mensaje de compra */}
+  {showBuyMessage && (
+    <div className="buy-message" style={{
+      position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
+      backgroundColor: inCart ? "#4CAF50" : "#F44336", color: "white", padding: "12px 24px",
+      borderRadius: "8px", zIndex: 9999, display: "flex", alignItems: "center",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.3)", fontSize: "14px", fontWeight: "500"
+    }}>
+      <span className="material-icons" style={{ marginRight: "8px" }}>
+        {inCart ? "check_circle" : "shopping_cart"}
+      </span>
+      {inCart
+        ? t("productAddedToCart", { lng: lang })
+        : t("thanksForPurchase", { lng: lang })}
     </div>
+  )}
+
+  {/* Modales de verificación */}
+  <AuthModal
+    show={showAuthModal}
+    onClose={() => setShowAuthModal(false)}
+  />
+  <VerifyModal
+    show={showVerifyModal}
+    onClose={() => setShowVerifyModal(false)}
+  />
+  <DesactivateModal
+    show={showDeactivatedModal}
+    onClose={() => setShowDeactivatedModal(false)}
+  />
+</div>
   );
 };
 

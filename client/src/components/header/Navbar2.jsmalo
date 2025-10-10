@@ -1,0 +1,368 @@
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import Avatar from '../Avatar';
+import Card from 'react-bootstrap/Card';
+import {
+  FaPlus,
+  FaHome,
+  FaUserCircle,
+  FaSignInAlt,
+  FaUserPlus,
+  FaSearch,
+  FaBell,
+  FaShareAlt,
+  FaInfoCircle,
+} from 'react-icons/fa';
+import { Navbar, Container, NavDropdown, Badge } from 'react-bootstrap';
+import { BsCartFill } from 'react-icons/bs';
+import { GLOBALTYPES } from '../../redux/actions/globalTypes';
+import LanguageSelectorpc from '../LanguageSelectorpc';
+import ShareAppModal from '../shareAppModal';
+
+const Navbar2 = () => {
+  const { auth, cart, notify, settings } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const { languageReducer } = useSelector(state => state);
+  const { t, i18n } = useTranslation('navbar');
+  const lang = languageReducer.language || 'es';
+  
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [userRole, setUserRole] = useState(auth.user?.role);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
+
+  useEffect(() => {
+    if (lang && lang !== i18n.language) {
+      i18n.changeLanguage(lang);
+    }
+  }, [lang, i18n]);
+
+  useEffect(() => {
+    if (auth.user?.role && auth.user.role !== userRole) {
+      setUserRole(auth.user.role);
+    }
+  }, [auth.user?.role, userRole]);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 700);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (!settings) {
+    return (
+      <nav className="navbar navbar-light bg-light">
+        <span className="navbar-brand">Cargando...</span>
+      </nav>
+    );
+  }
+
+  const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true });
+  const unreadNotifications = notify.data.filter(n => !n.isRead).length;
+
+  // MenuItem simplificado solo para dropdown de usuarios NO autenticados
+  const MenuItem = ({ icon: Icon, iconColor, to, onClick, children }) => (
+    <NavDropdown.Item
+      as={to ? Link : 'button'}
+      to={to}
+      onClick={onClick}
+      className="custom-menu-item"
+      style={{
+        padding: '12px 20px',
+        transition: 'all 0.2s ease',
+        borderRadius: '8px',
+        margin: '2px 8px',
+        display: 'flex',
+        alignItems: 'center',
+        fontWeight: '500'
+      }}
+    >
+      <Icon className="me-3" style={{ color: iconColor, fontSize: '1.1rem' }} />
+      <span>{children}</span>
+    </NavDropdown.Item>
+  );
+
+  return (
+    <div>
+      <Navbar
+        expand="lg"
+        style={{
+          zIndex: 1030,
+          marginTop: isMobile ? '55px' : '0',
+          background: settings.style
+            ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
+            : 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+          padding: isMobile ? '8px 0' : '12px 0',
+          boxShadow: '0 2px 20px rgba(0,0,0,0.08)'
+        }}
+        className={settings.style ? "navbar-dark" : "navbar-light"}
+      >
+        <Container fluid className="align-items-center justify-content-between">
+          {/* Logo y título */}
+          <div className="d-flex align-items-center">
+            <Link
+              to="/"
+              className="btn"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: isMobile ? '45px' : '55px',
+                height: isMobile ? '45px' : '55px',
+                marginLeft: '8px',
+                padding: '0',
+                marginRight: isMobile ? '8px' : '12px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                border: 'none',
+                borderRadius: '12px',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+              }}
+            >
+              <FaHome size={isMobile ? 24 : 28} style={{ color: 'white' }} />
+            </Link>
+
+            <Navbar.Brand href="/" className="py-2 d-none d-lg-block mb-0">
+              <Card.Title
+                className="mb-0"
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem'
+                }}
+              >
+                {t('appName')}
+              </Card.Title>
+            </Navbar.Brand>
+          </div>
+
+          {/* Iconos de navegación */}
+          <div className="d-flex align-items-center" style={{ gap: isMobile ? '12px' : '16px' }}>
+            {/* Selector de idioma para desktop */}
+            <div className="d-none d-lg-block">
+              <LanguageSelectorpc />
+            </div>
+
+            {/* Búsqueda */}
+            <Link
+              to="/search"
+              className="text-decoration-none d-flex align-items-center justify-content-center icon-button"
+              style={{
+                width: isMobile ? '40px' : '45px',
+                height: isMobile ? '40px' : '45px',
+                borderRadius: '12px',
+                transition: 'all 0.3s ease',
+                backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)'
+              }}
+            >
+              <FaSearch
+                size={isMobile ? 18 : 20}
+                style={{ color: '#667eea' }}
+                title={t('search')}
+              />
+            </Link>
+
+            {/* Botón Agregar Post (solo para usuarios autenticados con rol especial) */}
+            {auth.user && (userRole === "Super-utilisateur" || userRole === "admin") && (
+              <div
+                onClick={openStatusModal}
+                className="d-flex align-items-center justify-content-center icon-button"
+                style={{
+                  cursor: 'pointer',
+                  width: isMobile ? '40px' : '45px',
+                  height: isMobile ? '40px' : '45px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                }}
+              >
+                <FaPlus
+                  size={isMobile ? 18 : 20}
+                  style={{ color: 'white' }}
+                  title={t('addPost')}
+                />
+              </div>
+            )}
+
+            {/* Notificaciones (solo usuarios autenticados) */}
+            {auth.user && (
+              <Link
+                to="/notify"
+                className="position-relative d-flex align-items-center justify-content-center icon-button text-decoration-none"
+                style={{
+                  width: isMobile ? '40px' : '45px',
+                  height: isMobile ? '40px' : '45px',
+                  borderRadius: '12px',
+                  backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                <FaBell
+                  size={isMobile ? 20 : 22}
+                  style={{ color: unreadNotifications > 0 ? '#f5576c' : '#667eea' }}
+                />
+                {unreadNotifications > 0 && (
+                  <Badge
+                    pill
+                    style={{
+                      fontSize: '0.65rem',
+                      position: 'absolute',
+                      top: '-2px',
+                      right: '-2px',
+                      padding: '4px 7px',
+                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      border: '2px solid white',
+                      boxShadow: '0 2px 8px rgba(245, 87, 108, 0.4)'
+                    }}
+                  >
+                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                  </Badge>
+                )}
+              </Link>
+            )}
+
+            {/* Carrito (solo usuarios autenticados) */}
+            {auth.user && (
+              <Link
+                to="/cart"
+                className="position-relative text-decoration-none d-flex align-items-center justify-content-center icon-button"
+                style={{
+                  width: isMobile ? '40px' : '45px',
+                  height: isMobile ? '40px' : '45px',
+                  borderRadius: '12px',
+                  backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                <BsCartFill size={isMobile ? 20 : 22} style={{ color: '#667eea' }} />
+                {cart.items?.length > 0 && (
+                  <Badge
+                    pill
+                    style={{
+                      fontSize: '0.65rem',
+                      position: 'absolute',
+                      top: '-2px',
+                      right: '-2px',
+                      padding: '4px 7px',
+                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      border: '2px solid white',
+                      boxShadow: '0 2px 8px rgba(245, 87, 108, 0.4)'
+                    }}
+                  >
+                    {cart.items?.length > 9 ? '9+' : cart.items?.length || 0}
+                  </Badge>
+                )}
+              </Link>
+            )}
+
+            {/* Avatar o Dropdown según autenticación */}
+            {auth.user ? (
+              // Usuario AUTENTICADO: Avatar clickeable que redirige a página de configuración
+              <Link
+                to="/userSettingsPage"
+                className="text-decoration-none"
+              >
+                <div
+                  className="dropdown-avatar icon-button"
+                  style={{
+                    width: isMobile ? '40px' : '45px',
+                    height: isMobile ? '40px' : '45px',
+                    borderRadius: '12px',
+                    padding: '2px',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  <Avatar
+                    src={auth.user.avatar}
+                    size="medium-avatar"
+                    style={{
+                      borderRadius: '10px',
+                      objectFit: 'cover',
+                      width: '100%',
+                      height: '100%',
+                      margin:'3px',
+                      pading:'3px'
+                    }}
+                  />
+                </div>
+              </Link>
+            ) : (
+              // Usuario NO AUTENTICADO: Dropdown simple
+              <NavDropdown
+                align="end"
+                title={
+                  <div
+                    style={{
+                      width: isMobile ? '40px' : '45px',
+                      height: isMobile ? '40px' : '45px',
+                      borderRadius: '12px',
+                      backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.3s ease'
+                    }}
+                    className="icon-button"
+                  >
+                    <FaUserCircle size={isMobile ? 24 : 28} style={{ color: '#667eea' }} />
+                  </div>
+                }
+                id="nav-guest-dropdown"
+                className="custom-dropdown"
+              >
+                <MenuItem icon={FaSignInAlt} iconColor="#28a745" to="/login">
+                  {t('login')}
+                </MenuItem>
+                <MenuItem icon={FaUserPlus} iconColor="#667eea" to="/register">
+                  {t('register')}
+                </MenuItem>
+                <NavDropdown.Divider style={{ margin: '8px 16px' }} />
+                <MenuItem icon={FaInfoCircle} iconColor="#6c757d"  to="/infoaplicacionn">
+                  {t('appInfo')}
+                </MenuItem>
+               
+              </NavDropdown>
+            )}
+          </div>
+        </Container>
+      </Navbar>
+
+      {/* CSS personalizado */}
+      <style jsx>{`
+        .icon-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+        }
+
+        .custom-menu-item:hover {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+          transform: translateX(4px);
+        }
+
+        .dropdown-menu {
+          border: none !important;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
+          border-radius: 15px !important;
+        }import Navbar2 from './Navbar2';
+
+      `}</style>
+    </div>
+  );
+};
+
+ 
+   export default  Navbar2

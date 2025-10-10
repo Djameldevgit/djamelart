@@ -1,26 +1,13 @@
- 
 {
- 
-    "artwork_details": "تفاصيل العمل الفني",
-    "title": "العنوان",
-    "category": "الفئة",
-    "description": "الوصف",
-    "theme": "الموضوع",
-    "technique": "التقنية",
-    "support": "الدعم",
-    "art_style": "النمط الفني",
-    "packaging": "التغليف",
-    "copyright": "حقوق النشر",
-    "measurements": "القياسات",
-    "unit": "الوحدة",
-    "sale_option": "خيار البيع",
-    "price": "السعر",
-    "size": "الحجم",
-    "region": "المنطقة",
-    "city": "المدينة",
-    "last_updated": "آخر تحديث",
-    "print": "طباعة",
-    "read_more": "قراءة المزيد",
-    "show_less": "عرض أقل"
-  }
- 
+  "views": "Views",
+  "likes": "Likes", 
+  "comments": "Comments",
+  "published": "Published",
+  "updated": "Updated",
+  "basic_info": "Basic Information",
+  "technical_details": "Technical Details",
+  "commercial_info": "Commercial Information", 
+  "location_rights": "Location and Rights",
+  "read_more": "Read more",
+  "read_less": "Read less"
+}

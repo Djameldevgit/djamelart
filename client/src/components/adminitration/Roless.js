@@ -48,7 +48,19 @@ const Roless = () => {
       
       try {
         setIsSearching(true);
-        const query = `users/search?username=${encodeURIComponent(searchTerm)}&page=${page}&limit=9`;
+        
+        // ✅ NORMALIZACIÓN PARA ANDROID - Case insensitive
+        const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+        
+        // ✅ Validar que el término no esté vacío
+        if (normalizedSearchTerm.length === 0) {
+          setSearchResults([]);
+          setHasMoreSearch(false);
+          return;
+        }
+        
+        // ✅ Búsqueda con término normalizado
+        const query = `users/search?username=${encodeURIComponent(normalizedSearchTerm)}&page=${page}&limit=9`;
         const res = await getDataAPI(query, auth.token);
         
         if (page === 1) {

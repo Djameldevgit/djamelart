@@ -1,32 +1,23 @@
 {
-"auth":"authhhhhhhhhhhhhhhhhhhhhhhhhhh",
-  "authenticationRequired": "مطلوب مصادقة",
-  "pleaseLoginToContinue": "يرجى تسجيل الدخول أو التسجيل للمتابعة",
-  "login": "تسجيل الدخول",
-  "register": "تسجيل",
-
-
- "activate":"activateeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-    "activationRequest": "طلب التفعيل",
-    "activationMessage": "حسابك معطل. يرجى الاتصال بالمسؤول لإعادة تفعيل حسابك.",
-    "userEmail": "بريد المستخدم",
-    "message": "الرسالة",
-    "messagePlaceholder": "اكتب طلب التفعيل هنا...",
-    "messageRequired": "يجب كتابة رسالة",
-    "messageSentSuccess": "تم إرسال الطلب بنجاح",
-    "requestActivation": "طلب التفعيل",
-    "requestError": "خطأ في إرسال الطلب",
-    "sending": "جاري الإرسال...",
-    
-  
-    
-    "verifyyyyy":"verifyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
-      "verificationRequired": "مطلوب التحقق",
-      "verificationMessage": "حسابك يحتاج إلى التحقق للوصول إلى جميع الميزات. يرجى التحقق من بريدك الإلكتروني للمتابعة.",
-      "verificationNote": "إذا لم تستلم البريد الإلكتروني، يمكنك طلب واحد جديد",
-      "close": "إغلاق"
- 
-
-
-
+  "auth": "authhhhhhhhhhhhhhhhhhhhhhhhhhh",
+  "authenticationRequired": "Authentication Required",
+  "pleaseLoginToContinue": "Please log in or register to continue",
+  "login": "Log In",
+  "register": "Register",
+  "activate": "activateeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "activationRequest": "Activation Request",
+  "activationMessage": "Your account is deactivated. Please contact the administrator to reactivate your account.",
+  "userEmail": "User email",
+  "message": "Message",
+  "messagePlaceholder": "Write your activation request here...",
+  "messageRequired": "You must write a message",
+  "messageSentSuccess": "Request sent successfully",
+  "requestActivation": "Request activation",
+  "requestError": "Error sending request",
+  "sending": "Sending...",
+  "close": "Close",
+  "verifyyyyy": "verifyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+  "verificationRequired": "Verification Required",
+  "verificationMessage": "Your account needs to be verified to access all functionalities. Please verify your email to continue.",
+  "verificationNote": "If you didn't receive the email, you can request a new one"
 }

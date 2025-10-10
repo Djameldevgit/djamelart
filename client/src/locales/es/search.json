@@ -1,145 +1,145 @@
 {
   "header": {
-    "title": "Buscar",
-    "filtersActive": "Filtros activos"
+    "title": "Search",
+    "filtersActive": "Active filters"
   },
   "search": {
-    "placeholder": "Buscar por título, descripción, artista..."
+    "placeholder": "Search by title, description, artist..."
   },
   "buttons": {
-    "search": "🔍 Buscar",
-    "filters": "Filtros",
-    "hide": "Ocultar",
-    "advanced": "Avanzado",
-    "searching": "Buscando...",
-    "applyFilters": "Aplicar filtros",
-    "clearAll": "Limpiar todo"
+    "search": "🔍 Search",
+    "filters": "Filters",
+    "hide": "Hide",
+    "advanced": "Advanced",
+    "searching": "Searching...",
+    "applyFilters": "Apply filters",
+    "clearAll": "Clear all"
   },
   "users": {
-    "title": "Usuarios encontrados"
+    "title": "Users found"
   },
   "categories": {
-    "title": "Categorías",
-    "painting": "Pintura",
-    "sculpture": "Escultura",
-    "photography": "Fotografía",
-    "drawing": "Dibujo",
-    "engraving": "Grabado",
-    "digital_art": "Arte digital",
+    "title": "Categories",
+    "painting": "Painting",
+    "sculpture": "Sculpture",
+    "photography": "Photography",
+    "drawing": "Drawing",
+    "engraving": "Engraving",
+    "digital_art": "Digital art",
     "collage": "Collage",
-    "textile_art": "Arte textil"
+    "textile_art": "Textile art"
   },
   "filters": {
-    "theme": "Tema",
-    "style": "Estilo",
-    "minPrice": "Precio mínimo",
-    "maxPrice": "Precio máximo",
-    "location": "Ubicación",
-    "allThemes": "Todos los temas",
-    "allStyles": "Todos los estilos",
-    "pricePlaceholder": "0 dinares",
-    "maxPricePlaceholder": "10000 dinares",
-    "locationPlaceholder": "Ej: Argelia",
+    "theme": "Theme",
+    "style": "Style",
+    "minPrice": "Minimum price",
+    "maxPrice": "Maximum price",
+    "location": "Location",
+    "allThemes": "All themes",
+    "allStyles": "All styles",
+    "pricePlaceholder": "0 dinars",
+    "maxPricePlaceholder": "10000 dinars",
+    "locationPlaceholder": "Ex: Algeria",
     "themes": {
-      "abstract": "Abstracto",
-      "landscape": "Paisaje",
-      "portrait": "Retrato",
-      "still_life": "Naturaleza muerta",
-      "urban": "Urbano",
-      "surreal": "Surrealista"
+      "abstract": "Abstract",
+      "landscape": "Landscape",
+      "portrait": "Portrait",
+      "still_life": "Still life",
+      "urban": "Urban",
+      "surreal": "Surreal"
     },
     "styles": {
-      "realism": "Realismo",
-      "impressionism": "Impresionismo",
-      "expressionism": "Expresionismo",
-      "cubism": "Cubismo",
-      "surrealism": "Surrealismo",
-      "abstract": "Abstracto"
+      "realism": "Realism",
+      "impressionism": "Impressionism",
+      "expressionism": "Expressionism",
+      "cubism": "Cubism",
+      "surrealism": "Surrealism",
+      "abstract": "Abstract"
     }
   },
   "advancedFilters": {
-    "title": "Filtros avanzados",
-    "artType": "Tipo de arte",
+    "title": "Advanced filters",
+    "artType": "Art type",
     "material": "Material",
-    "technique": "Técnica",
-    "orientation": "Orientación",
-    "size": "Tamaño",
-    "year": "Año",
-    "tags": "Etiquetas",
-    "sortBy": "Ordenar por",
-    "order": "Orden",
-    "allTypes": "Todos los tipos",
-    "allMaterials": "Todos los materiales",
-    "allTechniques": "Todas las técnicas",
-    "allOrientations": "Todas las orientaciones",
-    "allSizes": "Todos los tamaños",
-    "tagsPlaceholder": "abstracto, moderno, colorido...",
+    "technique": "Technique",
+    "orientation": "Orientation",
+    "size": "Size",
+    "year": "Year",
+    "tags": "Tags",
+    "sortBy": "Sort by",
+    "order": "Order",
+    "allTypes": "All types",
+    "allMaterials": "All materials",
+    "allTechniques": "All techniques",
+    "allOrientations": "All orientations",
+    "allSizes": "All sizes",
+    "tagsPlaceholder": "abstract, modern, colorful...",
     "artTypes": {
-      "oil_painting": "Pintura al óleo",
-      "watercolor": "Acuarela",
-      "acrylic": "Acrílico",
-      "digital_art": "Arte digital",
-      "sculpture": "Escultura",
-      "photography": "Fotografía",
-      "drawing": "Dibujo",
-      "mixed_media": "Técnica mixta"
+      "oil_painting": "Oil painting",
+      "watercolor": "Watercolor",
+      "acrylic": "Acrylic",
+      "digital_art": "Digital art",
+      "sculpture": "Sculpture",
+      "photography": "Photography",
+      "drawing": "Drawing",
+      "mixed_media": "Mixed media"
     },
     "materials": {
-      "canvas": "Lienzo",
-      "paper": "Papel",
-      "wood": "Madera",
+      "canvas": "Canvas",
+      "paper": "Paper",
+      "wood": "Wood",
       "metal": "Metal",
-      "clay": "Arcilla",
-      "stone": "Piedra",
-      "fabric": "Tela",
+      "clay": "Clay",
+      "stone": "Stone",
+      "fabric": "Fabric",
       "digital": "Digital"
     },
     "techniques": {
-      "oil_painting": "Pintura al óleo",
-      "watercolor": "Acuarela",
-      "acrylic": "Acrílico",
-      "digital_painting": "Pintura digital",
-      "sculpting": "Escultura",
-      "carving": "Tallado",
-      "photography_digital": "Fotografía digital",
+      "oil_painting": "Oil painting",
+      "watercolor": "Watercolor",
+      "acrylic": "Acrylic",
+      "digital_painting": "Digital painting",
+      "sculpting": "Sculpting",
+      "carving": "Carving",
+      "photography_digital": "Digital photography",
       "collage": "Collage"
     },
     "orientations": {
       "horizontal": "Horizontal",
       "vertical": "Vertical",
-      "square": "Cuadrado"
+      "square": "Square"
     },
     "sizes": {
-      "small": "Pequeño",
-      "medium": "Mediano",
-      "large": "Grande",
-      "extra_large": "Muy grande"
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large",
+      "extra_large": "Extra large"
     },
     "sortOptions": {
-      "createdAt": "Más reciente",
-      "price": "Precio",
-      "title": "Título",
-      "likesCount": "Más popular"
+      "createdAt": "Most recent",
+      "price": "Price",
+      "title": "Title",
+      "likesCount": "Most popular"
     },
     "orderOptions": {
-      "desc": "Descendente",
-      "asc": "Ascendente"
+      "desc": "Descending",
+      "asc": "Ascending"
     }
   },
   "results": {
-    "title": "Resultados",
+    "title": "Results",
     "top": "Top",
-    "loadingPosts": "Cargando publicaciones...",
-    "searching": "Buscando...",
+    "loadingPosts": "Loading posts...",
+    "searching": "Searching...",
     "noResults": {
-      "title": "No se encontraron resultados",
-      "withFilters": "Intenta usar otros filtros o términos de búsqueda.",
-      "withoutFilters": "No hay publicaciones disponibles en este momento."
+      "title": "No results found",
+      "withFilters": "Try using other filters or search terms.",
+      "withoutFilters": "No posts available at the moment."
     }
   },
   "errors": {
-    "loadingPosts": "Error al cargar publicaciones",
-    "searchError": "Error en la búsqueda",
-    "userSearchError": "Error al buscar usuarios"
+    "loadingPosts": "Error loading posts",
+    "searchError": "Search error",
+    "userSearchError": "Error searching users"
   }
 }

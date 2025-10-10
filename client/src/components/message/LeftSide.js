@@ -24,7 +24,7 @@ const LeftSide = () => {
   const pageEnd = useRef()
   const [page, setPage] = useState(0)
 
-  const { t } = useTranslation('message')
+  const { t } = useTranslation('chat')
   const lang = languageReducer.language || 'es'
 
   useEffect(() => {

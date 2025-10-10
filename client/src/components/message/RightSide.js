@@ -1,17 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
- 
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import MsgDisplay from './MsgDisplay'
- 
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import { imageShow, videoShow } from '../../utils/mediaShow'
 import { imageUpload } from '../../utils/imageUpload'
 import { addMessage, getMessages, loadMoreMessages, deleteConversation } from '../../redux/actions/messageAction'
- 
 import { useTranslation } from 'react-i18next'
 import Avatar from '../Avatar'
-import { Card, Form, Button, Badge, Spinner, Alert, Container } from 'react-bootstrap'
+import { Card, Form, Button, Spinner } from 'react-bootstrap'
 import { FaArrowLeft, FaTrash, FaImage, FaPaperPlane, FaTimes, FaSmile } from 'react-icons/fa'
 import EmojiPicker from 'emoji-picker-react'
 
@@ -25,14 +22,12 @@ const RightSide = () => {
     const [text, setText] = useState('')
     const [media, setMedia] = useState([])
     const [loadMedia, setLoadMedia] = useState(false)
-    const [textError, setTextError] = useState('')
-
-    // 🔥 NUEVO ESTADO PARA EMOJI PICKER
     const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
     const refDisplay = useRef()
     const pageEnd = useRef()
     const emojiPickerRef = useRef()
+    const emojiButtonRef = useRef()
 
     const [data, setData] = useState([])
     const [result, setResult] = useState(9)
@@ -40,72 +35,9 @@ const RightSide = () => {
     const [isLoadMore, setIsLoadMore] = useState(0)
 
     const history = useHistory()
-    const [isTyping, setIsTyping] = useState(false)
     const typingTimeout = useRef()
 
-    // 🔥 Efecto para cerrar emoji picker al hacer clic fuera - MEJORADO
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
-                // Verificar si el clic no fue en el botón de emojis
-                const emojiButton = document.querySelector('.emoji-button')
-                if (!emojiButton || !emojiButton.contains(event.target)) {
-                    setShowEmojiPicker(false)
-                }
-            }
-        }
-
-        if (showEmojiPicker) {
-            document.addEventListener('mousedown', handleClickOutside)
-            // Prevenir scroll del body cuando el picker está abierto
-            document.body.style.overflow = 'hidden'
-        } else {
-            document.body.style.overflow = 'auto'
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside)
-            document.body.style.overflow = 'auto'
-        }
-    }, [showEmojiPicker])
-
-    // 🔥 Efecto para detectar typing
-    useEffect(() => {
-        const handleTyping = () => {
-            if (!isTyping) {
-                setIsTyping(true)
-                socket.emit('typing-start', {
-                    sender: auth.user._id,
-                    recipient: id,
-                    chatId: id
-                })
-            }
-
-            clearTimeout(typingTimeout.current)
-            typingTimeout.current = setTimeout(() => {
-                setIsTyping(false)
-                socket.emit('typing-stop', {
-                    sender: auth.user._id,
-                    recipient: id,
-                    chatId: id
-                })
-            }, 1000)
-        }
-
-        const input = document.querySelector('.chat_input input')
-        if (input) {
-            input.addEventListener('input', handleTyping)
-        }
-
-        return () => {
-            if (input) {
-                input.removeEventListener('input', handleTyping)
-            }
-            clearTimeout(typingTimeout.current)
-        }
-    }, [id, auth.user._id, socket, isTyping])
-
-    // 🔥 Cambiar idioma activamente
+    // Cambiar idioma
     const lang = languageReducer.language || 'es'
     useEffect(() => {
         if (i18n.language !== lang) {
@@ -113,57 +45,54 @@ const RightSide = () => {
         }
     }, [lang, i18n])
 
-    // 🔥 Validación en tiempo real del texto (internacionalizada)
+    // 🔥 MEJORADO: Cerrar emoji picker al hacer clic fuera
     useEffect(() => {
-        const validateText = () => {
-            if (text.length > 1000) {
-                return t('chat.maxChars')
+        function handleClickOutside(event) {
+            if (emojiPickerRef.current && 
+                !emojiPickerRef.current.contains(event.target) &&
+                emojiButtonRef.current &&
+                !emojiButtonRef.current.contains(event.target)) {
+                setShowEmojiPicker(false)
             }
-            
-            const allowedRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-.,!?()'"@#$%&*+=:;/\\\n\r\t¿¡€£¥©®—–•§¶\p{Emoji}]*$/u;
-            if (text && !allowedRegex.test(text)) {
-                return t('chat.invalidChars')
-            }
-            
-            const specialCharsCount = (text.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?€£¥©®—–•§¶]/g) || []).length;
-            if (specialCharsCount > text.length * 0.4) {
-                return t('chat.tooManySpecial')
-            }
-            
-            return ""
         }
-        
-        setTextError(validateText())
-    }, [text, t])
 
-    // 🔥 Función de sanitización de texto
-    const sanitizeText = (input) => {
-        return input
-            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-            .replace(/<[^>]*>/g, '')
-            .replace(/(\b)(on\w+)=([^>]*)/gi, '')
-            .slice(0, 1000);
-    };
+        if (showEmojiPicker) {
+            document.addEventListener('mousedown', handleClickOutside)
+        }
 
-    // 🔥 NUEVA FUNCIÓN PARA MANEJAR EMOJIS
-    const handleEmojiClick = (emojiObject) => {
-        setText(prevText => {
-            const newText = prevText + emojiObject.emoji
-            // Validar que no exceda el límite
-            return newText.slice(0, 1000)
-        })
-        // Cerrar el picker después de seleccionar (opcional)
-        // setShowEmojiPicker(false)
-        
-        // Mantener el foco en el input
-        const input = document.querySelector('.chat_input input')
-        if (input) {
-            input.focus()
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [showEmojiPicker])
+
+    // 🔥 MEJORADO: Manejo de typing simplificado
+    const handleTyping = () => {
+        if (socket && id && auth.user) {
+            socket.emit('typing-start', {
+                sender: auth.user._id,
+                recipient: id,
+                chatId: id
+            })
+
+            clearTimeout(typingTimeout.current)
+            typingTimeout.current = setTimeout(() => {
+                socket.emit('typing-stop', {
+                    sender: auth.user._id,
+                    recipient: id,
+                    chatId: id
+                })
+            }, 1000)
         }
     }
 
-    // 🔥 FUNCIÓN MEJORADA PARA TOGGLE EMOJI PICKER
-    const toggleEmojiPicker = () => {
+    // 🔥 NUEVO: Función mejorada para manejar emojis - SIN RESTRICCIONES
+    const handleEmojiClick = (emojiObject) => {
+        setText(prevText => prevText + emojiObject.emoji)
+    }
+
+    // 🔥 MEJORADO: Toggle emoji picker más simple
+    const toggleEmojiPicker = (e) => {
+        e?.stopPropagation()
         setShowEmojiPicker(prev => !prev)
     }
 
@@ -251,28 +180,21 @@ const RightSide = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         
-        // Cerrar emoji picker al enviar
         setShowEmojiPicker(false)
         
-        // 🔥 Validación final antes de enviar
-        if (!text.trim() && media.length === 0) return;
-        if (textError) {
-            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: textError } })
-            return;
-        }
+        if (!text.trim() && media.length === 0) return
 
-        const sanitizedText = sanitizeText(text);
         setText('')
         setMedia([])
         setLoadMedia(true)
 
-        let newArr = [];
+        let newArr = []
         if (media.length > 0) newArr = await imageUpload(media)
 
         const msg = {
             sender: auth.user._id,
             recipient: id,
-            text: sanitizedText,
+            text: text.trim(),
             media: newArr,
             createdAt: new Date().toISOString()
         }
@@ -298,7 +220,6 @@ const RightSide = () => {
         getMessagesData()
     }, [id, dispatch, auth, message.data])
 
-    // Load More
     useEffect(() => {
         const observer = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting) {
@@ -328,13 +249,14 @@ const RightSide = () => {
     }
 
     const handleGoBack = () => {
-        history.push('/message');
-    };
+        history.push('/message')
+    }
 
+    // 🔥 SIMPLIFICADO: Manejo de texto SIN validaciones restrictivas
     const handleTextChange = (e) => {
-        const value = e.target.value;
-        setText(value.slice(0, 1000));
-    };
+        setText(e.target.value)
+        handleTyping()
+    }
 
     return (
         <div style={{
@@ -342,9 +264,9 @@ const RightSide = () => {
             flexDirection: 'column',
             height: 'calc(100vh - 170px)',
             background: theme ? '#1a1a2e' : '#f8f9fa',
-            position: 'relative' // 🔥 IMPORTANTE para el z-index
+            position: 'relative'
         }}>
-            {/* 🎨 HEADER MEJORADO */}
+            {/* HEADER */}
             <Card 
                 className="border-0 shadow-sm"
                 style={{
@@ -378,9 +300,12 @@ const RightSide = () => {
                                     <small className="text-white" style={{ opacity: 0.9 }}>
                                         {user.fullname || user.username || ""}
                                         
-                                        {/* 🔥 INDICADOR DE TYPING MEJORADO */}
+                                        {/* 🔥 MEJORADO: Indicador de typing */}
                                         {message.typing && Array.isArray(message.typing) && 
-                                          message.typing.some(item => item.chatId === id && item.sender !== auth.user._id) && (
+                                          message.typing.find(item => 
+                                            item.chatId === id && 
+                                            item.sender !== auth.user._id
+                                          ) && (
                                             <span className="typing-indicator ms-2">
                                                 <span className="typing-dots">
                                                     <span>.</span>
@@ -434,7 +359,7 @@ const RightSide = () => {
                 </Card.Body>
             </Card>
 
-            {/* 🎨 ÁREA DE MENSAJES MEJORADA */}
+            {/* ÁREA DE MENSAJES */}
             <div 
                 className="chat_container" 
                 style={{ 
@@ -491,7 +416,7 @@ const RightSide = () => {
                 </div>
             </div>
 
-            {/* 🎨 PREVIEW DE MEDIOS MEJORADO */}
+            {/* PREVIEW DE MEDIOS */}
             {media.length > 0 && (
                 <div 
                     style={{ 
@@ -546,7 +471,7 @@ const RightSide = () => {
                 </div>
             )}
 
-            {/* 🎨 FORMULARIO DE ENTRADA MEJORADO CON NUEVO EMOJI PICKER */}
+            {/* FORMULARIO DE ENTRADA */}
             <Card 
                 className="border-0"
                 style={{
@@ -557,7 +482,7 @@ const RightSide = () => {
                     zIndex: 10
                 }}
             >
-                <Card.Body className="p-3" style={{ position: 'relative', zIndex: 10 }}>
+                <Card.Body className="p-3" style={{ position: 'relative' }}>
                     <Form onSubmit={handleSubmit}>
                         <div className="d-flex align-items-center gap-2">
                             <div className="position-relative flex-grow-1">
@@ -565,70 +490,31 @@ const RightSide = () => {
                                     type="text"
                                     placeholder={t('chat.placeholder', 'Escribe un mensaje...')}
                                     value={text}
-                                    onChange={(e) => {
-                                        handleTextChange(e)
-                                        
-                                        socket.emit('typing-start', {
-                                            sender: auth.user._id,
-                                            recipient: id,
-                                            chatId: id
-                                        })
-                                        
-                                        clearTimeout(typingTimeout.current)
-                                        typingTimeout.current = setTimeout(() => {
-                                            socket.emit('typing-stop', {
-                                                sender: auth.user._id,
-                                                recipient: id,
-                                                chatId: id
-                                            })
-                                        }, 1200)
-                                    }}
+                                    onChange={handleTextChange}
                                     style={{
                                         borderRadius: '25px',
-                                        border: textError 
-                                            ? '2px solid #dc3545' 
-                                            : `2px solid ${theme ? '#667eea' : '#e0e0e0'}`,
-                                        padding: '12px 50px 12px 20px',
+                                        border: `2px solid ${theme ? '#667eea' : '#e0e0e0'}`,
+                                        padding: '12px 20px',
                                         background: theme ? '#0f0f1e' : '#f8f9fa',
                                         color: theme ? 'white' : '#333',
                                         direction: lang === 'ar' ? 'rtl' : 'ltr',
                                         transition: 'all 0.3s ease'
                                     }}
                                     onFocus={(e) => {
-                                        if (!textError) {
-                                            e.target.style.borderColor = '#667eea';
-                                            e.target.style.boxShadow = '0 0 0 0.2rem rgba(102, 126, 234, 0.15)';
-                                        }
+                                        e.target.style.borderColor = '#667eea'
+                                        e.target.style.boxShadow = '0 0 0 0.2rem rgba(102, 126, 234, 0.15)'
                                     }}
                                     onBlur={(e) => {
-                                        e.target.style.borderColor = theme ? '#667eea' : '#e0e0e0';
-                                        e.target.style.boxShadow = 'none';
+                                        e.target.style.borderColor = theme ? '#667eea' : '#e0e0e0'
+                                        e.target.style.boxShadow = 'none'
                                     }}
                                 />
-                                
-                                {/* Contador de caracteres */}
-                                {text.length > 0 && (
-                                    <Badge
-                                        bg={text.length > 900 ? 'danger' : 'secondary'}
-                                        style={{
-                                            position: 'absolute',
-                                            right: '15px',
-                                            top: '50%',
-                                            transform: 'translateY(-50%)',
-                                            fontSize: '0.7rem',
-                                            padding: '4px 8px',
-                                            borderRadius: '12px'
-                                        }}
-                                    >
-                                        {text.length}/1000
-                                    </Badge>
-                                )}
                             </div>
 
-                            {/* 🔥 NUEVO BOTÓN DE EMOJIS - POSICIÓN CORREGIDA */}
+                            {/* 🔥 BOTÓN DE EMOJIS MEJORADO */}
                             <div className="position-relative">
                                 <Button
-                                    className="emoji-button"
+                                    ref={emojiButtonRef}
                                     variant={theme ? "outline-light" : "outline-primary"}
                                     onClick={toggleEmojiPicker}
                                     style={{
@@ -646,33 +532,21 @@ const RightSide = () => {
                                         transition: 'all 0.3s ease',
                                         zIndex: 1000
                                     }}
-                                    onMouseEnter={(e) => {
-                                        if (!showEmojiPicker) {
-                                            e.currentTarget.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                                            e.currentTarget.style.transform = 'scale(1.05)';
-                                        }
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        if (!showEmojiPicker) {
-                                            e.currentTarget.style.background = theme ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.1)';
-                                            e.currentTarget.style.transform = 'scale(1)';
-                                        }
-                                    }}
                                 >
                                     <FaSmile size={18} style={{ 
                                         color: showEmojiPicker ? 'white' : '#667eea' 
                                     }} />
                                 </Button>
 
-                                {/* 🔥 EMOJI PICKER - POSICIÓN CORREGIDA Y Z-INDEX SUPER ALTO */}
+                                {/* 🔥 EMOJI PICKER MEJORADO */}
                                 {showEmojiPicker && (
                                     <div 
                                         ref={emojiPickerRef}
                                         style={{
-                                            position: 'fixed', // 🔥 CAMBIADO de absolute a fixed
-                                            bottom: '100px',   // 🔥 POSICIÓN FIJA desde abajo
-                                            right: '20px',     // 🔥 POSICIÓN FIJA desde la derecha
-                                            zIndex: 99999,     // 🔥 Z-INDEX SUPER ALTO
+                                            position: 'fixed',
+                                            bottom: '100px',
+                                            right: '20px',
+                                            zIndex: 99999,
                                             borderRadius: '12px',
                                             overflow: 'hidden',
                                             boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
@@ -713,14 +587,6 @@ const RightSide = () => {
                                             background: theme ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.1)',
                                             transition: 'all 0.3s ease'
                                         }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                                            e.currentTarget.style.transform = 'scale(1.05)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.background = theme ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.1)';
-                                            e.currentTarget.style.transform = 'scale(1)';
-                                        }}
                                     >
                                         <FaImage size={18} style={{ color: '#667eea' }} />
                                     </Button>
@@ -745,7 +611,7 @@ const RightSide = () => {
                             {/* Botón de enviar */}
                             <Button
                                 type="submit"
-                                disabled={!(text.trim() || media.length > 0) || !!textError}
+                                disabled={!(text.trim() || media.length > 0)}
                                 style={{
                                     width: '45px',
                                     height: '45px',
@@ -754,43 +620,24 @@ const RightSide = () => {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    background: (text.trim() || media.length > 0) && !textError
+                                    background: (text.trim() || media.length > 0)
                                         ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                                         : '#ccc',
                                     border: 'none',
                                     transition: 'all 0.3s ease',
-                                    boxShadow: (text.trim() || media.length > 0) && !textError
+                                    boxShadow: (text.trim() || media.length > 0)
                                         ? '0 4px 12px rgba(102, 126, 234, 0.4)'
                                         : 'none'
-                                }}
-                                onMouseEnter={(e) => {
-                                    if ((text.trim() || media.length > 0) && !textError) {
-                                        e.currentTarget.style.transform = 'scale(1.05)';
-                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.5)';
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'scale(1)';
-                                    e.currentTarget.style.boxShadow = (text.trim() || media.length > 0) && !textError
-                                        ? '0 4px 12px rgba(102, 126, 234, 0.4)'
-                                        : 'none';
                                 }}
                             >
                                 <FaPaperPlane size={16} style={{ color: 'white' }} />
                             </Button>
                         </div>
                     </Form>
-
-                    {/* Mensaje de error */}
-                    {textError && (
-                        <Alert variant="danger" className="mt-2 mb-0 py-2" style={{ fontSize: '0.85rem', borderRadius: '10px' }}>
-                            <small>{textError}</small>
-                        </Alert>
-                    )}
                 </Card.Body>
             </Card>
 
-            {/* 🎨 ESTILOS PARA ANIMACIONES */}
+            {/* ESTILOS */}
             <style>{`
                 .typing-indicator {
                     display: inline-flex;
@@ -847,12 +694,6 @@ const RightSide = () => {
 
                 .chat_container::-webkit-scrollbar-thumb:hover {
                     background: #667eea;
-                }
-
-                /* 🔥 ESTILOS GLOBALES PARA EL EMOJI PICKER */
-                .EmojiPickerReact {
-                    --epr-emoji-size: 30px;
-                    --epr-horizontal-padding: 10px;
                 }
             `}</style>
         </div>

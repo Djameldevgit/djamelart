@@ -1,32 +1,23 @@
 {
-"auth":"authhhhhhhhhhhhhhhhhhhhhhhhhhh",
-  "authenticationRequired": "مطلوب مصادقة",
-  "pleaseLoginToContinue": "يرجى تسجيل الدخول أو التسجيل للمتابعة",
-  "login": "تسجيل الدخول",
-  "register": "تسجيل",
-
-
- "activate":"activateeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-    "activationRequest": "طلب التفعيل",
-    "activationMessage": "حسابك معطل. يرجى الاتصال بالمسؤول لإعادة تفعيل حسابك.",
-    "userEmail": "بريد المستخدم",
-    "message": "الرسالة",
-    "messagePlaceholder": "اكتب طلب التفعيل هنا...",
-    "messageRequired": "يجب كتابة رسالة",
-    "messageSentSuccess": "تم إرسال الطلب بنجاح",
-    "requestActivation": "طلب التفعيل",
-    "requestError": "خطأ في إرسال الطلب",
-    "sending": "جاري الإرسال...",
-    
-  
-    
-    "verifyyyyy":"verifyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
-      "verificationRequired": "مطلوب التحقق",
-      "verificationMessage": "حسابك يحتاج إلى التحقق للوصول إلى جميع الميزات. يرجى التحقق من بريدك الإلكتروني للمتابعة.",
-      "verificationNote": "إذا لم تستلم البريد الإلكتروني، يمكنك طلب واحد جديد",
-      "close": "إغلاق"
- 
-
-
-
+  "auth": "authhhhhhhhhhhhhhhhhhhhhhhhhhh",
+  "authenticationRequired": "Требуется аутентификация",
+  "pleaseLoginToContinue": "Пожалуйста, войдите или зарегистрируйтесь, чтобы продолжить",
+  "login": "Войти",
+  "register": "Зарегистрироваться",
+  "activate": "activateeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "activationRequest": "Запрос на активацию",
+  "activationMessage": "Ваша учетная запись деактивирована. Пожалуйста, свяжитесь с администратором для повторной активации вашей учетной записи.",
+  "userEmail": "Email пользователя",
+  "message": "Сообщение",
+  "messagePlaceholder": "Напишите ваш запрос на активацию здесь...",
+  "messageRequired": "Вы должны написать сообщение",
+  "messageSentSuccess": "Запрос успешно отправлен",
+  "requestActivation": "Запросить активацию",
+  "requestError": "Ошибка при отправке запроса",
+  "sending": "Отправка...",
+  "close": "Закрыть",
+  "verifyyyyy": "verifyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+  "verificationRequired": "Требуется верификация",
+  "verificationMessage": "Ваша учетная запись должна быть проверена для доступа ко всем функциям. Пожалуйста, подтвердите ваш email, чтобы продолжить.",
+  "verificationNote": "Если вы не получили письмо, вы можете запросить новое"
 }

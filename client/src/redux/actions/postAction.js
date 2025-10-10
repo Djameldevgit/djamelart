@@ -113,7 +113,7 @@ export const unLikePost = ({post, auth, socket}) => async (dispatch) => {
         // Notify
         const msg = {
             id: auth.user._id,
-            text: 'likeyourpost.',
+            text: 'unlikeyourpost',
             textNs: 'notify', 
 
             recipients: [post.user._id],
@@ -130,8 +130,7 @@ export const unLikePost = ({post, auth, socket}) => async (dispatch) => {
 }
 
 export const viewPost = ({ id, auth }) => async (dispatch) => {
-    console.log("🚀 Entrando a action viewPost con id:", id);
-  
+   
     try {
       const res = await postDataAPI(`post/${id}/view`, {}, auth.token);
   

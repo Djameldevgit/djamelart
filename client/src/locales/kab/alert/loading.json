@@ -1,13 +1,9 @@
 {
-
-    "error": "خطأ",
-    "success": "نجاح",
-    "login_failed": "فشل تسجيل الدخول",
-    "update_success": "تم التحديث بنجاح",
-   
-    "loading": "...تحميل",
-   
-    "errorTitle": "خطأ",
-    "successTitle": "نجاح"
-
+    "error": "Tuccḍa",
+    "success": "Arraz",
+    "login_failed": "Anekcum ur yeddi ara",
+    "update_success": "Leqqem yedda",
+    "loading": "Asali...",
+    "errorTitle": "Tuccḍa",
+    "successTitle": "Arraz"
 }

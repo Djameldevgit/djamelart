@@ -39,6 +39,7 @@ import { getPrivacySettings } from './redux/actions/privacyAction';
 import infoaplicacionn from './pages/infoaplicacionn';
 import bloginfo from './pages/bloginfo';
 import InfoAplicacion from './components/blogInfoComment/InfoAplicacion';
+import Bloqueos404 from './components/adminitration/Bloqueos404';
 
 
 
@@ -149,6 +150,7 @@ function App() {
   <Route exact path="/bloginfo" component={bloginfo} />
   <Route exact path="/infoaplicacionn" component={infoaplicacionn} />
   <Route exact path="/infoAplicacionn" component={InfoAplicacion} />
+  <Route exact path="/bloqueos" component={Bloqueos404} />
   <Route exact path="/video/:obraId" component={video} />
   <Route exact path="/forgot_password" component={ForgotPassword} />
   <Route path="/user/reset/:token" component={ResetPassword} exact />

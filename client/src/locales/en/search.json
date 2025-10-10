@@ -1,145 +1,145 @@
 {
   "header": {
-    "title": "بحث",
-    "filtersActive": "فلاتر نشطة"
+    "title": "Search",
+    "filtersActive": "Active filters"
   },
   "search": {
-    "placeholder": "ابحث بالعنوان، الوصف، الفنان..."
+    "placeholder": "Search by title, description, artist..."
   },
   "buttons": {
-    "search": "🔍 بحث",
-    "filters": "الفلاتر",
-    "hide": "إخفاء",
-    "advanced": "متقدم",
-    "searching": "جاري البحث...",
-    "applyFilters": "تطبيق الفلاتر",
-    "clearAll": "مسح الكل"
+    "search": "🔍 Search",
+    "filters": "Filters",
+    "hide": "Hide",
+    "advanced": "Advanced",
+    "searching": "Searching...",
+    "applyFilters": "Apply filters",
+    "clearAll": "Clear all"
   },
   "users": {
-    "title": "المستخدمون الموجودون"
+    "title": "Users found"
   },
   "categories": {
-    "title": "الفئات",
-    "painting": "الرسم",
-    "sculpture": "النحت",
-    "photography": "التصوير الفوتوغرافي",
-    "drawing": "الرسم",
-    "engraving": "النقش",
-    "digital_art": "الفن الرقمي",
-    "collage": "كولاج",
-    "textile_art": "الفن النسيجي"
+    "title": "Categories",
+    "painting": "Painting",
+    "sculpture": "Sculpture",
+    "photography": "Photography",
+    "drawing": "Drawing",
+    "engraving": "Engraving",
+    "digital_art": "Digital art",
+    "collage": "Collage",
+    "textile_art": "Textile art"
   },
   "filters": {
-    "theme": "الموضوع",
-    "style": "النمط",
-    "minPrice": "أدنى سعر",
-    "maxPrice": "أعلى سعر",
-    "location": "الموقع",
-    "allThemes": "جميع المواضيع",
-    "allStyles": "جميع الأنماط",
-    "pricePlaceholder": "0 دينار",
-    "maxPricePlaceholder": "10000 دينار",
-    "locationPlaceholder": "مثال: الجزائر",
+    "theme": "Theme",
+    "style": "Style",
+    "minPrice": "Minimum price",
+    "maxPrice": "Maximum price",
+    "location": "Location",
+    "allThemes": "All themes",
+    "allStyles": "All styles",
+    "pricePlaceholder": "0 dinars",
+    "maxPricePlaceholder": "10000 dinars",
+    "locationPlaceholder": "Ex: Algeria",
     "themes": {
-      "abstract": "تجريدي",
-      "landscape": "مناظر طبيعية",
-      "portrait": "بورتريه",
-      "still_life": "طبيعة صامتة",
-      "urban": "حضري",
-      "surreal": "سريالي"
+      "abstract": "Abstract",
+      "landscape": "Landscape",
+      "portrait": "Portrait",
+      "still_life": "Still life",
+      "urban": "Urban",
+      "surreal": "Surreal"
     },
     "styles": {
-      "realism": "واقعية",
-      "impressionism": "انطباعية",
-      "expressionism": "تعبيرية",
-      "cubism": "تكعيبية",
-      "surrealism": "سريالية",
-      "abstract": "تجريدي"
+      "realism": "Realism",
+      "impressionism": "Impressionism",
+      "expressionism": "Expressionism",
+      "cubism": "Cubism",
+      "surrealism": "Surrealism",
+      "abstract": "Abstract"
     }
   },
   "advancedFilters": {
-    "title": "فلاتر متقدمة",
-    "artType": "نوع الفن",
-    "material": "المادة",
-    "technique": "التقنية",
-    "orientation": "الاتجاه",
-    "size": "الحجم",
-    "year": "السنة",
-    "tags": "الوسوم",
-    "sortBy": "ترتيب حسب",
-    "order": "الترتيب",
-    "allTypes": "جميع الأنواع",
-    "allMaterials": "جميع المواد",
-    "allTechniques": "جميع التقنيات",
-    "allOrientations": "جميع الاتجاهات",
-    "allSizes": "جميع الأحجام",
-    "tagsPlaceholder": "تجريدي، حديث، ملون...",
+    "title": "Advanced filters",
+    "artType": "Art type",
+    "material": "Material",
+    "technique": "Technique",
+    "orientation": "Orientation",
+    "size": "Size",
+    "year": "Year",
+    "tags": "Tags",
+    "sortBy": "Sort by",
+    "order": "Order",
+    "allTypes": "All types",
+    "allMaterials": "All materials",
+    "allTechniques": "All techniques",
+    "allOrientations": "All orientations",
+    "allSizes": "All sizes",
+    "tagsPlaceholder": "abstract, modern, colorful...",
     "artTypes": {
-      "oil_painting": "رسم زيتي",
-      "watercolor": "ألوان مائية",
-      "acrylic": "أكريليك",
-      "digital_art": "فن رقمي",
-      "sculpture": "نحت",
-      "photography": "تصوير فوتوغرافي",
-      "drawing": "رسم",
-      "mixed_media": "تقنية مختلطة"
+      "oil_painting": "Oil painting",
+      "watercolor": "Watercolor",
+      "acrylic": "Acrylic",
+      "digital_art": "Digital art",
+      "sculpture": "Sculpture",
+      "photography": "Photography",
+      "drawing": "Drawing",
+      "mixed_media": "Mixed media"
     },
     "materials": {
-      "canvas": "قماش",
-      "paper": "ورق",
-      "wood": "خشب",
-      "metal": "معدن",
-      "clay": "طين",
-      "stone": "حجر",
-      "fabric": "قماش",
-      "digital": "رقمي"
+      "canvas": "Canvas",
+      "paper": "Paper",
+      "wood": "Wood",
+      "metal": "Metal",
+      "clay": "Clay",
+      "stone": "Stone",
+      "fabric": "Fabric",
+      "digital": "Digital"
     },
     "techniques": {
-      "oil_painting": "رسم زيتي",
-      "watercolor": "ألوان مائية",
-      "acrylic": "أكريليك",
-      "digital_painting": "رسم رقمي",
-      "sculpting": "نحت",
-      "carving": "نقش",
-      "photography_digital": "تصوير رقمي",
-      "collage": "كولاج"
+      "oil_painting": "Oil painting",
+      "watercolor": "Watercolor",
+      "acrylic": "Acrylic",
+      "digital_painting": "Digital painting",
+      "sculpting": "Sculpting",
+      "carving": "Carving",
+      "photography_digital": "Digital photography",
+      "collage": "Collage"
     },
     "orientations": {
-      "horizontal": "أفقي",
-      "vertical": "عمودي",
-      "square": "مربع"
+      "horizontal": "Horizontal",
+      "vertical": "Vertical",
+      "square": "Square"
     },
     "sizes": {
-      "small": "صغير",
-      "medium": "متوسط",
-      "large": "كبير",
-      "extra_large": "كبير جداً"
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large",
+      "extra_large": "Extra large"
     },
     "sortOptions": {
-      "createdAt": "الأحدث",
-      "price": "السعر",
-      "title": "العنوان",
-      "likesCount": "الأكثر شعبية"
+      "createdAt": "Most recent",
+      "price": "Price",
+      "title": "Title",
+      "likesCount": "Most popular"
     },
     "orderOptions": {
-      "desc": "تنازلي",
-      "asc": "تصاعدي"
+      "desc": "Descending",
+      "asc": "Ascending"
     }
   },
   "results": {
-    "title": "النتائج",
-    "top": "أعلى",
-    "loadingPosts": "جاري تحميل المنشورات...",
-    "searching": "جاري البحث...",
+    "title": "Results",
+    "top": "Top",
+    "loadingPosts": "Loading posts...",
+    "searching": "Searching...",
     "noResults": {
-      "title": "لم يتم العثور على نتائج",
-      "withFilters": "حاول استخدام فلاتر أو مصطلحات بحث أخرى.",
-      "withoutFilters": "لا توجد منشورات متاحة في الوقت الحالي."
+      "title": "No results found",
+      "withFilters": "Try using other filters or search terms.",
+      "withoutFilters": "No posts available at the moment."
     }
   },
   "errors": {
-    "loadingPosts": "خطأ في تحميل المنشورات",
-    "searchError": "خطأ في البحث",
-    "userSearchError": "خطأ في البحث عن المستخدمين"
+    "loadingPosts": "Error loading posts",
+    "searchError": "Search error",
+    "userSearchError": "Error searching users"
   }
 }

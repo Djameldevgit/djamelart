@@ -1,145 +1,145 @@
 {
   "header": {
-    "title": "بحث",
-    "filtersActive": "فلاتر نشطة"
+    "title": "Поиск",
+    "filtersActive": "Активные фильтры"
   },
   "search": {
-    "placeholder": "ابحث بالعنوان، الوصف، الفنان..."
+    "placeholder": "Поиск по названию, описанию, художнику..."
   },
   "buttons": {
-    "search": "🔍 بحث",
-    "filters": "الفلاتر",
-    "hide": "إخفاء",
-    "advanced": "متقدم",
-    "searching": "جاري البحث...",
-    "applyFilters": "تطبيق الفلاتر",
-    "clearAll": "مسح الكل"
+    "search": "🔍 Поиск",
+    "filters": "Фильтры",
+    "hide": "Скрыть",
+    "advanced": "Расширенные",
+    "searching": "Поиск...",
+    "applyFilters": "Применить фильтры",
+    "clearAll": "Очистить все"
   },
   "users": {
-    "title": "المستخدمون الموجودون"
+    "title": "Найденные пользователи"
   },
   "categories": {
-    "title": "الفئات",
-    "painting": "الرسم",
-    "sculpture": "النحت",
-    "photography": "التصوير الفوتوغرافي",
-    "drawing": "الرسم",
-    "engraving": "النقش",
-    "digital_art": "الفن الرقمي",
-    "collage": "كولاج",
-    "textile_art": "الفن النسيجي"
+    "title": "Категории",
+    "painting": "Живопись",
+    "sculpture": "Скульптура",
+    "photography": "Фотография",
+    "drawing": "Рисунок",
+    "engraving": "Гравюра",
+    "digital_art": "Цифровое искусство",
+    "collage": "Коллаж",
+    "textile_art": "Текстильное искусство"
   },
   "filters": {
-    "theme": "الموضوع",
-    "style": "النمط",
-    "minPrice": "أدنى سعر",
-    "maxPrice": "أعلى سعر",
-    "location": "الموقع",
-    "allThemes": "جميع المواضيع",
-    "allStyles": "جميع الأنماط",
-    "pricePlaceholder": "0 دينار",
-    "maxPricePlaceholder": "10000 دينار",
-    "locationPlaceholder": "مثال: الجزائر",
+    "theme": "Тема",
+    "style": "Стиль",
+    "minPrice": "Минимальная цена",
+    "maxPrice": "Максимальная цена",
+    "location": "Местоположение",
+    "allThemes": "Все темы",
+    "allStyles": "Все стили",
+    "pricePlaceholder": "0 динаров",
+    "maxPricePlaceholder": "10000 динаров",
+    "locationPlaceholder": "Например: Алжир",
     "themes": {
-      "abstract": "تجريدي",
-      "landscape": "مناظر طبيعية",
-      "portrait": "بورتريه",
-      "still_life": "طبيعة صامتة",
-      "urban": "حضري",
-      "surreal": "سريالي"
+      "abstract": "Абстрактное",
+      "landscape": "Пейзаж",
+      "portrait": "Портрет",
+      "still_life": "Натюрморт",
+      "urban": "Городское",
+      "surreal": "Сюрреализм"
     },
     "styles": {
-      "realism": "واقعية",
-      "impressionism": "انطباعية",
-      "expressionism": "تعبيرية",
-      "cubism": "تكعيبية",
-      "surrealism": "سريالية",
-      "abstract": "تجريدي"
+      "realism": "Реализм",
+      "impressionism": "Импрессионизм",
+      "expressionism": "Экспрессионизм",
+      "cubism": "Кубизм",
+      "surrealism": "Сюрреализм",
+      "abstract": "Абстрактное"
     }
   },
   "advancedFilters": {
-    "title": "فلاتر متقدمة",
-    "artType": "نوع الفن",
-    "material": "المادة",
-    "technique": "التقنية",
-    "orientation": "الاتجاه",
-    "size": "الحجم",
-    "year": "السنة",
-    "tags": "الوسوم",
-    "sortBy": "ترتيب حسب",
-    "order": "الترتيب",
-    "allTypes": "جميع الأنواع",
-    "allMaterials": "جميع المواد",
-    "allTechniques": "جميع التقنيات",
-    "allOrientations": "جميع الاتجاهات",
-    "allSizes": "جميع الأحجام",
-    "tagsPlaceholder": "تجريدي، حديث، ملون...",
+    "title": "Расширенные фильтры",
+    "artType": "Тип искусства",
+    "material": "Материал",
+    "technique": "Техника",
+    "orientation": "Ориентация",
+    "size": "Размер",
+    "year": "Год",
+    "tags": "Теги",
+    "sortBy": "Сортировать по",
+    "order": "Порядок",
+    "allTypes": "Все типы",
+    "allMaterials": "Все материалы",
+    "allTechniques": "Все техники",
+    "allOrientations": "Все ориентации",
+    "allSizes": "Все размеры",
+    "tagsPlaceholder": "абстрактный, современный, красочный...",
     "artTypes": {
-      "oil_painting": "رسم زيتي",
-      "watercolor": "ألوان مائية",
-      "acrylic": "أكريليك",
-      "digital_art": "فن رقمي",
-      "sculpture": "نحت",
-      "photography": "تصوير فوتوغرافي",
-      "drawing": "رسم",
-      "mixed_media": "تقنية مختلطة"
+      "oil_painting": "Масляная живопись",
+      "watercolor": "Акварель",
+      "acrylic": "Акрил",
+      "digital_art": "Цифровое искусство",
+      "sculpture": "Скульптура",
+      "photography": "Фотография",
+      "drawing": "Рисунок",
+      "mixed_media": "Смешанная техника"
     },
     "materials": {
-      "canvas": "قماش",
-      "paper": "ورق",
-      "wood": "خشب",
-      "metal": "معدن",
-      "clay": "طين",
-      "stone": "حجر",
-      "fabric": "قماش",
-      "digital": "رقمي"
+      "canvas": "Холст",
+      "paper": "Бумага",
+      "wood": "Дерево",
+      "metal": "Металл",
+      "clay": "Глина",
+      "stone": "Камень",
+      "fabric": "Ткань",
+      "digital": "Цифровой"
     },
     "techniques": {
-      "oil_painting": "رسم زيتي",
-      "watercolor": "ألوان مائية",
-      "acrylic": "أكريليك",
-      "digital_painting": "رسم رقمي",
-      "sculpting": "نحت",
-      "carving": "نقش",
-      "photography_digital": "تصوير رقمي",
-      "collage": "كولاج"
+      "oil_painting": "Масляная живопись",
+      "watercolor": "Акварель",
+      "acrylic": "Акрил",
+      "digital_painting": "Цифровая живопись",
+      "sculpting": "Скульптура",
+      "carving": "Резьба",
+      "photography_digital": "Цифровая фотография",
+      "collage": "Коллаж"
     },
     "orientations": {
-      "horizontal": "أفقي",
-      "vertical": "عمودي",
-      "square": "مربع"
+      "horizontal": "Горизонтальная",
+      "vertical": "Вертикальная",
+      "square": "Квадратная"
     },
     "sizes": {
-      "small": "صغير",
-      "medium": "متوسط",
-      "large": "كبير",
-      "extra_large": "كبير جداً"
+      "small": "Маленький",
+      "medium": "Средний",
+      "large": "Большой",
+      "extra_large": "Очень большой"
     },
     "sortOptions": {
-      "createdAt": "الأحدث",
-      "price": "السعر",
-      "title": "العنوان",
-      "likesCount": "الأكثر شعبية"
+      "createdAt": "Самые новые",
+      "price": "Цена",
+      "title": "Название",
+      "likesCount": "Самые популярные"
     },
     "orderOptions": {
-      "desc": "تنازلي",
-      "asc": "تصاعدي"
+      "desc": "По убыванию",
+      "asc": "По возрастанию"
     }
   },
   "results": {
-    "title": "النتائج",
-    "top": "أعلى",
-    "loadingPosts": "جاري تحميل المنشورات...",
-    "searching": "جاري البحث...",
+    "title": "Результаты",
+    "top": "Топ",
+    "loadingPosts": "Загрузка постов...",
+    "searching": "Поиск...",
     "noResults": {
-      "title": "لم يتم العثور على نتائج",
-      "withFilters": "حاول استخدام فلاتر أو مصطلحات بحث أخرى.",
-      "withoutFilters": "لا توجد منشورات متاحة في الوقت الحالي."
+      "title": "Результаты не найдены",
+      "withFilters": "Попробуйте использовать другие фильтры или условия поиска.",
+      "withoutFilters": "В настоящее время нет доступных постов."
     }
   },
   "errors": {
-    "loadingPosts": "خطأ في تحميل المنشورات",
-    "searchError": "خطأ في البحث",
-    "userSearchError": "خطأ في البحث عن المستخدمين"
+    "loadingPosts": "Ошибка загрузки постов",
+    "searchError": "Ошибка поиска",
+    "userSearchError": "Ошибка поиска пользователей"
   }
 }
