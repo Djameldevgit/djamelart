@@ -27,7 +27,7 @@ const VerifyModal = ({ show, onClose, closeOnOverlayClick = true }) => {
       onHide={onClose}
       backdrop={closeOnOverlayClick ? true : 'static'}
       keyboard={true}
- 
+      centered
       aria-labelledby="verify-modal-title"
     >
       <Modal.Header closeButton>
