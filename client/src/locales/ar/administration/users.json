@@ -1,29 +1,24 @@
 {
-  "deleteModal": {
-    "searchUsers":  "بحث المستخدمين",
-    
-    "title": "حذف المستخدم",
-    "message": "هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
-    "cancel": "إلغاء",
-    "confirm": "حذف"
-  },
-  "noUsersFound": "لم يتم العثور على مستخدمين.",
-  "tableHeaders": {
-    "user": "المستخدم",
-    "status": "الحالة",
-    "lastDisconnect": "آخر تسجيل خروج",
-    "registration": "تاريخ التسجيل",
-    "verification": "التحقق",
-    "accountStatus": "حالة الحساب",
-    "blockStatus": "حالة الحظر",
-    "actions": "الإجراءات"
-  },
+  "searchUsers": "البحث عن المستخدمين...",
+  "noUsersFound": "لم يتم العثور على مستخدمين",
+  "noUsersFoundSearch": "لا يوجد مستخدمون يطابقون بحثك",
+  "searching": "جاري البحث عن المستخدمين...",
+  
+  "user": "المستخدم",
+  "statuss": "الحالة",
+  "lastDisconnect": "آخر انقطاع",
+  "registration": "التسجيل",
+  "verification": "التحقق",
+  "accountStatus": "حالة الحساب",
+  "blockStatus": "الحظر",
+  "actions": "الإجراءات",
+
   "status": {
     "online": "متصل",
     "offline": "غير متصل",
     "offlineSince": "غير متصل منذ {{time}}",
     "verified": "تم التحقق",
-    "notVerified": "لم يتم التحقق",
+    "notVerified": "غير موثوق",
     "active": "نشط",
     "inactive": "غير نشط",
     "blocked": "محظور",
@@ -32,17 +27,27 @@
   "action": {
     "edit": "تعديل",
     "delete": "حذف",
-    "managePermissions": "إدارة الصلاحيات",
-    "deactivate": "إلغاء التفعيل",
     "activate": "تفعيل",
+    "deactivate": "تعطيل",
     "block": "حظر",
-    "unblock": "إلغاء الحظر"
+    "unblock": "رفع الحظر",
+    "verify": "تحقق",
+    "unverify": "إلغاء التحقق",
+    "managePermissions": "إدارة الصلاحيات"
+  },
+  "deleteModal": {
+    "title": "تأكيد الحذف",
+    "message": "هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.",
+    "cancel": "إلغاء",
+    "confirm": "حذف المستخدم"
   },
   "errors": {
-    "fetchUsers": "حدث خطأ أثناء جلب المستخدمين",
-    "loadMore": "حدث خطأ أثناء تحميل المزيد من المستخدمين",
-    "deleteUser": "حدث خطأ أثناء حذف المستخدم",
-    "blockUser": "حدث خطأ أثناء حظر المستخدم",
-    "unblockUser": "حدث خطأ أثناء إلغاء حظر المستخدم"
+    "fetchUsers": "خطأ في تحميل المستخدمين",
+    "loadMore": "خطأ في تحميل المزيد من المستخدمين",
+    "deleteUser": "خطأ في حذف المستخدم",
+    "blockUser": "خطأ في حظر المستخدم",
+    "unblockUser": "خطأ في رفع حظر المستخدم",
+    "toggleStatus": "خطأ في تغيير الحالة",
+    "toggleVerification": "خطأ في تغيير التحقق"
   }
 }

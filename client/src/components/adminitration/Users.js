@@ -358,7 +358,7 @@ const Users = () => {
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
         <div className="text-center">
           <Spinner animation="border" variant="primary" style={{ width: "3rem", height: "3rem" }} />
-          <p className="mt-3 text-muted fw-semibold">Cargando usuarios...</p>
+          <p className="mt-3 text-muted fw-semibold">Chargements utilizateurs...</p>
         </div>
       </div>
     );
@@ -371,10 +371,7 @@ const Users = () => {
         <Col>
           <Card className="border-0 shadow-sm bg-gradient" style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
             <Card.Body className="py-4">
-              <h2 className="text-white mb-3 fw-bold">
-                <i className="bi bi-people-fill me-2"></i>
-                Gestión de Usuarios
-              </h2>
+            
               <Row className="align-items-center g-3">
                 <Col lg={8} md={7}>
                   <InputGroup size="lg">
@@ -477,7 +474,7 @@ const Users = () => {
                       <Row className="g-3 mb-3">
                         <Col xs={6}>
                           <div className="p-2 bg-white rounded">
-                            <small className="text-muted d-block mb-1">{t('tableHeader.status')}</small>
+                            <small className="text-muted d-block mb-1">{t('status')}</small>
                             {online.some((u) => u._id === user._id) ? (
                               <Badge bg="success" className="w-100">{t('status.online')}</Badge>
                             ) : user.lastDisconnectedAt ? (
@@ -491,7 +488,7 @@ const Users = () => {
                         </Col>
                         <Col xs={6}>
                           <div className="p-2 bg-white rounded">
-                            <small className="text-muted d-block mb-1">{t('tableHeaderssss.lastDisconnect')}</small>
+                            <small className="text-muted d-block mb-1">{t('lastDisconnect')}</small>
                             {user.lastDisconnectedAt ? (
                               <small className="text-dark fw-semibold">
                                 {moment(user.lastDisconnectedAt).fromNow()}
@@ -503,7 +500,7 @@ const Users = () => {
                         </Col>
                         <Col xs={6}>
                           <div className="p-2 bg-white rounded">
-                            <small className="text-muted d-block mb-1">{t('tableHeaderssss.registration')}</small>
+                            <small className="text-muted d-block mb-1">{t('registration')}</small>
                             <small className="text-dark fw-semibold">
                               {new Date(user.createdAt).toLocaleDateString()}
                             </small>
@@ -511,7 +508,7 @@ const Users = () => {
                         </Col>
                         <Col xs={6}>
                           <div className="p-2 bg-white rounded">
-                            <small className="text-muted d-block mb-1">{t('tableHeader.verification')}</small>
+                            <small className="text-muted d-block mb-1">{t('verification')}</small>
                             {user.isVerified ? (
                               <Badge bg="success" className="w-100"><CheckCircleFill className="me-1" /> {t('status.verified')}</Badge>
                             ) : (
@@ -521,7 +518,7 @@ const Users = () => {
                         </Col>
                         <Col xs={6}>
                           <div className="p-2 bg-white rounded">
-                            <small className="text-muted d-block mb-1">{t('tableHeaders.accountStatus')}</small>
+                            <small className="text-muted d-block mb-1">{t('accountStatus')}</small>
                             {user.isActive ? (
                               <Badge bg="success" className="w-100">{t('status.active')}</Badge>
                             ) : (
@@ -531,7 +528,7 @@ const Users = () => {
                         </Col>
                         <Col xs={6}>
                           <div className="p-2 bg-white rounded">
-                            <small className="text-muted d-block mb-1">{t('tableHeaders.blockStatus')}</small>
+                            <small className="text-muted d-block mb-1">{t('blockStatus')}</small>
                             {user.esBloqueado ? (
                               <Badge bg="danger" className="w-100">{t('status.blocked')}</Badge>
                             ) : (
@@ -544,7 +541,7 @@ const Users = () => {
                       <Dropdown className="d-grid">
                         <Dropdown.Toggle variant="primary" size="sm" className="w-100">
                           <ThreeDotsVertical className="me-2" />
-                          {t('tableHeaders.actions')}
+                          {t('actions')}
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="w-100 shadow">
                           <Dropdown.Item disabled className="text-muted">
@@ -617,14 +614,14 @@ const Users = () => {
                 <thead style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
                   <tr>
                     <th className="text-white border-0 py-3">#</th>
-                    <th className="text-white border-0 py-3">{t('tableHeaders.user')}</th>
-                    <th className="text-white border-0 py-3">{t('tableHeaders.status')}</th>
-                    <th className="text-white border-0 py-3">{t('tableHeaders.lastDisconnect')}</th>
-                    <th className="text-white border-0 py-3">{t('tableHeaders.registration')}</th>
-                    <th className="text-white border-0 py-3">{t('tableHeaders.verification')}</th>
-                    <th className="text-white border-0 py-3">{t('tableHeaders.accountStatus')}</th>
-                    <th className="text-white border-0 py-3">{t('tableHeaders.blockStatus')}</th>
-                    <th className="text-white border-0 py-3 text-center">{t('tableHeaders.actions')}</th>
+                    <th className="text-white border-0 py-3">{t('user')}</th>
+                    <th className="text-white border-0 py-3">{t('status')}</th>
+                    <th className="text-white border-0 py-3">{t('lastDisconnect')}</th>
+                    <th className="text-white border-0 py-3">{t('registration')}</th>
+                    <th className="text-white border-0 py-3">{t('verification')}</th>
+                    <th className="text-white border-0 py-3">{t('accountStatus')}</th>
+                    <th className="text-white border-0 py-3">{t('blockStatus')}</th>
+                    <th className="text-white border-0 py-3 text-center">{t('actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -763,7 +760,7 @@ const Users = () => {
             <Card className="border-0 shadow-sm">
               <Card.Body className="text-center py-3">
                 <Spinner animation="border" variant="primary" size="sm" className="me-2" />
-                <span className="text-muted">Cargando más usuarios...</span>
+                <span className="text-muted">Charge plus...</span>
               </Card.Body>
             </Card>
           </Col>

@@ -15,7 +15,7 @@ import EmojiPicker from 'emoji-picker-react'
 const RightSide = () => {
     const { auth, message, theme, socket, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
-    const { t, i18n } = useTranslation('chat')
+    const { t, i18n } = useTranslation('message')
 
     const { id } = useParams()
     const [user, setUser] = useState([])
@@ -130,9 +130,9 @@ const RightSide = () => {
         const totalAfterUpload = media.length + files.length
     
         if (totalAfterUpload > maxMedia) {
-            err = t('chat.maxFiles', { 
+            err = t('maxFiles', { 
                 max: maxMedia,
-                extraInfo: maxMedia === 4 ? t('chat.superAdminInfo') : ""
+                extraInfo: maxMedia === 4 ? t('superAdminInfo') : ""
             })
             dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } })
             return
@@ -140,24 +140,24 @@ const RightSide = () => {
     
         files.forEach(file => {
             if (!file) {
-                err = t('chat.fileNotFound')
+                err = t('fileNotFound')
                 return
             }
     
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
             if (!allowedTypes.includes(file.type)) {
-                err = t('chat.onlyImages')
+                err = t('onlyImages')
                 return
             }
     
             if (file.size > 1024 * 1024 * 5) {
-                err = t('chat.fileTooLarge')
+                err = t('fileTooLarge')
                 return
             }
 
             const isValidFileName = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name)
             if (!isValidFileName) {
-                err = t('chat.invalidFileName', { fileName: file.name })
+                err = t('invalidFileName', { fileName: file.name })
                 return
             }
     
@@ -380,7 +380,7 @@ const RightSide = () => {
                         }} 
                         ref={pageEnd}
                     >
-                        {t('chat.loadMore')}
+                        {t('loadMore')}
                     </button>
 
                     {data.map((msg, index) => (
@@ -488,7 +488,7 @@ const RightSide = () => {
                             <div className="position-relative flex-grow-1">
                                 <Form.Control
                                     type="text"
-                                    placeholder={t('chat.placeholder', 'Escribe un mensaje...')}
+                                    placeholder={t('placeholder', 'Escribe un mensaje...')}
                                     value={text}
                                     onChange={handleTextChange}
                                     style={{

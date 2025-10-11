@@ -120,8 +120,8 @@ function App() {
   if (auth.token && auth.user?.esBloqueado) {
     return (
       <Router>
-        <Route exact path="/bloqueos" component={Bloqueos} />
-        <Route path="*" component={Bloqueos} />
+        <Route exact path="/bloqueos404" component={Bloqueos404} />
+        <Route path="*" component={Bloqueos404} />
       </Router>
     )
   }
@@ -150,7 +150,7 @@ function App() {
   <Route exact path="/bloginfo" component={bloginfo} />
   <Route exact path="/infoaplicacionn" component={infoaplicacionn} />
   <Route exact path="/infoAplicacionn" component={InfoAplicacion} />
-  <Route exact path="/bloqueos" component={Bloqueos404} />
+  <Route exact path="/bloqueos404" component={Bloqueos404} />
   <Route exact path="/video/:obraId" component={video} />
   <Route exact path="/forgot_password" component={ForgotPassword} />
   <Route path="/user/reset/:token" component={ResetPassword} exact />

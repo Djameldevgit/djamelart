@@ -1,7 +1,7 @@
 // components/home/post_card/ImageOverlay.js
 import React from 'react';
 import ActionButton from './ActionButton';
-import moment from 'moment';
+  
 
 const GRADIENTS = {
   cartAdd: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -112,7 +112,7 @@ const ImageOverlay = ({
           }}>
             schedule
           </span>
-          <span>{formatDate(post.createdAt)} • {moment(post.createdAt).fromNow()}</span>
+          <span>{formatDate(post.createdAt)}  </span>
         </div>
       )}
 

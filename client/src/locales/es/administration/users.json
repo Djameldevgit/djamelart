@@ -1,26 +1,22 @@
 {
-  "deleteModal": {
-    "searchUsers":  "Buscar usuarios",
-    "title": "Eliminar usuario",
-    "message": "¿Estás seguro de que quieres eliminar este usuario?",
-    "cancel": "Cancelar",
-    "confirm": "Eliminar"
-  },
-  "noUsersFound": "No se encontraron usuarios.",
-  "tableHeaders": {
+  "searchUsers": "Buscar usuarios...",
+  "noUsersFound": "No se encontraron usuarios",
+  "noUsersFoundSearch": "No se encontraron usuarios que coincidan con la búsqueda",
+  "searching": "Buscando usuarios...",
+ 
     "user": "Usuario",
-    "status": "Estado",
+   
     "lastDisconnect": "Última desconexión",
-    "registration": "Fecha de registro",
+    "registration": "Registro",
     "verification": "Verificación",
-    "accountStatus": "Estado de la cuenta",
-    "blockStatus": "Estado de bloqueo",
-    "actions": "Acciones"
-  },
+    "accountStatus": "Estado cuenta",
+    "blockStatus": "Bloqueo",
+    "actions": "Acciones",
+ 
   "status": {
     "online": "En línea",
     "offline": "Desconectado",
-    "offlineSince": "Desconectado desde {{time}}",
+    "offlineSince": "Desconectado {{time}}",
     "verified": "Verificado",
     "notVerified": "No verificado",
     "active": "Activo",
@@ -31,32 +27,27 @@
   "action": {
     "edit": "Editar",
     "delete": "Eliminar",
-    "verify": "Verfificado",
-    "unverify": "No Verfificado",
-    "managePermissions": "Gestionar permisos",
-    "deactivate": "Desactivar",
     "activate": "Activar",
+    "deactivate": "Desactivar",
     "block": "Bloquear",
-    "unblock": "Desbloquear"
+    "unblock": "Desbloquear",
+    "verify": "Verificar",
+    "unverify": "Quitar verificación",
+    "managePermissions": "Gestionar permisos"
+  },
+  "deleteModal": {
+    "title": "Confirmar eliminación",
+    "message": "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.",
+    "cancel": "Cancelar",
+    "confirm": "Eliminar usuario"
   },
   "errors": {
-    "fetchUsers": "Error al obtener los usuarios",
+    "fetchUsers": "Error al cargar usuarios",
     "loadMore": "Error al cargar más usuarios",
-    "deleteUser": "Error al eliminar el usuario",
-    "blockUser": "Error al bloquear el usuario",
-    "unblockUser": "Error al desbloquear el usuario"
-  },
-
-  "verify": "Verificar",
-  "unverify": "Quitar verificación",
-  "block": "Bloquear",
-  "unblock": "Desbloquear",
-  "activate": "Activar",
-  "deactivate": "Desactivar",
-  "delete": "Eliminar",
-  "managePermissions": "Gestionar permisos",
-  "edit": "Editar"
-
-
-
+    "deleteUser": "Error al eliminar usuario",
+    "blockUser": "Error al bloquear usuario",
+    "unblockUser": "Error al desbloquear usuario",
+    "toggleStatus": "Error al cambiar estado",
+    "toggleVerification": "Error al cambiar verificación"
+  }
 }

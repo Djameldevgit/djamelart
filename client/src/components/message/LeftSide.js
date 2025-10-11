@@ -24,7 +24,7 @@ const LeftSide = () => {
   const pageEnd = useRef()
   const [page, setPage] = useState(0)
 
-  const { t } = useTranslation('chat')
+  const { t } = useTranslation('message')
   const lang = languageReducer.language || 'es'
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const LeftSide = () => {
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
-        payload: { error: err.response?.data?.msg || t('message.searchError') }
+        payload: { error: err.response?.data?.msg || t('searchError') }
       })
     } finally {
       setIsSearching(false)
@@ -128,7 +128,7 @@ const LeftSide = () => {
                 <Form.Control
                   type="text"
                   value={search}
-                  placeholder={t('message.searchPlaceholder')}
+                  placeholder={t('searchPlaceholder')}
                   onChange={e => setSearch(e.target.value)}
                   style={{
                     borderRadius: lang === 'ar' ? '0 25px 25px 0' : '25px 0 0 25px',
@@ -175,7 +175,7 @@ const LeftSide = () => {
                   padding: '4px 8px'
                 }}
               >
-                {t('message.conversations')}: {message.users.length}
+                {t('conversations')}: {message.users.length}
               </Badge>
             </div>
           </Card.Body>
@@ -203,7 +203,7 @@ const LeftSide = () => {
                 fontWeight: '600'
               }}
             >
-              {t('message.searchResults')} ({searchUsers.length})
+              {t('searchResults')} ({searchUsers.length})
             </div>
             <ListGroup variant="flush">
               {searchUsers.map(user => (
@@ -268,10 +268,10 @@ const LeftSide = () => {
                   <FaInbox size={35} style={{ color: '#667eea' }} />
                 </div>
                 <h6 style={{ fontWeight: '600', marginBottom: '8px' }}>
-                  {t('message.noUsersFound')}
+                  {t('noUsersFound')}
                 </h6>
                 <small style={{ opacity: 0.7 }}>
-                  {t('message.startConversation')}
+                  {t('startConversation')}
                 </small>
               </div>
             ) : (
@@ -331,7 +331,7 @@ const LeftSide = () => {
                               }}
                             >
                               <FaCircle size={6} />
-                              {t('message.online')}
+                              {t('online')}
                             </Badge>
                           ) : (
                             auth.user.following.find(item => item._id === user._id) && (
@@ -344,7 +344,7 @@ const LeftSide = () => {
                                   }}
                                 />
                                 <span style={{ fontSize: '0.65rem', color: theme ? '#aaa' : '#666' }}>
-                                  {t('message.offline')}
+                                  {t('offline')}
                                 </span>
                               </div>
                             )
@@ -366,7 +366,7 @@ const LeftSide = () => {
                             minWidth: '24px',
                             boxShadow: '0 2px 8px rgba(220, 53, 69, 0.4)'
                           }}
-                          title={`${user.unread} ${t('message.unreadMessages')}`}
+                          title={`${user.unread} ${t('unreadMessages')}`}
                         >
                           {user.unread > 9 ? '9+' : user.unread}
                         </Badge>
@@ -388,9 +388,9 @@ const LeftSide = () => {
             border: 'none',
             background: 'transparent'
           }}
-          aria-label={t('message.loadMore2')}
+          aria-label={t('loadMore2')}
         >
-          {t('message.loadMore2')}
+          {t('loadMore2')}
         </button>
       </div>
 

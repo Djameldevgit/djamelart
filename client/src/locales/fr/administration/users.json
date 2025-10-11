@@ -1,48 +1,53 @@
 {
-  "deleteModal": {
-    "searchUsers":  "بحث المستخدمين",
-    
-    "title": "حذف المستخدم",
-    "message": "هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
-    "cancel": "إلغاء",
-    "confirm": "حذف"
-  },
-  "noUsersFound": "لم يتم العثور على مستخدمين.",
-  "tableHeaders": {
-    "user": "المستخدم",
-    "status": "الحالة",
-    "lastDisconnect": "آخر تسجيل خروج",
-    "registration": "تاريخ التسجيل",
-    "verification": "التحقق",
-    "accountStatus": "حالة الحساب",
-    "blockStatus": "حالة الحظر",
-    "actions": "الإجراءات"
-  },
+  "searchUsers": "Rechercher des utilisateurs...",
+  "noUsersFound": "Aucun utilisateur trouvé",
+  "noUsersFoundSearch": "Aucun utilisateur ne correspond à votre recherche",
+  "searching": "Recherche d'utilisateurs...",
+  
+    "user": "Utilisateur",
+    "statuss": "Statut",
+    "lastDisconnect": "Dernière déconnexion",
+    "registration": "Enregistrement",
+    "verification": "Vérification",
+    "accountStatus": "Statut du compte",
+    "blockStatus": "Blocage",
+    "actions": "Actions",
+ 
   "status": {
-    "online": "متصل",
-    "offline": "غير متصل",
-    "offlineSince": "غير متصل منذ {{time}}",
-    "verified": "تم التحقق",
-    "notVerified": "لم يتم التحقق",
-    "active": "نشط",
-    "inactive": "غير نشط",
-    "blocked": "محظور",
-    "notBlocked": "غير محظور"
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "offlineSince": "Hors ligne depuis {{time}}",
+    "verified": "Vérifié",
+    "notVerified": "Non vérifié",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "blocked": "Bloqué",
+    "notBlocked": "Non bloqué"
   },
   "action": {
-    "edit": "تعديل",
-    "delete": "حذف",
-    "managePermissions": "إدارة الصلاحيات",
-    "deactivate": "إلغاء التفعيل",
-    "activate": "تفعيل",
-    "block": "حظر",
-    "unblock": "إلغاء الحظر"
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "activate": "Activer",
+    "deactivate": "Désactiver",
+    "block": "Bloquer",
+    "unblock": "Débloquer",
+    "verify": "Vérifier",
+    "unverify": "Annuler vérification",
+    "managePermissions": "Gérer les permissions"
+  },
+  "deleteModal": {
+    "title": "Confirmer la suppression",
+    "message": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée.",
+    "cancel": "Annuler",
+    "confirm": "Supprimer l'utilisateur"
   },
   "errors": {
-    "fetchUsers": "حدث خطأ أثناء جلب المستخدمين",
-    "loadMore": "حدث خطأ أثناء تحميل المزيد من المستخدمين",
-    "deleteUser": "حدث خطأ أثناء حذف المستخدم",
-    "blockUser": "حدث خطأ أثناء حظر المستخدم",
-    "unblockUser": "حدث خطأ أثناء إلغاء حظر المستخدم"
+    "fetchUsers": "Erreur lors du chargement des utilisateurs",
+    "loadMore": "Erreur lors du chargement d'autres utilisateurs",
+    "deleteUser": "Erreur lors de la suppression de l'utilisateur",
+    "blockUser": "Erreur lors du blocage de l'utilisateur",
+    "unblockUser": "Erreur lors du déblocage de l'utilisateur",
+    "toggleStatus": "Erreur lors du changement de statut",
+    "toggleVerification": "Erreur lors du changement de vérification"
   }
 }

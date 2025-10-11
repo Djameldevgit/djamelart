@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 
-
+const BlockUser = require('../models/blockModel');
 const Users = require('../models/userModel');
 const Posts = require('../models/postModel');
 const Comments = require('../models/commentModel');
@@ -589,106 +589,116 @@ deleteUser: async (req, res) => {
     });
   }
 },
- 
+getUsersAction: async (req, res) => {
+  try {
+    const { filter } = req.query;
 
- 
-  getUsersAction: async (req, res) => {
-    try {
-      const { filter } = req.query;
+    let query = Users.find();
 
-      let query = Users.find();
+    const features = new APIfeatures(query, req.query).paginating();
+    let users = await features.query.sort('-createdAt');
 
-      const features = new APIfeatures(query, req.query).paginating();
-      let users = await features.query.sort('-createdAt');
+    const usersWithDetails = await Promise.all(
+      users.map(async (user) => {
+        const posts = await Posts.find({ user: user._id });
+        const totalLikesReceived = posts.reduce(
+          (acc, post) => acc + post.likes.length,
+          0
+        );
+        const totalCommentsReceived = posts.reduce(
+          (acc, post) => acc + post.comments.length,
+          0
+        );
+        const reportsReceived = await Report.countDocuments({
+          userId: user._id,
+        });
+        const likesGiven = await Posts.countDocuments({ likes: user._id });
+        const commentsMade = await Comments.countDocuments({
+          user: user._id,
+        });
 
-      const usersWithDetails = await Promise.all(
-        users.map(async (user) => {
-          const posts = await Posts.find({ user: user._id });
-          const totalLikesReceived = posts.reduce(
-            (acc, post) => acc + post.likes.length,
-            0
-          );
-          const totalCommentsReceived = posts.reduce(
-            (acc, post) => acc + post.comments.length,
-            0
-          );
-          const reportsReceived = await Report.countDocuments({
-            userId: user._id,
-          });
-          const likesGiven = await Posts.countDocuments({ likes: user._id });
-          const commentsMade = await Comments.countDocuments({
-            user: user._id,
-          });
+        // 🚀 NUEVO: Buscar información de bloqueo del usuario
+        const blockInfo = await BlockUser.findOne({ user: user._id })
+          .populate('userquibloquea', 'username')
+          .select('motivo content fechaLimite esBloqueado createdAt');
 
-          // 🚀 Añadir privacidad de cada usuario
-         
-          return {
-            ...user.toObject(),
-            postCount: posts.length,
-            totalLikesReceived,
-            totalCommentsReceived,
-            totalFollowers: user.followers.length,
-            totalFollowing: user.following.length,
-            totalReportsReceived: reportsReceived,
-            likesGiven,
-            commentsMade,
-              };
-        })
-      );
+        // Preparar información de bloqueo
+        let blockInfoData = null;
+        if (blockInfo) {
+          blockInfoData = {
+            motivo: blockInfo.motivo,
+            content: blockInfo.content,
+            fechaLimite: blockInfo.fechaLimite,
+            esBloqueado: blockInfo.esBloqueado,
+            createdAt: blockInfo.createdAt,
+            bloqueadoPor: blockInfo.userquibloquea ? blockInfo.userquibloquea.username : 'Desconocido'
+          };
+        }
 
-      // 📊 Aplicar filtros
-      switch (filter) {
-        case 'mostLikes':
-          usersWithDetails.sort(
-            (a, b) => b.totalLikesReceived - a.totalLikesReceived
-          );
-          break;
-        case 'mostComments':
-          usersWithDetails.sort(
-            (a, b) => b.totalCommentsReceived - a.totalCommentsReceived
-          );
-          break;
-        case 'mostFollowers':
-          usersWithDetails.sort(
-            (a, b) => b.totalFollowers - a.totalFollowers
-          );
-          break;
-        case 'mostPosts':
-          usersWithDetails.sort((a, b) => b.postCount - a.postCount);
-          break;
-        case 'mostReports':
-          usersWithDetails.sort(
-            (a, b) => b.totalReportsReceived - a.totalReportsReceived
-          );
-          break;
-        case 'lastLogin':
-          usersWithDetails.sort(
-            (a, b) => new Date(b.lastLogin) - new Date(a.lastLogin)
-          );
-          break;
-        case 'latestRegistered':
-          usersWithDetails.sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-          );
-          break;
-        default:
-          break; // ningún filtro
-      }
+        return {
+          ...user.toObject(),
+          postCount: posts.length,
+          totalLikesReceived,
+          totalCommentsReceived,
+          totalFollowers: user.followers.length,
+          totalFollowing: user.following.length,
+          totalReportsReceived: reportsReceived,
+          likesGiven,
+          commentsMade,
+          // 🚀 Añadir información de bloqueo si existe
+          blockInfo: blockInfoData
+        };
+      })
+    );
 
-      res.json({
-        msg: 'Success!',
-        result: usersWithDetails.length,
-        users: usersWithDetails,
-      });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
+    // 📊 Aplicar filtros
+    switch (filter) {
+      case 'mostLikes':
+        usersWithDetails.sort(
+          (a, b) => b.totalLikesReceived - a.totalLikesReceived
+        );
+        break;
+      case 'mostComments':
+        usersWithDetails.sort(
+          (a, b) => b.totalCommentsReceived - a.totalCommentsReceived
+        );
+        break;
+      case 'mostFollowers':
+        usersWithDetails.sort(
+          (a, b) => b.totalFollowers - a.totalFollowers
+        );
+        break;
+      case 'mostPosts':
+        usersWithDetails.sort((a, b) => b.postCount - a.postCount);
+        break;
+      case 'mostReports':
+        usersWithDetails.sort(
+          (a, b) => b.totalReportsReceived - a.totalReportsReceived
+        );
+        break;
+      case 'lastLogin':
+        usersWithDetails.sort(
+          (a, b) => new Date(b.lastLogin) - new Date(a.lastLogin)
+        );
+        break;
+      case 'latestRegistered':
+        usersWithDetails.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        break;
+      default:
+        break; // ningún filtro
     }
-  },
- 
 
-
- 
-
+    res.json({
+      msg: 'Success!',
+      result: usersWithDetails.length,
+      users: usersWithDetails,
+    });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+},
  getInactiveUsers : async (req, res) => {
   try {
     const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
