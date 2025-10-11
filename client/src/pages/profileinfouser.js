@@ -11,7 +11,12 @@ import {
   FaUserCog, FaUserSlash, FaFlag, FaBan, FaShoppingCart, FaSignOutAlt,
   FaPlus, FaCheckCircle, FaGlobe, FaSun, FaMoon
 } from 'react-icons/fa';
-
+/*<MenuOption
+icon={FaTools}
+iconColor="#6c757d"
+title={t('roles', 'Roles')}
+to="/users/roles"
+/>*/
 // Componente MenuOption
 const MenuOption = ({ icon: Icon, iconColor, title, onClick, to, danger }) => {
   const history = useHistory();
@@ -25,9 +30,9 @@ const MenuOption = ({ icon: Icon, iconColor, title, onClick, to, danger }) => {
   };
 
   return (
-    <Card 
+    <Card
       className="mb-3 border-0 shadow-sm"
-      style={{ 
+      style={{
         cursor: 'pointer',
         transition: 'all 0.3s ease',
         borderRadius: '12px'
@@ -155,7 +160,7 @@ const profileinfouser = () => {
   }
 
   const getRoleDisplay = () => {
-    switch(userRole) {
+    switch (userRole) {
       case 'admin':
         return t('adminRole', '👑 Admin');
       case 'Moderateur':
@@ -169,14 +174,14 @@ const profileinfouser = () => {
 
   return (
     <div>
-      <Container className="py-4"style={{
-      direction: lang === 'ar' ? 'rtl' : 'ltr',
-      textAlign: lang === 'ar' ? 'right' : 'left'
-    }}>
+      <Container className="py-4" style={{
+        direction: lang === 'ar' ? 'rtl' : 'ltr',
+        textAlign: lang === 'ar' ? 'right' : 'left'
+      }}>
         <Row className="justify-content-center">
           <Col lg={10} xl={8}>
             {/* Header del Usuario */}
-            <Card 
+            <Card
               className="mb-4 border-0 shadow-sm"
               style={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -195,19 +200,19 @@ const profileinfouser = () => {
                       padding: '3px',
                       background: 'white'
                     }} >
-                   
-                  <Link  to={`/profile/${auth.user?._id}`}>
-                     <img 
-                      src={auth.user?.avatar} 
-                      alt="Avatar"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: '50%',
-                        objectFit: 'cover'
-                      }} />
-                  </Link> 
-                 
+
+                    <Link to={`/profile/${auth.user?._id}`}>
+                      <img
+                        src={auth.user?.avatar}
+                        alt="Avatar"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: '50%',
+                          objectFit: 'cover'
+                        }} />
+                    </Link>
+
                   </div>
                   <div className="flex-grow-1">
                     <h3 className="text-white mb-2">{auth.user?.username}</h3>
@@ -246,7 +251,7 @@ const profileinfouser = () => {
                       {t('verifiedAccount', 'Cuenta Verificada')}
                     </div>
                   ) : (
-                    <Button 
+                    <Button
                       variant="light"
                       className="w-100"
                       style={{ borderRadius: '10px', fontWeight: '600' }}
@@ -332,17 +337,43 @@ const profileinfouser = () => {
                     title={t('shareApp', 'Compartir Aplicación')}
                     onClick={() => setShowModal(true)}
                   />
-                  <MenuOption
-                    icon={FaTools}
-                    iconColor="#6c757d"
-                    title={t('roles', 'Roles')}
-                    to="/users/roles"
-                  />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 </Section>
 
                 {/* Panel de Admin */}
                 {userRole === "admin" && (
-                  <Section 
+                  <Section
                     title={
                       <div className="d-flex align-items-center">
                         <FaShieldAlt className="me-2" size={18} />
@@ -351,6 +382,13 @@ const profileinfouser = () => {
                     }
                     gradient="linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)"
                   >
+                    <MenuOption
+                      icon={FaTools}
+                      iconColor="#6c757d"
+                      title={t('roles', 'Roles')}
+                      to="/users/roles"
+                    />
+
                     <MenuOption
                       icon={FaCog}
                       iconColor="#6c757d"
@@ -363,7 +401,7 @@ const profileinfouser = () => {
                       title={t('globalSettings', 'Configuración global')}
                       onClick={() => setShowFeaturesModal(true)}
                     />
-                   
+
                     <MenuOption
                       icon={FaEnvelope}
                       iconColor="#17a2b8"
@@ -438,21 +476,21 @@ const profileinfouser = () => {
         </Modal.Header>
         <Modal.Body>
           <div className="d-grid gap-2">
-            <Button 
+            <Button
               variant={lang === 'es' ? 'primary' : 'outline-primary'}
               onClick={() => changeLanguage('es')}
               size="lg"
             >
               🇪🇸 Español
             </Button>
-            <Button 
+            <Button
               variant={lang === 'ar' ? 'primary' : 'outline-primary'}
               onClick={() => changeLanguage('ar')}
               size="lg"
             >
               🇦🇪 العربية
             </Button>
-            <Button 
+            <Button
               variant={lang === 'en' ? 'primary' : 'outline-primary'}
               onClick={() => changeLanguage('en')}
               size="lg"
