@@ -104,6 +104,8 @@ const StatusModal = () => {
             }
         }
     */
+
+
     const handleCapture = () => {
         const width = videoRef.current.clientWidth;
         const height = videoRef.current.clientHeight;
@@ -315,7 +317,11 @@ const StatusModal = () => {
         dispatch({ type: GLOBALTYPES.STATUS, payload: false });
     };
 
-
+  const deleteImage = (index) => {
+        const newArr = [...images]
+        newArr.splice(index, 1)
+        setImages(newArr)
+    }
 
 
     useEffect(() => {
