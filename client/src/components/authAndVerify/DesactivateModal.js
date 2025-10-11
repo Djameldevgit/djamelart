@@ -82,7 +82,7 @@ const DesactivateModal = ({ show, onClose, closeOnOverlayClick = true }) => {
       onHide={handleClose}
       backdrop={closeOnOverlayClick ? true : 'static'}
       keyboard={true}
-      centered
+   
       size="lg"
       aria-labelledby="activation-modal-title"
     >

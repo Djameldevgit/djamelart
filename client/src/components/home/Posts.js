@@ -47,7 +47,7 @@ const Posts = ({ filteredPosts }) => {
 
                 {load && <img src={LoadIcon} alt="loading" className="d-block mx-auto" />}
             </div>
-            
+          
             {/* Mostrar LoadMoreBtn solo cuando no hay filtros aplicados */}
             {!filteredPosts && (
                 <LoadMoreBtn 

@@ -36,7 +36,7 @@ const AuthModal = ({ show, onClose, closeOnOverlayClick = true }) => {
       onHide={onClose}
       backdrop={closeOnOverlayClick ? true : 'static'}
       keyboard={true}
-      centered
+     
       aria-labelledby="auth-modal-title"
     >
       <Modal.Header closeButton>

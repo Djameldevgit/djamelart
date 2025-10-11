@@ -150,7 +150,7 @@ const Register = () => {
                                                 onChange={handleChangeInput}
                                                 value={username.toLowerCase().replace(/ /g, '')}
                                                 isInvalid={!!alert.username}
-                                                placeholder="johndoe"
+                                                placeholder=""
                                                 style={{
                                                     borderLeft: 'none',
                                                     borderRadius: '0 12px 12px 0',
@@ -196,7 +196,7 @@ const Register = () => {
                                                 onChange={handleChangeInput}
                                                 value={email}
                                                 isInvalid={!!alert.email}
-                                                placeholder="john@example.com"
+                                                placeholder=""
                                                 style={{
                                                     borderLeft: 'none',
                                                     borderRadius: '0 12px 12px 0',
@@ -242,7 +242,7 @@ const Register = () => {
                                                 onChange={handleChangeInput}
                                                 value={password}
                                                 isInvalid={!!alert.password}
-                                                placeholder="••••••••"
+                                                placeholder=""
                                                 style={{
                                                     borderLeft: 'none',
                                                     borderRight: 'none',
@@ -314,7 +314,7 @@ const Register = () => {
                                                 onChange={handleChangeInput}
                                                 value={cf_password}
                                                 isInvalid={!!alert.cf_password}
-                                                placeholder="••••••••"
+                                                placeholder=""
                                                 style={{
                                                     borderLeft: 'none',
                                                     borderRight: 'none',

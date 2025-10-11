@@ -179,7 +179,7 @@ const Login = () => {
                                                 onFocus={handleInputFocus}
                                                 onClick={handleInputClick}
                                                 value={email}
-                                                placeholder="john@example.com"
+                                                placeholder=""
                                                 style={{
                                                     borderLeft: isRTL ? '2px solid #e2e8f0' : 'none',
                                                     borderRight: isRTL ? 'none' : '2px solid #e2e8f0',
