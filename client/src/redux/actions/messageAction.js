@@ -39,13 +39,7 @@ export const setTyping = (typingData) => ({
 
 
 export const addMessage = ({ msg, auth, socket }) => async (dispatch) => {
-    // Validación inicial
-    if (!msg || !msg.recipient || !msg.text) {
-        return dispatch({
-            type: GLOBALTYPES.ALERT,
-            payload: { error: 'Invalid message structure' }
-        });
-    }
+    
 
     dispatch({ type: MESS_TYPES.ADD_MESSAGE, payload: msg })
 

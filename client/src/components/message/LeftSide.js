@@ -10,13 +10,48 @@ import i18n from 'i18next'
 import { Card, Form, InputGroup, Button, Badge, ListGroup, Spinner } from 'react-bootstrap'
 import { FaSearch, FaCircle, FaInbox } from 'react-icons/fa'
 
+// 🔥 COMPONENTE REUTILIZABLE PARA INDICADOR DE CONEXIÓN
+const OnlineIndicator = ({ isOnline, size = 'small', showText = false, theme }) => {
+    const indicatorSize = size === 'large' ? '12px' : '8px'
+    const textSize = size === 'large' ? '0.75rem' : '0.65rem'
+    
+    return (
+        <div className="d-flex align-items-center gap-1">
+            <div
+                style={{
+                    width: indicatorSize,
+                    height: indicatorSize,
+                    borderRadius: '50%',
+                    background: isOnline ? '#4CAF50' : '#9E9E9E',
+                    border: `2px solid ${theme ? '#16213e' : 'white'}`,
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    animation: isOnline ? 'pulse 2s infinite' : 'none'
+                }}
+                title={isOnline ? 'En línea' : 'Desconectado'}
+            />
+            {showText && (
+                <span 
+                    style={{ 
+                        fontSize: textSize, 
+                        color: isOnline ? '#4CAF50' : (theme ? '#aaa' : '#666'),
+                        fontWeight: '500'
+                    }}
+                >
+                    {isOnline ? 'En línea' : 'Desconectado'}
+                </span>
+            )}
+        </div>
+    )
+}
+
 const LeftSide = () => {
-  const { auth, message, online, languageReducer, theme } = useSelector(state => state)
+  const { auth, message, online, languageReducer, theme, socket } = useSelector(state => state)
   const dispatch = useDispatch()
 
   const [search, setSearch] = useState('')
   const [searchUsers, setSearchUsers] = useState([])
   const [isSearching, setIsSearching] = useState(false)
+  const [onlineUsers, setOnlineUsers] = useState([]) // 🔥 NUEVO: Estado para usuarios online
 
   const history = useHistory()
   const { id } = useParams()
@@ -33,22 +68,64 @@ const LeftSide = () => {
     }
   }, [lang])
 
+  // 🔥 NUEVO: Effect para sincronizar estado online con socket
+  useEffect(() => {
+    if (!socket) return
+
+    // Escuchar cambios de estado online
+    socket.on('user-online-status', (data) => {
+      setOnlineUsers(prev => {
+        const filtered = prev.filter(userId => userId !== data.userId)
+        if (data.isOnline) {
+          return [...filtered, data.userId]
+        }
+        return filtered
+      })
+    })
+
+    socket.on('user-connected', (userId) => {
+      setOnlineUsers(prev => [...prev, userId])
+    })
+
+    socket.on('user-disconnected', (userId) => {
+      setOnlineUsers(prev => prev.filter(id => id !== userId))
+    })
+
+    return () => {
+      socket.off('user-online-status')
+      socket.off('user-connected')
+      socket.off('user-disconnected')
+    }
+  }, [socket])
+
+  // 🔥 MEJORADO: Función para verificar si usuario está online
+  const isUserOnline = (userId) => {
+    // Priorizar datos de socket (tiempo real), luego el estado global
+    return onlineUsers.includes(userId) || online.includes(userId)
+  }
+
   const handleSearch = async e => {
     e.preventDefault()
     
-    // Normalización más completa
     const normalizedSearch = search
       .trim()
       .toLowerCase()
-      .normalize("NFD") // Separar acentos de letras
-      .replace(/[\u0300-\u036f]/g, "") // Eliminar diacríticos
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
 
     if (!normalizedSearch) return setSearchUsers([])
 
     try {
       setIsSearching(true)
       const res = await getDataAPI(`search?username=${encodeURIComponent(normalizedSearch)}`, auth.token)
-      setSearchUsers(res.data.users)
+      
+      // 🔥 MEJORADO: Agregar estado online a usuarios de búsqueda
+      const usersWithOnlineStatus = res.data.users.map(user => ({
+        ...user,
+        online: isUserOnline(user._id)
+      }))
+      
+      setSearchUsers(usersWithOnlineStatus)
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
@@ -86,7 +163,9 @@ const LeftSide = () => {
       threshold: 0.1
     })
 
-    observer.observe(pageEnd.current)
+    if (pageEnd.current) {
+      observer.observe(pageEnd.current)
+    }
   }, [setPage])
 
   useEffect(() => {
@@ -95,11 +174,12 @@ const LeftSide = () => {
     }
   }, [message.resultUsers, page, auth, dispatch])
 
+  // 🔥 MEJORADO: Sincronizar online users con el estado global
   useEffect(() => {
-    if (message.firstLoad) {
-      dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online })
+    if (message.firstLoad && online.length > 0) {
+      setOnlineUsers(prev => [...new Set([...prev, ...online])])
     }
-  }, [online, message.firstLoad, dispatch])
+  }, [online, message.firstLoad])
 
   return (
     <div 
@@ -165,18 +245,29 @@ const LeftSide = () => {
               </InputGroup>
             </Form>
 
-            {/* Badge con contador de conversaciones */}
+            {/* Badge con contador de conversaciones y usuarios online */}
             <div className="d-flex justify-content-between align-items-center mt-2">
-              <Badge 
-                bg="light" 
-                text="dark"
-                style={{
-                  fontSize: '0.75rem',
-                  padding: '4px 8px'
-                }}
-              >
-                {t('conversations')}: {message.users.length}
-              </Badge>
+              <div className="d-flex gap-2">
+                <Badge 
+                  bg="light" 
+                  text="dark"
+                  style={{
+                    fontSize: '0.75rem',
+                    padding: '4px 8px'
+                  }}
+                >
+                  {t('conversations')}: {message.users.length}
+                </Badge>
+                <Badge 
+                  bg="success" 
+                  style={{
+                    fontSize: '0.75rem',
+                    padding: '4px 8px'
+                  }}
+                >
+                  {t('online')}: {onlineUsers.length}
+                </Badge>
+              </div>
             </div>
           </Card.Body>
         </Card>
@@ -231,7 +322,17 @@ const LeftSide = () => {
                     e.currentTarget.style.transform = 'translateX(0)';
                   }}
                 >
-                  <UserCard user={user} />
+                  <div style={{ position: 'relative' }}>
+                    <UserCard user={user} />
+                    {/* 🔥 INDICADOR DE CONEXIÓN MEJORADO */}
+                    <div className="mt-2">
+                      <OnlineIndicator 
+                        isOnline={user.online} 
+                        showText={true}
+                        theme={theme}
+                      />
+                    </div>
+                  </div>
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -315,40 +416,13 @@ const LeftSide = () => {
                   >
                     <div style={{ position: 'relative' }}>
                       <UserCard user={user} msg={true}>
-                        {/* Indicador de online/offline mejorado */}
-                        <div style={{ position: 'relative' }}>
-                          {user.online ? (
-                            <Badge
-                              bg="success"
-                              pill
-                              style={{
-                                fontSize: '0.65rem',
-                                padding: '4px 8px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                boxShadow: '0 2px 8px rgba(40, 167, 69, 0.4)'
-                              }}
-                            >
-                              <FaCircle size={6} />
-                              {t('online')}
-                            </Badge>
-                          ) : (
-                            auth.user.following.find(item => item._id === user._id) && (
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <FaCircle 
-                                  size={8} 
-                                  style={{ 
-                                    color: theme ? '#555' : '#ccc',
-                                    opacity: 0.6
-                                  }}
-                                />
-                                <span style={{ fontSize: '0.65rem', color: theme ? '#aaa' : '#666' }}>
-                                  {t('offline')}
-                                </span>
-                              </div>
-                            )
-                          )}
+                        {/* 🔥 INDICADOR DE CONEXIÓN MEJORADO Y CONSISTENTE */}
+                        <div className="mt-1">
+                          <OnlineIndicator 
+                            isOnline={isUserOnline(user._id)} 
+                            showText={true}
+                            theme={theme}
+                          />
                         </div>
                       </UserCard>
 
@@ -394,7 +468,7 @@ const LeftSide = () => {
         </button>
       </div>
 
-      {/* 🎨 ESTILOS PERSONALIZADOS */}
+      {/* 🎨 ESTILOS PERSONALIZADOS MEJORADOS */}
       <style>{`
         .message_chat_list::-webkit-scrollbar {
           width: 6px;
@@ -420,6 +494,29 @@ const LeftSide = () => {
 
         .list-group-item.active * {
           color: white !important;
+        }
+
+        /* 🔥 ANIMACIÓN DE PULSO PARA INDICADOR ONLINE */
+        @keyframes pulse {
+          0% { 
+            transform: scale(1); 
+            opacity: 1;
+          }
+          50% { 
+            transform: scale(1.2); 
+            opacity: 0.7;
+          }
+          100% { 
+            transform: scale(1); 
+            opacity: 1;
+          }
+        }
+
+        /* Asegurar que los textos en items activos sean blancos */
+        .list-group-item.active .text-muted,
+        .list-group-item.active .text-dark {
+          color: white !important;
+          opacity: 0.9;
         }
       `}</style>
     </div>

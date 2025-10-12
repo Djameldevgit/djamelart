@@ -12,6 +12,29 @@ import { Card, Form, Button, Spinner } from 'react-bootstrap'
 import { FaArrowLeft, FaTrash, FaImage, FaPaperPlane, FaTimes, FaSmile } from 'react-icons/fa'
 import EmojiPicker from 'emoji-picker-react'
 
+// 🔥 COMPONENTE PARA INDICADOR DE CONEXIÓN
+const OnlineIndicator = ({ isOnline, size = 'small' }) => {
+    const indicatorSize = size === 'large' ? '12px' : '8px'
+    
+    return (
+        <div
+            style={{
+                position: 'absolute',
+                bottom: '2px',
+                right: '2px',
+                width: indicatorSize,
+                height: indicatorSize,
+                borderRadius: '50%',
+                background: isOnline ? '#4CAF50' : '#9E9E9E',
+                border: `2px solid white`,
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                zIndex: 10
+            }}
+            title={isOnline ? 'En línea' : 'Desconectado'}
+        />
+    )
+}
+
 const RightSide = () => {
     const { auth, message, theme, socket, languageReducer } = useSelector(state => state)
     const dispatch = useDispatch()
@@ -23,6 +46,7 @@ const RightSide = () => {
     const [media, setMedia] = useState([])
     const [loadMedia, setLoadMedia] = useState(false)
     const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+    const [onlineUsers, setOnlineUsers] = useState([]) // 🔥 NUEVO: Estado para usuarios online
 
     const refDisplay = useRef()
     const pageEnd = useRef()
@@ -44,6 +68,46 @@ const RightSide = () => {
             i18n.changeLanguage(lang)
         }
     }, [lang, i18n])
+
+    // 🔥 NUEVO: Effect para manejar usuarios en línea
+    useEffect(() => {
+        if (!socket) return
+
+        // Escuchar estado de conexión del usuario
+        socket.emit('check-user-online', { userId: id })
+        
+        socket.on('user-online-status', (data) => {
+            if (data.userId === id) {
+                setOnlineUsers(prev => {
+                    const filtered = prev.filter(userId => userId !== data.userId)
+                    if (data.isOnline) {
+                        return [...filtered, data.userId]
+                    }
+                    return filtered
+                })
+            }
+        })
+
+        // Escuchar cuando usuarios se conectan
+        socket.on('user-connected', (userId) => {
+            if (userId === id) {
+                setOnlineUsers(prev => [...prev, userId])
+            }
+        })
+
+        // Escuchar cuando usuarios se desconectan
+        socket.on('user-disconnected', (userId) => {
+            if (userId === id) {
+                setOnlineUsers(prev => prev.filter(userId => userId !== id))
+            }
+        })
+
+        return () => {
+            socket.off('user-online-status')
+            socket.off('user-connected')
+            socket.off('user-disconnected')
+        }
+    }, [socket, id])
 
     // 🔥 MEJORADO: Cerrar emoji picker al hacer clic fuera
     useEffect(() => {
@@ -85,7 +149,10 @@ const RightSide = () => {
         }
     }
 
-    // 🔥 NUEVO: Función mejorada para manejar emojis - SIN RESTRICCIONES
+    // 🔥 NUEVO: Función para verificar si el usuario está online
+    const isUserOnline = onlineUsers.includes(id)
+
+    // 🔥 NUEVO: Función mejorada para manejar emojis
     const handleEmojiClick = (emojiObject) => {
         setText(prevText => prevText + emojiObject.emoji)
     }
@@ -118,6 +185,7 @@ const RightSide = () => {
         }
     }, [message.users, id])
 
+    // 🔥 CORREGIDO: Manejo de medios mejorado
     const handleChangeMedia = (e) => {
         const files = [...e.target.files]
         let err = ""
@@ -144,18 +212,20 @@ const RightSide = () => {
                 return
             }
     
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
-            if (!allowedTypes.includes(file.type)) {
+            // Validar tipo de archivo
+            if (!file.type.startsWith('image/')) {
                 err = t('onlyImages')
                 return
             }
     
-            if (file.size > 1024 * 1024 * 5) {
+            // Validar tamaño (5MB máximo)
+            if (file.size > 5 * 1024 * 1024) {
                 err = t('fileTooLarge')
                 return
             }
 
-            const isValidFileName = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.]+$/.test(file.name)
+            // Validar nombre de archivo
+            const isValidFileName = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-_.()]+$/.test(file.name)
             if (!isValidFileName) {
                 err = t('invalidFileName', { fileName: file.name })
                 return
@@ -169,6 +239,9 @@ const RightSide = () => {
         } else {
             setMedia([...media, ...newMedia])
         }
+        
+        // Limpiar input file
+        e.target.value = ''
     }
 
     const handleDeleteMedia = (index) => {
@@ -177,6 +250,7 @@ const RightSide = () => {
         setMedia(newArr)
     }
 
+    // 🔥 CORREGIDO: Función de envío mejorada
     const handleSubmit = async (e) => {
         e.preventDefault()
         
@@ -184,25 +258,58 @@ const RightSide = () => {
         
         if (!text.trim() && media.length === 0) return
 
-        setText('')
-        setMedia([])
         setLoadMedia(true)
 
         let newArr = []
-        if (media.length > 0) newArr = await imageUpload(media)
+        if (media.length > 0) {
+            try {
+                newArr = await imageUpload(media)
+            } catch (error) {
+                dispatch({ 
+                    type: GLOBALTYPES.ALERT, 
+                    payload: { error: t('uploadError') } 
+                })
+                setLoadMedia(false)
+                return
+            }
+        }
 
+        // 🔥 ESTRUCTURA CORREGIDA del mensaje
         const msg = {
             sender: auth.user._id,
             recipient: id,
             text: text.trim(),
             media: newArr,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            // Agregar estos campos si tu backend los requiere
+            conversationId: id,
+            type: media.length > 0 ? 'media' : 'text'
         }
 
+        setText('')
+        setMedia([])
         setLoadMedia(false)
-        await dispatch(addMessage({ msg, auth, socket }))
-        if (refDisplay.current) {
-            refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+
+        try {
+            await dispatch(addMessage({ 
+                msg, 
+                auth, 
+                socket,
+                // Estructura alternativa que podría requerir tu backend
+                messageData: {
+                    ...msg,
+                    user: auth.user // Incluir información del usuario si es necesario
+                }
+            }))
+            
+            if (refDisplay.current) {
+                refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+            }
+        } catch (error) {
+            dispatch({ 
+                type: GLOBALTYPES.ALERT, 
+                payload: { error: t('sendError') } 
+            })
         }
     }
 
@@ -252,7 +359,7 @@ const RightSide = () => {
         history.push('/message')
     }
 
-    // 🔥 SIMPLIFICADO: Manejo de texto SIN validaciones restrictivas
+    // 🔥 SIMPLIFICADO: Manejo de texto
     const handleTextChange = (e) => {
         setText(e.target.value)
         handleTyping()
@@ -266,7 +373,7 @@ const RightSide = () => {
             background: theme ? '#1a1a2e' : '#f8f9fa',
             position: 'relative'
         }}>
-            {/* HEADER */}
+            {/* HEADER MEJORADO CON INDICADOR DE CONEXIÓN */}
             <Card 
                 className="border-0 shadow-sm"
                 style={{
@@ -282,20 +389,27 @@ const RightSide = () => {
                     {user.length !== 0 && (
                         <div className="d-flex align-items-center justify-content-between">
                             <div className="d-flex align-items-center gap-3">
+                                {/* 🔥 AVATAR CON INDICADOR DE CONEXIÓN */}
                                 <div 
                                     style={{
+                                        position: 'relative',
                                         width: '50px',
                                         height: '50px',
                                         borderRadius: '50%',
-                                      
                                     }}
                                 >
                                     <Avatar src={user.avatar || "/default-avatar.png"} size="big-avatar" />
+                                    {/* Indicador de conexión */}
+                                    <OnlineIndicator 
+                                        isOnline={isUserOnline} 
+                                        size="large" 
+                                    />
                                 </div>
                                 <div>
                                     <h6 className="mb-0 text-white fw-bold">{user.username || "Usuario desconocido"}</h6>
                                     <small className="text-white" style={{ opacity: 0.9 }}>
-                                        {user.fullname || user.username || ""}
+                                        {  user.username }
+                                      
                                         
                                         {/* 🔥 MEJORADO: Indicador de typing */}
                                         {message.typing && Array.isArray(message.typing) && 
@@ -313,7 +427,11 @@ const RightSide = () => {
                                             </span>
                                         )}
                                     </small>
+
+
+                                    
                                 </div>
+                              
                             </div>
                             <div className="d-flex gap-3">
                                 <Button
@@ -407,6 +525,7 @@ const RightSide = () => {
                                 }}
                             >
                                 <Spinner animation="border" size="sm" style={{ color: 'white' }} />
+                                <span className="ms-2 text-white">Subiendo archivos...</span>
                             </div>
                         </div>
                     )}
@@ -468,7 +587,7 @@ const RightSide = () => {
                 </div>
             )}
 
-            {/* FORMULARIO DE ENTRADA */}
+            {/* FORMULARIO DE ENTRADA MEJORADO */}
             <Card 
                 className="border-0"
                 style={{
@@ -634,7 +753,7 @@ const RightSide = () => {
                 </Card.Body>
             </Card>
 
-            {/* ESTILOS */}
+            {/* ESTILOS MEJORADOS */}
             <style>{`
                 .typing-indicator {
                     display: inline-flex;
@@ -642,6 +761,7 @@ const RightSide = () => {
                     font-size: 11px;
                     font-style: italic;
                     color: rgba(255,255,255,0.9);
+                    margin-top: 4px;
                 }
 
                 .typing-dots {
@@ -691,6 +811,17 @@ const RightSide = () => {
 
                 .chat_container::-webkit-scrollbar-thumb:hover {
                     background: #667eea;
+                }
+
+                /* Animación para el indicador de conexión */
+                @keyframes pulse {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.1); }
+                    100% { transform: scale(1); }
+                }
+
+                .online-indicator {
+                    animation: pulse 2s infinite;
                 }
             `}</style>
         </div>
