@@ -287,10 +287,7 @@ const RightSide = () => {
                                         width: '50px',
                                         height: '50px',
                                         borderRadius: '50%',
-                                        border: '3px solid white',
-                                        padding: '2px',
-                                        background: 'white',
-                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                                      
                                     }}
                                 >
                                     <Avatar src={user.avatar || "/default-avatar.png"} size="big-avatar" />

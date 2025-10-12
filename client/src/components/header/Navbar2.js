@@ -14,6 +14,7 @@ import {
   FaBell,
   FaShareAlt,
   FaInfoCircle,
+  FaFacebookMessenger,
 } from 'react-icons/fa';
 import { Navbar, Container, NavDropdown, Badge } from 'react-bootstrap';
 import { BsCartFill } from 'react-icons/bs';
@@ -59,6 +60,9 @@ const Navbar2 = () => {
 
   const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true });
   const unreadNotifications = notify.data.filter(n => !n.isRead).length;
+  
+  // Simular mensajes no leídos (puedes conectarlo a tu store real)
+  const unreadMessages = 0; // Aquí conectas tu lógica de mensajes no leídos
 
   // MenuItem simplificado solo para dropdown de usuarios NO autenticados
   const MenuItem = ({ icon: Icon, iconColor, to, onClick, children }) => (
@@ -98,7 +102,6 @@ const Navbar2 = () => {
           boxShadow: '0 2px 20px rgba(0,0,0,0.08)'
         }}
         className={settings.style ? "navbar-dark" : "navbar-light"}
-         
       >
         <Container fluid className="align-items-center justify-content-between">
           {/* Logo y título */}
@@ -150,7 +153,7 @@ const Navbar2 = () => {
           </div>
 
           {/* Iconos de navegación */}
-          <div className="d-flex align-items-center" style={{ gap: isMobile ? '12px' : '16px' }}>
+          <div className="d-flex align-items-center" style={{ gap: isMobile ? '8px' : '16px' }}>
             {/* Selector de idioma para desktop */}
             <div className="d-none d-lg-block">
               <LanguageSelectorpc />
@@ -196,6 +199,44 @@ const Navbar2 = () => {
                   style={{ color: 'white' }}
                 />
               </div>
+            )}
+
+            {/* Messenger (solo usuarios autenticados) */}
+            {auth.user && (
+              <Link
+                to="/message"
+                className="position-relative d-flex align-items-center justify-content-center icon-button text-decoration-none"
+                style={{
+                  width: isMobile ? '40px' : '45px',
+                  height: isMobile ? '40px' : '45px',
+                  borderRadius: '12px',
+                  backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                  transition: 'all 0.3s ease',
+                }}
+                title={t('messages')}
+              >
+                <FaFacebookMessenger
+                  size={isMobile ? 20 : 22}
+                  style={{ color: unreadMessages > 0 ? '#00b2ff' : '#667eea' }}
+                />
+                {unreadMessages > 0 && (
+                  <Badge
+                    pill
+                    style={{
+                      fontSize: '0.65rem',
+                      position: 'absolute',
+                      top: '-2px',
+                      [lang === 'ar' ? 'left' : 'right']: '-2px',
+                      padding: '4px 7px',
+                      background: 'linear-gradient(135deg, #00b2ff 0%, #006aff 100%)',
+                      border: '2px solid white',
+                      boxShadow: '0 2px 8px rgba(0, 178, 255, 0.4)'
+                    }}
+                  >
+                    {unreadMessages > 9 ? '9+' : unreadMessages}
+                  </Badge>
+                )}
+              </Link>
             )}
 
             {/* Notificaciones (solo usuarios autenticados) */}
@@ -285,26 +326,26 @@ const Navbar2 = () => {
                     width: isMobile ? '40px' : '45px',
                     height: isMobile ? '40px' : '45px',
                     borderRadius: '12px',
-                    padding: '0', // 🔥 CORREGIDO: Sin padding interno
+                    padding: '0',
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
                     transition: 'all 0.3s ease',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    overflow: 'hidden' // 🔥 IMPORTANTE: Para que la imagen no se salga del contenedor
+                    overflow: 'hidden'
                   }}
                 >
                   <Avatar
                     src={auth.user.avatar}
                     size="medium-avatar"
                     style={{
-                      borderRadius: '10px', // 🔥 Mismo border radius que los otros iconos
+                      borderRadius: '10px',
                       objectFit: 'cover',
-                      width: '100%', // 🔥 Ocupa todo el espacio disponible
-                      height: '100%', // 🔥 Ocupa todo el espacio disponible
-                      margin: '0', // 🔥 CORREGIDO: Sin margen interno
-                      padding: '0', // 🔥 CORREGIDO: Sin padding interno
+                      width: '100%',
+                      height: '100%',
+                      margin: '0',
+                      padding: '0',
                       display: 'block'
                     }}
                   />
@@ -313,66 +354,63 @@ const Navbar2 = () => {
             ) : (
               // Usuario NO AUTENTICADO: Dropdown simple
               <NavDropdown
-              align="end"
-              title={
-                <div
-                  style={{
-                    width: isMobile ? '40px' : '45px',
-                    height: isMobile ? '40px' : '45px',
-                    borderRadius: '12px',
-                    backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.3s ease'
-                  }}
-                  className="icon-button"
-                >
-                  <FaUserCircle size={isMobile ? 24 : 28} style={{ color: '#667eea' }} />
-                </div>
-              }
-              id="nav-guest-dropdown"
-              className="custom-dropdown"
-            >
-              <MenuItem icon={FaSignInAlt} iconColor="#28a745" to="/login">
-                {t('login')}
-              </MenuItem>
-              <MenuItem icon={FaUserPlus} iconColor="#667eea" to="/register">
-                {t('register')}
-              </MenuItem>
-              <NavDropdown.Divider style={{ margin: '8px 16px' }} />
-              <MenuItem icon={FaInfoCircle} iconColor="#6c757d"  to="/infoaplicacionn">
-                {t('appInfo')}
-              </MenuItem>
-             
-            </NavDropdown>
-          )}
-        </div>
-      </Container>
-    </Navbar>
+                align="end"
+                title={
+                  <div
+                    style={{
+                      width: isMobile ? '40px' : '45px',
+                      height: isMobile ? '40px' : '45px',
+                      borderRadius: '12px',
+                      backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.3s ease'
+                    }}
+                    className="icon-button"
+                  >
+                    <FaUserCircle size={isMobile ? 24 : 28} style={{ color: '#667eea' }} />
+                  </div>
+                }
+                id="nav-guest-dropdown"
+                className="custom-dropdown"
+              >
+                <MenuItem icon={FaSignInAlt} iconColor="#28a745" to="/login">
+                  {t('login')}
+                </MenuItem>
+                <MenuItem icon={FaUserPlus} iconColor="#667eea" to="/register">
+                  {t('register')}
+                </MenuItem>
+                <NavDropdown.Divider style={{ margin: '8px 16px' }} />
+                <MenuItem icon={FaInfoCircle} iconColor="#6c757d" to="/infoaplicacionn">
+                  {t('appInfo')}
+                </MenuItem>
+              </NavDropdown>
+            )}
+          </div>
+        </Container>
+      </Navbar>
 
-    {/* CSS personalizado */}
-    <style jsx>{`
-      .icon-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
-      }
+      {/* CSS personalizado */}
+      <style jsx>{`
+        .icon-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+        }
 
-      .custom-menu-item:hover {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
-        transform: translateX(4px);
-      }
+        .custom-menu-item:hover {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+          transform: translateX(4px);
+        }
 
-      .dropdown-menu {
-        border: none !important;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
-        border-radius: 15px !important;
-      }import Navbar2 from './Navbar2';
-
-    `}</style>
-  </div>
-);
+        .dropdown-menu {
+          border: none !important;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
+          border-radius: 15px !important;
+        }
+      `}</style>
+    </div>
+  );
 };
 
-
- export default  Navbar2
+export default Navbar2;
