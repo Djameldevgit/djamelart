@@ -1,145 +1,25 @@
 {
-  "header": {
-    "title": "Search",
-    "filtersActive": "Active filters"
-  },
-  "search": {
-    "placeholder": "Search by title, description, artist..."
-  },
-  "buttons": {
-    "search": "🔍 Search",
-    "filters": "Filters",
-    "hide": "Hide",
-    "advanced": "Advanced",
-    "searching": "Searching...",
-    "applyFilters": "Apply filters",
-    "clearAll": "Clear all"
-  },
-  "users": {
-    "title": "Users found"
-  },
-  "categories": {
-    "title": "Categories",
-    "painting": "Painting",
-    "sculpture": "Sculpture",
-    "photography": "Photography",
-    "drawing": "Drawing",
-    "engraving": "Engraving",
-    "digital_art": "Digital art",
-    "collage": "Collage",
-    "textile_art": "Textile art"
-  },
-  "filters": {
-    "theme": "Theme",
-    "style": "Style",
-    "minPrice": "Minimum price",
-    "maxPrice": "Maximum price",
-    "location": "Location",
-    "allThemes": "All themes",
-    "allStyles": "All styles",
-    "pricePlaceholder": "0 dinars",
-    "maxPricePlaceholder": "10000 dinars",
-    "locationPlaceholder": "Ex: Algeria",
-    "themes": {
-      "abstract": "Abstract",
-      "landscape": "Landscape",
-      "portrait": "Portrait",
-      "still_life": "Still life",
-      "urban": "Urban",
-      "surreal": "Surreal"
-    },
-    "styles": {
-      "realism": "Realism",
-      "impressionism": "Impressionism",
-      "expressionism": "Expressionism",
-      "cubism": "Cubism",
-      "surrealism": "Surrealism",
-      "abstract": "Abstract"
-    }
-  },
-  "advancedFilters": {
-    "title": "Advanced filters",
-    "artType": "Art type",
-    "material": "Material",
-    "technique": "Technique",
-    "orientation": "Orientation",
-    "size": "Size",
-    "year": "Year",
-    "tags": "Tags",
-    "sortBy": "Sort by",
-    "order": "Order",
-    "allTypes": "All types",
-    "allMaterials": "All materials",
-    "allTechniques": "All techniques",
-    "allOrientations": "All orientations",
-    "allSizes": "All sizes",
-    "tagsPlaceholder": "abstract, modern, colorful...",
-    "artTypes": {
-      "oil_painting": "Oil painting",
-      "watercolor": "Watercolor",
-      "acrylic": "Acrylic",
-      "digital_art": "Digital art",
-      "sculpture": "Sculpture",
-      "photography": "Photography",
-      "drawing": "Drawing",
-      "mixed_media": "Mixed media"
-    },
-    "materials": {
-      "canvas": "Canvas",
-      "paper": "Paper",
-      "wood": "Wood",
-      "metal": "Metal",
-      "clay": "Clay",
-      "stone": "Stone",
-      "fabric": "Fabric",
-      "digital": "Digital"
-    },
-    "techniques": {
-      "oil_painting": "Oil painting",
-      "watercolor": "Watercolor",
-      "acrylic": "Acrylic",
-      "digital_painting": "Digital painting",
-      "sculpting": "Sculpting",
-      "carving": "Carving",
-      "photography_digital": "Digital photography",
-      "collage": "Collage"
-    },
-    "orientations": {
-      "horizontal": "Horizontal",
-      "vertical": "Vertical",
-      "square": "Square"
-    },
-    "sizes": {
-      "small": "Small",
-      "medium": "Medium",
-      "large": "Large",
-      "extra_large": "Extra large"
-    },
-    "sortOptions": {
-      "createdAt": "Most recent",
-      "price": "Price",
-      "title": "Title",
-      "likesCount": "Most popular"
-    },
-    "orderOptions": {
-      "desc": "Descending",
-      "asc": "Ascending"
-    }
-  },
-  "results": {
-    "title": "Results",
-    "top": "Top",
-    "loadingPosts": "Loading posts...",
-    "searching": "Searching...",
-    "noResults": {
-      "title": "No results found",
-      "withFilters": "Try using other filters or search terms.",
-      "withoutFilters": "No posts available at the moment."
-    }
-  },
-  "errors": {
-    "loadingPosts": "Error loading posts",
-    "searchError": "Search error",
-    "userSearchError": "Error searching users"
-  }
+ 
+    
+      "searchPlaceholder": "Search users...",
+      "searchError": "Error searching users",
+      "noUsersFound": "No conversations",
+      "loadMore2": "Load more",
+      "offline": "Offline",
+      "searchResults": "Search results",
+      "searchToStart": "Search users to start a conversation",
+   
+   
+      "online": "Online",
+     
+      "typing": "Typing...",
+      "lastSeen": "Last seen",
+      "justNow": "Just now",
+      "minutesAgo": "{{minutes}} min ago",
+      "hoursAgo": "{{hours}} h ago",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "days ago"
+   
+  
 }

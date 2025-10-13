@@ -307,12 +307,7 @@ const profileinfouser = () => {
                     title={t('appInfo', 'Información')}
                     to="/infoaplicacionn"
                   />
-                  <MenuOption
-                    icon={FaUserCircle}
-                    iconColor="#667eea"
-                    title={t('profile', 'Perfil')}
-                    to={`/profile/${auth.user?._id}`}
-                  />
+                 
                   <MenuOption
                     icon={FaUserCircle}
                     iconColor="#667eea"
@@ -469,38 +464,7 @@ const profileinfouser = () => {
         </Row>
       </Container>
 
-      {/* Modal de Idioma */}
-      <Modal show={showLanguageModal} onHide={() => setShowLanguageModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{t('selectLanguage', 'Seleccionar Idioma')}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="d-grid gap-2">
-            <Button
-              variant={lang === 'es' ? 'primary' : 'outline-primary'}
-              onClick={() => changeLanguage('es')}
-              size="lg"
-            >
-              🇪🇸 Español
-            </Button>
-            <Button
-              variant={lang === 'ar' ? 'primary' : 'outline-primary'}
-              onClick={() => changeLanguage('ar')}
-              size="lg"
-            >
-              🇦🇪 العربية
-            </Button>
-            <Button
-              variant={lang === 'en' ? 'primary' : 'outline-primary'}
-              onClick={() => changeLanguage('en')}
-              size="lg"
-            >
-              🇺🇸 English
-            </Button>
-          </div>
-        </Modal.Body>
-      </Modal>
-
+     
       {/* Modal de Compartir */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>

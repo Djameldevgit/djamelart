@@ -1,5 +1,12 @@
 {
- 
+  "noPermission": "Vous n'avez pas l'autorisation de modifier ce profil",
+  "adminEditMode": "Mode d'édition administrateur",
+  "adminEditWarning": "Vous modifiez le profil d'un autre utilisateur. Les modifications seront appliquées immédiatement.",
+  "editingAsAdmin": "Modification en tant qu'administrateur",
+  "profileUpdatedByAdmin": "Profil de {{username}} mis à jour avec succès",
+  "updateUserInfo": "Mettre à jour les informations de l'utilisateur",
+  "noEditPermission": "Vous n'avez pas l'autorisation de modifier ce profil.",
+  "backToHome": "Retour à l'accueil",
     "loadingProfile": "Chargement du profil...",
     "profilePrivate": "Profil privé",
     "profileNotAccessible": "Ce profil est privé et vous ne pouvez pas accéder à ses informations.",

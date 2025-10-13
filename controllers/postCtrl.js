@@ -95,66 +95,97 @@ const postCtrl = {
         }
     },
 
-
     getPosts: async (req, res) => {
         try {
-          const { title, theme, style, priceMin, priceMax, wilaya, ...categories } = req.query;
-      
-          const query = { estado: "aprobado" };
-      
-          // 🔹 Buscar por título
-          if (title) {
-            query.title = { $regex: title, $options: "i" };
-          }
-      
-          // 🔹 Filtros directos
-          if (theme) query.theme = { $regex: theme, $options: "i" };
-          if (style) query.style = { $regex: style, $options: "i" };
-          if (wilaya) query.wilaya = { $regex: wilaya, $options: "i" };
-      
-          // 🔹 Precio
-          if (priceMin || priceMax) {
-            query.price = {};
-            if (priceMin) query.price.$gte = Number(priceMin);
-            if (priceMax) query.price.$lte = Number(priceMax);
-          }
-      
-          // 🔹 Categorías dinámicas (ej: painting=true)
-          const selectedCategories = Object.keys(categories).filter(
-            (key) => categories[key] === "true"
-          );
-          if (selectedCategories.length > 0) {
-            query.category = { $in: selectedCategories };
-          }
-      
-          // 🚨 Control clave:
-          if (Object.keys(categories).length > 0 && selectedCategories.length === 0) {
-            return res.json({ posts: [] });
-          }
-      
-          // 🔥 Mantener paginación con APIfeatures
-          const features = new APIfeatures(Posts.find(query), req.query).paginating();
-      
-          const posts = await features.query
-            .sort("-createdAt")
-            .populate("user likes", "avatar username fullname followers")
-            .populate({
-              path: "comments",
-              populate: {
-                path: "user likes",
-                select: "-password",
-              },
+            const { 
+                title, 
+                theme, 
+                style, 
+                priceMin, 
+                priceMax, 
+                wilaya, 
+                page, 
+                limit, 
+                ...categories 
+            } = req.query;
+    
+            const query = { estado: "aprobado" };
+    
+            // 🔹 Buscar por título
+            if (title && title.trim() !== "") {
+                query.title = { $regex: title.trim(), $options: "i" };
+            }
+    
+            // 🔹 Filtros directos
+            if (theme && theme.trim() !== "") {
+                query.theme = { $regex: theme.trim(), $options: "i" };
+            }
+            if (style && style.trim() !== "") {
+                query.style = { $regex: style.trim(), $options: "i" };
+            }
+            if (wilaya && wilaya.trim() !== "") {
+                query.wilaya = { $regex: wilaya.trim(), $options: "i" };
+            }
+    
+            // 🔹 Precio
+            if (priceMin || priceMax) {
+                query.price = {};
+                if (priceMin && !isNaN(priceMin)) query.price.$gte = Number(priceMin);
+                if (priceMax && !isNaN(priceMax)) query.price.$lte = Number(priceMax);
+                
+                // Si solo hay un precio y es 0, eliminar el filtro
+                if (Object.keys(query.price).length === 0) {
+                    delete query.price;
+                }
+            }
+    
+            // 🔹 Categorías dinámicas - SOLUCIÓN CORREGIDA
+            const categoryFields = [
+                'painting', 'sculpture', 'photography', 'drawing', 
+                'engraving', 'digital_art', 'collage', 'textile_art'
+            ];
+    
+            const selectedCategories = [];
+    
+            // Verificar cada categoría posible
+            categoryFields.forEach(cat => {
+                if (categories[cat] === "true") {
+                    selectedCategories.push(cat);
+                }
             });
-      
-          res.json({
-            msg: "Success!",
-            result: posts.length,
-            posts,
-          });
+    
+            // Aplicar filtro de categorías solo si hay selecciones
+            if (selectedCategories.length > 0) {
+                query.category = { $in: selectedCategories };
+            }
+    
+            console.log("Query final:", JSON.stringify(query, null, 2));
+            console.log("Categorías seleccionadas:", selectedCategories);
+    
+            // 🔥 Mantener paginación con APIfeatures
+            const features = new APIfeatures(Posts.find(query), req.query).paginating();
+    
+            const posts = await features.query
+                .sort("-createdAt")
+                .populate("user likes", "avatar username fullname followers")
+                .populate({
+                    path: "comments",
+                    populate: {
+                        path: "user likes",
+                        select: "-password",
+                    },
+                });
+    
+            res.json({
+                msg: "Success!",
+                result: posts.length,
+                posts,
+            });
         } catch (err) {
-          return res.status(500).json({ msg: err.message });
+            console.error("Error en getPosts:", err);
+            return res.status(500).json({ msg: err.message });
         }
-      },
+    },
       
 
     updatePost: async (req, res) => {

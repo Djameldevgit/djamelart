@@ -1,145 +1,64 @@
 {
-  "header": {
-    "title": "بحث",
-    "filtersActive": "فلاتر نشطة"
-  },
-  "search": {
-    "placeholder": "ابحث بالعنوان، الوصف، الفنان..."
-  },
-  "buttons": {
-    "search": "🔍 بحث",
-    "filters": "الفلاتر",
-    "hide": "إخفاء",
-    "advanced": "متقدم",
-    "searching": "جاري البحث...",
-    "applyFilters": "تطبيق الفلاتر",
-    "clearAll": "مسح الكل"
-  },
-  "users": {
-    "title": "المستخدمون الموجودون"
-  },
+  "title": "🔍 بحث عن الفن",
+  "subtitle": "اكتشف الأعمال الفنية والفنانين",
+  "searchPlaceholder": "مثال: لوحة زيتية، صورة تجريدية، تمثال حديث...",
+  "searchLabel": "ماذا تبحث عن؟",
+  "searchHelp": "ابحث حسب العنوان، الفنان، التقنية أو الوصف",
+  "artistsFound": "الفنانون الموجودون",
+  "searchingArtists": "جاري البحث عن الفنانين...",
   "categories": {
-    "title": "الفئات",
+    "title": "الفئات الفنية",
     "painting": "الرسم",
     "sculpture": "النحت",
     "photography": "التصوير الفوتوغرافي",
     "drawing": "الرسم",
     "engraving": "النقش",
     "digital_art": "الفن الرقمي",
-    "collage": "كولاج",
-    "textile_art": "الفن النسيجي"
+    "collage": "الكولاج",
+    "textile_art": "فن النسيج"
   },
-  "filters": {
+  "advancedSearch": {
+    "title": "بحث متقدم",
     "theme": "الموضوع",
-    "style": "النمط",
+    "themePlaceholder": "مثال: طبيعة، تجريدي، صورة...",
+    "style": "الأسلوب",
+    "stylePlaceholder": "مثال: واقعي، انطباعي، حديث...",
     "minPrice": "أدنى سعر",
+    "minPricePlaceholder": "مثال: 50",
     "maxPrice": "أعلى سعر",
-    "location": "الموقع",
-    "allThemes": "جميع المواضيع",
-    "allStyles": "جميع الأنماط",
-    "pricePlaceholder": "0 دينار",
-    "maxPricePlaceholder": "10000 دينار",
-    "locationPlaceholder": "مثال: الجزائر",
-    "themes": {
-      "abstract": "تجريدي",
-      "landscape": "مناظر طبيعية",
-      "portrait": "بورتريه",
-      "still_life": "طبيعة صامتة",
-      "urban": "حضري",
-      "surreal": "سريالي"
-    },
-    "styles": {
-      "realism": "واقعية",
-      "impressionism": "انطباعية",
-      "expressionism": "تعبيرية",
-      "cubism": "تكعيبية",
-      "surrealism": "سريالية",
-      "abstract": "تجريدي"
-    }
+    "maxPricePlaceholder": "مثال: 500",
+    "location": "الموقع (الولاية)",
+    "locationPlaceholder": "مثال: الجزائر، وهران، قسنطينة..."
   },
-  "advancedFilters": {
-    "title": "فلاتر متقدمة",
-    "artType": "نوع الفن",
-    "material": "المادة",
-    "technique": "التقنية",
-    "orientation": "الاتجاه",
-    "size": "الحجم",
-    "year": "السنة",
-    "tags": "الوسوم",
-    "sortBy": "ترتيب حسب",
-    "order": "الترتيب",
-    "allTypes": "جميع الأنواع",
-    "allMaterials": "جميع المواد",
-    "allTechniques": "جميع التقنيات",
-    "allOrientations": "جميع الاتجاهات",
-    "allSizes": "جميع الأحجام",
-    "tagsPlaceholder": "تجريدي، حديث، ملون...",
-    "artTypes": {
-      "oil_painting": "رسم زيتي",
-      "watercolor": "ألوان مائية",
-      "acrylic": "أكريليك",
-      "digital_art": "فن رقمي",
-      "sculpture": "نحت",
-      "photography": "تصوير فوتوغرافي",
-      "drawing": "رسم",
-      "mixed_media": "تقنية مختلطة"
-    },
-    "materials": {
-      "canvas": "قماش",
-      "paper": "ورق",
-      "wood": "خشب",
-      "metal": "معدن",
-      "clay": "طين",
-      "stone": "حجر",
-      "fabric": "قماش",
-      "digital": "رقمي"
-    },
-    "techniques": {
-      "oil_painting": "رسم زيتي",
-      "watercolor": "ألوان مائية",
-      "acrylic": "أكريليك",
-      "digital_painting": "رسم رقمي",
-      "sculpting": "نحت",
-      "carving": "نقش",
-      "photography_digital": "تصوير رقمي",
-      "collage": "كولاج"
-    },
-    "orientations": {
-      "horizontal": "أفقي",
-      "vertical": "عمودي",
-      "square": "مربع"
-    },
-    "sizes": {
-      "small": "صغير",
-      "medium": "متوسط",
-      "large": "كبير",
-      "extra_large": "كبير جداً"
-    },
-    "sortOptions": {
-      "createdAt": "الأحدث",
-      "price": "السعر",
-      "title": "العنوان",
-      "likesCount": "الأكثر شعبية"
-    },
-    "orderOptions": {
-      "desc": "تنازلي",
-      "asc": "تصاعدي"
-    }
+  "buttons": {
+    "search": "بحث عن الأعمال",
+    "searching": "جاري البحث...",
+    "clear": "مسح",
+    "close": "×"
   },
   "results": {
-    "title": "النتائج",
-    "top": "أعلى",
-    "loadingPosts": "جاري تحميل المنشورات...",
-    "searching": "جاري البحث...",
-    "noResults": {
-      "title": "لم يتم العثور على نتائج",
-      "withFilters": "حاول استخدام فلاتر أو مصطلحات بحث أخرى.",
-      "withoutFilters": "لا توجد منشورات متاحة في الوقت الحالي."
-    }
+    "found": "تم العثور على {{count}} عمل فني يتطابق مع بحثك",
+    "searching": "جاري البحث عن الأعمال الفنية...",
+    "loading": "قد يستغرق هذا بضع ثوانٍ",
+    "noResults": "لم يتم العثور على أعمال فنية تتطابق مع بحثك"
   },
   "errors": {
-    "loadingPosts": "خطأ في تحميل المنشورات",
     "searchError": "خطأ في البحث",
     "userSearchError": "خطأ في البحث عن المستخدمين"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجاح",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "yes": "نعم",
+    "no": "لا",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق"
   }
 }

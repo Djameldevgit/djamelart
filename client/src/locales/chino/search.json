@@ -1,25 +1,13 @@
 {
-  "header": {
-    "title": "搜索",
-    "filtersActive": "活动筛选器"
-  },
-  "search": {
-    "placeholder": "按标题、描述、艺术家搜索..."
-  },
-  "buttons": {
-    "search": "🔍 搜索",
-    "filters": "筛选器",
-    "hide": "隐藏",
-    "advanced": "高级",
-    "searching": "搜索中...",
-    "applyFilters": "应用筛选器",
-    "clearAll": "清除全部"
-  },
-  "users": {
-    "title": "找到的用户"
-  },
+  "title": "🔍 搜索艺术",
+  "subtitle": "发现艺术品和艺术家",
+  "searchPlaceholder": "例如：油画风景、抽象肖像、现代雕塑...",
+  "searchLabel": "您在寻找什么？",
+  "searchHelp": "按标题、艺术家、技术或描述搜索",
+  "artistsFound": "找到的艺术家",
+  "searchingArtists": "搜索艺术家...",
   "categories": {
-    "title": "分类",
+    "title": "艺术类别",
     "painting": "绘画",
     "sculpture": "雕塑",
     "photography": "摄影",
@@ -29,117 +17,48 @@
     "collage": "拼贴",
     "textile_art": "纺织艺术"
   },
-  "filters": {
+  "advancedSearch": {
+    "title": "高级搜索",
     "theme": "主题",
+    "themePlaceholder": "例如：自然、抽象、肖像...",
     "style": "风格",
+    "stylePlaceholder": "例如：现实主义、印象派、现代...",
     "minPrice": "最低价格",
+    "minPricePlaceholder": "例如：50",
     "maxPrice": "最高价格",
-    "location": "位置",
-    "allThemes": "所有主题",
-    "allStyles": "所有风格",
-    "pricePlaceholder": "0 第纳尔",
-    "maxPricePlaceholder": "10000 第纳尔",
-    "locationPlaceholder": "例如：阿尔及利亚",
-    "themes": {
-      "abstract": "抽象",
-      "landscape": "风景",
-      "portrait": "肖像",
-      "still_life": "静物",
-      "urban": "城市",
-      "surreal": "超现实"
-    },
-    "styles": {
-      "realism": "现实主义",
-      "impressionism": "印象派",
-      "expressionism": "表现主义",
-      "cubism": "立体主义",
-      "surrealism": "超现实主义",
-      "abstract": "抽象"
-    }
+    "maxPricePlaceholder": "例如：500",
+    "location": "位置（省）",
+    "locationPlaceholder": "例如：阿尔及尔、奥兰、君士坦丁..."
   },
-  "advancedFilters": {
-    "title": "高级筛选器",
-    "artType": "艺术类型",
-    "material": "材料",
-    "technique": "技术",
-    "orientation": "方向",
-    "size": "尺寸",
-    "year": "年份",
-    "tags": "标签",
-    "sortBy": "排序方式",
-    "order": "顺序",
-    "allTypes": "所有类型",
-    "allMaterials": "所有材料",
-    "allTechniques": "所有技术",
-    "allOrientations": "所有方向",
-    "allSizes": "所有尺寸",
-    "tagsPlaceholder": "抽象、现代、多彩...",
-    "artTypes": {
-      "oil_painting": "油画",
-      "watercolor": "水彩",
-      "acrylic": "丙烯",
-      "digital_art": "数字艺术",
-      "sculpture": "雕塑",
-      "photography": "摄影",
-      "drawing": "素描",
-      "mixed_media": "混合媒体"
-    },
-    "materials": {
-      "canvas": "画布",
-      "paper": "纸张",
-      "wood": "木材",
-      "metal": "金属",
-      "clay": "粘土",
-      "stone": "石材",
-      "fabric": "织物",
-      "digital": "数字"
-    },
-    "techniques": {
-      "oil_painting": "油画",
-      "watercolor": "水彩",
-      "acrylic": "丙烯",
-      "digital_painting": "数字绘画",
-      "sculpting": "雕塑",
-      "carving": "雕刻",
-      "photography_digital": "数字摄影",
-      "collage": "拼贴"
-    },
-    "orientations": {
-      "horizontal": "水平",
-      "vertical": "垂直",
-      "square": "正方形"
-    },
-    "sizes": {
-      "small": "小",
-      "medium": "中",
-      "large": "大",
-      "extra_large": "特大"
-    },
-    "sortOptions": {
-      "createdAt": "最新",
-      "price": "价格",
-      "title": "标题",
-      "likesCount": "最受欢迎"
-    },
-    "orderOptions": {
-      "desc": "降序",
-      "asc": "升序"
-    }
+  "buttons": {
+    "search": "搜索艺术品",
+    "searching": "搜索中...",
+    "clear": "清除",
+    "close": "×"
   },
   "results": {
-    "title": "结果",
-    "top": "热门",
-    "loadingPosts": "加载帖子中...",
-    "searching": "搜索中...",
-    "noResults": {
-      "title": "未找到结果",
-      "withFilters": "尝试使用其他筛选器或搜索词。",
-      "withoutFilters": "目前没有可用的帖子。"
-    }
+    "found": "找到 {{count}} 件与您搜索匹配的艺术品",
+    "searching": "搜索艺术品中...",
+    "loading": "这可能需要几秒钟",
+    "noResults": "未找到与您搜索匹配的艺术品"
   },
   "errors": {
-    "loadingPosts": "加载帖子时出错",
     "searchError": "搜索错误",
     "userSearchError": "搜索用户时出错"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "yes": "是",
+    "no": "否",
+    "confirm": "确认",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步"
   }
 }

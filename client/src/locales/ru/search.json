@@ -1,25 +1,13 @@
 {
-  "header": {
-    "title": "Поиск",
-    "filtersActive": "Активные фильтры"
-  },
-  "search": {
-    "placeholder": "Поиск по названию, описанию, художнику..."
-  },
-  "buttons": {
-    "search": "🔍 Поиск",
-    "filters": "Фильтры",
-    "hide": "Скрыть",
-    "advanced": "Расширенные",
-    "searching": "Поиск...",
-    "applyFilters": "Применить фильтры",
-    "clearAll": "Очистить все"
-  },
-  "users": {
-    "title": "Найденные пользователи"
-  },
+  "title": "🔍 Поиск Искусства",
+  "subtitle": "Откройте для себя произведения искусства и художников",
+  "searchPlaceholder": "Например: Картина маслом, абстрактный портрет, современная скульптура...",
+  "searchLabel": "Что вы ищете?",
+  "searchHelp": "Ищите по названию, художнику, технике или описанию",
+  "artistsFound": "Найденные художники",
+  "searchingArtists": "Поиск художников...",
   "categories": {
-    "title": "Категории",
+    "title": "Художественные категории",
     "painting": "Живопись",
     "sculpture": "Скульптура",
     "photography": "Фотография",
@@ -29,117 +17,48 @@
     "collage": "Коллаж",
     "textile_art": "Текстильное искусство"
   },
-  "filters": {
+  "advancedSearch": {
+    "title": "Расширенный поиск",
     "theme": "Тема",
+    "themePlaceholder": "Например: природа, абстракция, портрет...",
     "style": "Стиль",
+    "stylePlaceholder": "Например: реализм, импрессионизм, современный...",
     "minPrice": "Минимальная цена",
+    "minPricePlaceholder": "Например: 50",
     "maxPrice": "Максимальная цена",
-    "location": "Местоположение",
-    "allThemes": "Все темы",
-    "allStyles": "Все стили",
-    "pricePlaceholder": "0 динаров",
-    "maxPricePlaceholder": "10000 динаров",
-    "locationPlaceholder": "Например: Алжир",
-    "themes": {
-      "abstract": "Абстрактное",
-      "landscape": "Пейзаж",
-      "portrait": "Портрет",
-      "still_life": "Натюрморт",
-      "urban": "Городское",
-      "surreal": "Сюрреализм"
-    },
-    "styles": {
-      "realism": "Реализм",
-      "impressionism": "Импрессионизм",
-      "expressionism": "Экспрессионизм",
-      "cubism": "Кубизм",
-      "surrealism": "Сюрреализм",
-      "abstract": "Абстрактное"
-    }
+    "maxPricePlaceholder": "Например: 500",
+    "location": "Местоположение (Вилайя)",
+    "locationPlaceholder": "Например: Алжир, Оран, Константина..."
   },
-  "advancedFilters": {
-    "title": "Расширенные фильтры",
-    "artType": "Тип искусства",
-    "material": "Материал",
-    "technique": "Техника",
-    "orientation": "Ориентация",
-    "size": "Размер",
-    "year": "Год",
-    "tags": "Теги",
-    "sortBy": "Сортировать по",
-    "order": "Порядок",
-    "allTypes": "Все типы",
-    "allMaterials": "Все материалы",
-    "allTechniques": "Все техники",
-    "allOrientations": "Все ориентации",
-    "allSizes": "Все размеры",
-    "tagsPlaceholder": "абстрактный, современный, красочный...",
-    "artTypes": {
-      "oil_painting": "Масляная живопись",
-      "watercolor": "Акварель",
-      "acrylic": "Акрил",
-      "digital_art": "Цифровое искусство",
-      "sculpture": "Скульптура",
-      "photography": "Фотография",
-      "drawing": "Рисунок",
-      "mixed_media": "Смешанная техника"
-    },
-    "materials": {
-      "canvas": "Холст",
-      "paper": "Бумага",
-      "wood": "Дерево",
-      "metal": "Металл",
-      "clay": "Глина",
-      "stone": "Камень",
-      "fabric": "Ткань",
-      "digital": "Цифровой"
-    },
-    "techniques": {
-      "oil_painting": "Масляная живопись",
-      "watercolor": "Акварель",
-      "acrylic": "Акрил",
-      "digital_painting": "Цифровая живопись",
-      "sculpting": "Скульптура",
-      "carving": "Резьба",
-      "photography_digital": "Цифровая фотография",
-      "collage": "Коллаж"
-    },
-    "orientations": {
-      "horizontal": "Горизонтальная",
-      "vertical": "Вертикальная",
-      "square": "Квадратная"
-    },
-    "sizes": {
-      "small": "Маленький",
-      "medium": "Средний",
-      "large": "Большой",
-      "extra_large": "Очень большой"
-    },
-    "sortOptions": {
-      "createdAt": "Самые новые",
-      "price": "Цена",
-      "title": "Название",
-      "likesCount": "Самые популярные"
-    },
-    "orderOptions": {
-      "desc": "По убыванию",
-      "asc": "По возрастанию"
-    }
+  "buttons": {
+    "search": "Поиск произведений",
+    "searching": "Поиск...",
+    "clear": "Очистить",
+    "close": "×"
   },
   "results": {
-    "title": "Результаты",
-    "top": "Топ",
-    "loadingPosts": "Загрузка постов...",
-    "searching": "Поиск...",
-    "noResults": {
-      "title": "Результаты не найдены",
-      "withFilters": "Попробуйте использовать другие фильтры или условия поиска.",
-      "withoutFilters": "В настоящее время нет доступных постов."
-    }
+    "found": "Найдено {{count}} произведений, соответствующих вашему запросу",
+    "searching": "Поиск произведений искусства...",
+    "loading": "Это может занять несколько секунд",
+    "noResults": "Произведения искусства, соответствующие вашему запросу, не найдены"
   },
   "errors": {
-    "loadingPosts": "Ошибка загрузки постов",
     "searchError": "Ошибка поиска",
-    "userSearchError": "Ошибка поиска пользователей"
+    "userSearchError": "Ошибка при поиске пользователей"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успех",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "yes": "Да",
+    "no": "Нет",
+    "confirm": "Подтвердить",
+    "back": "Назад",
+    "next": "Далее",
+    "previous": "Предыдущий"
   }
 }

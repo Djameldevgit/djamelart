@@ -1,145 +1,68 @@
 {
-  "header": {
-    "title": "Search",
-    "filtersActive": "Active filters"
+  "title": "🔍 Buscar Arte",
+  "subtitle": "Encuentra obras de arte y artistas",
+  "searchPlaceholder": "Ej: Paisaje al óleo, retrato abstracto, escultura moderna...",
+  "searchLabel": "¿Qué estás buscando?",
+  "searchHelp": "Busca por título, artista, técnica o descripción",
+  "artistsFound": "Artistas encontrados",
+  "searchingArtists": "Buscando artistas...",
+  "categories": {
+    "title": "Categorías Artísticas",
+    "painting": "Pintura",
+    "sculpture": "Escultura",
+    "photography": "Fotografía",
+    "drawing": "Dibujo",
+    "engraving": "Grabado",
+    "digital_art": "Arte Digital",
+    "collage": "Collage",
+    "textile_art": "Arte Textil"
   },
-  "search": {
-    "placeholder": "Search by title, description, artist..."
+  "advancedSearch": {
+    "title": "Búsqueda Avanzada",
+    "theme": "Tema",
+    "themePlaceholder": "Ej: naturaleza, abstracto, retrato...",
+    "style": "Estilo",
+    "stylePlaceholder": "Ej: realismo, impresionismo, moderno...",
+    "minPrice": "Precio mínimo",
+    "minPricePlaceholder": "Ej: 50",
+    "maxPrice": "Precio máximo",
+    "maxPricePlaceholder": "Ej: 500",
+    "location": "Ubicación (Wilaya)",
+    "locationPlaceholder": "Ej: Alger, Oran, Constantine..."
   },
   "buttons": {
-    "search": "🔍 Search",
-    "filters": "Filters",
-    "hide": "Hide",
-    "advanced": "Advanced",
-    "searching": "Searching...",
-    "applyFilters": "Apply filters",
-    "clearAll": "Clear all"
-  },
-  "users": {
-    "title": "Users found"
-  },
-  "categories": {
-    "title": "Categories",
-    "painting": "Painting",
-    "sculpture": "Sculpture",
-    "photography": "Photography",
-    "drawing": "Drawing",
-    "engraving": "Engraving",
-    "digital_art": "Digital art",
-    "collage": "Collage",
-    "textile_art": "Textile art"
-  },
-  "filters": {
-    "theme": "Theme",
-    "style": "Style",
-    "minPrice": "Minimum price",
-    "maxPrice": "Maximum price",
-    "location": "Location",
-    "allThemes": "All themes",
-    "allStyles": "All styles",
-    "pricePlaceholder": "0 dinars",
-    "maxPricePlaceholder": "10000 dinars",
-    "locationPlaceholder": "Ex: Algeria",
-    "themes": {
-      "abstract": "Abstract",
-      "landscape": "Landscape",
-      "portrait": "Portrait",
-      "still_life": "Still life",
-      "urban": "Urban",
-      "surreal": "Surreal"
-    },
-    "styles": {
-      "realism": "Realism",
-      "impressionism": "Impressionism",
-      "expressionism": "Expressionism",
-      "cubism": "Cubism",
-      "surrealism": "Surrealism",
-      "abstract": "Abstract"
-    }
-  },
-  "advancedFilters": {
-    "title": "Advanced filters",
-    "artType": "Art type",
-    "material": "Material",
-    "technique": "Technique",
-    "orientation": "Orientation",
-    "size": "Size",
-    "year": "Year",
-    "tags": "Tags",
-    "sortBy": "Sort by",
-    "order": "Order",
-    "allTypes": "All types",
-    "allMaterials": "All materials",
-    "allTechniques": "All techniques",
-    "allOrientations": "All orientations",
-    "allSizes": "All sizes",
-    "tagsPlaceholder": "abstract, modern, colorful...",
-    "artTypes": {
-      "oil_painting": "Oil painting",
-      "watercolor": "Watercolor",
-      "acrylic": "Acrylic",
-      "digital_art": "Digital art",
-      "sculpture": "Sculpture",
-      "photography": "Photography",
-      "drawing": "Drawing",
-      "mixed_media": "Mixed media"
-    },
-    "materials": {
-      "canvas": "Canvas",
-      "paper": "Paper",
-      "wood": "Wood",
-      "metal": "Metal",
-      "clay": "Clay",
-      "stone": "Stone",
-      "fabric": "Fabric",
-      "digital": "Digital"
-    },
-    "techniques": {
-      "oil_painting": "Oil painting",
-      "watercolor": "Watercolor",
-      "acrylic": "Acrylic",
-      "digital_painting": "Digital painting",
-      "sculpting": "Sculpting",
-      "carving": "Carving",
-      "photography_digital": "Digital photography",
-      "collage": "Collage"
-    },
-    "orientations": {
-      "horizontal": "Horizontal",
-      "vertical": "Vertical",
-      "square": "Square"
-    },
-    "sizes": {
-      "small": "Small",
-      "medium": "Medium",
-      "large": "Large",
-      "extra_large": "Extra large"
-    },
-    "sortOptions": {
-      "createdAt": "Most recent",
-      "price": "Price",
-      "title": "Title",
-      "likesCount": "Most popular"
-    },
-    "orderOptions": {
-      "desc": "Descending",
-      "asc": "Ascending"
-    }
+    "search": "Buscar Obras",
+    "searching": "Buscando...",
+    "clear": "Limpiar",
+    "close": "×"
   },
   "results": {
-    "title": "Results",
-    "top": "Top",
-    "loadingPosts": "Loading posts...",
-    "searching": "Searching...",
-    "noResults": {
-      "title": "No results found",
-      "withFilters": "Try using other filters or search terms.",
-      "withoutFilters": "No posts available at the moment."
-    }
+    "found": "Se encontraron {{count}} obras que coinciden con tu búsqueda",
+    "searching": "Buscando obras de arte...",
+    "loading": "Esto puede tomar unos segundos",
+    "noResults": "No se encontraron obras que coincidan con tu búsqueda"
   },
   "errors": {
-    "loadingPosts": "Error loading posts",
-    "searchError": "Search error",
-    "userSearchError": "Error searching users"
-  }
+    "searchError": "Error en la búsqueda",
+    "userSearchError": "Error al buscar usuarios"
+  },
+
+ 
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "yes": "Sí",
+    "no": "No",
+    "confirm": "Confirmar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior"
+ 
+
+
+
 }

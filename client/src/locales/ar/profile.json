@@ -1,4 +1,11 @@
-{
+{ "noPermission": "ليس لديك إذن لتعديل هذا الملف الشخصي",
+"adminEditMode": "وضع التحرير كمسؤول",
+"adminEditWarning": "أنت تقوم بتحرير ملف تعريف مستخدم آخر. سيتم تطبيق التغييرات فورًا.",
+"editingAsAdmin": "التحرير كمسؤول",
+"profileUpdatedByAdmin": "تم تحديث ملف {{username}} بنجاح",
+"updateUserInfo": "تحديث معلومات المستخدم",
+"noEditPermission": "ليس لديك إذن لتعديل هذا الملف الشخصي.",
+"backToHome": "العودة إلى الصفحة الرئيسية",
       
         "loadingProfile": "جاري تحميل الملف...",
         "profilePrivate": "ملف شخصي خاص",

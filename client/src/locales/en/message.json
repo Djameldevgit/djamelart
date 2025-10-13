@@ -1,5 +1,16 @@
 {
+    
+      
   
+        "justNow": "Just now",
+        "minutesAgo": "{{minutes}} min ago",
+        "hoursAgo": "{{hours}} h ago",
+      
+        "daysAgo": "days ago",
+  
+
+
+
       "rightside": "rightside",
       "send": "Send",
       "loading": "Loading...",

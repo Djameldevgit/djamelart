@@ -7,51 +7,17 @@ import { MESS_TYPES, getConversations } from '../../redux/actions/messageAction'
 import { getDataAPI } from '../../utils/fetchData'
 import { useTranslation } from 'react-i18next'
 import i18n from 'i18next'
-import { Card, Form, InputGroup, Button, Badge, ListGroup, Spinner } from 'react-bootstrap'
-import { FaSearch, FaCircle, FaInbox } from 'react-icons/fa'
-
-// 🔥 COMPONENTE REUTILIZABLE PARA INDICADOR DE CONEXIÓN
-const OnlineIndicator = ({ isOnline, size = 'small', showText = false, theme }) => {
-    const indicatorSize = size === 'large' ? '12px' : '8px'
-    const textSize = size === 'large' ? '0.75rem' : '0.65rem'
-    
-    return (
-        <div className="d-flex align-items-center gap-1">
-            <div
-                style={{
-                    width: indicatorSize,
-                    height: indicatorSize,
-                    borderRadius: '50%',
-                    background: isOnline ? '#4CAF50' : '#9E9E9E',
-                    border: `2px solid ${theme ? '#16213e' : 'white'}`,
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                    animation: isOnline ? 'pulse 2s infinite' : 'none'
-                }}
-                title={isOnline ? 'En línea' : 'Desconectado'}
-            />
-            {showText && (
-                <span 
-                    style={{ 
-                        fontSize: textSize, 
-                        color: isOnline ? '#4CAF50' : (theme ? '#aaa' : '#666'),
-                        fontWeight: '500'
-                    }}
-                >
-                    {isOnline ? 'En línea' : 'Desconectado'}
-                </span>
-            )}
-        </div>
-    )
-}
+import { Card, Form, InputGroup, Button, Badge, ListGroup, Spinner, Tooltip, OverlayTrigger } from 'react-bootstrap'
+import { FaSearch, FaCircle, FaInbox, FaClock, FaRegClock } from 'react-icons/fa'
 
 const LeftSide = () => {
-  const { auth, message, online, languageReducer, theme, socket } = useSelector(state => state)
+  const { auth, message, online, languageReducer, theme } = useSelector(state => state)
   const dispatch = useDispatch()
 
   const [search, setSearch] = useState('')
   const [searchUsers, setSearchUsers] = useState([])
   const [isSearching, setIsSearching] = useState(false)
-  const [onlineUsers, setOnlineUsers] = useState([]) // 🔥 NUEVO: Estado para usuarios online
+  const [userStatus, setUserStatus] = useState({}) // Para almacenar estados de usuarios
 
   const history = useHistory()
   const { id } = useParams()
@@ -68,64 +34,63 @@ const LeftSide = () => {
     }
   }, [lang])
 
-  // 🔥 NUEVO: Effect para sincronizar estado online con socket
-  useEffect(() => {
-    if (!socket) return
+  // 🔹 Función para calcular el tiempo desde la última conexión
+  const getLastSeenTime = (lastLogin) => {
+    if (!lastLogin) return t('offline', { lng: lang })
+    
+    const now = new Date()
+    const lastSeen = new Date(lastLogin)
+    const diffInMinutes = Math.floor((now - lastSeen) / (1000 * 60))
+    const diffInHours = Math.floor(diffInMinutes / 60)
+    const diffInDays = Math.floor(diffInHours / 24)
 
-    // Escuchar cambios de estado online
-    socket.on('user-online-status', (data) => {
-      setOnlineUsers(prev => {
-        const filtered = prev.filter(userId => userId !== data.userId)
-        if (data.isOnline) {
-          return [...filtered, data.userId]
-        }
-        return filtered
-      })
-    })
+    if (diffInMinutes < 1) return t('justNow', { lng: lang })
+    if (diffInMinutes < 60) return t('minutesAgo', { minutes: diffInMinutes, lng: lang })
+    if (diffInHours < 24) return t('hoursAgo', { hours: diffInHours, lng: lang })
+    if (diffInDays === 1) return t('yesterday', { lng: lang })
+    return `${diffInDays} ${t('daysAgo', { lng: lang })}`
+  }
 
-    socket.on('user-connected', (userId) => {
-      setOnlineUsers(prev => [...prev, userId])
-    })
-
-    socket.on('user-disconnected', (userId) => {
-      setOnlineUsers(prev => prev.filter(id => id !== userId))
-    })
-
-    return () => {
-      socket.off('user-online-status')
-      socket.off('user-connected')
-      socket.off('user-disconnected')
+  // 🔹 Determinar el estado del usuario
+  const getUserStatus = (user) => {
+    // Si está en línea
+    if (user.online) {
+      return {
+        status: 'online',
+        text: t('online', { lng: lang }),
+        color: '#28a745',
+        icon: <FaCircle size={8} />
+      }
     }
-  }, [socket])
 
-  // 🔥 MEJORADO: Función para verificar si usuario está online
-  const isUserOnline = (userId) => {
-    // Priorizar datos de socket (tiempo real), luego el estado global
-    return onlineUsers.includes(userId) || online.includes(userId)
+    // Si no está en línea pero es un usuario seguido
+    if (auth.user.following.find(item => item._id === user._id)) {
+      const lastSeen = getLastSeenTime(user.lastLogin)
+      return {
+        status: 'offline',
+        text: lastSeen,
+        color: theme ? '#6c757d' : '#adb5bd',
+        icon: <FaRegClock size={8} />
+      }
+    }
+
+    // Usuario no seguido
+    return {
+      status: 'unknown',
+      text: t('offline', { lng: lang }),
+      color: theme ? '#495057' : '#dee2e6',
+      icon: <FaCircle size={8} />
+    }
   }
 
   const handleSearch = async e => {
     e.preventDefault()
-    
-    const normalizedSearch = search
-      .trim()
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-
-    if (!normalizedSearch) return setSearchUsers([])
+    if (!search) return setSearchUsers([])
 
     try {
       setIsSearching(true)
-      const res = await getDataAPI(`search?username=${encodeURIComponent(normalizedSearch)}`, auth.token)
-      
-      // 🔥 MEJORADO: Agregar estado online a usuarios de búsqueda
-      const usersWithOnlineStatus = res.data.users.map(user => ({
-        ...user,
-        online: isUserOnline(user._id)
-      }))
-      
-      setSearchUsers(usersWithOnlineStatus)
+      const res = await getDataAPI(`search?username=${search}`, auth.token)
+      setSearchUsers(res.data.users)
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
@@ -163,9 +128,7 @@ const LeftSide = () => {
       threshold: 0.1
     })
 
-    if (pageEnd.current) {
-      observer.observe(pageEnd.current)
-    }
+    observer.observe(pageEnd.current)
   }, [setPage])
 
   useEffect(() => {
@@ -174,12 +137,66 @@ const LeftSide = () => {
     }
   }, [message.resultUsers, page, auth, dispatch])
 
-  // 🔥 MEJORADO: Sincronizar online users con el estado global
   useEffect(() => {
-    if (message.firstLoad && online.length > 0) {
-      setOnlineUsers(prev => [...new Set([...prev, ...online])])
+    if (message.firstLoad) {
+      dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online })
     }
-  }, [online, message.firstLoad])
+  }, [online, message.firstLoad, dispatch])
+
+  // 🔹 Componente de indicador de estado
+  const StatusIndicator = ({ user, compact = false }) => {
+    const status = getUserStatus(user)
+    
+    if (compact) {
+      return (
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip>
+              {status.text}
+            </Tooltip>
+          }
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {status.icon}
+            {!compact && (
+              <small style={{ 
+                fontSize: '0.7rem', 
+                color: status.color,
+                fontWeight: '500'
+              }}>
+                {status.text}
+              </small>
+            )}
+          </div>
+        </OverlayTrigger>
+      )
+    }
+
+    return (
+      <Badge
+        bg={status.status === 'online' ? 'success' : 'secondary'}
+        pill
+        style={{
+          fontSize: '0.65rem',
+          padding: '4px 8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+          background: status.status === 'online' 
+            ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)'
+            : theme ? '#495057' : '#6c757d',
+          boxShadow: status.status === 'online' 
+            ? '0 2px 8px rgba(40, 167, 69, 0.4)'
+            : 'none',
+          border: status.status === 'online' ? '1px solid rgba(255,255,255,0.2)' : 'none'
+        }}
+      >
+        {status.icon}
+        {status.text}
+      </Badge>
+    )
+  }
 
   return (
     <div 
@@ -208,10 +225,10 @@ const LeftSide = () => {
                 <Form.Control
                   type="text"
                   value={search}
-                  placeholder={t('searchPlaceholder')}
+                  placeholder={t('searchPlaceholder', { lng: lang }) || 'Buscar usuarios...'}
                   onChange={e => setSearch(e.target.value)}
                   style={{
-                    borderRadius: lang === 'ar' ? '0 25px 25px 0' : '25px 0 0 25px',
+                    borderRadius: '25px 0 0 25px',
                     border: 'none',
                     padding: '12px 20px',
                     background: 'rgba(255, 255, 255, 0.95)',
@@ -223,7 +240,7 @@ const LeftSide = () => {
                 <Button
                   type="submit"
                   style={{
-                    borderRadius: lang === 'ar' ? '25px 0 0 25px' : '0 25px 25px 0',
+                    borderRadius: '0 25px 25px 0',
                     border: 'none',
                     background: 'rgba(255, 255, 255, 0.2)',
                     padding: '0 20px',
@@ -245,29 +262,16 @@ const LeftSide = () => {
               </InputGroup>
             </Form>
 
-            {/* Badge con contador de conversaciones y usuarios online */}
-            <div className="d-flex justify-content-between align-items-center mt-2">
-              <div className="d-flex gap-2">
-                <Badge 
-                  bg="light" 
-                  text="dark"
-                  style={{
-                    fontSize: '0.75rem',
-                    padding: '4px 8px'
-                  }}
-                >
-                  {t('conversations')}: {message.users.length}
-                </Badge>
-                <Badge 
-                  bg="success" 
-                  style={{
-                    fontSize: '0.75rem',
-                    padding: '4px 8px'
-                  }}
-                >
-                  {t('online')}: {onlineUsers.length}
-                </Badge>
-              </div>
+            {/* Indicador de estado global */}
+            <div className="d-flex justify-content-between align-items-center mt-2 px-1">
+              <small style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
+                {t('online', { lng: lang })}: {online.filter(userId => 
+                  message.users.find(u => u._id === userId)
+                ).length}
+              </small>
+              <small style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem' }}>
+                Total: {message.users.length}
+              </small>
             </div>
           </Card.Body>
         </Card>
@@ -294,7 +298,7 @@ const LeftSide = () => {
                 fontWeight: '600'
               }}
             >
-              {t('searchResults')} ({searchUsers.length})
+              {t('searchResults', { lng: lang }) || 'Resultados de búsqueda'} ({searchUsers.length})
             </div>
             <ListGroup variant="flush">
               {searchUsers.map(user => (
@@ -315,23 +319,16 @@ const LeftSide = () => {
                     e.currentTarget.style.background = theme 
                       ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
                       : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)';
-                    e.currentTarget.style.transform = lang === 'ar' ? 'translateX(-4px)' : 'translateX(4px)';
+                    e.currentTarget.style.transform = 'translateX(4px)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = theme ? '#16213e' : 'white';
                     e.currentTarget.style.transform = 'translateX(0)';
                   }}
                 >
-                  <div style={{ position: 'relative' }}>
+                  <div className="d-flex align-items-center justify-content-between">
                     <UserCard user={user} />
-                    {/* 🔥 INDICADOR DE CONEXIÓN MEJORADO */}
-                    <div className="mt-2">
-                      <OnlineIndicator 
-                        isOnline={user.online} 
-                        showText={true}
-                        theme={theme}
-                      />
-                    </div>
+                    <StatusIndicator user={user} compact={true} />
                   </div>
                 </ListGroup.Item>
               ))}
@@ -369,10 +366,10 @@ const LeftSide = () => {
                   <FaInbox size={35} style={{ color: '#667eea' }} />
                 </div>
                 <h6 style={{ fontWeight: '600', marginBottom: '8px' }}>
-                  {t('noUsersFound')}
+                  {t('noUsersFound', { lng: lang }) || 'No hay conversaciones'}
                 </h6>
                 <small style={{ opacity: 0.7 }}>
-                  {t('startConversation')}
+                  {t('searchToStart', { lng: lang }) || 'Busca usuarios para iniciar una conversación'}
                 </small>
               </div>
             ) : (
@@ -404,7 +401,7 @@ const LeftSide = () => {
                         e.currentTarget.style.background = theme 
                           ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
                           : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)';
-                        e.currentTarget.style.transform = lang === 'ar' ? 'translateX(-4px)' : 'translateX(4px)';
+                        e.currentTarget.style.transform = 'translateX(4px)';
                       }
                     }}
                     onMouseLeave={(e) => {
@@ -415,16 +412,10 @@ const LeftSide = () => {
                     }}
                   >
                     <div style={{ position: 'relative' }}>
-                      <UserCard user={user} msg={true}>
-                        {/* 🔥 INDICADOR DE CONEXIÓN MEJORADO Y CONSISTENTE */}
-                        <div className="mt-1">
-                          <OnlineIndicator 
-                            isOnline={isUserOnline(user._id)} 
-                            showText={true}
-                            theme={theme}
-                          />
-                        </div>
-                      </UserCard>
+                      <div className="d-flex align-items-center justify-content-between">
+                        <UserCard user={user} msg={true} />
+                        <StatusIndicator user={user} compact={false} />
+                      </div>
 
                       {/* Indicador de mensaje no leído */}
                       {user.unread > 0 && (
@@ -434,13 +425,13 @@ const LeftSide = () => {
                           style={{
                             position: 'absolute',
                             top: '8px',
-                            [lang === 'ar' ? 'left' : 'right']: '8px',
+                            right: lang === 'ar' ? 'auto' : '8px',
+                            left: lang === 'ar' ? '8px' : 'auto',
                             fontSize: '0.7rem',
                             padding: '4px 8px',
                             minWidth: '24px',
                             boxShadow: '0 2px 8px rgba(220, 53, 69, 0.4)'
                           }}
-                          title={`${user.unread} ${t('unreadMessages')}`}
                         >
                           {user.unread > 9 ? '9+' : user.unread}
                         </Badge>
@@ -462,13 +453,13 @@ const LeftSide = () => {
             border: 'none',
             background: 'transparent'
           }}
-          aria-label={t('loadMore2')}
+          aria-label={t('loadMore2', { lng: lang })}
         >
-          {t('loadMore2')}
+          {t('loadMore2', { lng: lang })}
         </button>
       </div>
 
-      {/* 🎨 ESTILOS PERSONALIZADOS MEJORADOS */}
+      {/* 🎨 ESTILOS PERSONALIZADOS */}
       <style>{`
         .message_chat_list::-webkit-scrollbar {
           width: 6px;
@@ -496,27 +487,15 @@ const LeftSide = () => {
           color: white !important;
         }
 
-        /* 🔥 ANIMACIÓN DE PULSO PARA INDICADOR ONLINE */
-        @keyframes pulse {
-          0% { 
-            transform: scale(1); 
-            opacity: 1;
-          }
-          50% { 
-            transform: scale(1.2); 
-            opacity: 0.7;
-          }
-          100% { 
-            transform: scale(1); 
-            opacity: 1;
-          }
+        /* Animación para el indicador online */
+        @keyframes pulse-online {
+          0% { opacity: 1; }
+          50% { opacity: 0.5; }
+          100% { opacity: 1; }
         }
 
-        /* Asegurar que los textos en items activos sean blancos */
-        .list-group-item.active .text-muted,
-        .list-group-item.active .text-dark {
-          color: white !important;
-          opacity: 0.9;
+        .status-online {
+          animation: pulse-online 2s infinite;
         }
       `}</style>
     </div>
