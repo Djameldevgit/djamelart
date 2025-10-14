@@ -1,4 +1,28 @@
 {
+
+	 
+		"emailActivation": {
+		  "subject": "Sermed amaynut-inek di Tassili Art",
+		  "body": "Anṣuf yiswen di Tassili Art! Iwakken ad tgeḍ amejmuɛ n yifenniyen akked timahilin n tneflit, ḥeqqed amiḍan-inek. Sit ɣef tqeffalt-agi akken ad tkemmleḍ asenqed:",
+		  "button": "Ssenqed amiḍan",
+		  "alt": "Ma yella tqeffalt ur tetteddu ara, nɣel ɣer iminig-inek aseɣwen-agi akken ad tesermed amiḍan-inek di Tassili Art."
+		},
+		"emailReset": {
+		  "subject": "Ales awennez n wawal n uɛeddi n Tassili Art",
+		  "body": "Tesutreḍ ad terrezed awal-inek n uɛeddi di Tassili Art. Sit ɣef tqeffalt-agi akken ad tkemmleḍ tamhelt:",
+		  "button": "Ales awennez",
+		  "alt": "Ma ur tesutreḍ ara asenqed-agi, tzemreḍ ad ttruḍ izen-agi."
+		},
+		"emailInformativo": {
+		  "subject": "Tilɣa timaynutin si Tassili Art",
+		  "body": "Wali tilɣa timaynutin d leqdic n Tassili Art. Snifel iɣefsen, imennayen d timahilin timaynutin di tneflit-nneɣ.",
+		  "button": "Snefli tura",
+		  "alt": "Ma yella tqeffalt ur tetteddu ara, rzu ɣer usmel-nneɣ web i wugar n telɣut."
+		},
+	  
+	  
+
+
 	"auth": {
 		"username_exists": "Isem n useqdac yella yakan.",
 		"email_exists": "Imayl yella yakan.",

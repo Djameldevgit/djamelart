@@ -1,4 +1,30 @@
 {
+
+	 
+		"emailActivation": {
+		  "subject": "激活您的 Tassili Art 帐户",
+		  "body": "欢迎加入 Tassili Art！为了成为我们艺术社区的一员并使用所有功能，请验证您的帐户。点击下方按钮完成验证：",
+		  "button": "验证帐户",
+		  "alt": "如果按钮无法使用，请将以下链接复制并粘贴到浏览器中以激活您的 Tassili Art 帐户。"
+		},
+		"emailReset": {
+		  "subject": "重置您的 Tassili Art 密码",
+		  "body": "您请求重置 Tassili Art 的密码。请点击下方按钮继续密码恢复过程：",
+		  "button": "重置密码",
+		  "alt": "如果您未发出此请求，请忽略此邮件。"
+		},
+		"emailInformativo": {
+		  "subject": "Tassili Art 最新资讯",
+		  "body": "了解 Tassili Art 的最新动态与更新。探索新的艺术作品、艺术家以及平台功能。",
+		  "button": "立即探索",
+		  "alt": "如果按钮无法使用，请访问我们的网站了解更多信息。"
+		},
+	 
+	  
+
+
+
+
 	"auth": {
 		"username_exists": "用户名已存在",
 		"email_exists": "电子邮件已存在",

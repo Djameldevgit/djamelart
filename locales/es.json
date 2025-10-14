@@ -1,4 +1,34 @@
 {
+	 
+		"emailActivation": {
+		  "subject": "Activa tu cuenta en Tassili Art",
+		  "body": "¡Bienvenido a Tassili Art! Para formar parte de nuestra comunidad de arte y disfrutar de todas las funciones de la plataforma, necesitamos verificar tu cuenta. Haz clic en el siguiente botón para completarlo:",
+		  "button": "Verificar cuenta",
+		  "alt": "Si el botón no funciona, copia y pega el siguiente enlace en tu navegador para activar tu cuenta en Tassili Art."
+		},
+		"emailReset": {
+		  "subject": "Restablece tu contraseña en Tassili Art",
+		  "body": "Has solicitado restablecer tu contraseña en Tassili Art. Para continuar con el proceso de recuperación, haz clic en el siguiente botón:",
+		  "button": "Restablecer contraseña",
+		  "alt": "Si no realizaste esta solicitud, puedes ignorar este mensaje con total seguridad."
+		},
+		"emailInformativo": {
+		  "subject": "Novedades en Tassili Art",
+		  "body": "Te damos la bienvenida a las últimas noticias y actualizaciones de Tassili Art. Descubre nuevas obras, artistas y funciones disponibles en nuestra plataforma.",
+		  "button": "Explorar ahora",
+		  "alt": "Si no puedes acceder mediante el botón, visita nuestra web para más información."
+		},
+	  
+	  
+	  
+	  
+
+
+
+
+
+
+
 	"auth": {
 		"username_exists": "El nombre de usuario ya existe.",
 		"email_exists": "El correo electrónico ya existe.",
