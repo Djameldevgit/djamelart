@@ -7,7 +7,6 @@ import { MESS_TYPES } from './redux/actions/messageAction'
 
 import audiobell from './audio/got-it-done-613.mp3'
 
-
 const spawnNotification = (body, icon, url, title) => {
     let options = {
         body, icon
@@ -31,6 +30,53 @@ const SocketClient = () => {
         socket.emit('joinUser', auth.user)
     },[socket, auth.user])
 
+    // 🔹 NUEVOS EVENTOS: Online/Offline con base de datos
+    useEffect(() => {
+        socket.on('userOnline', (data) => {
+            dispatch({type: GLOBALTYPES.ONLINE, payload: data.userId})
+            
+            dispatch({ 
+                type: MESS_TYPES.UPDATE_USER_STATUS, 
+                payload: {
+                    userId: data.userId,
+                    isOnline: true,
+                    lastOnline: data.lastOnline
+                }
+            });
+        })
+
+        socket.on('userOffline', (data) => {
+            dispatch({type: GLOBALTYPES.OFFLINE, payload: data.userId})
+            
+            dispatch({ 
+                type: MESS_TYPES.UPDATE_USER_STATUS, 
+                payload: {
+                    userId: data.userId,
+                    isOnline: false,
+                    lastOnline: data.lastOnline,
+                    lastDisconnectedAt: data.lastDisconnectedAt
+                }
+            });
+        })
+
+        return () => {
+            socket.off('userOnline')
+            socket.off('userOffline')
+        }
+    }, [socket, dispatch])
+
+    // 🔹 ACTIVIDAD PERIÓDICA para actualizar lastOnline
+    useEffect(() => {
+        const activityInterval = setInterval(() => {
+            if (auth.user && socket) {
+                socket.emit('userActivity', auth.user._id);
+            }
+        }, 30000); // Cada 30 segundos
+
+        return () => clearInterval(activityInterval);
+    }, [auth.user, socket])
+
+    // TYPING - Funciones existentes
     useEffect(() => {
         socket.on('typing-start-to-client', (data) => {
             console.log('TYPING START RECIBIDO:', data)
@@ -48,11 +94,8 @@ const SocketClient = () => {
     
         return () => socket.off('typing-stop-to-client')
     }, [socket, dispatch])
- 
 
-
-
-
+    // Likes - Funciones existentes
     useEffect(() => {
         socket.on('likeToClient', newPost =>{
             dispatch({type: POST_TYPES.UPDATE_POST, payload: newPost})
@@ -69,8 +112,7 @@ const SocketClient = () => {
         return () => socket.off('unLikeToClient')
     },[socket, dispatch])
 
-
-    // Comments
+    // Comments - Funciones existentes
     useEffect(() => {
         socket.on('createCommentToClient', newPost =>{
             dispatch({type: POST_TYPES.UPDATE_POST, payload: newPost})
@@ -87,8 +129,7 @@ const SocketClient = () => {
         return () => socket.off('deleteCommentToClient')
     },[socket, dispatch])
 
-
-    // Follow
+    // Follow - Funciones existentes
     useEffect(() => {
         socket.on('followToClient', newUser =>{
             dispatch({type: GLOBALTYPES.AUTH, payload: {...auth, user: newUser}})
@@ -105,8 +146,7 @@ const SocketClient = () => {
         return () => socket.off('unFollowToClient')
     },[socket, dispatch, auth])
 
-
-    // Notification
+    // Notification - Funciones existentes
     useEffect(() => {
         socket.on('createNotifyToClient', msg =>{
             dispatch({type: NOTIFY_TYPES.CREATE_NOTIFY, payload: msg})
@@ -131,8 +171,7 @@ const SocketClient = () => {
         return () => socket.off('removeNotifyToClient')
     },[socket, dispatch])
 
-
-    // Message
+    // Message - Funciones existentes
     useEffect(() => {
         socket.on('addMessageToClient', msg =>{
             dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
@@ -150,7 +189,7 @@ const SocketClient = () => {
         return () => socket.off('addMessageToClient')
     },[socket, dispatch])
 
-    // Check User Online / Offline
+    // Check User Online / Offline - Funciones existentes
     useEffect(() => {
         socket.emit('checkUserOnline', auth.user)
     },[socket, auth.user])
@@ -177,7 +216,7 @@ const SocketClient = () => {
         return () => socket.off('checkUserOnlineToClient')
     },[socket, dispatch, online])
 
-    // Check User Offline
+    // Check User Offline - Funciones existentes
     useEffect(() => {
         socket.on('CheckUserOffline', id =>{
             dispatch({type: GLOBALTYPES.OFFLINE, payload: id})
@@ -186,8 +225,7 @@ const SocketClient = () => {
         return () => socket.off('CheckUserOffline')
     },[socket, dispatch])
 
-
-    // Call User
+    // Call User - Funciones existentes
     useEffect(() => {
         socket.on('callUserToClient', data =>{
             dispatch({type: GLOBALTYPES.CALL, payload: data})
@@ -203,8 +241,6 @@ const SocketClient = () => {
 
         return () => socket.off('userBusy')
     },[socket, dispatch, call])
-
-
 
     return (
         <>

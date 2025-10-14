@@ -3,7 +3,6 @@ import { postDataAPI, getDataAPI, deleteDataAPI } from '../../utils/fetchData'
 import { createNotify } from './notifyAction'
 
 
-
 export const MESS_TYPES = {
     ADD_USER: 'ADD_USER',
     ADD_MESSAGE: 'ADD_MESSAGE',
@@ -13,19 +12,20 @@ export const MESS_TYPES = {
     DELETE_MESSAGES: 'DELETE_MESSAGES',
     DELETE_CONVERSATION: 'DELETE_CONVERSATION',
     CHECK_ONLINE_OFFLINE: 'CHECK_ONLINE_OFFLINE',
-
     TYPING_START: 'TYPING_START',
     TYPING_STOP: 'TYPING_STOP',
-    SET_TYPING: 'SET_TYPING'
-
-
-
+    SET_TYPING: 'SET_TYPING',
+    UPDATE_USER_STATUS: 'UPDATE_USER_STATUS' // 🔹 AGREGADO DENTRO del objeto
 }
-// En tu messageAction.js (agrega estas functions)
-export const startTyping = ({ sender, recipient, chatId }) => ({
-    type: MESS_TYPES.TYPING_START,
-    payload: { sender, recipient, chatId }
-});
+
+// 🔹 LUEGO las acciones que usan MESS_TYPES
+export const updateUserStatus = (data) => (dispatch) => {
+    dispatch({
+        type: MESS_TYPES.UPDATE_USER_STATUS,
+        payload: data
+    });
+};
+
 
 export const stopTyping = ({ sender, recipient, chatId }) => ({
     type: MESS_TYPES.TYPING_STOP,
