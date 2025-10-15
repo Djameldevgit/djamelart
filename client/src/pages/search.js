@@ -18,15 +18,15 @@ import {
   Col,
   Card,
   Accordion,
+  Badge,
 } from "react-bootstrap";
 
 import LoadIcon from "../images/loading.gif";
 
 export default function SearchPage() {
   const { t, i18n } = useTranslation('search');
-  const languageReducer = useSelector(state => state.languageReducer); // Ajusta según tu store
+  const languageReducer = useSelector(state => state.languageReducer);
   
-  // Sincronizar idioma con Redux
   useEffect(() => {
     const lang = languageReducer?.language || 'es';
     if (i18n.language !== lang) {
@@ -34,35 +34,36 @@ export default function SearchPage() {
     }
   }, [languageReducer?.language, i18n]);
 
+  // 🔹 Estados consolidados
   const [search, setSearch] = useState("");
-  const [categories, setCategories] = useState({
-    painting: false,
-    sculpture: false,
-    photography: false,
-    drawing: false,
-    engraving: false,
-    digital_art: false,
-    collage: false,
-    textile_art: false,
+  const [filters, setFilters] = useState({
+    categories: {
+      painting: false,
+      sculpture: false,
+      photography: false,
+      drawing: false,
+      engraving: false,
+      digital_art: false,
+      collage: false,
+      textile_art: false,
+    },
+    theme: "",
+    style: "",
+    priceMin: "",
+    priceMax: "",
+    wilaya: ""
   });
 
-  const [theme, setTheme] = useState("");
-  const [style, setStyle] = useState("");
-  const [priceMin, setPriceMin] = useState("");
-  const [priceMax, setPriceMax] = useState("");
-  const [wilaya, setWilaya] = useState("");
-
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState([]);
+  const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
-
   const [users, setUsers] = useState([]);
   const [userLoading, setUserLoading] = useState(false);
 
   const { auth } = useSelector((state) => state);
   const dispatch = useDispatch();
 
-  // 🔹 Búsqueda inteligente con debounce
+  // 🔹 Búsqueda inteligente con debounce mejorado
   const handleUserSearch = useCallback(async (value) => {
     const searchValue = value.toLowerCase().trim();
     setSearch(value);
@@ -93,28 +94,24 @@ export default function SearchPage() {
     setLoading(true);
 
     try {
-      // Construir query parameters correctamente
       const queryParams = new URLSearchParams();
       
       if (search.trim()) queryParams.append('title', search.trim().toLowerCase());
-      if (theme.trim()) queryParams.append('theme', theme.trim().toLowerCase());
-      if (style.trim()) queryParams.append('style', style.trim().toLowerCase());
-      if (wilaya.trim()) queryParams.append('wilaya', wilaya.trim().toLowerCase());
-      if (priceMin) queryParams.append('priceMin', priceMin);
-      if (priceMax) queryParams.append('priceMax', priceMax);
+      if (filters.theme.trim()) queryParams.append('theme', filters.theme.trim().toLowerCase());
+      if (filters.style.trim()) queryParams.append('style', filters.style.trim().toLowerCase());
+      if (filters.wilaya.trim()) queryParams.append('wilaya', filters.wilaya.trim().toLowerCase());
+      if (filters.priceMin) queryParams.append('priceMin', filters.priceMin);
+      if (filters.priceMax) queryParams.append('priceMax', filters.priceMax);
 
-      // Agregar categorías como "true"/"false"
-      Object.entries(categories).forEach(([key, value]) => {
+      Object.entries(filters.categories).forEach(([key, value]) => {
         queryParams.append(key, value.toString());
       });
 
       const queryString = queryParams.toString();
       const url = `posts${queryString ? `?${queryString}` : ''}`;
-
-      console.log("Buscando con URL:", url);
       
       const res = await getDataAPI(url, auth.token);
-      setFilters(res.data.posts || []);
+      setResults(res.data.posts || []);
       
     } catch (err) {
       console.error("Error en búsqueda:", err);
@@ -131,58 +128,77 @@ export default function SearchPage() {
     setSearch("");
   };
 
+  // 🔹 Manejo de filtros optimizado
+  const updateFilter = (section, key, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [section]: section === 'categories' 
+        ? { ...prev.categories, [key]: value }
+        : value
+    }));
+  };
+
   // 🔹 Limpiar todos los filtros
   const handleClearFilters = () => {
     setSearch("");
-    setCategories({
-      painting: false,
-      sculpture: false,
-      photography: false,
-      drawing: false,
-      engraving: false,
-      digital_art: false,
-      collage: false,
-      textile_art: false,
+    setFilters({
+      categories: {
+        painting: false,
+        sculpture: false,
+        photography: false,
+        drawing: false,
+        engraving: false,
+        digital_art: false,
+        collage: false,
+        textile_art: false,
+      },
+      theme: "",
+      style: "",
+      priceMin: "",
+      priceMax: "",
+      wilaya: ""
     });
-    setTheme("");
-    setStyle("");
-    setPriceMin("");
-    setPriceMax("");
-    setWilaya("");
-    setFilters([]);
+    setResults([]);
     setUsers([]);
     setError(null);
   };
 
-  // 🔹 Contador de filtros activos
+  // 🔹 Contador de filtros activos optimizado
   const activeFiltersCount = [
     search,
-    theme,
-    style,
-    wilaya,
-    priceMin,
-    priceMax,
-    ...Object.values(categories).filter(Boolean)
+    filters.theme,
+    filters.style,
+    filters.wilaya,
+    filters.priceMin,
+    filters.priceMax,
+    ...Object.values(filters.categories).filter(Boolean)
   ].filter(Boolean).length;
 
   return (
-    <Container className="py-4">
-      {/* Header Mejorado */}
-      <div className="text-center mb-4">
-        <h2 className="fw-bold text-primary">{t('title')}</h2>
-        <p className="text-muted">{t('subtitle')}</p>
+    <Container className="py-3">
+      {/* Header Compacto */}
+      <div className="text-center mb-3">
+        <h4 className="fw-bold text-primary mb-1">{t('title')}</h4>
+        <p className="text-muted small">{t('subtitle')}</p>
       </div>
 
-      {/* Search Card */}
-      <Card className="shadow-sm border-0 mb-4">
-        <Card.Body className="p-4">
+      {/* Search Card Compacta */}
+      <Card className="shadow-sm border-0 mb-3">
+        <Card.Body className="p-3">
           <Form onSubmit={handleSearch}>
-            {/* 🔹 Búsqueda Principal Mejorada */}
-            <Form.Group className="mb-4">
-              <Form.Label className="fw-semibold text-dark">
-                {t('searchLabel')}
-              </Form.Label>
-              <InputGroup size="lg">
+            {/* 🔹 Búsqueda Principal Compacta */}
+            <Form.Group className="mb-3">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <Form.Label className="fw-semibold text-dark mb-0 small">
+                  {t('searchLabel')}
+                </Form.Label>
+                {activeFiltersCount > 0 && (
+                  <Badge bg="primary" className="fs-6">
+                    {activeFiltersCount}
+                  </Badge>
+                )}
+              </div>
+              <InputGroup size="md">
                 <Form.Control
                   type="text"
                   placeholder={t('searchPlaceholder')}
@@ -194,37 +210,38 @@ export default function SearchPage() {
                   <Button 
                     variant="outline-secondary" 
                     onClick={handleCloseUsers}
-                    className="border-start-0"
-                    title={t('buttons.close')}
+                    className="border-start-0 px-3"
+                    size="sm"
                   >
-                    <i className="fas fa-times"></i>
+                    <i className="fas fa-times small"></i>
                   </Button>
                 )}
               </InputGroup>
-              <Form.Text className="text-muted">
-                {t('searchHelp')}
-              </Form.Text>
             </Form.Group>
 
-            {/* 🔹 Dropdown usuarios mejorado */}
+            {/* 🔹 Dropdown usuarios compacto */}
             {search && users.length > 0 && (
-              <Card className="mb-3 border-primary">
-                <Card.Header className="bg-primary text-white py-2">
-                  <small>{t('artistsFound')}</small>
+              <Card className="mb-2 border-primary">
+                <Card.Header className="bg-primary text-white py-1 px-2">
+                  <small className="fw-bold">
+                    <i className="fas fa-users me-1"></i>
+                    {t('artistsFound')} ({users.length})
+                  </small>
                 </Card.Header>
-                <ListGroup variant="flush">
+                <ListGroup variant="flush" className="max-h-200 overflow-auto">
                   {userLoading && (
-                    <ListGroup.Item className="text-center py-3">
+                    <ListGroup.Item className="text-center py-2">
                       <Spinner animation="border" size="sm" className="me-2" />
-                      {t('searchingArtists')}
+                      <small>{t('searchingArtists')}</small>
                     </ListGroup.Item>
                   )}
                   {users.map((user) => (
-                    <ListGroup.Item key={user._id} action className="p-3">
+                    <ListGroup.Item key={user._id} action className="p-2">
                       <UserCard
                         user={user}
                         border="border-0"
                         handleClose={handleCloseUsers}
+                        compact={true}
                       />
                     </ListGroup.Item>
                   ))}
@@ -232,37 +249,33 @@ export default function SearchPage() {
               </Card>
             )}
 
-            {/* 🔹 Acordeón para Búsqueda Avanzada */}
-            <Accordion className="mb-4" defaultActiveKey="0">
-              {/* Categorías */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <div className="d-flex align-items-center">
-                    <i className="fas fa-tags text-primary me-2"></i>
-                    {t('categories.title')}
-                    {Object.values(categories).filter(Boolean).length > 0 && (
-                      <span className="badge bg-primary ms-2">
-                        {Object.values(categories).filter(Boolean).length}
-                      </span>
+            {/* 🔹 Acordeón Compacto para Filtros */}
+            <Accordion className="mb-3" defaultActiveKey={[]} alwaysOpen>
+              {/* Categorías Compactas */}
+              <Accordion.Item eventKey="0" className="mb-2">
+                <Accordion.Header className="py-2">
+                  <div className="d-flex align-items-center w-100">
+                    <i className="fas fa-tags text-primary me-2 fs-6"></i>
+                    <small className="fw-semibold">{t('categories.title')}</small>
+                    {Object.values(filters.categories).filter(Boolean).length > 0 && (
+                      <Badge bg="primary" className="ms-2 fs-6">
+                        {Object.values(filters.categories).filter(Boolean).length}
+                      </Badge>
                     )}
                   </div>
                 </Accordion.Header>
-                <Accordion.Body>
-                  <Row>
-                    {Object.keys(categories).map((cat) => (
-                      <Col xs={6} md={4} lg={3} key={cat} className="mb-2">
+                <Accordion.Body className="p-2">
+                  <Row className="g-1">
+                    {Object.keys(filters.categories).map((cat) => (
+                      <Col xs={6} sm={4} key={cat}>
                         <Form.Check
                           type="checkbox"
                           id={cat}
                           name={cat}
-                          label={t(`categories.${cat}`)}
-                          checked={categories[cat]}
-                          onChange={(e) =>
-                            setCategories((prev) => ({
-                              ...prev,
-                              [e.target.name]: e.target.checked,
-                            }))
-                          }
+                          label={<small>{t(`categories.${cat}`)}</small>}
+                          checked={filters.categories[cat]}
+                          onChange={(e) => updateFilter('categories', e.target.name, e.target.checked)}
+                          className="small"
                         />
                       </Col>
                     ))}
@@ -270,116 +283,118 @@ export default function SearchPage() {
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Búsqueda Avanzada */}
+              {/* Filtros Avanzados Compactos */}
               <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <div className="d-flex align-items-center">
-                    <i className="fas fa-sliders-h text-warning me-2"></i>
-                    {t('advancedSearch.title')}
-                    {activeFiltersCount > 0 && (
-                      <span className="badge bg-warning ms-2">
-                        {activeFiltersCount}
-                      </span>
-                    )}
+                <Accordion.Header className="py-2">
+                  <div className="d-flex align-items-center w-100">
+                    <i className="fas fa-sliders-h text-warning me-2 fs-6"></i>
+                    <small className="fw-semibold">{t('advancedSearch.title')}</small>
                   </div>
                 </Accordion.Header>
-                <Accordion.Body>
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>
-                          <i className="fas fa-palette text-info me-2"></i>
+                <Accordion.Body className="p-2">
+                  <Row className="g-2">
+                    <Col sm={6}>
+                      <Form.Group className="mb-2">
+                        <Form.Label className="small fw-semibold mb-1">
+                          <i className="fas fa-palette text-info me-1"></i>
                           {t('advancedSearch.theme')}
                         </Form.Label>
                         <Form.Control
                           type="text"
                           placeholder={t('advancedSearch.themePlaceholder')}
-                          value={theme}
-                          onChange={(e) => setTheme(e.target.value)}
+                          value={filters.theme}
+                          onChange={(e) => updateFilter('theme', null, e.target.value)}
+                          size="sm"
                         />
                       </Form.Group>
                     </Col>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>
-                          <i className="fas fa-brush text-success me-2"></i>
+                    <Col sm={6}>
+                      <Form.Group className="mb-2">
+                        <Form.Label className="small fw-semibold mb-1">
+                          <i className="fas fa-brush text-success me-1"></i>
                           {t('advancedSearch.style')}
                         </Form.Label>
                         <Form.Control
                           type="text"
                           placeholder={t('advancedSearch.stylePlaceholder')}
-                          value={style}
-                          onChange={(e) => setStyle(e.target.value)}
+                          value={filters.style}
+                          onChange={(e) => updateFilter('style', null, e.target.value)}
+                          size="sm"
                         />
                       </Form.Group>
                     </Col>
                   </Row>
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>
-                          <i className="fas fa-euro-sign text-danger me-2"></i>
+                  
+                  <Row className="g-2">
+                    <Col sm={6}>
+                      <Form.Group className="mb-2">
+                        <Form.Label className="small fw-semibold mb-1">
+                          <i className="fas fa-euro-sign text-danger me-1"></i>
                           {t('advancedSearch.minPrice')}
                         </Form.Label>
                         <Form.Control
                           type="number"
                           placeholder={t('advancedSearch.minPricePlaceholder')}
-                          value={priceMin}
-                          onChange={(e) => setPriceMin(e.target.value)}
+                          value={filters.priceMin}
+                          onChange={(e) => updateFilter('priceMin', null, e.target.value)}
                           min="0"
+                          size="sm"
                         />
                       </Form.Group>
                     </Col>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>
-                          <i className="fas fa-euro-sign text-success me-2"></i>
+                    <Col sm={6}>
+                      <Form.Group className="mb-2">
+                        <Form.Label className="small fw-semibold mb-1">
+                          <i className="fas fa-euro-sign text-success me-1"></i>
                           {t('advancedSearch.maxPrice')}
                         </Form.Label>
                         <Form.Control
                           type="number"
                           placeholder={t('advancedSearch.maxPricePlaceholder')}
-                          value={priceMax}
-                          onChange={(e) => setPriceMax(e.target.value)}
+                          value={filters.priceMax}
+                          onChange={(e) => updateFilter('priceMax', null, e.target.value)}
                           min="0"
+                          size="sm"
                         />
                       </Form.Group>
                     </Col>
                   </Row>
-                  <Form.Group className="mb-3">
-                    <Form.Label>
-                      <i className="fas fa-map-marker-alt text-primary me-2"></i>
+                  
+                  <Form.Group className="mb-2">
+                    <Form.Label className="small fw-semibold mb-1">
+                      <i className="fas fa-map-marker-alt text-primary me-1"></i>
                       {t('advancedSearch.location')}
                     </Form.Label>
                     <Form.Control
                       type="text"
                       placeholder={t('advancedSearch.locationPlaceholder')}
-                      value={wilaya}
-                      onChange={(e) => setWilaya(e.target.value)}
+                      value={filters.wilaya}
+                      onChange={(e) => updateFilter('wilaya', null, e.target.value)}
+                      size="sm"
                     />
                   </Form.Group>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
 
-            {/* 🔹 Botones de Acción */}
-            <div className="d-flex gap-2 flex-wrap">
+            {/* 🔹 Botones de Acción Compactos */}
+            <div className="d-flex gap-2">
               <Button 
                 type="submit" 
                 disabled={loading}
                 variant="primary"
-                size="lg"
+                size="sm"
                 className="flex-fill"
               >
                 {loading ? (
                   <>
                     <Spinner animation="border" size="sm" className="me-2" />
-                    {t('buttons.searching')}
+                    <small>{t('buttons.searching')}</small>
                   </>
                 ) : (
                   <>
                     <i className="fas fa-search me-2"></i>
-                    {t('buttons.search')}
+                    <small>{t('buttons.search')}</small>
                   </>
                 )}
               </Button>
@@ -388,10 +403,11 @@ export default function SearchPage() {
                 <Button 
                   variant="outline-secondary" 
                   onClick={handleClearFilters}
-                  size="lg"
+                  size="sm"
+                  className="px-3"
                 >
-                  <i className="fas fa-times me-2"></i>
-                  {t('buttons.clear')}
+                  <i className="fas fa-times me-1"></i>
+                  <small>{t('buttons.clear')}</small>
                 </Button>
               )}
             </div>
@@ -399,35 +415,58 @@ export default function SearchPage() {
         </Card.Body>
       </Card>
 
-      {/* 🔹 Indicador de Resultados */}
-      {filters.length > 0 && (
-        <Alert variant="info" className="d-flex align-items-center">
-          <i className="fas fa-info-circle me-2"></i>
-          {t('results.found', { count: filters.length })}
+      {/* 🔹 Indicadores Compactos */}
+      {results.length > 0 && (
+        <Alert variant="info" className="py-2 px-3 mb-3 d-flex align-items-center">
+          <i className="fas fa-info-circle me-2 fs-6"></i>
+          <small className="fw-semibold">
+            {t('results.found', { count: results.length })}
+          </small>
         </Alert>
       )}
 
       {error && (
-        <Alert variant="danger" className="d-flex align-items-center">
-          <i className="fas fa-exclamation-triangle me-2"></i>
-          {error}
+        <Alert variant="danger" className="py-2 px-3 mb-3 d-flex align-items-center">
+          <i className="fas fa-exclamation-triangle me-2 fs-6"></i>
+          <small>{error}</small>
         </Alert>
       )}
 
       {/* 🔹 Lista de Posts */}
-      <div className="mt-4">
+      <div className="mt-3">
         {loading ? (
-          <Card className="text-center py-5">
-            <Card.Body>
-              <img src={LoadIcon} alt="loading" className="d-block mx-auto mb-3" />
-              <h5 className="text-muted">{t('results.searching')}</h5>
-              <p className="text-muted">{t('results.loading')}</p>
+          <Card className="text-center py-4">
+            <Card.Body className="p-3">
+              <img src={LoadIcon} alt="loading" width="40" className="mb-2" />
+              <h6 className="text-muted mb-1">{t('results.searching')}</h6>
+              <small className="text-muted">{t('results.loading')}</small>
             </Card.Body>
           </Card>
         ) : (
-          <Posts filters={filters} />
+          <Posts filters={results} />
         )}
       </div>
     </Container>
   );
 }
+
+// 🔹 Estilos CSS adicionales para mejor compactación
+const styles = `
+.max-h-200 {
+  max-height: 200px;
+}
+.accordion-button {
+  padding: 0.5rem 1rem;
+}
+.accordion-button:not(.collapsed) {
+  background-color: #f8f9fa;
+}
+.accordion-body {
+  padding: 0.5rem;
+}s
+`;
+
+// Agregar estilos al documento
+const styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);

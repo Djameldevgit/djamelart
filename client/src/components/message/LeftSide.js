@@ -1,83 +1,85 @@
-import React, { useState, useEffect, useRef } from 'react'
-import UserCard from '../UserCard'
-import { useSelector, useDispatch } from 'react-redux'
-import { GLOBALTYPES } from '../../redux/actions/globalTypes'
-import { useHistory, useParams, Link } from 'react-router-dom'
-import { MESS_TYPES, getConversations } from '../../redux/actions/messageAction'
-import { getDataAPI } from '../../utils/fetchData'
-import { useTranslation } from 'react-i18next'
-import i18n from 'i18next'
-import { Card, Form, InputGroup, Button, Badge, ListGroup, Spinner, Tooltip, OverlayTrigger } from 'react-bootstrap'
-import { FaSearch, FaCircle, FaInbox, FaClock, FaRegClock } from 'react-icons/fa'
+import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import { Form, Button, InputGroup, ListGroup, Card, Badge, Spinner, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { FaSearch, FaCircle, FaRegClock, FaInbox } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
+import { getDataAPI } from '../../utils/fetchData';
+import { MESS_TYPES } from '../../redux/actions/messageAction';
+import { GLOBALTYPES } from '../../redux/actions/globalTypes';
+import { getConversations } from '../../redux/actions/messageAction';
 
 const LeftSide = () => {
-  const { auth, message, online, languageReducer, theme, socket } = useSelector(state => state) // 🔹 Agregar socket
-  const dispatch = useDispatch()
+  const { auth, message, online, languageReducer, theme, socket } = useSelector(state => state);
+  const dispatch = useDispatch();
 
-  const [search, setSearch] = useState('')
-  const [searchUsers, setSearchUsers] = useState([])
-  const [isSearching, setIsSearching] = useState(false)
+  const [search, setSearch] = useState('');
+  const [searchUsers, setSearchUsers] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const history = useHistory()
-  const { id } = useParams()
+  const history = useHistory();
+  const { id } = useParams();
 
-  const pageEnd = useRef()
-  const [page, setPage] = useState(0)
+  const pageEnd = useRef();
+  const [page, setPage] = useState(0);
 
-  const { t } = useTranslation('message')
-  const lang = languageReducer.language || 'es'
+  const { t, i18n } = useTranslation('message');
+  const lang = languageReducer?.language || 'es';
 
   useEffect(() => {
     if (i18n.language !== lang) {
-      i18n.changeLanguage(lang)
+      i18n.changeLanguage(lang);
     }
-  }, [lang])
+  }, [lang, i18n]);
 
-  // 🔹 ESCUCHAR EVENTOS DE SOCKET PARA ACTUALIZAR ESTADO EN TIEMPO REAL
+  // 🔹 SOCKET LISTENERS MEJORADOS - Actualización en tiempo real
   useEffect(() => {
     if (!socket) return;
 
-    // Escuchar cuando un usuario se conecta
+    // Usuario conectado
     socket.on('userOnline', (data) => {
       console.log('🟢 Usuario online:', data.userId);
-      dispatch({ 
-        type: MESS_TYPES.UPDATE_USER_STATUS, 
+      dispatch({
+        type: MESS_TYPES.UPDATE_USER_STATUS,
         payload: {
           userId: data.userId,
           isOnline: true,
-          lastOnline: data.lastOnline
+          lastOnline: data.lastOnline || new Date().toISOString(),
+          lastConnectedAt: data.lastConnectedAt || new Date().toISOString()
         }
       });
     });
 
-    // Escuchar cuando un usuario se desconecta
+    // Usuario desconectado - CORREGIDO
     socket.on('userOffline', (data) => {
       console.log('🔴 Usuario offline:', data.userId);
-      dispatch({ 
-        type: MESS_TYPES.UPDATE_USER_STATUS, 
+      const offlineTime = new Date().toISOString();
+      dispatch({
+        type: MESS_TYPES.UPDATE_USER_STATUS,
         payload: {
           userId: data.userId,
           isOnline: false,
-          lastOnline: data.lastOnline,
-          lastDisconnectedAt: data.lastDisconnectedAt
+          lastOnline: data.lastOnline || offlineTime, // 🔹 PRIORIDAD: usar lastOnline del servidor
+          lastDisconnectedAt: data.lastDisconnectedAt || offlineTime
         }
       });
     });
 
-    // Escuchar evento de compatibilidad del sistema antiguo
+    // Evento de compatibilidad
     socket.on('CheckUserOffline', (userId) => {
-      console.log('🔴 Usuario offline (sistema antiguo):', userId);
-      dispatch({ 
-        type: MESS_TYPES.UPDATE_USER_STATUS, 
+      console.log('🔴 Usuario offline (legacy):', userId);
+      const offlineTime = new Date().toISOString();
+      dispatch({
+        type: MESS_TYPES.UPDATE_USER_STATUS,
         payload: {
           userId: userId,
           isOnline: false,
-          lastOnline: new Date()
+          lastOnline: offlineTime,
+          lastDisconnectedAt: offlineTime
         }
       });
     });
 
-    // Limpieza de event listeners
     return () => {
       socket.off('userOnline');
       socket.off('userOffline');
@@ -85,72 +87,86 @@ const LeftSide = () => {
     };
   }, [socket, dispatch]);
 
-  // 🔹 FUNCIÓN CORREGIDA: Calcular tiempo desde última conexión
+  // 🔹 FUNCIÓN MEJORADA: Calcular tiempo desde última conexión
   const getLastSeenTime = (user) => {
-    // Crear array de todas las posibles fechas de conexión
+    if (!user) return t('neverConnected', { lng: lang }) || 'Nunca conectado';
+
+    // 🔹 CORRECCIÓN: Verificar si está online primero
+    const isUserOnline = user.online || online.includes(user._id);
+    if (isUserOnline) {
+      return t('online', { lng: lang }) || 'En línea';
+    }
+
+    // 🔹 ORDEN DE PRIORIDAD CORREGIDO para lastOnline
     const possibleDates = [
-      user.lastDisconnectedAt,
-      user.lastOnline, 
-      user.lastActivity,
-      user.lastLogin,
-      user.lastConnectedAt
+      user.lastDisconnectedAt, // 🔹 PRIORIDAD 1: Última desconexión
+      user.lastOnline,         // 🔹 PRIORIDAD 2: Campo específico lastOnline
+      user.lastActivity,       // 🔹 PRIORIDAD 3: Última actividad
+      user.lastConnectedAt,    // 🔹 PRIORIDAD 4: Última conexión
+      user.lastLogin           // 🔹 PRIORIDAD 5: Último login
     ].filter(date => date && !isNaN(new Date(date).getTime()));
 
-    // Si no hay fechas válidas
     if (possibleDates.length === 0) {
       return t('neverConnected', { lng: lang }) || 'Nunca conectado';
     }
 
     // Encontrar la fecha más reciente
     const latestDate = possibleDates.reduce((latest, current) => {
-      const currentDate = new Date(current);
-      const latestDate = new Date(latest);
-      return currentDate > latestDate ? current : latest;
+      return new Date(current) > new Date(latest) ? current : latest;
     });
 
+    return formatTimeDifference(latestDate, lang, t);
+  };
+
+  // 🔹 FUNCIÓN AUXILIAR: Formatear diferencia de tiempo
+  const formatTimeDifference = (dateString, lang, t) => {
     const now = new Date();
-    const lastSeen = new Date(latestDate);
-    const diffInMinutes = Math.floor((now - lastSeen) / (1000 * 60));
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
+    const date = new Date(dateString);
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
 
-    // 🔹 CORRECCIÓN: Usar valores por defecto si la traducción falla
-    if (diffInMinutes < 1) return t('justNow', { lng: lang }) || 'Ahora mismo';
-    if (diffInMinutes < 60) return t('minutesAgo', { minutes: diffInMinutes, lng: lang }) || `hace ${diffInMinutes} min`;
-    if (diffInHours < 24) return t('hoursAgo', { hours: diffInHours, lng: lang }) || `hace ${diffInHours} h`;
-    if (diffInDays === 1) return t('yesterday', { lng: lang }) || 'Ayer';
-    if (diffInDays < 7) return t('daysAgo', { days: diffInDays, lng: lang }) || `hace ${diffInDays} días`;
-    
-    // Para más de una semana, mostrar fecha completa
-    return lastSeen.toLocaleDateString(lang, { 
-      day: 'numeric', 
-      month: 'short'
+    if (diffMins < 1) return t('justNow', { lng: lang }) || 'Ahora mismo';
+    if (diffMins < 60) return t('minutesAgo', { minutes: diffMins, lng: lang }) || `hace ${diffMins} min`;
+    if (diffHours < 24) return t('hoursAgo', { hours: diffHours, lng: lang }) || `hace ${diffHours} h`;
+    if (diffDays === 1) return t('yesterday', { lng: lang }) || 'Ayer';
+    if (diffDays < 7) return t('daysAgo', { days: diffDays, lng: lang }) || `hace ${diffDays} días`;
+    if (diffDays < 30) {
+      const weeks = Math.floor(diffDays / 7);
+      return t('weeksAgo', { weeks, lng: lang }) || `hace ${weeks} semana${weeks > 1 ? 's' : ''}`;
+    }
+
+    // Para más de un mes, mostrar fecha localizada
+    return date.toLocaleDateString(lang, {
+      day: 'numeric',
+      month: 'short',
+      year: diffDays > 365 ? 'numeric' : undefined
     });
-  }
+  };
 
   // 🔹 FUNCIÓN MEJORADA: Determinar estado del usuario
   const getUserStatus = (user) => {
-    // 🔹 CORRECCIÓN: Verificar tanto en 'online' como en el array global 'online'
     const isUserOnline = user.online || online.includes(user._id);
-    
+
     if (isUserOnline) {
       return {
         status: 'online',
         text: t('online', { lng: lang }),
         color: '#28a745',
         icon: <FaCircle size={8} className="status-online" />
-      }
+      };
     }
 
     // Para usuarios seguidos, mostrar última conexión detallada
-    if (auth.user.following.find(item => item._id === user._id)) {
-      const lastSeen = getLastSeenTime(user)
+    if (auth.user?.following?.find(item => item._id === user._id)) {
+      const lastSeen = getLastSeenTime(user);
       return {
         status: 'offline',
         text: lastSeen,
         color: theme ? '#6c757d' : '#adb5bd',
         icon: <FaRegClock size={8} />
-      }
+      };
     }
 
     // Para usuarios no seguidos, mostrar genérico
@@ -159,79 +175,81 @@ const LeftSide = () => {
       text: t('offline', { lng: lang }),
       color: theme ? '#495057' : '#dee2e6',
       icon: <FaCircle size={8} />
-    }
-  }
+    };
+  };
 
   const handleSearch = async e => {
-    e.preventDefault()
-    if (!search) return setSearchUsers([])
+    e.preventDefault();
+    if (!search) return setSearchUsers([]);
 
     try {
-      setIsSearching(true)
-      const res = await getDataAPI(`search?username=${search}`, auth.token)
-      setSearchUsers(res.data.users)
+      setIsSearching(true);
+      const res = await getDataAPI(`search?username=${search}`, auth.token);
+      setSearchUsers(res.data.users);
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
         payload: { error: err.response?.data?.msg || t('searchError') }
-      })
+      });
     } finally {
-      setIsSearching(false)
+      setIsSearching(false);
     }
-  }
+  };
 
   const handleAddUser = (user) => {
-    setSearch('')
-    setSearchUsers([])
-    dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...user, text: '', media: [] } })
-    dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online })
-    return history.push(`/message/${user._id}`)
-  }
+    setSearch('');
+    setSearchUsers([]);
+    dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...user, text: '', media: [] } });
+    dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online });
+    return history.push(`/message/${user._id}`);
+  };
 
-  // 🔹 FUNCIÓN: Solo el avatar va al perfil
   const handleAvatarClick = (e, user) => {
-    e.stopPropagation()
-    history.push(`/profile/${user._id}`)
-  }
+    e.stopPropagation();
+    history.push(`/profile/${user._id}`);
+  };
 
   const isActive = (user) => {
-    if (id === user._id) return 'active'
-    return ''
-  }
+    return id === user._id ? 'active' : '';
+  };
 
+  // 🔹 Cargar conversaciones
   useEffect(() => {
-    if (message.firstLoad) return
-    dispatch(getConversations({ auth }))
-  }, [dispatch, auth, message.firstLoad])
+    if (message.firstLoad) return;
+    dispatch(getConversations({ auth }));
+  }, [dispatch, auth, message.firstLoad]);
 
+  // 🔹 Paginación
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) {
-        setPage(p => p + 1)
+        setPage(p => p + 1);
       }
-    }, {
-      threshold: 0.1
-    })
+    }, { threshold: 0.1 });
 
-    observer.observe(pageEnd.current)
-  }, [setPage])
+    if (pageEnd.current) {
+      observer.observe(pageEnd.current);
+    }
+
+    return () => observer.disconnect();
+  }, [setPage]);
 
   useEffect(() => {
     if (message.resultUsers >= (page - 1) * 9 && page > 1) {
-      dispatch(getConversations({ auth, page }))
+      dispatch(getConversations({ auth, page }));
     }
-  }, [message.resultUsers, page, auth, dispatch])
+  }, [message.resultUsers, page, auth, dispatch]);
 
+  // 🔹 Sincronizar estado online
   useEffect(() => {
     if (message.firstLoad) {
-      dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online })
+      dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online });
     }
-  }, [online, message.firstLoad, dispatch])
+  }, [online, message.firstLoad, dispatch]);
 
-  // 🔹 COMPONENTE MEJORADO: Indicador de estado con última conexión
+  // 🔹 COMPONENTE: Indicador de estado
   const StatusIndicator = ({ user, compact = false }) => {
-    const status = getUserStatus(user)
-    const lastSeenTime = getLastSeenTime(user)
+    const status = getUserStatus(user);
     
     if (compact) {
       return (
@@ -241,8 +259,12 @@ const LeftSide = () => {
             <Tooltip>
               <div>
                 <strong>{status.text}</strong>
-                <br />
-                {!user.online && `${t('lastSeen', { lng: lang }) || 'Última vez'}: ${lastSeenTime}`}
+                {!user.online && (
+                  <>
+                    <br />
+                    {t('lastSeen', { lng: lang }) || 'Última vez'}: {getLastSeenTime(user)}
+                  </>
+                )}
               </div>
             </Tooltip>
           }
@@ -251,12 +273,11 @@ const LeftSide = () => {
             {status.icon}
           </div>
         </OverlayTrigger>
-      )
+      );
     }
 
     return (
       <div className="d-flex flex-column align-items-end">
-        {/* Indicador principal de estado */}
         <Badge
           bg={status.status === 'online' ? 'success' : 'secondary'}
           pill
@@ -280,8 +301,7 @@ const LeftSide = () => {
           {status.text}
         </Badge>
         
-        {/* 🔹 NUEVO: Fecha de última conexión debajo del estado */}
-        {!user.online && auth.user.following.find(item => item._id === user._id) && (
+        {!user.online && auth.user?.following?.find(item => item._id === user._id) && (
           <small 
             style={{ 
               fontSize: '0.6rem',
@@ -294,21 +314,19 @@ const LeftSide = () => {
               whiteSpace: 'nowrap'
             }}
           >
-            {t('lastSeen', { lng: lang }) || 'Visto'}: {lastSeenTime}
+            {t('lastSeen', { lng: lang }) || 'Visto'}: {getLastSeenTime(user)}
           </small>
         )}
       </div>
-    )
-  }
+    );
+  };
 
-  // 🔹 COMPONENTE MEJORADO: UserCard con información mejorada
+  // 🔹 COMPONENTE: UserCard con información mejorada
   const UserCardWithAvatarLink = ({ user, msg = false }) => {
-    // 🔹 CORRECCIÓN: Verificar estado online de manera consistente
     const isUserOnline = user.online || online.includes(user._id);
     
     return (
       <div className="d-flex align-items-center" style={{ flex: 1 }}>
-        {/* Avatar clickeable */}
         <div 
           className="me-3"
           style={{ cursor: 'pointer' }}
@@ -322,21 +340,20 @@ const LeftSide = () => {
               width: '45px',
               height: '45px',
               objectFit: 'cover',
-              border: isUserOnline ? '2px solid #28a745' : '2px solid transparent', // 🔹 Usar isUserOnline
+              border: isUserOnline ? '2px solid #28a745' : '2px solid transparent',
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              e.target.style.transform = 'scale(1.1)'
-              e.target.style.borderColor = '#667eea'
+              e.target.style.transform = 'scale(1.1)';
+              e.target.style.borderColor = '#667eea';
             }}
             onMouseLeave={(e) => {
-              e.target.style.transform = 'scale(1)'
-              e.target.style.borderColor = isUserOnline ? '#28a745' : 'transparent' // 🔹 Usar isUserOnline
+              e.target.style.transform = 'scale(1)';
+              e.target.style.borderColor = isUserOnline ? '#28a745' : 'transparent';
             }}
           />
         </div>
         
-        {/* Información del usuario */}
         <div className="flex-grow-1">
           <div className="d-flex align-items-center">
             <h6 className="mb-0 me-2" style={{ 
@@ -347,8 +364,7 @@ const LeftSide = () => {
               {user.username}
             </h6>
             
-            {/* Indicador online pequeño junto al nombre */}
-            {isUserOnline && ( // 🔹 Usar isUserOnline
+            {isUserOnline && (
               <FaCircle 
                 size={6} 
                 className="status-online" 
@@ -363,8 +379,7 @@ const LeftSide = () => {
             </p>
           )}
           
-          {/* 🔹 NUEVO: Información de última actividad para usuarios seguidos */}
-          {!isUserOnline && auth.user.following.find(item => item._id === user._id) && ( // 🔹 Usar isUserOnline
+          {!isUserOnline && auth.user?.following?.find(item => item._id === user._id) && (
             <small 
               style={{ 
                 fontSize: '0.65rem',
@@ -378,12 +393,12 @@ const LeftSide = () => {
           )}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
-  // 🔹 CONTADOR CORREGIDO de usuarios online
+  // 🔹 CONTADOR de usuarios online
   const onlineUsersCount = message.users.filter(user => 
-    user.online || online.includes(user._id) // 🔹 Verificar ambos estados
+    user.online || online.includes(user._id)
   ).length;
 
   return (
@@ -434,12 +449,6 @@ const LeftSide = () => {
                     padding: '0 20px',
                     transition: 'all 0.3s ease'
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                  }}
                 >
                   {isSearching ? (
                     <Spinner animation="border" size="sm" style={{ color: 'white' }} />
@@ -452,7 +461,7 @@ const LeftSide = () => {
 
             <div className="d-flex justify-content-between align-items-center mt-2 px-1">
               <small style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
-                {t('online', { lng: lang })}: {onlineUsersCount} {/* 🔹 Usar el contador corregido */}
+                {t('online', { lng: lang })}: {onlineUsersCount}
               </small>
               <small style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem' }}>
                 {t('total', { lng: lang })}: {message.users.length}
@@ -461,9 +470,6 @@ const LeftSide = () => {
           </Card.Body>
         </Card>
       )}
-
-    
- 
 
       {/* LISTA DE CONVERSACIONES */}
       <div 
@@ -499,18 +505,7 @@ const LeftSide = () => {
                     marginBottom: '8px',
                     padding: '12px',
                     background: theme ? '#16213e' : 'white',
-                    transition: 'all 0.2s ease',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = theme 
-                      ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
-                      : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)';
-                    e.currentTarget.style.transform = 'translateX(4px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = theme ? '#16213e' : 'white';
-                    e.currentTarget.style.transform = 'translateX(0)';
+                    transition: 'all 0.2s ease'
                   }}
                 >
                   <div className="d-flex align-items-center justify-content-between">
@@ -535,28 +530,13 @@ const LeftSide = () => {
                   color: theme ? '#aaa' : '#999'
                 }}
               >
-                <div
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
-                    background: theme 
-                      ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
-                      : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '20px'
-                  }}
-                >
-                  <FaInbox size={35} style={{ color: '#667eea' }} />
+                <div>
+                 <i className='fas fa-user'></i>
                 </div>
                 <h6 style={{ fontWeight: '600', marginBottom: '8px' }}>
                   {t('noUsersFound', { lng: lang }) || 'No hay conversaciones'}
                 </h6>
-                <small style={{ opacity: 0.7 }}>
-                  {t('searchToStart', { lng: lang }) || 'Busca usuarios para iniciar una conversación'}
-                </small>
+               
               </div>
             ) : (
               <ListGroup variant="flush">
@@ -573,27 +553,7 @@ const LeftSide = () => {
                       padding: '12px',
                       background: id === user._id
                         ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                        : theme ? '#16213e' : 'white',
-                      transition: 'all 0.2s ease',
-                      boxShadow: id === user._id
-                        ? '0 4px 15px rgba(102, 126, 234, 0.4)'
-                        : '0 2px 8px rgba(0,0,0,0.05)',
-                      position: 'relative',
-                      overflow: 'hidden'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (id !== user._id) {
-                        e.currentTarget.style.background = theme 
-                          ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)'
-                          : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)';
-                        e.currentTarget.style.transform = 'translateX(4px)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (id !== user._id) {
-                        e.currentTarget.style.background = theme ? '#16213e' : 'white';
-                        e.currentTarget.style.transform = 'translateX(0)';
-                      }
+                        : theme ? '#16213e' : 'white'
                     }}
                   >
                     <div style={{ position: 'relative' }}>
@@ -613,8 +573,7 @@ const LeftSide = () => {
                             left: lang === 'ar' ? '8px' : 'auto',
                             fontSize: '0.7rem',
                             padding: '4px 8px',
-                            minWidth: '24px',
-                            boxShadow: '0 2px 8px rgba(220, 53, 69, 0.4)'
+                            minWidth: '24px'
                           }}
                         >
                           {user.unread > 9 ? '9+' : user.unread}
@@ -630,12 +589,7 @@ const LeftSide = () => {
 
         <button
           ref={pageEnd}
-          style={{ 
-            opacity: 0, 
-            height: '1px',
-            border: 'none',
-            background: 'transparent'
-          }}
+          style={{ opacity: 0, height: '1px', border: 'none', background: 'transparent' }}
           aria-label={t('loadMore2', { lng: lang })}
         >
           {t('loadMore2', { lng: lang })}
@@ -648,14 +602,10 @@ const LeftSide = () => {
         }
         .message_chat_list::-webkit-scrollbar-track {
           background: ${theme ? '#0f0f1e' : '#f1f1f1'};
-          border-radius: 10px;
         }
         .message_chat_list::-webkit-scrollbar-thumb {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           border-radius: 10px;
-        }
-        .message_chat_list::-webkit-scrollbar-thumb:hover {
-          background: #667eea;
         }
         .list-group-item.active {
           color: white !important;
@@ -673,7 +623,7 @@ const LeftSide = () => {
         }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
-export default LeftSide
+export default LeftSide;

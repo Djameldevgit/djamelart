@@ -46,8 +46,7 @@ const SocketServer = (socket) => {
                     lastOnline: new Date() // 🔹 Esto es importante
                 });
                 
-                console.log(`✅ Usuario ${data.id} actualizado como offline`); // 🔹 Agregar log
-                
+               
                 socket.broadcast.emit('userOffline', { 
                     userId: data.id,
                     lastOnline: new Date(),

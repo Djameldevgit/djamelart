@@ -13,8 +13,7 @@ const INACTIVE_DAYS = process.env.CLEANUP_INACTIVE_DAYS || 24; // días
 
 // 🔹 Ejecutar una vez cada 24h (a medianoche)
 cron.schedule('0 0 * * *', async () => {
-  console.log('🧹 Iniciando limpieza profunda... (ejecutando cada 24h)');
-
+ 
   const unverifiedLimit = new Date(Date.now() - UNVERIFIED_HOURS * 60 * 60 * 1000); // usuarios no verificados
   const inactiveLimit = new Date(Date.now() - INACTIVE_DAYS * 24 * 60 * 60 * 1000); // usuarios inactivos
 

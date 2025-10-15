@@ -32,8 +32,7 @@ const sendSupportMessage = async ({ from, subject, message, lang = 'es' }) => {
     }
 
     i18n.setLocale(lang);
-    console.log(`📨 Mensaje de contacto recibido de ${from} en idioma ${lang}`);
-
+   
     const smtpTransport = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -64,8 +63,7 @@ const sendSupportMessage = async ({ from, subject, message, lang = 'es' }) => {
     };
 
     await smtpTransport.sendMail(mailOptions);
-    console.log('✅ Mensaje de contacto enviado.');
-  } catch (err) {
+      } catch (err) {
     console.error('❌ Error al enviar mensaje de contacto:', err.message);
     throw err;
   }

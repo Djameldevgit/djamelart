@@ -214,8 +214,7 @@ export const createDenuncia = ({ razones, auth, post }) => async (dispatch) => {
 export const getDenuncias = (user, token) => async (dispatch) => {
     try {
         const res = await getDataAPI(`denunciar/${user.id}`, token); // Asegúrate de que la ruta esté correcta
-        console.log(res)
-        dispatch({
+          dispatch({
             type: USERS_TYPES_ACTION.GET_DENUNCIAS,
             payload: res.data,
         });

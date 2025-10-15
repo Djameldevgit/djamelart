@@ -600,7 +600,7 @@ const RightSide = () => {
             >
                 <Card.Body className="p-3" style={{ position: 'relative' }}>
                     <Form onSubmit={handleSubmit}>
-                        <div className="d-flex align-items-center gap-2">
+                        <div className="d-flex align-items-center">
                             <div className="position-relative flex-grow-1">
                                 <Form.Control
                                     type="text"

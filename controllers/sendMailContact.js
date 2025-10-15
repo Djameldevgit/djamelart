@@ -63,8 +63,7 @@ const sendMailContact = async (to, lang = 'es', subject = '', html = '') => {
     };
 
     await smtpTransport.sendMail(mailOptions);
-    console.log('✅ Correo de contacto enviado correctamente.');
-  } catch (err) {
+     } catch (err) {
     console.error('❌ Error al enviar el correo de contacto:', err.message);
     throw err;
   }

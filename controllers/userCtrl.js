@@ -739,8 +739,7 @@ getUsersAction: async (req, res) => {
   eliminaRrestosDePosts: async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
-    console.log('🟢 Entró al controlador eliminaRrestosDePosts');
-
+   
     try {
 
 
@@ -778,8 +777,7 @@ getUsersAction: async (req, res) => {
         }
       ]).session(session);
 
-      console.log('Orphaned posts:', orphanedPosts);
-
+     
       const idsToDelete = orphanedPosts.map(post => post._id);
       const commentIdsToDelete = orphanedPosts.flatMap(post => post.comments || []);
       const idsToDeleteObjectId = idsToDelete.map(id => new mongoose.Types.ObjectId(id));
