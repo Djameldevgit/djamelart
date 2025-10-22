@@ -1,51 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <link rel="icon" href="./icon-web-01.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Tassili ART - Plataforma d'art" />
-  
-  <!-- ✅ MANIFEST - Bien configurado -->
-  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" crossorigin="use-credentials" />
-  
-  <!-- 🍎 MEJORA Apple Meta Tags -->
-  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Djamel APS" />
-  
-  <!-- ⚠️ CORRECCIÓN: Eliminar Bootstrap duplicado -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  
-  <!-- Iconos y Fuentes -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  
-  <title>Tassili ART</title>
-</head>
-<body>
-  <noscript>Necesitas habilitar JavaScript para ejecutar esta app.</noscript>
-  <div id="root"></div>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Djamel APS - Plataforma de aplicaciones web progresivas" />
+    
+    <!-- ✅ MANIFEST CORREGIDO -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- ✅ APPLE META TAGS -->
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Djamel APS" />
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <!-- Iconos y Fuentes -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    
+    <title>Djamel APS</title>
+  </head>
+  <body>
+    <noscript>Necesitas habilitar JavaScript para ejecutar esta app.</noscript>
+    <div id="root"></div>
 
-  <!-- ✅ Service Worker - Bien implementado -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-          .then(function(registration) {
-            console.log('✅ ServiceWorker registrado: ', registration.scope);
-            registration.update();
-          })
-          .catch(function(error) {
-            console.log('❌ ServiceWorker falló: ', error);
-          });
+    <!-- ✅ SCRIPT DE REGISTRO DEL SERVICE WORKER MEJORADO -->
+    <script>
+      console.log('🚀 Iniciando registro de Service Worker...');
+      
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          console.log('📱 Registrando Service Worker...');
+          
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('✅ ServiceWorker registrado correctamente: ', registration.scope);
+              
+              // Verificar actualizaciones
+              registration.update();
+              
+              // Escuchar cambios en el Service Worker
+              registration.addEventListener('updatefound', () => {
+                console.log('🔄 Nuevo Service Worker encontrado');
+              });
+            })
+            .catch(function(error) {
+              console.log('❌ ServiceWorker registro falló: ', error);
+              console.log('🔍 Error details:', error.message);
+            });
+        });
+        
+        // ✅ Escuchar mensajes del Service Worker
+        navigator.serviceWorker.addEventListener('message', event => {
+          console.log('📨 Mensaje del Service Worker:', event.data);
+        });
+      } else {
+        console.log('❌ ServiceWorker no soportado en este navegador');
+      }
+      
+      // ✅ Debug info
+      console.log('🌐 PWA Debug Info:', {
+        url: window.location.href,
+        protocol: window.location.protocol,
+        userAgent: navigator.userAgent,
+        serviceWorker: 'serviceWorker' in navigator,
+        standalone: window.matchMedia('(display-mode: standalone)').matches
       });
-    }
-  </script>
+    </script>
 
-  <!-- 🚀 SOLO una versión de Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

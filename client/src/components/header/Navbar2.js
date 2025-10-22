@@ -178,8 +178,7 @@ const Navbar2 = () => {
               />
             </Link>
 
-            {/* Botón Agregar Post (solo para usuarios autenticados con rol especial) */}
-            {auth.user && (userRole === "Super-utilisateur" || userRole === "admin") && (
+    
               <div
                 onClick={openStatusModal}
                 className="d-flex align-items-center justify-content-center icon-button"
@@ -199,7 +198,7 @@ const Navbar2 = () => {
                   style={{ color: 'white' }}
                 />
               </div>
-            )}
+           
 
             {/* Messenger (solo usuarios autenticados) */}
             {auth.user && (
