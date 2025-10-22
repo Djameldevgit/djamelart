@@ -181,7 +181,7 @@ const ProfileInfoUser = () => {
       setIsAppInstalled(true);
       setShowInstallButton(false);
       showInstallMessage(
-        t('pwa_install_success') || '¡App instalada correctamente! 🎉', 
+        t('pwa_install_success') || '¡App installé correctement 🎉', 
         'success'
       );
     };
