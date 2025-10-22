@@ -15,8 +15,10 @@ import {
   FaShareAlt,
   FaInfoCircle,
   FaFacebookMessenger,
+  FaDownload, // ✅ Icono de descarga para PWA
+  FaCheckCircle // ✅ Icono de verificación para instalado
 } from 'react-icons/fa';
-import { Navbar, Container, NavDropdown, Badge } from 'react-bootstrap';
+import { Navbar, Container, NavDropdown, Badge, Alert, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { BsCartFill } from 'react-icons/bs';
 import { GLOBALTYPES } from '../../redux/actions/globalTypes';
 import LanguageSelectorpc from '../LanguageSelectorpc';
@@ -31,6 +33,15 @@ const Navbar2 = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [userRole, setUserRole] = useState(auth.user?.role);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
+
+  // ✅ Estados para instalación PWA
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [canInstall, setCanInstall] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [showInstallAlert, setShowInstallAlert] = useState(false);
+  const [installAlertMessage, setInstallAlertMessage] = useState('');
+  const [isAppInstalled, setIsAppInstalled] = useState(false);
+  const [showInstallButton, setShowInstallButton] = useState(true);
 
   useEffect(() => {
     if (lang && lang !== i18n.language) {
@@ -50,6 +61,143 @@ const Navbar2 = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // ✅ Effect para capturar el evento de instalación PWA
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      console.log('📱 PWA: beforeinstallprompt event captured');
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setCanInstall(true);
+      
+      // Mostrar el botón después de un delay para mejor UX
+      setTimeout(() => setShowInstallButton(true), 1000);
+    };
+
+    const handleAppInstalled = () => {
+      console.log('✅ PWA: App installed successfully');
+      setDeferredPrompt(null);
+      setCanInstall(false);
+      setIsAppInstalled(true);
+      setShowInstallButton(false);
+      showInstallMessage(
+        t('pwa_install_success') || '¡App instalada correctamente! 🎉', 
+        'success'
+      );
+    };
+
+    // Verificar si ya está instalado al cargar
+    const checkIfInstalled = () => {
+      const isInstalled = 
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone ||
+        document.referrer.includes('android-app://');
+      
+      console.log('🔍 PWA: Checking if installed:', isInstalled);
+      setIsAppInstalled(isInstalled);
+      if (isInstalled) {
+        setShowInstallButton(false);
+      }
+    };
+
+    // Listeners
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+    
+    // Verificar instalación
+    checkIfInstalled();
+    
+    // Verificar periodicamente
+    const interval = setInterval(checkIfInstalled, 30000);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+      clearInterval(interval);
+    };
+  }, [t]);
+
+  // ✅ Función para mostrar mensajes de instalación
+  const showInstallMessage = (message, variant = 'info') => {
+    setInstallAlertMessage(message);
+    setShowInstallAlert(true);
+    
+    setTimeout(() => {
+      setShowInstallAlert(false);
+    }, 4000);
+  };
+
+  // ✅ Función principal para instalar PWA
+  const handleInstallPWA = async () => {
+    if (!deferredPrompt) {
+      showInstallMessage(
+        t('pwa_not_supported') || 'Tu navegador no soporta instalación de apps 📵', 
+        'warning'
+      );
+      return;
+    }
+
+    if (isInstalling) {
+      showInstallMessage(
+        t('pwa_install_in_progress') || 'La instalación ya está en progreso...', 
+        'info'
+      );
+      return;
+    }
+
+    setIsInstalling(true);
+
+    try {
+      console.log('🚀 PWA: Triggering install prompt');
+      deferredPrompt.prompt();
+      
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      console.log('📊 PWA: User choice:', outcome);
+      
+      if (outcome === 'accepted') {
+        showInstallMessage(
+          t('pwa_install_started') || '📥 Instalación iniciada...', 
+          'success'
+        );
+      } else {
+        showInstallMessage(
+          t('pwa_install_declined') || 'Instalación cancelada ❌', 
+          'info'
+        );
+        
+        // Ocultar botón temporalmente después del rechazo
+        setShowInstallButton(false);
+        setTimeout(() => {
+          if (canInstall && !isAppInstalled) {
+            setShowInstallButton(true);
+          }
+        }, 30000);
+      }
+      
+      setDeferredPrompt(null);
+      setCanInstall(false);
+      
+    } catch (error) {
+      console.error('❌ PWA: Error during installation:', error);
+      showInstallMessage(
+        t('pwa_install_error') || 'Error durante la instalación 🔧', 
+        'danger'
+      );
+    } finally {
+      setIsInstalling(false);
+    }
+  };
+
+  // ✅ Tooltip para el botón de instalación
+  const installTooltip = (props) => (
+    <Tooltip id="install-tooltip" {...props}>
+      {isInstalling 
+        ? (t('pwa_installing') || 'Instalando...') 
+        : (t('install_app') || 'Instalar App en tu dispositivo')
+      }
+    </Tooltip>
+  );
+
   if (!settings) {
     return (
       <nav className="navbar navbar-light bg-light">
@@ -60,9 +208,7 @@ const Navbar2 = () => {
 
   const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true });
   const unreadNotifications = notify.data.filter(n => !n.isRead).length;
-  
-  // Simular mensajes no leídos (puedes conectarlo a tu store real)
-  const unreadMessages = 0; // Aquí conectas tu lógica de mensajes no leídos
+  const unreadMessages = 0;
 
   // MenuItem simplificado solo para dropdown de usuarios NO autenticados
   const MenuItem = ({ icon: Icon, iconColor, to, onClick, children }) => (
@@ -90,6 +236,41 @@ const Navbar2 = () => {
 
   return (
     <div>
+      {/* ✅ Alert para mensajes de instalación */}
+      {showInstallAlert && (
+        <Alert 
+          variant={
+            installAlertMessage.includes('éxito') || 
+            installAlertMessage.includes('correctamente') ||
+            installAlertMessage.includes('🎉') ? 'success' : 
+            installAlertMessage.includes('Error') || 
+            installAlertMessage.includes('🔧') ? 'danger' : 
+            installAlertMessage.includes('cancelada') || 
+            installAlertMessage.includes('❌') ? 'warning' : 'info'
+          }
+          className="mb-0 text-center py-2 animate__animated animate__fadeInDown"
+          style={{
+            position: 'fixed',
+            top: '70px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 9999,
+            minWidth: '300px',
+            borderRadius: '12px',
+            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+            border: 'none',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}
+        >
+          <div className="d-flex align-items-center justify-content-center">
+            {installAlertMessage.includes('éxito') && <FaCheckCircle className="me-2" />}
+            {installAlertMessage.includes('Error') && <FaInfoCircle className="me-2" />}
+            {installAlertMessage}
+          </div>
+        </Alert>
+      )}
+
       <Navbar
         expand="lg"
         style={{
@@ -159,6 +340,78 @@ const Navbar2 = () => {
               <LanguageSelectorpc />
             </div>
 
+            {/* ✅ Botón Instalar App PWA - INTEGRADO */}
+            {canInstall && showInstallButton && !isAppInstalled && (
+              <OverlayTrigger
+                placement="bottom"
+                delay={{ show: 250, hide: 400 }}
+                overlay={installTooltip}
+              >
+                <div
+                  onClick={handleInstallPWA}
+                  className="d-flex align-items-center justify-content-center icon-button"
+                  style={{
+                    cursor: isInstalling ? 'not-allowed' : 'pointer',
+                    width: isMobile ? '40px' : '45px',
+                    height: isMobile ? '40px' : '45px',
+                    borderRadius: '12px',
+                    background: isInstalling 
+                      ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                      : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    transition: 'all 0.3s ease',
+                    boxShadow: isInstalling 
+                      ? '0 4px 12px rgba(245, 158, 11, 0.3)'
+                      : '0 4px 12px rgba(16, 185, 129, 0.3)',
+                    opacity: isInstalling ? 0.8 : 1,
+                    animation: isInstalling ? 'pulse 1.5s infinite' : 'none'
+                  }}
+                >
+                  {isInstalling ? (
+                    <div className="spinner-border spinner-border-sm" style={{ 
+                      width: '14px', 
+                      height: '14px', 
+                      borderWidth: '2px',
+                      color: 'white' 
+                    }} />
+                  ) : (
+                    <FaDownload
+                      size={isMobile ? 18 : 20}
+                      style={{ color: 'white' }}
+                    />
+                  )}
+                </div>
+              </OverlayTrigger>
+            )}
+
+            {/* ✅ Indicador de que ya está instalado (opcional) */}
+            {isAppInstalled && (
+              <OverlayTrigger
+                placement="bottom"
+                delay={{ show: 250, hide: 400 }}
+                overlay={
+                  <Tooltip id="installed-tooltip">
+                    {t('pwa_already_installed') || 'App ya instalada ✅'}
+                  </Tooltip>
+                }
+              >
+                <div
+                  className="d-flex align-items-center justify-content-center"
+                  style={{
+                    width: isMobile ? '40px' : '45px',
+                    height: isMobile ? '40px' : '45px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
+                    opacity: 0.7
+                  }}
+                >
+                  <FaCheckCircle
+                    size={isMobile ? 18 : 20}
+                    style={{ color: 'white' }}
+                  />
+                </div>
+              </OverlayTrigger>
+            )}
+
             {/* Búsqueda */}
             <Link
               to="/search"
@@ -178,8 +431,9 @@ const Navbar2 = () => {
               />
             </Link>
 
-            {/* Botón Agregar Post (solo para usuarios autenticados con rol especial) */}
-            {auth.user && (userRole === "Super-utilisateur" || userRole === "admin") && (
+             
+          {/*  {auth.user && (userRole === "Super-utilisateur" || userRole === "admin") && (  )}*/}
+
               <div
                 onClick={openStatusModal}
                 className="d-flex align-items-center justify-content-center icon-button"
@@ -199,8 +453,7 @@ const Navbar2 = () => {
                   style={{ color: 'white' }}
                 />
               </div>
-            )}
-
+          
             {/* Messenger (solo usuarios autenticados) */}
             {auth.user && (
               <Link
@@ -314,7 +567,6 @@ const Navbar2 = () => {
 
             {/* Avatar o Dropdown según autenticación */}
             {auth.user ? (
-              // Usuario AUTENTICADO: Avatar clickeable que redirige a página de configuración
               <Link
                 to="/profileinfouser"
                 className="text-decoration-none"
@@ -352,7 +604,6 @@ const Navbar2 = () => {
                 </div>
               </Link>
             ) : (
-              // Usuario NO AUTENTICADO: Dropdown simple
               <NavDropdown
                 align="end"
                 title={
@@ -393,6 +644,12 @@ const Navbar2 = () => {
 
       {/* CSS personalizado */}
       <style jsx>{`
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+
         .icon-button:hover {
           transform: translateY(-2px);
           box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
@@ -405,8 +662,8 @@ const Navbar2 = () => {
 
         .dropdown-menu {
           border: none !important;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
-          border-radius: 15px !important;
+          boxShadow: 0 10px 40px rgba(0,0,0,0.15) !important;
+          borderRadius: 15px !important;
         }
       `}</style>
     </div>

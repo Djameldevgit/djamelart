@@ -4,8 +4,38 @@ import { login } from '../redux/actions/authAction'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Container, Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap'
-import Loginfacegoogle from '../auth/Loginfacegoogle'
+{/*import Loginfacegoogle from '../auth/Loginfacegoogle'
+ Login con Facebook/Google - Añadir contenedor con prevención 
+  <Form.Group 
+  className="mb-4"
+  onClick={(e) => e.stopPropagation()}
+>
+  <Loginfacegoogle />
+</Form.Group>
 
+    <div className="position-relative mb-4">
+                                        <hr style={{ 
+                                            margin: '0',
+                                            borderTop: '1px solid #e2e8f0'
+                                        }} />
+                                        <span 
+                                            className={`position-absolute top-50 ${isRTL ? 'end-0 translate-middle-x' : 'start-50 translate-middle'} px-3`}
+                                            style={{
+                                                background: 'white',
+                                                color: '#a0aec0',
+                                                fontSize: '0.875rem',
+                                                fontWeight: '500'
+                                            }}
+                                        >
+                                            {t('orContinueWith' ) }
+                                        </span>
+                                       
+                                    </div>
+
+
+
+
+*/}
 const Login = () => {
     const initialState = { email: '', password: '' }
     const [userData, setUserData] = useState(initialState)
@@ -16,12 +46,12 @@ const Login = () => {
     const history = useHistory()
     const { t, i18n } = useTranslation('auth');
     const lang = languageReducer.language || 'es';
-    
+
     // Referencia para el contenedor del formulario
     const formContainerRef = useRef(null);
 
     if (i18n.language !== lang) i18n.changeLanguage(lang);
-   
+
     useEffect(() => {
         if (auth.token) history.push("/")
     }, [auth.token, history])
@@ -48,7 +78,7 @@ const Login = () => {
     const isRTL = lang === "ar"
 
     return (
-        <div 
+        <div
             className={isRTL ? "rtl" : ""}
             style={{
                 minHeight: '100vh',
@@ -62,7 +92,7 @@ const Login = () => {
             <Container>
                 <Row className="justify-content-center">
                     <Col xs={12} sm={10} md={8} lg={6} xl={5}>
-                        <Card 
+                        <Card
                             ref={formContainerRef}
                             className="shadow-lg border-0"
                             style={{
@@ -73,14 +103,14 @@ const Login = () => {
                             }}
                         >
                             {/* Header elegante */}
-                            <div 
+                            <div
                                 className="text-center py-2"
                                 style={{
                                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                     position: 'relative'
                                 }}
                             >
-                                <div 
+                                <div
                                     style={{
                                         width: '80px',
                                         height: '80px',
@@ -94,12 +124,12 @@ const Login = () => {
                                         border: '3px solid rgba(255,255,255,0.3)'
                                     }}
                                 >
-                                    <svg 
-                                        width="40" 
-                                        height="40" 
-                                        viewBox="0 0 24 24" 
-                                        fill="none" 
-                                        stroke="white" 
+                                    <svg
+                                        width="40"
+                                        height="40"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="white"
                                         strokeWidth="2"
                                     >
                                         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
@@ -107,9 +137,9 @@ const Login = () => {
                                         <line x1="15" y1="12" x2="3" y2="12"></line>
                                     </svg>
                                 </div>
-                                <h3 
-                                    className="text-uppercase fw-bold mb-0" 
-                                    style={{ 
+                                <h3
+                                    className="text-uppercase fw-bold mb-0"
+                                    style={{
                                         color: 'white',
                                         letterSpacing: '1px',
                                         fontSize: '1.75rem'
@@ -121,45 +151,22 @@ const Login = () => {
 
                             <Card.Body className="p-3 p-md-4">
                                 <Form onSubmit={handleSubmit}>
-                                    
-                                    {/* Login con Facebook/Google - Añadir contenedor con prevención */}
-                                    <Form.Group 
-                                        className="mb-4"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <Loginfacegoogle />
-                                    </Form.Group>
+
+
 
                                     {/* Divisor */}
-                                    <div className="position-relative mb-4">
-                                        <hr style={{ 
-                                            margin: '0',
-                                            borderTop: '1px solid #e2e8f0'
-                                        }} />
-                                        <span 
-                                            className={`position-absolute top-50 ${isRTL ? 'end-0 translate-middle-x' : 'start-50 translate-middle'} px-3`}
-                                            style={{
-                                                background: 'white',
-                                                color: '#a0aec0',
-                                                fontSize: '0.875rem',
-                                                fontWeight: '500'
-                                            }}
-                                        >
-                                            {t('orContinueWith' ) }
-                                        </span>
-                                       
-                                    </div>
+
 
                                     {/* Email */}
                                     <Form.Group className="mb-4">
-                                        <Form.Label 
+                                        <Form.Label
                                             className="fw-semibold"
                                             style={{ color: '#4a5568', fontSize: '0.95rem' }}
                                         >
                                             {t('emailAddress', { lng: lang })}
                                         </Form.Label>
                                         <InputGroup>
-                                            <InputGroup.Text 
+                                            <InputGroup.Text
                                                 style={{
                                                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                     border: 'none',
@@ -195,7 +202,7 @@ const Login = () => {
 
                                     {/* Password */}
                                     <Form.Group className="mb-3">
-                                        <Form.Label 
+                                        <Form.Label
                                             className="fw-semibold"
                                             style={{ color: '#4a5568', fontSize: '0.95rem' }}
                                         >
@@ -248,7 +255,7 @@ const Login = () => {
                                                             order: 2
                                                         }}
                                                     />
-                                                    <InputGroup.Text 
+                                                    <InputGroup.Text
                                                         style={{
                                                             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                             border: 'none',
@@ -265,7 +272,7 @@ const Login = () => {
                                             ) : (
                                                 // Orden LTR: Icono → Input → Botón
                                                 <>
-                                                    <InputGroup.Text 
+                                                    <InputGroup.Text
                                                         style={{
                                                             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                             border: 'none',
@@ -325,7 +332,7 @@ const Login = () => {
 
                                     {/* Forgot Password Link */}
                                     <div className={`mb-4 ${isRTL ? 'text-start' : 'text-end'}`}>
-                                        <Link 
+                                        <Link
                                             to="/forgot_password"
                                             style={{
                                                 color: '#667eea',
@@ -353,7 +360,7 @@ const Login = () => {
                                         className="w-100 fw-bold text-uppercase"
                                         disabled={!(email && password)}
                                         style={{
-                                            background: email && password 
+                                            background: email && password
                                                 ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                                                 : '#cbd5e0',
                                             border: 'none',
@@ -361,7 +368,7 @@ const Login = () => {
                                             padding: '0.875rem',
                                             fontSize: '1rem',
                                             letterSpacing: '1px',
-                                            boxShadow: email && password 
+                                            boxShadow: email && password
                                                 ? '0 10px 25px rgba(102, 126, 234, 0.3)'
                                                 : 'none',
                                             transition: 'all 0.3s ease',
@@ -388,8 +395,8 @@ const Login = () => {
                                     <div className="text-center mt-4">
                                         <p className="mb-0" style={{ color: '#718096' }}>
                                             {t('dontHaveAccount', { lng: lang })}{' '}
-                                            <Link 
-                                                to="/register" 
+                                            <Link
+                                                to="/register"
                                                 style={{
                                                     color: 'crimson',
                                                     textDecoration: 'none',
@@ -407,7 +414,7 @@ const Login = () => {
                             </Card.Body>
 
                             {/* Footer */}
-                            <div 
+                            <div
                                 className="text-center py-2"
                                 style={{
                                     background: '#f8f9fa',

@@ -314,6 +314,8 @@ const profileinfouser = () => {
                     title={t('notifications', 'Notificaciones')}
                     to="/notify"
                   />
+  
+
                   <MenuOption
                     icon={FaComments}
                     iconColor="#28a745"

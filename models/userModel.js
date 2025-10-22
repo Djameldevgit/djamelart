@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema({
   },
 
   // --- ESTADO DE LA CUENTA ---
-  isVerified: { type: Boolean, default: false },
+  isVerified: { type: Boolean, default: true},
   isActive: { type: Boolean, default: true },
   loginType: { type: String, enum: ['local', 'google', 'facebook'], default: 'local' },
 
