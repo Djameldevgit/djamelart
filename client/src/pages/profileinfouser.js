@@ -109,6 +109,227 @@ const Section = ({ title, children, gradient }) => (
   </div>
 );
 
+// ✅ Componente PWA Install Manager MEJORADO
+const PWAInstallManager = ({ onInstallStatusChange }) => {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [canInstall, setCanInstall] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [isAppInstalled, setIsAppInstalled] = useState(false);
+  const [showInstallButton, setShowInstallButton] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showIOSModal, setShowIOSModal] = useState(false);
+  const [isLocalhost, setIsLocalhost] = useState(false);
+  const { t } = useTranslation('profile');
+
+  useEffect(() => {
+    // ✅ Detectar si estamos en localhost
+    const checkLocalhost = () => {
+      const isLocal = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.hostname.includes('local');
+      setIsLocalhost(isLocal);
+      console.log('🌐 Environment:', isLocal ? 'localhost' : 'production');
+      return isLocal;
+    };
+
+    // Detectar si es iOS
+    const detectIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    setIsIOS(detectIOS);
+
+    // Verificar si ya está instalado
+    const checkIfInstalled = () => {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+      const isIOSStandalone = window.navigator.standalone;
+      const installed = isStandalone || isIOSStandalone;
+      
+      console.log('🔍 PWA Check - Standalone:', isStandalone, 'iOS Standalone:', isIOSStandalone, 'Installed:', installed);
+      
+      setIsAppInstalled(installed);
+      
+      if (onInstallStatusChange) {
+        onInstallStatusChange(installed);
+      }
+
+      // Ocultar botón si ya está instalado
+      if (installed) {
+        setShowInstallButton(false);
+        setCanInstall(false);
+      }
+    };
+
+    // Evento cuando la PWA puede instalarse
+    const handleBeforeInstallPrompt = (e) => {
+      console.log('🎯 PWA: beforeinstallprompt event captured');
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setCanInstall(true);
+      setShowInstallButton(true);
+    };
+
+    // Evento cuando la PWA se instala
+    const handleAppInstalled = () => {
+      console.log('✅ PWA: App installed successfully');
+      setIsAppInstalled(true);
+      setShowInstallButton(false);
+      setCanInstall(false);
+      setDeferredPrompt(null);
+      
+      if (onInstallStatusChange) {
+        onInstallStatusChange(true);
+      }
+    };
+
+    // Configurar event listeners
+    const isLocal = checkLocalhost();
+    checkIfInstalled();
+    
+    // ✅ Solo agregar event listeners si no estamos en localhost
+    if (!isLocal) {
+      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.addEventListener('appinstalled', handleAppInstalled);
+    } else {
+      console.log('🚫 PWA: Localhost environment - installation disabled');
+    }
+
+    // Para iOS, siempre mostrar el botón (no tiene beforeinstallprompt)
+    if (detectIOS && !isAppInstalled && !isLocal) {
+      setShowInstallButton(true);
+    }
+
+    // Verificar periódicamente
+    const interval = setInterval(checkIfInstalled, 10000);
+
+    return () => {
+      if (!isLocal) {
+        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        window.removeEventListener('appinstalled', handleAppInstalled);
+      }
+      clearInterval(interval);
+    };
+  }, [onInstallStatusChange, isAppInstalled]);
+
+  const handleInstallPWA = async () => {
+    // ✅ No permitir instalación en localhost
+    if (isLocalhost) {
+      console.log('🚫 PWA: Installation blocked on localhost');
+      return;
+    }
+
+    // Para iOS, mostrar instrucciones
+    if (isIOS) {
+      setShowIOSModal(true);
+      return;
+    }
+
+    // Para otros navegadores
+    if (deferredPrompt && canInstall) {
+      try {
+        setIsInstalling(true);
+        console.log('🚀 PWA: Triggering install prompt');
+        
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        console.log('📊 PWA: User choice:', outcome);
+        
+        if (outcome === 'accepted') {
+          console.log('✅ PWA: User accepted installation');
+        } else {
+          console.log('❌ PWA: User declined installation');
+          // Reaparecer el botón después de 30 segundos si el usuario declina
+          setTimeout(() => {
+            if (!isAppInstalled) {
+              setShowInstallButton(true);
+            }
+          }, 30000);
+        }
+        
+        setDeferredPrompt(null);
+        setCanInstall(false);
+        
+      } catch (error) {
+        console.error('❌ PWA: Error during installation:', error);
+      } finally {
+        setIsInstalling(false);
+      }
+    }
+  };
+
+  // ✅ No mostrar nada en localhost o si no se puede instalar o ya está instalado
+  if (isLocalhost || !showInstallButton || isAppInstalled) {
+    return null;
+  }
+
+  return (
+    <>
+      <MenuOption
+        icon={isInstalling ? FaMobileAlt : FaDownload}
+        iconColor={isInstalling ? "#f59e0b" : "#10b981"}
+        title={isInstalling 
+          ? (t('pwa_installing') || 'Instalando...') 
+          : (isIOS 
+              ? (t('pwa_add_to_home') || 'Agregar a Pantalla') 
+              : (t('install_app') || 'Instalar App')
+            )
+        }
+        onClick={handleInstallPWA}
+        badge={isInstalling 
+          ? { text: '⏳', color: '#f59e0b' } 
+          : { text: '📱', color: '#10b981' }
+        }
+      />
+
+      {/* Modal para instrucciones iOS */}
+      <Modal show={showIOSModal} onHide={() => setShowIOSModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <FaMobileAlt className="me-2" />
+            {t('pwa_ios_install_title') || 'Agregar a Pantalla de Inicio'}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="p-3">
+            <div className="d-flex align-items-center mb-3">
+              <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                   style={{ width: '30px', height: '30px', flexShrink: 0 }}>
+                1
+              </div>
+              <span>{t('pwa_ios_step1') || 'Toca el botón compartir'}</span>
+              <FaShareAlt className="ms-2 text-primary" />
+            </div>
+            
+            <div className="d-flex align-items-center mb-3">
+              <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                   style={{ width: '30px', height: '30px', flexShrink: 0 }}>
+                2
+              </div>
+              <span>{t('pwa_ios_step2') || 'Selecciona "Agregar a Pantalla de Inicio"'}</span>
+            </div>
+            
+            <div className="d-flex align-items-center">
+              <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                   style={{ width: '30px', height: '30px', flexShrink: 0 }}>
+                3
+              </div>
+              <span>{t('pwa_ios_step3') || 'Confirma la instalación'}</span>
+            </div>
+
+            <Alert variant="info" className="mt-3 small">
+              <FaInfoCircle className="me-2" />
+              {t('pwa_ios_note') || 'Esta opción está disponible en Safari para iOS'}
+            </Alert>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShowIOSModal(false)}>
+            {t('understand') || 'Entendido'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
 const ProfileInfoUser = () => {
   const { auth, theme, cart, notify, settings } = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -124,15 +345,7 @@ const ProfileInfoUser = () => {
   const [showFeaturesModal, setShowFeaturesModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
   const [showNotifyDropdown, setShowNotifyDropdown] = useState(false);
-
-  // ✅ Estados para instalación PWA
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [canInstall, setCanInstall] = useState(false);
-  const [isInstalling, setIsInstalling] = useState(false);
-  const [showInstallAlert, setShowInstallAlert] = useState(false);
-  const [installAlertMessage, setInstallAlertMessage] = useState('');
-  const [isAppInstalled, setIsAppInstalled] = useState(false);
-  const [showInstallButton, setShowInstallButton] = useState(true);
+  const [isPWAInstalled, setIsPWAInstalled] = useState(false);
 
   useEffect(() => {
     if (lang && lang !== i18n.language) {
@@ -163,136 +376,9 @@ const ProfileInfoUser = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ✅ Effect para capturar el evento de instalación PWA
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (e) => {
-      console.log('📱 PWA: beforeinstallprompt event captured');
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setCanInstall(true);
-      
-      setTimeout(() => setShowInstallButton(true), 1000);
-    };
-
-    const handleAppInstalled = () => {
-      console.log('✅ PWA: App installed successfully');
-      setDeferredPrompt(null);
-      setCanInstall(false);
-      setIsAppInstalled(true);
-      setShowInstallButton(false);
-      showInstallMessage(
-        t('pwa_install_success') || '¡App instalada correctamente! 🎉', 
-        'success'
-      );
-    };
-
-    const checkIfInstalled = () => {
-      const isInstalled = 
-        window.matchMedia('(display-mode: standalone)').matches ||
-        window.navigator.standalone ||
-        document.referrer.includes('android-app://');
-      
-      console.log('🔍 PWA: Checking if installed:', isInstalled);
-      setIsAppInstalled(isInstalled);
-      if (isInstalled) {
-        setShowInstallButton(false);
-      }
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
-    
-    checkIfInstalled();
-    
-    const interval = setInterval(checkIfInstalled, 30000);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
-      clearInterval(interval);
-    };
-  }, [t]);
-
-  // ✅ Función para mostrar mensajes de instalación
-  const showInstallMessage = (message, variant = 'info') => {
-    setInstallAlertMessage(message);
-    setShowInstallAlert(true);
-    
-    setTimeout(() => {
-      setShowInstallAlert(false);
-    }, 4000);
+  const handlePWAInstallStatusChange = (installed) => {
+    setIsPWAInstalled(installed);
   };
-
-  // ✅ Función principal para instalar PWA
-  const handleInstallPWA = async () => {
-    if (!deferredPrompt) {
-      showInstallMessage(
-        t('pwa_not_supported') || 'Tu navegador no soporta instalación de apps 📵', 
-        'warning'
-      );
-      return;
-    }
-
-    if (isInstalling) {
-      showInstallMessage(
-        t('pwa_install_in_progress') || 'La instalación ya está en progreso...', 
-        'info'
-      );
-      return;
-    }
-
-    setIsInstalling(true);
-
-    try {
-      console.log('🚀 PWA: Triggering install prompt');
-      deferredPrompt.prompt();
-      
-      const { outcome } = await deferredPrompt.userChoice;
-      
-      console.log('📊 PWA: User choice:', outcome);
-      
-      if (outcome === 'accepted') {
-        showInstallMessage(
-          t('pwa_install_started') || '📥 Instalación iniciada...', 
-          'success'
-        );
-      } else {
-        showInstallMessage(
-          t('pwa_install_declined') || 'Instalación cancelada ❌', 
-          'info'
-        );
-        
-        setShowInstallButton(false);
-        setTimeout(() => {
-          if (canInstall && !isAppInstalled) {
-            setShowInstallButton(true);
-          }
-        }, 30000);
-      }
-      
-      setDeferredPrompt(null);
-      setCanInstall(false);
-      
-    } catch (error) {
-      console.error('❌ PWA: Error during installation:', error);
-      showInstallMessage(
-        t('pwa_install_error') || 'Error durante la instalación 🔧', 
-        'danger'
-      );
-    } finally {
-      setIsInstalling(false);
-    }
-  };
-
-  // ✅ Tooltip para el botón de instalación
-  const installTooltip = (props) => (
-    <Tooltip id="install-tooltip" {...props}>
-      {isInstalling 
-        ? (t('pwa_installing') || 'Instalando...') 
-        : (t('install_app') || 'Instalar App en tu dispositivo')
-      }
-    </Tooltip>
-  );
 
   const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true });
 
@@ -330,41 +416,6 @@ const ProfileInfoUser = () => {
 
   return (
     <div>
-      {/* ✅ Alert para mensajes de instalación */}
-      {showInstallAlert && (
-        <Alert 
-          variant={
-            installAlertMessage.includes('éxito') || 
-            installAlertMessage.includes('correctamente') ||
-            installAlertMessage.includes('🎉') ? 'success' : 
-            installAlertMessage.includes('Error') || 
-            installAlertMessage.includes('🔧') ? 'danger' : 
-            installAlertMessage.includes('cancelada') || 
-            installAlertMessage.includes('❌') ? 'warning' : 'info'
-          }
-          className="mb-0 text-center py-2"
-          style={{
-            position: 'fixed',
-            top: '70px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 9999,
-            minWidth: '300px',
-            borderRadius: '12px',
-            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-            border: 'none',
-            fontSize: '14px',
-            fontWeight: '500'
-          }}
-        >
-          <div className="d-flex align-items-center justify-content-center">
-            {installAlertMessage.includes('éxito') && <FaCheckCircle className="me-2" />}
-            {installAlertMessage.includes('Error') && <FaInfoCircle className="me-2" />}
-            {installAlertMessage}
-          </div>
-        </Alert>
-      )}
-
       <Container className="py-4" style={{
         direction: lang === 'ar' ? 'rtl' : 'ltr',
         textAlign: lang === 'ar' ? 'right' : 'left'
@@ -472,48 +523,30 @@ const ProfileInfoUser = () => {
 
                 {/* ✅ SECCIÓN PWA - INSTALAR APP */}
                 <Section title={t('pwaSection', '📱 Instalar App')}>
-                  {canInstall && showInstallButton && !isAppInstalled && (
-                    <OverlayTrigger
-                      placement="top"
-                      delay={{ show: 250, hide: 400 }}
-                      overlay={installTooltip}
-                    >
-                      <div>
-                        <MenuOption
-                          icon={isInstalling ? FaMobileAlt : FaDownload}
-                          iconColor={isInstalling ? "#f59e0b" : "#10b981"}
-                          title={isInstalling 
-                            ? (t('pwa_installing') || 'Instalando...') 
-                            : (t('install_app') || 'Instalar App')
-                          }
-                          onClick={handleInstallPWA}
-                          badge={isInstalling ? { text: '⏳', color: '#f59e0b' } : { text: '✨', color: '#10b981' }}
-                        />
-                      </div>
-                    </OverlayTrigger>
-                  )}
-
-                  {isAppInstalled && (
+                  <PWAInstallManager onInstallStatusChange={handlePWAInstallStatusChange} />
+                  
+                  {/* Mensaje cuando ya está instalado */}
+                  {isPWAInstalled && (
                     <MenuOption
                       icon={FaCheckCircle}
                       iconColor="#6b7280"
-                      title={t('pwa_already_installed') || 'App ya instalada'}
+                      title={t('pwa_already_installed') || 'App instalada'}
                       badge={{ text: '✅', color: '#6b7280' }}
                     />
                   )}
 
-                  {!canInstall && !isAppInstalled && (
-                    <MenuOption
-                      icon={FaInfoCircle}
-                      iconColor="#6c757d"
-                      title={t('pwa_not_supported') || 'Instalación no disponible'}
-                      badge={{ text: 'ℹ️', color: '#6c757d' }}
-                    />
-                  )}
+                  {/* Información sobre PWA */}
+                  <MenuOption
+                    icon={FaInfoCircle}
+                    iconColor="#6c757d"
+                    title={t('pwa_info') || '¿Qué es una PWA?'}
+                    to="/infoaplicacionn"
+                    badge={{ text: 'ℹ️', color: '#6c757d' }}
+                  />
                 </Section>
 
-                {/* Agregar Post (Super Usuarios) */}
-                {(userRole === "Super-utilisateur" || userRole === "admin") && (
+                {/* ✅ Agregar Post (SOLO para usuarios autenticados con roles específicos) */}
+                {auth.user && (userRole === "Super-utilisateur" || userRole === "admin") && (
                   <Section>
                     <MenuOption
                       icon={FaPlus}
@@ -538,18 +571,26 @@ const ProfileInfoUser = () => {
                     title={t('appInfo', 'Información')}
                     to="/infoaplicacionn"
                   />
-                  <MenuOption
-                    icon={FaUserCircle}
-                    iconColor="#667eea"
-                    title={t('notifications', 'Notificaciones')}
-                    to="/notify"
-                  />
-                  <MenuOption
-                    icon={FaComments}
-                    iconColor="#28a745"
-                    title={t('conversations', 'Conversaciones')}
-                    to="/message"
-                  />
+                  
+                  {/* ✅ Notificaciones - SOLO para usuarios autenticados */}
+                  {auth.user && (
+                    <MenuOption
+                      icon={FaUserCircle}
+                      iconColor="#667eea"
+                      title={t('notifications', 'Notificaciones')}
+                      to="/notify"
+                    />
+                  )}
+                  
+                  {/* ✅ Conversaciones - SOLO para usuarios autenticados */}
+                  {auth.user && (
+                    <MenuOption
+                      icon={FaComments}
+                      iconColor="#28a745"
+                      title={t('conversations', 'Conversaciones')}
+                      to="/message"
+                    />
+                  )}
                 </Section>
               </Col>
 
@@ -564,8 +605,8 @@ const ProfileInfoUser = () => {
                   />
                 </Section>
 
-                {/* Panel de Admin */}
-                {userRole === "admin" && (
+                {/* Panel de Admin - SOLO para admin */}
+                {auth.user && userRole === "admin" && (
                   <Section
                     title={
                       <div className="d-flex align-items-center">
@@ -644,16 +685,18 @@ const ProfileInfoUser = () => {
                   </Section>
                 )}
 
-                {/* Cerrar Sesión */}
-                <Section>
-                  <MenuOption
-                    icon={FaSignOutAlt}
-                    iconColor="#dc3545"
-                    title={t('logout', 'Cerrar Sesión')}
-                    onClick={handleLogout}
-                    danger
-                  />
-                </Section>
+                {/* ✅ Cerrar Sesión - SOLO para usuarios autenticados */}
+                {auth.user && (
+                  <Section>
+                    <MenuOption
+                      icon={FaSignOutAlt}
+                      iconColor="#dc3545"
+                      title={t('logout', 'Cerrar Sesión')}
+                      onClick={handleLogout}
+                      danger
+                    />
+                  </Section>
+                )}
               </Col>
             </Row>
           </Col>

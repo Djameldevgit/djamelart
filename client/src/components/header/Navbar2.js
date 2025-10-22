@@ -206,8 +206,8 @@ const Navbar2 = () => {
               />
             </Link>
 
-            {/* Botón Agregar Post - CORREGIDO (sin condición de rol temporalmente) */}
-            <div
+            {auth.user && (
+  <div
               onClick={openStatusModal}
               className="d-flex align-items-center justify-content-center icon-button"
               style={{
@@ -228,6 +228,9 @@ const Navbar2 = () => {
               />
             </div>
 
+
+            )}
+          
             {/* Messenger (solo usuarios autenticados) */}
             {auth.user && (
               <Link

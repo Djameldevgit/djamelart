@@ -1,42 +1,39 @@
-// public/sw.js - VERSIÓN MEJORADA
-const CACHE_NAME = 'djamel-aps-v2';
+// public/sw.js - VERSIÓN MEJORADA CON CACHE ESTRATÉGICO
+const CACHE_NAME = 'djamel-aps-v3';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
+  '/index.html',
   '/manifest.json',
-  '/icon-web-01.png',
+  '/favicon.ico',
   '/logo192.png',
-  '/offline.html',
-  // ✅ Agregar rutas principales de tu app
-  '/',
-  '/search',
-  '/profile'
-  // Agrega aquí las rutas principales de tu React app
+  '/logo512.png',
+  '/static/js/bundle.js',
+  '/static/css/main.css'
 ];
+
 // INSTALACIÓN
 self.addEventListener('install', (event) => {
-  console.log('🔄 Service Worker: Installation...');
+  console.log('🔄 Service Worker: Instalando...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('📦 Service Worker: Ressources de mise en cache');
+        console.log('📦 Service Worker: Cacheando recursos esenciales');
         return cache.addAll(urlsToCache);
       })
       .then(() => {
-        console.log('✅ Service Worker: Installation terminée');
+        console.log('✅ Service Worker: Instalación completada');
         return self.skipWaiting();
       })
       .catch(error => {
-        console.log('❌ Service Worker: Error en instalaction', error);
+        console.log('❌ Service Worker: Error en instalación', error);
       })
   );
 });
 
 // ACTIVACIÓN
 self.addEventListener('activate', (event) => {
-  console.log('🔥 Service Worker: Activé...');
+  console.log('🔥 Service Worker: Activando...');
   
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -49,50 +46,58 @@ self.addEventListener('activate', (event) => {
         })
       );
     }).then(() => {
-      console.log('✅ Service Worker: activé et prêt!');
+      console.log('✅ Service Worker: Activado y listo!');
       return self.clients.claim();
     })
   );
 });
 
-// FETCH - Estrategia mejorada
+// FETCH - Estrategia Cache First con fallback a network
 self.addEventListener('fetch', (event) => {
   // No manejar requests que no sean GET
   if (event.request.method !== 'GET') return;
   
   // Excluir chrome-extension y otros
   if (event.request.url.indexOf('chrome-extension') !== -1) return;
+  
+  // Para solicitudes de la misma origen
+  if (event.request.url.startsWith(self.location.origin)) {
+    event.respondWith(
+      caches.match(event.request)
+        .then(cachedResponse => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          
+          return fetch(event.request)
+            .then(response => {
+              // Verificar si la respuesta es válida
+              if (!response || response.status !== 200 || response.type !== 'basic') {
+                return response;
+              }
+              
+              // Clonar la respuesta para cachear
+              const responseToCache = response.clone();
+              
+              caches.open(CACHE_NAME)
+                .then(cache => {
+                  cache.put(event.request, responseToCache);
+                });
+              
+              return response;
+            })
+            .catch(error => {
+              console.log('🌐 Fetch failed:', error);
+              // Podrías devolver una página offline personalizada aquí
+            });
+        })
+    );
+  }
+});
 
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Devolver del cache si existe
-        if (response) {
-          return response;
-        }
-
-        // Hacer fetch y cachear
-        return fetch(event.request)
-          .then(fetchResponse => {
-            // Solo cachear respuestas válidas
-            if (!fetchResponse || fetchResponse.status !== 200 || !fetchResponse.type === 'basic') {
-              return fetchResponse;
-            }
-
-            // Clonar para cachear
-            const responseToCache = fetchResponse.clone();
-
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return fetchResponse;
-          })
-          .catch(error => {
-            console.log('🌐 Fetch failed:', error);
-            // Podrías devolver una página offline aquí
-          });
-      })
-  );
+// Manejar mensajes del cliente
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
