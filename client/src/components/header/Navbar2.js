@@ -98,14 +98,21 @@ const Navbar2 = () => {
           background: settings.style
             ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
             : 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-          padding: isMobile ? '8px 0' : '12px 0',
-          boxShadow: '0 2px 20px rgba(0,0,0,0.08)'
+          padding: isMobile ? '6px 0' : '10px 0', // ✅ Reducido padding
+          boxShadow: '0 2px 20px rgba(0,0,0,0.08)',
+          minHeight: isMobile ? '60px' : '70px' // ✅ Altura mínima consistente
         }}
         className={settings.style ? "navbar-dark" : "navbar-light"}
       >
-        <Container fluid className="align-items-center justify-content-between">
-          {/* Logo y título */}
-          <div className="d-flex align-items-center">
+        <Container fluid className="align-items-center justify-content-between" style={{
+          paddingLeft: isMobile ? '12px' : '16px',
+          paddingRight: isMobile ? '12px' : '16px'
+        }}>
+          {/* Logo y título - CORREGIDO */}
+          <div className="d-flex align-items-center" style={{
+            minWidth: isMobile ? 'auto' : '200px', // ✅ Ancho consistente
+            flex: isMobile ? '0 0 auto' : '0 1 auto'
+          }}>
             <Link
               to="/"
               className="btn"
@@ -113,16 +120,17 @@ const Navbar2 = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: isMobile ? '45px' : '55px',
-                height: isMobile ? '45px' : '55px',
-                marginLeft: lang === 'ar' ? '0' : '8px',
-                marginRight: lang === 'ar' ? '8px' : (isMobile ? '8px' : '12px'),
+                width: isMobile ? '42px' : '50px', // ✅ Tamaño ajustado
+                height: isMobile ? '42px' : '50px',
+                marginLeft: lang === 'ar' ? (isMobile ? '4px' : '8px') : '0',
+                marginRight: lang === 'ar' ? '0' : (isMobile ? '8px' : '12px'),
                 padding: '0',
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 border: 'none',
                 borderRadius: '12px',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
+                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+                flexShrink: 0 // ✅ Evita que se reduzca
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -133,27 +141,46 @@ const Navbar2 = () => {
                 e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
               }}
             >
-              <FaHome size={isMobile ? 24 : 28} style={{ color: 'white' }} />
+              <FaHome size={isMobile ? 22 : 26} style={{ color: 'white' }} /> {/* ✅ Tamaño ajustado */}
             </Link>
 
-            <Navbar.Brand href="/" className="py-2 d-none d-lg-block mb-0">
-              <Card.Title
-                className="mb-0"
+            {/* ✅ Navbar.Brand SOLO cuando no es móvil y con margen ajustado */}
+            {!isMobile && (
+              <Navbar.Brand 
+                href="/" 
+                className="py-2 mb-0"
                 style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  fontWeight: 'bold',
-                  fontSize: '1.5rem'
+                  marginLeft: lang === 'ar' ? '12px' : '0',
+                  marginRight: lang === 'ar' ? '0' : '0',
+                  flexShrink: 1,
+                  minWidth: 0 // ✅ Permite que se reduzca si es necesario
                 }}
               >
-                {t('appName')}
-              </Card.Title>
-            </Navbar.Brand>
+                <Card.Title
+                  className="mb-0"
+                  style={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    fontWeight: 'bold',
+                    fontSize: '1.4rem', // ✅ Tamaño ajustado
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}
+                >
+                  {t('appName')}
+                </Card.Title>
+              </Navbar.Brand>
+            )}
           </div>
 
-          {/* Iconos de navegación */}
-          <div className="d-flex align-items-center" style={{ gap: isMobile ? '8px' : '16px' }}>
+          {/* Iconos de navegación - CORREGIDO */}
+          <div className="d-flex align-items-center" style={{ 
+            gap: isMobile ? '6px' : '12px', // ✅ Espacio reducido
+            flexShrink: 0,
+            minWidth: 0
+          }}>
             {/* Selector de idioma para desktop */}
             <div className="d-none d-lg-block">
               <LanguageSelectorpc />
@@ -164,41 +191,42 @@ const Navbar2 = () => {
               to="/search"
               className="text-decoration-none d-flex align-items-center justify-content-center icon-button"
               style={{
-                width: isMobile ? '40px' : '45px',
-                height: isMobile ? '40px' : '45px',
-                borderRadius: '12px',
+                width: isMobile ? '38px' : '42px', // ✅ Tamaño consistente
+                height: isMobile ? '38px' : '42px',
+                borderRadius: '10px', // ✅ Bordes ligeramente más pequeños
                 transition: 'all 0.3s ease',
-                backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)'
+                backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
+                flexShrink: 0
               }}
               title={t('search')}
             >
               <FaSearch
-                size={isMobile ? 18 : 20}
+                size={isMobile ? 16 : 18} // ✅ Iconos más pequeños
                 style={{ color: '#667eea' }}
               />
             </Link>
 
-    
-              <div
-                onClick={openStatusModal}
-                className="d-flex align-items-center justify-content-center icon-button"
-                style={{
-                  cursor: 'pointer',
-                  width: isMobile ? '40px' : '45px',
-                  height: isMobile ? '40px' : '45px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
-                }}
-                title={t('addPost')}
-              >
-                <FaPlus
-                  size={isMobile ? 18 : 20}
-                  style={{ color: 'white' }}
-                />
-              </div>
-           
+            {/* Botón Agregar Post - CORREGIDO (sin condición de rol temporalmente) */}
+            <div
+              onClick={openStatusModal}
+              className="d-flex align-items-center justify-content-center icon-button"
+              style={{
+                cursor: 'pointer',
+                width: isMobile ? '38px' : '42px',
+                height: isMobile ? '38px' : '42px',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                flexShrink: 0
+              }}
+              title={t('addPost')}
+            >
+              <FaPlus
+                size={isMobile ? 16 : 18}
+                style={{ color: 'white' }}
+              />
+            </div>
 
             {/* Messenger (solo usuarios autenticados) */}
             {auth.user && (
@@ -206,30 +234,31 @@ const Navbar2 = () => {
                 to="/message"
                 className="position-relative d-flex align-items-center justify-content-center icon-button text-decoration-none"
                 style={{
-                  width: isMobile ? '40px' : '45px',
-                  height: isMobile ? '40px' : '45px',
-                  borderRadius: '12px',
+                  width: isMobile ? '38px' : '42px',
+                  height: isMobile ? '38px' : '42px',
+                  borderRadius: '10px',
                   backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
                   transition: 'all 0.3s ease',
+                  flexShrink: 0
                 }}
                 title={t('messages')}
               >
                 <FaFacebookMessenger
-                  size={isMobile ? 20 : 22}
+                  size={isMobile ? 18 : 20} // ✅ Tamaño ajustado
                   style={{ color: unreadMessages > 0 ? '#00b2ff' : '#667eea' }}
                 />
                 {unreadMessages > 0 && (
                   <Badge
                     pill
                     style={{
-                      fontSize: '0.65rem',
+                      fontSize: '0.6rem', // ✅ Tamaño reducido
                       position: 'absolute',
                       top: '-2px',
                       [lang === 'ar' ? 'left' : 'right']: '-2px',
-                      padding: '4px 7px',
+                      padding: '3px 6px',
                       background: 'linear-gradient(135deg, #00b2ff 0%, #006aff 100%)',
-                      border: '2px solid white',
-                      boxShadow: '0 2px 8px rgba(0, 178, 255, 0.4)'
+                      border: '2px solid' + (settings.style ? '#16213e' : '#ffffff'),
+                      boxShadow: '0 2px 6px rgba(0, 178, 255, 0.4)'
                     }}
                   >
                     {unreadMessages > 9 ? '9+' : unreadMessages}
@@ -244,30 +273,31 @@ const Navbar2 = () => {
                 to="/notify"
                 className="position-relative d-flex align-items-center justify-content-center icon-button text-decoration-none"
                 style={{
-                  width: isMobile ? '40px' : '45px',
-                  height: isMobile ? '40px' : '45px',
-                  borderRadius: '12px',
+                  width: isMobile ? '38px' : '42px',
+                  height: isMobile ? '38px' : '42px',
+                  borderRadius: '10px',
                   backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
                   transition: 'all 0.3s ease',
+                  flexShrink: 0
                 }}
                 title={t('notifications')}
               >
                 <FaBell
-                  size={isMobile ? 20 : 22}
+                  size={isMobile ? 18 : 20}
                   style={{ color: unreadNotifications > 0 ? '#f5576c' : '#667eea' }}
                 />
                 {unreadNotifications > 0 && (
                   <Badge
                     pill
                     style={{
-                      fontSize: '0.65rem',
+                      fontSize: '0.6rem',
                       position: 'absolute',
                       top: '-2px',
                       [lang === 'ar' ? 'left' : 'right']: '-2px',
-                      padding: '4px 7px',
+                      padding: '3px 6px',
                       background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                      border: '2px solid white',
-                      boxShadow: '0 2px 8px rgba(245, 87, 108, 0.4)'
+                      border: '2px solid' + (settings.style ? '#16213e' : '#ffffff'),
+                      boxShadow: '0 2px 6px rgba(245, 87, 108, 0.4)'
                     }}
                   >
                     {unreadNotifications > 9 ? '9+' : unreadNotifications}
@@ -282,27 +312,28 @@ const Navbar2 = () => {
                 to="/cart"
                 className="position-relative text-decoration-none d-flex align-items-center justify-content-center icon-button"
                 style={{
-                  width: isMobile ? '40px' : '45px',
-                  height: isMobile ? '40px' : '45px',
-                  borderRadius: '12px',
+                  width: isMobile ? '38px' : '42px',
+                  height: isMobile ? '38px' : '42px',
+                  borderRadius: '10px',
                   backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
+                  flexShrink: 0
                 }}
                 title={t('cart')}
               >
-                <BsCartFill size={isMobile ? 20 : 22} style={{ color: '#667eea' }} />
+                <BsCartFill size={isMobile ? 18 : 20} style={{ color: '#667eea' }} />
                 {cart.items?.length > 0 && (
                   <Badge
                     pill
                     style={{
-                      fontSize: '0.65rem',
+                      fontSize: '0.6rem',
                       position: 'absolute',
                       top: '-2px',
                       [lang === 'ar' ? 'left' : 'right']: '-2px',
-                      padding: '4px 7px',
+                      padding: '3px 6px',
                       background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                      border: '2px solid white',
-                      boxShadow: '0 2px 8px rgba(245, 87, 108, 0.4)'
+                      border: '2px solid' + (settings.style ? '#16213e' : '#ffffff'),
+                      boxShadow: '0 2px 6px rgba(245, 87, 108, 0.4)'
                     }}
                   >
                     {cart.items?.length > 9 ? '9+' : cart.items?.length || 0}
@@ -313,18 +344,18 @@ const Navbar2 = () => {
 
             {/* Avatar o Dropdown según autenticación */}
             {auth.user ? (
-              // Usuario AUTENTICADO: Avatar clickeable que redirige a página de configuración
               <Link
                 to="/profileinfouser"
                 className="text-decoration-none"
                 title={t('profile')}
+                style={{ flexShrink: 0 }}
               >
                 <div
                   className="dropdown-avatar icon-button"
                   style={{
-                    width: isMobile ? '40px' : '45px',
-                    height: isMobile ? '40px' : '45px',
-                    borderRadius: '12px',
+                    width: isMobile ? '38px' : '42px',
+                    height: isMobile ? '38px' : '42px',
+                    borderRadius: '10px',
                     padding: '0',
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
@@ -332,14 +363,15 @@ const Navbar2 = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    flexShrink: 0
                   }}
                 >
                   <Avatar
                     src={auth.user.avatar}
                     size="medium-avatar"
                     style={{
-                      borderRadius: '10px',
+                      borderRadius: '8px', // ✅ Bordes más pequeños
                       objectFit: 'cover',
                       width: '100%',
                       height: '100%',
@@ -351,24 +383,24 @@ const Navbar2 = () => {
                 </div>
               </Link>
             ) : (
-              // Usuario NO AUTENTICADO: Dropdown simple
               <NavDropdown
                 align="end"
                 title={
                   <div
                     style={{
-                      width: isMobile ? '40px' : '45px',
-                      height: isMobile ? '40px' : '45px',
-                      borderRadius: '12px',
+                      width: isMobile ? '38px' : '42px',
+                      height: isMobile ? '38px' : '42px',
+                      borderRadius: '10px',
                       backgroundColor: settings.style ? 'rgba(255,255,255,0.1)' : 'rgba(102, 126, 234, 0.1)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      flexShrink: 0
                     }}
                     className="icon-button"
                   >
-                    <FaUserCircle size={isMobile ? 24 : 28} style={{ color: '#667eea' }} />
+                    <FaUserCircle size={isMobile ? 22 : 24} style={{ color: '#667eea' }} /> {/* ✅ Tamaño ajustado */}
                   </div>
                 }
                 id="nav-guest-dropdown"
@@ -390,7 +422,7 @@ const Navbar2 = () => {
         </Container>
       </Navbar>
 
-      {/* CSS personalizado */}
+      {/* CSS personalizado MEJORADO */}
       <style jsx>{`
         .icon-button:hover {
           transform: translateY(-2px);
@@ -406,6 +438,16 @@ const Navbar2 = () => {
           border: none !important;
           box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
           border-radius: 15px !important;
+        }
+
+        /* ✅ Eliminar espacios innecesarios del Navbar */
+        .navbar {
+          line-height: 1 !important;
+        }
+        
+        .navbar-brand {
+          padding: 0 !important;
+          margin: 0 !important;
         }
       `}</style>
     </div>
