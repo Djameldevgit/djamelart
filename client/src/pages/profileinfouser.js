@@ -4,21 +4,17 @@ import { logout } from '../redux/actions/authAction';
 import { GLOBALTYPES } from '../redux/actions/globalTypes';
 import { useTranslation } from 'react-i18next';
 import { Link, useHistory } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Modal, Alert, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import {
   FaUserCircle, FaEnvelope, FaInfoCircle, FaComments, FaShareAlt,
   FaTools, FaShieldAlt, FaCog, FaBlog, FaUsers, FaClipboardList,
   FaUserCog, FaUserSlash, FaFlag, FaBan, FaShoppingCart, FaSignOutAlt,
-  FaPlus, FaCheckCircle, FaGlobe, FaSun, FaMoon
+  FaPlus, FaCheckCircle, FaGlobe, FaSun, FaMoon,
+  FaDownload, FaMobileAlt // ✅ Iconos PWA agregados
 } from 'react-icons/fa';
-/*<MenuOption
-icon={FaTools}
-iconColor="#6c757d"
-title={t('roles', 'Roles')}
-to="/users/roles"
-/>*/
+
 // Componente MenuOption
-const MenuOption = ({ icon: Icon, iconColor, title, onClick, to, danger }) => {
+const MenuOption = ({ icon: Icon, iconColor, title, onClick, to, danger, badge }) => {
   const history = useHistory();
 
   const handleClick = () => {
@@ -35,7 +31,8 @@ const MenuOption = ({ icon: Icon, iconColor, title, onClick, to, danger }) => {
       style={{
         cursor: 'pointer',
         transition: 'all 0.3s ease',
-        borderRadius: '12px'
+        borderRadius: '12px',
+        position: 'relative'
       }}
       onClick={handleClick}
       onMouseEnter={(e) => {
@@ -65,6 +62,25 @@ const MenuOption = ({ icon: Icon, iconColor, title, onClick, to, danger }) => {
         <span className={`fw-${danger ? 'bold' : '500'}`} style={{ color: danger ? '#dc3545' : 'inherit' }}>
           {title}
         </span>
+        
+        {/* Badge para indicadores */}
+        {badge && (
+          <span
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '15px',
+              background: badge.color || '#28a745',
+              color: 'white',
+              borderRadius: '10px',
+              padding: '2px 8px',
+              fontSize: '0.7rem',
+              fontWeight: 'bold'
+            }}
+          >
+            {badge.text}
+          </span>
+        )}
       </Card.Body>
     </Card>
   );
@@ -93,7 +109,7 @@ const Section = ({ title, children, gradient }) => (
   </div>
 );
 
-const profileinfouser = () => {
+const ProfileInfoUser = () => {
   const { auth, theme, cart, notify, settings } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { languageReducer } = useSelector(state => state);
@@ -108,6 +124,15 @@ const profileinfouser = () => {
   const [showFeaturesModal, setShowFeaturesModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
   const [showNotifyDropdown, setShowNotifyDropdown] = useState(false);
+
+  // ✅ Estados para instalación PWA
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [canInstall, setCanInstall] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [showInstallAlert, setShowInstallAlert] = useState(false);
+  const [installAlertMessage, setInstallAlertMessage] = useState('');
+  const [isAppInstalled, setIsAppInstalled] = useState(false);
+  const [showInstallButton, setShowInstallButton] = useState(true);
 
   useEffect(() => {
     if (lang && lang !== i18n.language) {
@@ -137,6 +162,137 @@ const profileinfouser = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // ✅ Effect para capturar el evento de instalación PWA
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      console.log('📱 PWA: beforeinstallprompt event captured');
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setCanInstall(true);
+      
+      setTimeout(() => setShowInstallButton(true), 1000);
+    };
+
+    const handleAppInstalled = () => {
+      console.log('✅ PWA: App installed successfully');
+      setDeferredPrompt(null);
+      setCanInstall(false);
+      setIsAppInstalled(true);
+      setShowInstallButton(false);
+      showInstallMessage(
+        t('pwa_install_success') || '¡App instalada correctamente! 🎉', 
+        'success'
+      );
+    };
+
+    const checkIfInstalled = () => {
+      const isInstalled = 
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone ||
+        document.referrer.includes('android-app://');
+      
+      console.log('🔍 PWA: Checking if installed:', isInstalled);
+      setIsAppInstalled(isInstalled);
+      if (isInstalled) {
+        setShowInstallButton(false);
+      }
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+    
+    checkIfInstalled();
+    
+    const interval = setInterval(checkIfInstalled, 30000);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+      clearInterval(interval);
+    };
+  }, [t]);
+
+  // ✅ Función para mostrar mensajes de instalación
+  const showInstallMessage = (message, variant = 'info') => {
+    setInstallAlertMessage(message);
+    setShowInstallAlert(true);
+    
+    setTimeout(() => {
+      setShowInstallAlert(false);
+    }, 4000);
+  };
+
+  // ✅ Función principal para instalar PWA
+  const handleInstallPWA = async () => {
+    if (!deferredPrompt) {
+      showInstallMessage(
+        t('pwa_not_supported') || 'Tu navegador no soporta instalación de apps 📵', 
+        'warning'
+      );
+      return;
+    }
+
+    if (isInstalling) {
+      showInstallMessage(
+        t('pwa_install_in_progress') || 'La instalación ya está en progreso...', 
+        'info'
+      );
+      return;
+    }
+
+    setIsInstalling(true);
+
+    try {
+      console.log('🚀 PWA: Triggering install prompt');
+      deferredPrompt.prompt();
+      
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      console.log('📊 PWA: User choice:', outcome);
+      
+      if (outcome === 'accepted') {
+        showInstallMessage(
+          t('pwa_install_started') || '📥 Instalación iniciada...', 
+          'success'
+        );
+      } else {
+        showInstallMessage(
+          t('pwa_install_declined') || 'Instalación cancelada ❌', 
+          'info'
+        );
+        
+        setShowInstallButton(false);
+        setTimeout(() => {
+          if (canInstall && !isAppInstalled) {
+            setShowInstallButton(true);
+          }
+        }, 30000);
+      }
+      
+      setDeferredPrompt(null);
+      setCanInstall(false);
+      
+    } catch (error) {
+      console.error('❌ PWA: Error during installation:', error);
+      showInstallMessage(
+        t('pwa_install_error') || 'Error durante la instalación 🔧', 
+        'danger'
+      );
+    } finally {
+      setIsInstalling(false);
+    }
+  };
+
+  // ✅ Tooltip para el botón de instalación
+  const installTooltip = (props) => (
+    <Tooltip id="install-tooltip" {...props}>
+      {isInstalling 
+        ? (t('pwa_installing') || 'Instalando...') 
+        : (t('install_app') || 'Instalar App en tu dispositivo')
+      }
+    </Tooltip>
+  );
 
   const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true });
 
@@ -174,6 +330,41 @@ const profileinfouser = () => {
 
   return (
     <div>
+      {/* ✅ Alert para mensajes de instalación */}
+      {showInstallAlert && (
+        <Alert 
+          variant={
+            installAlertMessage.includes('éxito') || 
+            installAlertMessage.includes('correctamente') ||
+            installAlertMessage.includes('🎉') ? 'success' : 
+            installAlertMessage.includes('Error') || 
+            installAlertMessage.includes('🔧') ? 'danger' : 
+            installAlertMessage.includes('cancelada') || 
+            installAlertMessage.includes('❌') ? 'warning' : 'info'
+          }
+          className="mb-0 text-center py-2"
+          style={{
+            position: 'fixed',
+            top: '70px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 9999,
+            minWidth: '300px',
+            borderRadius: '12px',
+            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+            border: 'none',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}
+        >
+          <div className="d-flex align-items-center justify-content-center">
+            {installAlertMessage.includes('éxito') && <FaCheckCircle className="me-2" />}
+            {installAlertMessage.includes('Error') && <FaInfoCircle className="me-2" />}
+            {installAlertMessage}
+          </div>
+        </Alert>
+      )}
+
       <Container className="py-4" style={{
         direction: lang === 'ar' ? 'rtl' : 'ltr',
         textAlign: lang === 'ar' ? 'right' : 'left'
@@ -200,7 +391,6 @@ const profileinfouser = () => {
                       padding: '3px',
                       background: 'white'
                     }} >
-
                     <Link to={`/profile/${auth.user?._id}`}>
                       <img
                         src={auth.user?.avatar}
@@ -212,7 +402,6 @@ const profileinfouser = () => {
                           objectFit: 'cover'
                         }} />
                     </Link>
-
                   </div>
                   <div className="flex-grow-1">
                     <h3 className="text-white mb-2">{auth.user?.username}</h3>
@@ -281,6 +470,48 @@ const profileinfouser = () => {
                   />
                 </Section>
 
+                {/* ✅ SECCIÓN PWA - INSTALAR APP */}
+                <Section title={t('pwaSection', '📱 Instalar App')}>
+                  {canInstall && showInstallButton && !isAppInstalled && (
+                    <OverlayTrigger
+                      placement="top"
+                      delay={{ show: 250, hide: 400 }}
+                      overlay={installTooltip}
+                    >
+                      <div>
+                        <MenuOption
+                          icon={isInstalling ? FaMobileAlt : FaDownload}
+                          iconColor={isInstalling ? "#f59e0b" : "#10b981"}
+                          title={isInstalling 
+                            ? (t('pwa_installing') || 'Instalando...') 
+                            : (t('install_app') || 'Instalar App')
+                          }
+                          onClick={handleInstallPWA}
+                          badge={isInstalling ? { text: '⏳', color: '#f59e0b' } : { text: '✨', color: '#10b981' }}
+                        />
+                      </div>
+                    </OverlayTrigger>
+                  )}
+
+                  {isAppInstalled && (
+                    <MenuOption
+                      icon={FaCheckCircle}
+                      iconColor="#6b7280"
+                      title={t('pwa_already_installed') || 'App ya instalada'}
+                      badge={{ text: '✅', color: '#6b7280' }}
+                    />
+                  )}
+
+                  {!canInstall && !isAppInstalled && (
+                    <MenuOption
+                      icon={FaInfoCircle}
+                      iconColor="#6c757d"
+                      title={t('pwa_not_supported') || 'Instalación no disponible'}
+                      badge={{ text: 'ℹ️', color: '#6c757d' }}
+                    />
+                  )}
+                </Section>
+
                 {/* Agregar Post (Super Usuarios) */}
                 {(userRole === "Super-utilisateur" || userRole === "admin") && (
                   <Section>
@@ -307,15 +538,12 @@ const profileinfouser = () => {
                     title={t('appInfo', 'Información')}
                     to="/infoaplicacionn"
                   />
-                 
                   <MenuOption
                     icon={FaUserCircle}
                     iconColor="#667eea"
                     title={t('notifications', 'Notificaciones')}
                     to="/notify"
                   />
-  
-
                   <MenuOption
                     icon={FaComments}
                     iconColor="#28a745"
@@ -334,38 +562,6 @@ const profileinfouser = () => {
                     title={t('shareApp', 'Compartir Aplicación')}
                     onClick={() => setShowModal(true)}
                   />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 </Section>
 
                 {/* Panel de Admin */}
@@ -385,7 +581,6 @@ const profileinfouser = () => {
                       title={t('roles', 'Roles')}
                       to="/users/roles"
                     />
-
                     <MenuOption
                       icon={FaCog}
                       iconColor="#6c757d"
@@ -398,7 +593,6 @@ const profileinfouser = () => {
                       title={t('globalSettings', 'Configuración global')}
                       onClick={() => setShowFeaturesModal(true)}
                     />
-
                     <MenuOption
                       icon={FaEnvelope}
                       iconColor="#17a2b8"
@@ -410,7 +604,9 @@ const profileinfouser = () => {
                       iconColor="#28a745"
                       title={t('users', 'Usuarios')}
                       to="/users"
-                    />
+                      />
+ 
+
                     <MenuOption
                       icon={FaClipboardList}
                       iconColor="#ffc107"
@@ -466,7 +662,6 @@ const profileinfouser = () => {
         </Row>
       </Container>
 
-     
       {/* Modal de Compartir */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
@@ -512,8 +707,29 @@ const profileinfouser = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Modal de Idioma */}
+      <Modal show={showLanguageModal} onHide={() => setShowLanguageModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{t('selectLanguage', 'Seleccionar Idioma')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="d-grid gap-2">
+            <Button variant="outline-primary" onClick={() => changeLanguage('es')}>
+              Español 🇪🇸
+            </Button>
+            <Button variant="outline-primary" onClick={() => changeLanguage('en')}>
+              English 🇺🇸
+            </Button>
+            <Button variant="outline-primary" onClick={() => changeLanguage('fr')}>
+              Français 🇫🇷
+            </Button>
+            {/* Agrega más idiomas según necesites */}
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
 
-export default profileinfouser;
+export default ProfileInfoUser;
