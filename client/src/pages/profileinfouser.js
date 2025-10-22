@@ -181,7 +181,7 @@ const ProfileInfoUser = () => {
       setIsAppInstalled(true);
       setShowInstallButton(false);
       showInstallMessage(
-        t('pwa_install_success') || '¡App installé correctement 🎉', 
+        t('pwa_install_success') || '¡App instalada correctamente! 🎉', 
         'success'
       );
     };
@@ -604,9 +604,7 @@ const ProfileInfoUser = () => {
                       iconColor="#28a745"
                       title={t('users', 'Usuarios')}
                       to="/users"
-                      />
- 
-
+                    />
                     <MenuOption
                       icon={FaClipboardList}
                       iconColor="#ffc107"

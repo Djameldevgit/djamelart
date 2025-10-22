@@ -12,7 +12,7 @@ import {
   FaUserPlus,
   FaSearch,
   FaBell,
-  
+  FaShareAlt,
   FaInfoCircle,
   FaFacebookMessenger,
 } from 'react-icons/fa';
@@ -28,7 +28,7 @@ const Navbar2 = () => {
   const { t, i18n } = useTranslation('navbar2');
   const lang = languageReducer.language || 'es';
   
- 
+  const [showShareModal, setShowShareModal] = useState(false);
   const [userRole, setUserRole] = useState(auth.user?.role);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
 
