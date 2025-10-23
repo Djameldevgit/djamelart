@@ -35,7 +35,7 @@ export function ItemsTheme({ handleChangeInput, postData }) {
       { value: "fleurs", label: t('theme.fleurs', { lng: lang }), group: "Nature" },
       { value: "mer", label: t('theme.mer', { lng: lang }), group: "Nature" },
       { value: "ciel", label: t('theme.ciel', { lng: lang }), group: "Nature" },
-    
+      { value: 'paysage marino', label: t('paysage marino', { lng: lang }) },
       // 👤 Humain
       { value: "portrait", label: t('theme.portrait', { lng: lang }), group: "Humain" },
       { value: "corps_humain", label: t('theme.corps_humain', { lng: lang }), group: "Humain" },

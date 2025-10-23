@@ -9,7 +9,7 @@ import Toast from './Toast'
 const Notify = () => {
     const { alert } = useSelector(state => state)
     const { languageReducer } = useSelector(state => state)
-    const { t } = useTranslation('aplicacion')
+    const { t } = useTranslation('alert')
     const dispatch = useDispatch()
     const lang = languageReducer.language || 'en'
 

@@ -1,5 +1,5 @@
-// public/sw.js - VERSIÓN MEJORADA CON CACHE ESTRATÉGICO
-const CACHE_NAME = 'djamel-aps-v3';
+// public/sw.js - VERSIÓN ARTE DJAMEL CON CACHE ESTRATÉGICO
+const CACHE_NAME = 'djamel-art-v3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -11,42 +11,42 @@ const urlsToCache = [
   '/static/css/main.css'
 ];
 
-// INSTALACIÓN
+// INSTALACIÓN - TEXTO ARTÍSTICO
 self.addEventListener('install', (event) => {
-  console.log('🔄 Service Worker: Instalando...');
+  console.log('🎨 Service Worker Djamel Art: Instalando galería...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('📦 Service Worker: Cacheando recursos esenciales');
+        console.log('🖼️ Service Worker: Cacheando obras maestras');
         return cache.addAll(urlsToCache);
       })
       .then(() => {
-        console.log('✅ Service Worker: Instalación completada');
+        console.log('✅ Service Worker Djamel Art: Galería instalada');
         return self.skipWaiting();
       })
       .catch(error => {
-        console.log('❌ Service Worker: Error en instalación', error);
+        console.log('❌ Service Worker: Error en la instalación', error);
       })
   );
 });
 
 // ACTIVACIÓN
 self.addEventListener('activate', (event) => {
-  console.log('🔥 Service Worker: Activando...');
+  console.log('🔥 Service Worker Djamel Art: Activando exposición...');
   
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cache => {
           if (cache !== CACHE_NAME) {
-            console.log('🗑️ Service Worker: Eliminando cache viejo', cache);
+            console.log('🔄 Service Worker: Renovando exposición anterior', cache);
             return caches.delete(cache);
           }
         })
       );
     }).then(() => {
-      console.log('✅ Service Worker: Activado y listo!');
+      console.log('✅ Service Worker Djamel Art: Exposición activada!');
       return self.clients.claim();
     })
   );
@@ -66,6 +66,7 @@ self.addEventListener('fetch', (event) => {
       caches.match(event.request)
         .then(cachedResponse => {
           if (cachedResponse) {
+            console.log('🎭 Sirviendo desde galería cacheada:', event.request.url);
             return cachedResponse;
           }
           
@@ -81,14 +82,15 @@ self.addEventListener('fetch', (event) => {
               
               caches.open(CACHE_NAME)
                 .then(cache => {
+                  console.log('💾 Guardando nueva obra en galería:', event.request.url);
                   cache.put(event.request, responseToCache);
                 });
               
               return response;
             })
             .catch(error => {
-              console.log('🌐 Fetch failed:', error);
-              // Podrías devolver una página offline personalizada aquí
+              console.log('🌐 Conexión falló, mostrando galería offline:', error);
+              // Podrías devolver una página de galería offline personalizada aquí
             });
         })
     );
@@ -98,6 +100,7 @@ self.addEventListener('fetch', (event) => {
 // Manejar mensajes del cliente
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('🔄 Service Worker: Actualizando galería inmediatamente');
     self.skipWaiting();
   }
 });

@@ -13,6 +13,8 @@ export function ItemsSubCategoryStyle({ handleChangeInput, postData }) {
     {
       label: t('groups.modernes', { lng: lang }), // "حديث" (moderno)
       options: [
+        { value: "hiperrealisme", label: t('hiperrealisme', { lng: lang }) },
+        { value: "realisme", label: t('realisme', { lng: lang }) },
         { value: "abstrait", label: t('styles.abstrait', { lng: lang }) },
         { value: "impressionnisme", label: t('styles.impressionnisme', { lng: lang }) },
         { value: "expressionnisme", label: t('styles.expressionnisme', { lng: lang }) },

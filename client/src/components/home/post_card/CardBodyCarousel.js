@@ -228,11 +228,10 @@ const CardBodyCarousel = ({ post }) => {
     handleAddUser(adminUser);
   }, [canProceed, adminUser, dispatch, t]);
 
-  const handleEditPost = useCallback(() => {
-    if (!canProceed()) return;
-    dispatch({ type: GLOBALTYPES.STATUS, payload: { ...post, onEdit: true } });
-    setShowOptionsModal(false);
-  }, [canProceed, post, dispatch]);
+  const handleEditPost = () => {
+    dispatch({ type: GLOBALTYPES.STATUS, payload: {...post, onEdit: true}})
+}
+
 
   const handleDeletePost = useCallback(() => {
     if (!canProceed()) return;

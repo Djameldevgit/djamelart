@@ -1,12 +1,19 @@
  
   {
+    "direccionartista" :"Argelia Argel",
+    "totalartista" :"Total",
+    "contactartista":"artealger2020argelia@gmail.com",
+    "telefonoartista" :"00 213 658 556 296",
+    "swiftbanjartita": "Por favor contactame en privado desde el post en el chat privado",
+
+    "accountNumberCCP": "Número de Cuenta CCP: Contactame en privado",
     "paymentForm": "Formulario de Pago",
     "completeYourOrder": "Completa tu pedido de forma segura",
     "selectCountryLabel": "Selecciona tu país",
     "paymentMethod": "Método de Pago",
     "algeriaPostTitle": "Pago por Correo de Argelia",
     "accountName": "Nombre del Titular",
-    "accountNumberCCP": "Número de Cuenta CCP",
+     
     "postalCode": "Código Postal",
     "ccpKey": "Clave CCP",
     "ccpInstruction1": "Realiza el pago en cualquier oficina postal de Argelia",

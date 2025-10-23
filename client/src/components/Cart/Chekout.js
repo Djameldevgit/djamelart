@@ -198,7 +198,7 @@ const Chekout = () => {
                                   {t('accountName', { lng: lang })}:
                                 </strong>
                               </p>
-                              <p className="mb-0" style={{ fontSize: '1.1rem' }}>Mohamed Benali</p>
+                              <p className="mb-0" style={{ fontSize: '1.1rem' }}>Djamel Baouali</p>
                             </Col>
                             <Col xs={12} sm={6}>
                               <p className="mb-2">
@@ -207,7 +207,7 @@ const Chekout = () => {
                                 </strong>
                               </p>
                               <p className="mb-0" style={{ fontSize: '1.1rem', fontFamily: 'monospace' }}>
-                                123 456 78 90
+                              in private for chat
                               </p>
                             </Col>
                           </Row>
@@ -224,7 +224,7 @@ const Chekout = () => {
                             <Col xs={12} sm={6}>
                               <p className="mb-2">
                                 <strong style={{ color: '#667eea' }}>
-                                  {t('ccpKey', { lng: lang })}:
+                                  {t('ccpKey', { lng: lang })}:in private for chat
                                 </strong>
                               </p>
                               <p className="mb-0" style={{ fontSize: '1.1rem', fontWeight: '600' }}>95</p>
@@ -311,7 +311,7 @@ const Chekout = () => {
                             {t('beneficiary', { lng: lang })}:
                           </strong>
                         </p>
-                        <p className="mb-3" style={{ fontSize: '1.1rem' }}>Mohamed Benali</p>
+                        <p className="mb-3" style={{ fontSize: '1.1rem' }}>Djamel Baouali</p>
                       </Col>
                       <Col xs={12} md={6}>
                         <p className="mb-2">
@@ -338,7 +338,7 @@ const Chekout = () => {
                             borderRadius: '8px'
                           }}
                         >
-                          FR76 3000 3036 2000 0500 0001 234
+                        in private for chat
                         </p>
                       </Col>
                     </Row>
@@ -346,7 +346,7 @@ const Chekout = () => {
                     <Row className="mb-3">
                       <Col xs={12} md={6}>
                         <p className="mb-2">
-                          <strong style={{ color: '#667eea' }}>SWIFT/BIC:</strong>
+                          <strong style={{ color: '#667eea' }}>SWIFT/BNC:</strong>
                         </p>
                         <p className="mb-3" style={{ fontSize: '1.1rem', fontFamily: 'monospace' }}>
                           SOGEFRPP
@@ -358,7 +358,7 @@ const Chekout = () => {
                             {t('bankAddress', { lng: lang })}:
                           </strong>
                         </p>
-                        <p className="mb-0">29 Blvd Haussmann, 75009 Paris, France</p>
+                        <p className="mb-0">{t('direccionartista', { lng: lang })}</p>
                       </Col>
                     </Row>
                   </div>
@@ -425,7 +425,7 @@ const Chekout = () => {
                 <div className="mb-4">
                   <div className="d-flex justify-content-between align-items-center">
                     <h4 className="mb-0 fw-bold" style={{ color: '#2d3748' }}>
-                      Total:
+                    {t('totalartista', { lng: lang })}:
                     </h4>
                     <h3 
                       className="mb-0 fw-bold"
@@ -474,11 +474,11 @@ const Chekout = () => {
                   </p>
                   <p className="mb-1" style={{ fontSize: '0.9rem' }}>
                     <FaEnvelope className="me-2" style={{ color: '#667eea' }} />
-                    contact@artista.com
+                    {t('contactartista', { lng: lang })}
                   </p>
                   <p className="mb-0" style={{ fontSize: '0.9rem' }}>
                     <FaPhoneAlt className="me-2" style={{ color: '#667eea' }} />
-                    +213 123 456 789
+                    {t('telefonoartista', { lng: lang })}
                   </p>
                 </div>
               </Card.Body>
