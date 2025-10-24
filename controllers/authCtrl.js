@@ -14,6 +14,115 @@ const client = new OAuth2(process.env.GOOGLE_CLIENT_ID)
  
  
 const authCtrl = {
+
+ 
+    googleLogin: async (req, res) => {
+        try {
+          const { tokenId } = req.body;
+    
+          if (!tokenId) {
+            return res.status(400).json({ msg: 'Token ID es requerido' });
+          }
+    
+          // Verificar el token ID
+          const ticket = await client.verifyIdToken({
+            idToken: tokenId,
+            audience: process.env.GOOGLE_CLIENT_ID,
+          });
+    
+          const { email, name, picture, email_verified } = ticket.getPayload();
+    
+          if (!email_verified) {
+            return res.status(400).json({ msg: 'Correo no verificado por Google' });
+          }
+    
+          // Buscar usuario existente
+          let user = await Users.findOne({ email });
+    
+          if (!user) {
+            // Generar username único
+            const baseUsername = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '');
+            let username = baseUsername.substring(0, 25);
+            let usernameExists = await Users.findOne({ username });
+            
+            // Si el username ya existe, agregar números
+            let counter = 1;
+            while (usernameExists && counter < 5) {
+              username = `${baseUsername}${Math.floor(1000 + Math.random() * 9000)}`.substring(0, 25);
+              usernameExists = await Users.findOne({ username });
+              counter++;
+            }
+    
+            // ✅ CREAR USUARIO SIMPLIFICADO - Solo campos esenciales
+            user = await Users.create({
+              fullname: name || '',
+              username: username,
+              email: email.toLowerCase(),
+              password: email + process.env.JWT_SECRET,
+              avatar: picture, // ✅ Usar directamente la picture de Google
+              loginType: 'google',
+              isVerified: true,
+              lastLogin: new Date(),
+              lastActivity: new Date(),
+              isOnline: true,
+            });
+          } else {
+            // ✅ ACTUALIZAR SOLO CAMPOS ESENCIALES
+            user = await Users.findByIdAndUpdate(
+              user._id, 
+              {
+                avatar: picture, // ✅ Forzar actualización del avatar
+                fullname: user.fullname || name,
+                loginType: 'google',
+                lastLogin: new Date(),
+                lastActivity: new Date(),
+                isOnline: true,
+              }, 
+              { new: true }
+            );
+          }
+    
+          // Generar tokens JWT
+          const access_token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' });
+          const refresh_token = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
+    
+          // Establecer cookie del refresh token
+          res.cookie('refreshtoken', refresh_token, {
+            httpOnly: true,
+            path: '/api/refresh_token',
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            sameSite: 'none',
+            secure: true
+          });
+    
+          // ✅ POPULAR SOLO LO NECESARIO
+          const userWithPopulate = await Users.findById(user._id)
+            .select("-password")
+            .populate('followers following', 'avatar username fullname');
+    
+          // ✅ DEBUG: Verificar la URL del avatar
+          console.log('🔍 AVATAR URL:', {
+            originalPicture: picture,
+            savedAvatar: userWithPopulate.avatar,
+            isSame: picture === userWithPopulate.avatar
+          });
+    
+          res.json({
+            msg: 'Inicio de sesión con Google exitoso',
+            access_token,
+            refresh_token,
+            user: userWithPopulate,
+          });
+    
+        } catch (err) {
+          console.error('Error en googleLogin:', err);
+          return res.status(500).json({ msg: 'Error en el inicio de sesión con Google' });
+        }
+      },
+    
+
+
+
     register: async (req, res) => {
         try {
             const { username, email, password } = req.body
@@ -224,76 +333,7 @@ const authCtrl = {
     },
 
 
-
-    googleLogin: async (req, res) => {
-        try {
-            const { tokenId } = req.body;
-
-            const verify = await client.verifyIdToken({
-                idToken: tokenId,
-                audience: process.env.GOOGLE_CLIENT_ID
-            });
-
-            const { email_verified, email, name, picture } = verify.payload;
-
-            if (!email_verified) {
-                return res.status(400).json({ msg: "Email verification failed." });
-            }
-
-            const password = email + process.env.GOOGLE_SECRET;
-            const passwordHash = await bcrypt.hash(password, 12);
-
-            let user = await Users.findOne({ email });
-
-            if (user) {
-                const isMatch = await bcrypt.compare(password, user.password);
-                if (!isMatch)
-                    return res.status(400).json({ msg: "Password is incorrect." });
-                // ✅ Si existe pero aún no está verificado, lo marcamos como verificado:
-                if (!user.isVerified) {
-                    user.isVerified = true;
-                    await user.save();
-                }
-
-            } else {
-                const username = email.split("@")[0].toLowerCase().replace(/\s/g, '');
-
-                user = new Users({
-                    name,
-                    username,
-                    email,
-                    password: passwordHash,
-                    avatar: picture,
-                    isVerified: true // ✅ Usuario de confianza, marcado como verificado
-                });
-
-                await user.save();
-            }
-
-
-            const access_token = createAccessToken({ id: user._id });
-            const refresh_token = createRefreshToken({ id: user._id });
-
-            res.cookie("refreshtoken", refresh_token, {
-                httpOnly: true,
-                path: "/api/refresh_token",
-                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días
-            });
-
-            res.json({
-                msg: "Login success!",
-                access_token,
-                user: {
-                    ...user._doc,
-                    password: ''
-                }
-            });
-
-        } catch (err) {
-            return res.status(500).json({ msg: err.message });
-        }
-    },
-
+ 
     facebookLogin: async (req, res) => {
         try {
             const { accessToken, userID } = req.body;

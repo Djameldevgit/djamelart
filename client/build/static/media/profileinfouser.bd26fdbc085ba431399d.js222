@@ -1,0 +1,1207 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../redux/actions/authAction';
+import { GLOBALTYPES } from '../redux/actions/globalTypes';
+import { useTranslation } from 'react-i18next';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import { 
+  Container, Row, Col, Card, Button, Modal, Alert, 
+  Badge, Dropdown, Form, InputGroup, Spinner 
+} from 'react-bootstrap';
+import {
+  FaUserCircle, FaEnvelope, FaInfoCircle, FaComments, FaShareAlt,
+  FaTools, FaShieldAlt, FaCog, FaBlog, FaUsers, FaClipboardList,
+  FaUserCog, FaUserSlash, FaFlag, FaBan, FaShoppingCart, FaSignOutAlt,
+  FaPlus, FaCheckCircle, FaGlobe, FaSun, FaMoon, FaBell, FaSearch,
+  FaDownload, FaMobileAlt, FaHeart, FaHistory, FaEdit, FaKey,
+  FaLock, FaEye, FaEyeSlash, FaTrash, FaQrcode, FaPalette,
+  FaStar, FaCrown, FaCreditCard, FaChartLine, FaDatabase,
+  FaExclamationTriangle, FaUserFriends, FaImages, FaVideo,
+  FaMusic, FaFileAlt, FaMapMarkerAlt, FaCalendarAlt,
+  FaBookmark, FaRegBookmark, FaRegHeart, FaRegComment,
+  FaRegShareSquare, FaEllipsisH, FaArrowLeft, FaCaretDown
+} from 'react-icons/fa';
+
+// ==============================
+// COMPONENTES AUXILIARES MEJORADOS
+// ==============================
+
+// Componente MenuOption mejorado
+const MenuOption = ({ 
+  icon: Icon, 
+  iconColor, 
+  title, 
+  onClick, 
+  to, 
+  danger, 
+  badge,
+  disabled,
+  description,
+  customIcon,
+  size = "default"
+}) => {
+  const history = useHistory();
+
+  const handleClick = () => {
+    if (disabled) return;
+    if (to) {
+      history.push(to);
+    } else if (onClick) {
+      onClick();
+    }
+  };
+
+  const getSizeStyles = () => {
+    switch (size) {
+      case "small":
+        return { padding: '8px 12px', iconSize: 16 };
+      case "large":
+        return { padding: '16px 20px', iconSize: 24 };
+      default:
+        return { padding: '12px 16px', iconSize: 20 };
+    }
+  };
+
+  const sizeStyles = getSizeStyles();
+
+  return (
+    <Card
+      className={`mb-2 border-0 shadow-sm ${disabled ? 'opacity-50' : ''}`}
+      style={{
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        transition: 'all 0.3s ease',
+        borderRadius: '12px',
+        position: 'relative',
+        background: 'white'
+      }}
+      onClick={handleClick}
+      onMouseEnter={(e) => {
+        if (!disabled) {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+      }}
+    >
+      <Card.Body className="d-flex align-items-center" style={{ padding: sizeStyles.padding }}>
+        <div
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '10px',
+            backgroundColor: danger ? 'rgba(220, 53, 69, 0.1)' : disabled ? '#f8f9fa' : `${iconColor}15`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginRight: '12px',
+            flexShrink: 0
+          }}
+        >
+          {customIcon || (
+            <Icon 
+              size={sizeStyles.iconSize} 
+              style={{ 
+                color: danger ? '#dc3545' : disabled ? '#6c757d' : iconColor 
+              }} 
+            />
+          )}
+        </div>
+        
+        <div className="flex-grow-1">
+          <div className={`fw-${danger ? 'bold' : '500'} ${disabled ? 'text-muted' : ''}`}>
+            {title}
+          </div>
+          {description && (
+            <div className="text-muted small mt-1">
+              {description}
+            </div>
+          )}
+        </div>
+        
+        {/* Badge para indicadores */}
+        {badge && (
+          <Badge 
+            bg={badge.color || 'primary'}
+            style={{ 
+              fontSize: '0.7rem',
+              fontWeight: 'bold'
+            }}
+          >
+            {badge.text}
+          </Badge>
+        )}
+      </Card.Body>
+    </Card>
+  );
+};
+
+// Componente Section mejorado
+const Section = ({ title, children, gradient, icon, action, actionIcon, onActionClick }) => (
+  <div className="mb-4">
+    {title && (
+      <div
+        className="d-flex justify-content-between align-items-center"
+        style={{
+          background: gradient || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          padding: '12px 20px',
+          borderRadius: '10px',
+          color: 'white',
+          fontWeight: '700',
+          fontSize: '0.95rem',
+          marginBottom: '15px',
+          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+        }}
+      >
+        <div className="d-flex align-items-center">
+          {icon && React.createElement(icon, { className: "me-2", size: 16 })}
+          {title}
+        </div>
+        {action && (
+          <Button
+            variant="outline-light"
+            size="sm"
+            onClick={onActionClick}
+            className="d-flex align-items-center"
+          >
+            {actionIcon && React.createElement(actionIcon, { className: "me-1", size: 12 })}
+            {action}
+          </Button>
+        )}
+      </div>
+    )}
+    {children}
+  </div>
+);
+
+// Componente UserStats mejorado
+const UserStats = ({ user }) => {
+  const { t } = useTranslation('profile');
+  
+  const stats = [
+    { label: t('posts', 'Posts'), value: user?.postCount || 0, icon: FaFileAlt, color: '#667eea' },
+    { label: t('followers', 'Seguidores'), value: user?.followers?.length || 0, icon: FaUserFriends, color: '#28a745' },
+    { label: t('following', 'Siguiendo'), value: user?.following?.length || 0, icon: FaUsers, color: '#17a2b8' },
+    { label: t('likes', 'Me gusta'), value: user?.likeCount || 0, icon: FaHeart, color: '#dc3545' }
+  ];
+
+  return (
+    <Row className="g-2 mb-4">
+      {stats.map((stat, index) => (
+        <Col key={index} xs={6} sm={3}>
+          <Card className="border-0 text-center shadow-sm h-100">
+            <Card.Body className="p-3">
+              <div 
+                className="mx-auto mb-2 d-flex align-items-center justify-content-center"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  backgroundColor: `${stat.color}15`
+                }}
+              >
+                <stat.icon size={18} style={{ color: stat.color }} />
+              </div>
+              <h5 className="mb-1 fw-bold" style={{ color: stat.color }}>
+                {stat.value}
+              </h5>
+              <small className="text-muted">{stat.label}</small>
+            </Card.Body>
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  );
+};
+
+// ==============================
+// COMPONENTE PWA INSTALL MANAGER MEJORADO
+// ==============================
+
+const PWAInstallManager = ({ onInstallStatusChange }) => {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [canInstall, setCanInstall] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [isAppInstalled, setIsAppInstalled] = useState(false);
+  const [showInstallButton, setShowInstallButton] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showIOSModal, setShowIOSModal] = useState(false);
+  const [isLocalhost, setIsLocalhost] = useState(false);
+  const [installationDismissed, setInstallationDismissed] = useState(false);
+  const { t } = useTranslation('profile');
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem('pwa_install_dismissed');
+    if (dismissed) {
+      setInstallationDismissed(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkLocalhost = () => {
+      const isLocal = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.hostname.includes('local');
+      setIsLocalhost(isLocal);
+      return isLocal;
+    };
+
+    const detectIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    setIsIOS(detectIOS);
+
+    const checkIfInstalled = () => {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+      const isIOSStandalone = window.navigator.standalone;
+      const installed = isStandalone || isIOSStandalone;
+      
+      setIsAppInstalled(installed);
+      
+      if (onInstallStatusChange) {
+        onInstallStatusChange(installed);
+      }
+
+      if (installed) {
+        setShowInstallButton(false);
+        setCanInstall(false);
+        localStorage.removeItem('pwa_install_dismissed');
+      }
+    };
+
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setCanInstall(true);
+      
+      if (!installationDismissed) {
+        setShowInstallButton(true);
+      }
+    };
+
+    const handleAppInstalled = () => {
+      setIsAppInstalled(true);
+      setShowInstallButton(false);
+      setCanInstall(false);
+      setDeferredPrompt(null);
+      setInstallationDismissed(false);
+      localStorage.removeItem('pwa_install_dismissed');
+      
+      if (onInstallStatusChange) {
+        onInstallStatusChange(true);
+      }
+    };
+
+    const isLocal = checkLocalhost();
+    checkIfInstalled();
+    
+    if (!isLocal) {
+      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.addEventListener('appinstalled', handleAppInstalled);
+    }
+
+    if (detectIOS && !isAppInstalled && !isLocal && !installationDismissed) {
+      setShowInstallButton(true);
+    }
+
+    const interval = setInterval(checkIfInstalled, 10000);
+
+    return () => {
+      if (!isLocal) {
+        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        window.removeEventListener('appinstalled', handleAppInstalled);
+      }
+      clearInterval(interval);
+    };
+  }, [onInstallStatusChange, isAppInstalled, installationDismissed]);
+
+  const handleInstallPWA = async () => {
+    if (isLocalhost) return;
+
+    if (isIOS) {
+      setShowIOSModal(true);
+      return;
+    }
+
+    if (deferredPrompt && canInstall) {
+      try {
+        setIsInstalling(true);
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+          setShowInstallButton(false);
+        } else {
+          localStorage.setItem('pwa_install_dismissed', 'true');
+          setInstallationDismissed(true);
+          setShowInstallButton(false);
+        }
+        
+        setDeferredPrompt(null);
+        setCanInstall(false);
+      } catch (error) {
+        console.error('PWA installation error:', error);
+      } finally {
+        setIsInstalling(false);
+      }
+    }
+  };
+
+  const showInstallButtonManually = () => {
+    setShowInstallButton(true);
+    setInstallationDismissed(false);
+    localStorage.removeItem('pwa_install_dismissed');
+  };
+
+  if (isLocalhost || isAppInstalled) {
+    return null;
+  }
+
+  if (installationDismissed && !showInstallButton) {
+    return (
+      <MenuOption
+        icon={FaInfoCircle}
+        iconColor="#6c757d"
+        title={t('pwa_show_install_option') || 'Mostrar opción de instalación'}
+        onClick={showInstallButtonManually}
+        badge={{ text: '📱', color: '#6c757d' }}
+        description={t('pwa_show_install_desc') || 'Activar el botón de instalación de la app'}
+        size="small"
+      />
+    );
+  }
+
+  if (showInstallButton) {
+    return (
+      <>
+        <MenuOption
+          icon={isInstalling ? FaMobileAlt : FaDownload}
+          iconColor={isInstalling ? "#f59e0b" : "#10b981"}
+          title={isInstalling 
+            ? (t('pwa_installing') || 'Instalando...') 
+            : (isIOS 
+                ? (t('pwa_add_to_home') || 'Agregar a Pantalla') 
+                : (t('install_app') || 'Instalar App')
+              )
+          }
+          onClick={handleInstallPWA}
+          badge={isInstalling 
+            ? { text: '⏳', color: '#f59e0b' } 
+            : { text: '✨', color: '#10b981' }
+          }
+          description={t('pwa_install_desc') || 'Instala la app para una mejor experiencia'}
+        />
+
+        <Modal show={showIOSModal} onHide={() => setShowIOSModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <FaMobileAlt className="me-2" />
+              {t('pwa_ios_install_title') || 'Agregar a Pantalla de Inicio'}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="p-3">
+              {[1, 2, 3].map((step) => (
+                <div key={step} className="d-flex align-items-center mb-3">
+                  <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                       style={{ width: '30px', height: '30px', flexShrink: 0 }}>
+                    {step}
+                  </div>
+                  <span>
+                    {t(`pwa_ios_step${step}`) || `Paso ${step}`}
+                  </span>
+                </div>
+              ))}
+              <Alert variant="info" className="mt-3 small">
+                <FaInfoCircle className="me-2" />
+                {t('pwa_ios_note') || 'Esta opción está disponible en Safari para iOS'}
+              </Alert>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={() => setShowIOSModal(false)}>
+              {t('understand') || 'Entendido'}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </>
+    );
+  }
+
+  return null;
+};
+
+// ==============================
+// COMPONENTE PRINCIPAL COMPLETO
+// ==============================
+
+const ProfileInfoUser = () => {
+  const { auth, theme, cart, notify, settings } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const { languageReducer } = useSelector(state => state);
+  const { t, i18n } = useTranslation('profile');
+  const lang = languageReducer.language || 'es';
+  const history = useHistory();
+  const location = useLocation();
+  
+  const [userRole, setUserRole] = useState(auth.user?.role);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showThemeModal, setShowThemeModal] = useState(false);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showFeaturesModal, setShowFeaturesModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
+  const [isPWAInstalled, setIsPWAInstalled] = useState(false);
+  const [activeTab, setActiveTab] = useState('profile');
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileData, setProfileData] = useState({
+    username: auth.user?.username || '',
+    bio: auth.user?.bio || '',
+    website: auth.user?.website || '',
+    location: auth.user?.location || ''
+  });
+
+  // Efectos
+  useEffect(() => {
+    if (lang && lang !== i18n.language) {
+      i18n.changeLanguage(lang);
+    }
+  }, [lang, i18n]);
+
+  useEffect(() => {
+    if (auth.user?.role && auth.user.role !== userRole) {
+      setUserRole(auth.user.role);
+    }
+  }, [auth.user?.role, userRole]);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 700);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Handlers
+  const handlePWAInstallStatusChange = (installed) => {
+    setIsPWAInstalled(installed);
+  };
+
+  const openStatusModal = () => dispatch({ type: GLOBALTYPES.STATUS, payload: true });
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
+  const toggleTheme = () => {
+    dispatch({ type: GLOBALTYPES.THEME, payload: !theme });
+  };
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    setShowLanguageModal(false);
+  };
+
+  const handleProfileEdit = () => {
+    setIsEditingProfile(!isEditingProfile);
+  };
+
+  const handleProfileSave = () => {
+    // Aquí iría la lógica para guardar los cambios del perfil
+    console.log('Guardando perfil:', profileData);
+    setIsEditingProfile(false);
+  };
+
+  const handleInputChange = (field, value) => {
+    setProfileData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Funciones auxiliares
+  const getRoleDisplay = () => {
+    const roles = {
+      'admin': t('adminRole', '👑 Admin'),
+      'Moderateur': t('moderatorRole', '🛡️ Moderador'),
+      'Super-utilisateur': t('superUserRole', '⭐ Super User'),
+      'premium': t('premiumRole', '💎 Premium'),
+      'vip': t('vipRole', '🌟 VIP')
+    };
+    return roles[userRole] || t('userRole', '👤 Usuario');
+  };
+
+  const getRoleColor = () => {
+    const colors = {
+      'admin': 'linear-gradient(135deg, #ff6b6b 0%, #c44569 100%)',
+      'Moderateur': 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)',
+      'Super-utilisateur': 'linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%)',
+      'premium': 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)',
+      'vip': 'linear-gradient(135deg, #fd79a8 0%, #f368e0 100%)'
+    };
+    return colors[userRole] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  };
+
+  if (!auth.user) {
+    return (
+      <Container className="py-5">
+        <Row className="justify-content-center">
+          <Col md={6} className="text-center">
+            <FaUserCircle size={64} className="text-muted mb-3" />
+            <h4>{t('pleaseLogin', 'Por favor inicia sesión')}</h4>
+            <Button 
+              variant="primary" 
+              onClick={() => history.push('/login')}
+              className="mt-3"
+            >
+              {t('login', 'Iniciar Sesión')}
+            </Button>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+
+  return (
+    <div style={{ 
+      background: theme ? '#1a1a1a' : '#f8f9fa',
+      minHeight: '100vh'
+    }}>
+      <Container className="py-4" style={{
+        direction: lang === 'ar' ? 'rtl' : 'ltr',
+        textAlign: lang === 'ar' ? 'right' : 'left'
+      }}>
+        <Row className="justify-content-center">
+          <Col lg={10} xl={8}>
+            
+            {/* Header del Usuario Mejorado */}
+            <Card
+              className="mb-4 border-0 shadow-lg"
+              style={{
+                background: getRoleColor(),
+                borderRadius: '20px',
+                overflow: 'hidden',
+                position: 'relative'
+              }}
+            >
+              <Card.Body className="p-4 text-white">
+                <div className="d-flex align-items-start justify-content-between">
+                  <div className="d-flex align-items-center gap-4 flex-grow-1">
+                    <div
+                      style={{
+                        width: '100px',
+                        height: '100px',
+                        borderRadius: '50%',
+                        border: '4px solid rgba(255,255,255,0.3)',
+                        padding: '3px',
+                        background: 'rgba(255,255,255,0.1)',
+                        position: 'relative'
+                      }}
+                    >
+                      <Link to={`/profile/${auth.user?._id}`}>
+                        <img
+                          src={auth.user?.avatar}
+                          alt="Avatar"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                      </Link>
+                      {auth.user?.isVerified && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            bottom: '5px',
+                            right: '5px',
+                            background: '#10b981',
+                            borderRadius: '50%',
+                            padding: '4px',
+                            border: '2px solid white'
+                          }}
+                        >
+                          <FaCheckCircle size={12} color="white" />
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex-grow-1">
+                      <div className="d-flex align-items-center gap-3 mb-2">
+                        <h3 className="text-white mb-0">{auth.user?.username}</h3>
+                        <Button
+                          variant="outline-light"
+                          size="sm"
+                          onClick={handleProfileEdit}
+                          className="d-flex align-items-center"
+                        >
+                          <FaEdit className="me-1" size={12} />
+                          {t('edit', 'Editar')}
+                        </Button>
+                      </div>
+                      
+                      <div
+                        style={{
+                          fontSize: '0.9rem',
+                          backgroundColor: 'rgba(255,255,255,0.2)',
+                          padding: '6px 16px',
+                          borderRadius: '20px',
+                          display: 'inline-block',
+                          color: 'white',
+                          fontWeight: '600',
+                          marginBottom: '10px'
+                        }}
+                      >
+                        {getRoleDisplay()}
+                      </div>
+                      
+                      {auth.user?.bio && (
+                        <p className="text-white-50 mb-2" style={{ fontSize: '0.95rem' }}>
+                          {auth.user.bio}
+                        </p>
+                      )}
+                      
+                      <div className="d-flex gap-3 text-white-50 small">
+                        {auth.user?.location && (
+                          <span className="d-flex align-items-center">
+                            <FaMapMarkerAlt className="me-1" size={12} />
+                            {auth.user.location}
+                          </span>
+                        )}
+                        {auth.user?.website && (
+                          <span className="d-flex align-items-center">
+                            <FaGlobe className="me-1" size={12} />
+                            <a href={auth.user.website} className="text-white-50 text-decoration-none">
+                              {auth.user.website.replace(/^https?:\/\//, '')}
+                            </a>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Botones de acción */}
+                  <div className="d-flex flex-column gap-2">
+                    <Button
+                      variant="light"
+                      size="sm"
+                      className="d-flex align-items-center"
+                      onClick={() => history.push(`/profile/${auth.user?._id}`)}
+                    >
+                      <FaUserCircle className="me-1" />
+                      {t('viewProfile', 'Ver Perfil')}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Estadísticas del usuario */}
+                <UserStats user={auth.user} />
+              </Card.Body>
+            </Card>
+
+            {/* Tabs de Navegación */}
+            <Card className="mb-4 border-0 shadow-sm">
+              <Card.Body className="p-0">
+                <div className="d-flex overflow-auto">
+                  {[
+                    { id: 'profile', label: t('profile', 'Perfil'), icon: FaUserCircle },
+                    { id: 'settings', label: t('settings', 'Ajustes'), icon: FaCog },
+                    { id: 'security', label: t('security', 'Seguridad'), icon: FaShieldAlt },
+                    { id: 'preferences', label: t('preferences', 'Preferencias'), icon: FaPalette }
+                  ].map(tab => (
+                    <Button
+                      key={tab.id}
+                      variant={activeTab === tab.id ? 'primary' : 'outline-primary'}
+                      className="rounded-0 border-0 flex-fill d-flex align-items-center justify-content-center gap-2"
+                      style={{ 
+                        borderRadius: '0',
+                        borderBottom: activeTab === tab.id ? '3px solid #007bff' : '3px solid transparent',
+                        whiteSpace: 'nowrap'
+                      }}
+                      onClick={() => setActiveTab(tab.id)}
+                    >
+                      <tab.icon size={14} />
+                      <span className="d-none d-sm-inline">{tab.label}</span>
+                    </Button>
+                  ))}
+                </div>
+              </Card.Body>
+            </Card>
+
+            <Row>
+              <Col lg={6}>
+                {/* Pestaña: Perfil */}
+                {activeTab === 'profile' && (
+                  <>
+                    <Section title={t('quickActions', '⚡ Acciones Rápidas')}  >
+                      <MenuOption
+                        icon={FaPlus}
+                        iconColor="#667eea"
+                        title={t('addPost', 'Crear Publicación')}
+                        onClick={openStatusModal}
+                        description={t('addPostDesc', 'Comparte algo con la comunidad')}
+                      />
+                      
+                      <MenuOption
+                        icon={FaImages}
+                        iconColor="#10b981"
+                        title={t('addPhoto', 'Subir Foto')}
+                        to="/upload"
+                        description={t('addPhotoDesc', 'Comparte tus mejores momentos')}
+                      />
+                      
+                      <MenuOption
+                        icon={FaVideo}
+                        iconColor="#dc3545"
+                        title={t('addVideo', 'Subir Video')}
+                        to="/upload/video"
+                        description={t('addVideoDesc', 'Comparte videos interesantes')}
+                      />
+                    </Section>
+
+                    <Section title={t('social', '👥 Social')} icon={FaUsers}>
+                      <MenuOption
+                        icon={FaUserFriends}
+                        iconColor="#17a2b8"
+                        title={t('friends', 'Amigos')}
+                        to="/friends"
+                        badge={{ text: auth.user?.friends?.length || 0, color: '#17a2b8' }}
+                      />
+                      
+                      <MenuOption
+                        icon={FaComments}
+                        iconColor="#28a745"
+                        title={t('messages', 'Mensajes')}
+                        to="/message"
+                        badge={{ text: 'Nuevo', color: '#28a745' }}
+                      />
+                      
+                      <MenuOption
+                        icon={FaBell}
+                        iconColor="#ffc107"
+                        title={t('notifications', 'Notificaciones')}
+                        to="/notify"
+                        badge={{ text: notify?.data?.filter(n => !n.isRead).length || 0, color: '#ffc107' }}
+                      />
+                    </Section>
+
+                    <Section title={t('content', '📚 Tu Contenido')} icon={FaFileAlt}>
+                      <MenuOption
+                        icon={FaFileAlt}
+                        iconColor="#6c757d"
+                        title={t('myPosts', 'Mis Publicaciones')}
+                        to={`/profile/${auth.user?._id}`}
+                      />
+                      
+                      <MenuOption
+                        icon={FaHeart}
+                        iconColor="#dc3545"
+                        title={t('likedPosts', 'Posts que me gustan')}
+                        to="/liked-posts"
+                      />
+                      
+                      <MenuOption
+                        icon={FaBookmark}
+                        iconColor="#6f42c1"
+                        title={t('savedPosts', 'Posts guardados')}
+                        to="/saved-posts"
+                      />
+                      
+                      <MenuOption
+                        icon={FaHistory}
+                        iconColor="#fd7e14"
+                        title={t('history', 'Historial')}
+                        to="/history"
+                      />
+                    </Section>
+                  </>
+                )}
+
+                {/* Pestaña: Ajustes */}
+                {activeTab === 'settings' && (
+                  <>
+                    <Section title={t('appSettings', '⚙️ Ajustes de la App')} icon={FaCog}>
+                      <MenuOption
+                        icon={FaGlobe}
+                        iconColor="#667eea"
+                        title={t('language', 'Idioma')}
+                        onClick={() => setShowLanguageModal(true)}
+                        description={`Actual: ${lang.toUpperCase()}`}
+                      />
+                      
+                      <MenuOption
+                        icon={theme ? FaSun : FaMoon}
+                        iconColor="#ffc107"
+                        title={theme ? t('lightMode', 'Modo Claro') : t('darkMode', 'Modo Oscuro')}
+                        onClick={toggleTheme}
+                        description={theme ? t('switchToLight', 'Cambiar a modo claro') : t('switchToDark', 'Cambiar a modo oscuro')}
+                      />
+                      
+                      <MenuOption
+                        icon={FaPalette}
+                        iconColor="#e83e8c"
+                        title={t('theme', 'Tema Personalizado')}
+                        onClick={() => setShowThemeModal(true)}
+                        description={t('customizeAppearance', 'Personaliza la apariencia')}
+                      />
+                    </Section>
+
+                    {/* ✅ SECCIÓN PWA MEJORADA */}
+                    <Section title={t('pwaSection', '📱 App Móvil')} icon={FaMobileAlt}>
+                      <PWAInstallManager onInstallStatusChange={handlePWAInstallStatusChange} />
+                      
+                      {isPWAInstalled && (
+                        <MenuOption
+                          icon={FaCheckCircle}
+                          iconColor="#10b981"
+                          title={t('pwa_already_installed') || 'App instalada'}
+                          description={t('pwa_installed_desc') || 'La app está instalada en tu dispositivo'}
+                          badge={{ text: '✅', color: '#10b981' }}
+                        />
+                      )}
+
+                      <MenuOption
+                        icon={FaInfoCircle}
+                        iconColor="#6c757d"
+                        title={t('pwa_info') || '¿Qué es una PWA?'}
+                        to="/infoaplicacionn"
+                        description={t('pwa_info_desc') || 'Aprende sobre las ventajas'}
+                      />
+                    </Section>
+
+                    <Section title={t('sharing', '📤 Compartir')} icon={FaShareAlt}>
+                      <MenuOption
+                        icon={FaShareAlt}
+                        iconColor="#20c997"
+                        title={t('shareApp', 'Compartir App')}
+                        onClick={() => setShowModal(true)}
+                        description={t('shareAppDesc', 'Comparte con amigos y familiares')}
+                      />
+                      
+                      <MenuOption
+                        icon={FaQrcode}
+                        iconColor="#6f42c1"
+                        title={t('qrCode', 'Código QR')}
+                        to="/qr-code"
+                        description={t('qrCodeDesc', 'Comparte tu perfil con QR')}
+                      />
+                    </Section>
+                  </>
+                )}
+              </Col>
+
+              <Col lg={6}>
+                {/* Panel de Administración */}
+                {auth.user && userRole === "admin" && (
+                  <Section
+                    title={
+                      <div className="d-flex align-items-center">
+                        <FaShieldAlt className="me-2" />
+                        {t('adminPanel', 'Panel de Administración')}
+                      </div>
+                    }
+                    gradient="linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)"
+                    action={t('viewAll', 'Ver todo')}
+                    actionIcon={FaArrowLeft}
+                    onActionClick={() => history.push('/admin')}
+                  >
+                    <MenuOption
+                      icon={FaUsers}
+                      iconColor="#28a745"
+                      title={t('manageUsers', 'Gestionar Usuarios')}
+                      to="/users"
+                      description={t('manageUsersDesc', 'Administrar todos los usuarios')}
+                    />
+                    
+                    <MenuOption
+                      icon={FaClipboardList}
+                      iconColor="#ffc107"
+                      title={t('pendingPosts', 'Posts Pendientes')}
+                      to="/postspendientes"
+                      badge={{ text: '5', color: '#ffc107' }}
+                    />
+                    
+                    <MenuOption
+                      icon={FaFlag}
+                      iconColor="#dc3545"
+                      title={t('reports', 'Reportes')}
+                      to="/listausariosdenunciadoss"
+                      badge={{ text: '3', color: '#dc3545' }}
+                    />
+                    
+                    <MenuOption
+                      icon={FaChartLine}
+                      iconColor="#17a2b8"
+                      title={t('analytics', 'Analíticas')}
+                      to="/analytics"
+                      description={t('viewStats', 'Ver estadísticas de la app')}
+                    />
+                    
+                    <MenuOption
+                      icon={FaDatabase}
+                      iconColor="#6c757d"
+                      title={t('backup', 'Respaldo')}
+                      to="/backup"
+                      description={t('manageBackup', 'Gestionar respaldos')}
+                    />
+                  </Section>
+                )}
+
+                {/* Pestaña: Seguridad */}
+                {(activeTab === 'security' || activeTab === 'settings') && (
+                  <Section title={t('security', '🔒 Seguridad')} icon={FaShieldAlt}>
+                    <MenuOption
+                      icon={FaKey}
+                      iconColor="#fd7e14"
+                      title={t('changePassword', 'Cambiar Contraseña')}
+                      onClick={() => setShowSecurityModal(true)}
+                      description={t('changePasswordDesc', 'Actualiza tu contraseña regularmente')}
+                    />
+                    
+                    <MenuOption
+                      icon={FaShieldAlt}
+                      iconColor="#20c997"
+                      title={t('twoFactor', 'Autenticación de Dos Factores')}
+                      to="/two-factor"
+                      description={t('twoFactorDesc', 'Añade una capa extra de seguridad')}
+                      badge={{ text: 'OFF', color: '#6c757d' }}
+                    />
+                    
+                    <MenuOption
+                      icon={FaEye}
+                      iconColor="#6f42c1"
+                      title={t('privacy', 'Privacidad')}
+                      to="/privacy"
+                      description={t('privacyDesc', 'Controla tu visibilidad')}
+                    />
+                    
+                    <MenuOption
+                      icon={FaUserSlash}
+                      iconColor="#dc3545"
+                      title={t('blockedUsers', 'Usuarios Bloqueados')}
+                      to="/blocked-users"
+                      description={t('blockedUsersDesc', 'Gestiona usuarios bloqueados')}
+                    />
+                  </Section>
+                )}
+
+                {/* Sección de Cuenta */}
+                <Section title={t('account', '👤 Cuenta')} icon={FaUserCircle}>
+                  {auth.user && (
+                    <MenuOption
+                      icon={FaSignOutAlt}
+                      iconColor="#dc3545"
+                      title={t('logout', 'Cerrar Sesión')}
+                      onClick={handleLogout}
+                      danger
+                      description={t('logoutDesc', 'Cerrar tu sesión actual')}
+                    />
+                  )}
+                  
+                  <MenuOption
+                    icon={FaTrash}
+                    iconColor="#6c757d"
+                    title={t('deleteAccount', 'Eliminar Cuenta')}
+                    onClick={() => setShowDeleteModal(true)}
+                    danger
+                    description={t('deleteAccountDesc', 'Eliminar permanentemente tu cuenta')}
+                  />
+                </Section>
+
+                {/* Información de Suscripción */}
+                {(userRole === 'premium' || userRole === 'vip') && (
+                  <Section 
+                    title={t('subscription', '💎 Suscripción Premium')} 
+                    gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+                  >
+                    <MenuOption
+                      icon={FaCrown}
+                      iconColor="#ffd700"
+                      title={t('premiumBenefits', 'Beneficios Premium')}
+                      to="/premium"
+                      description={t('premiumBenefitsDesc', 'Ver todos tus beneficios')}
+                    />
+                    
+                    <MenuOption
+                      icon={FaCreditCard}
+                      iconColor="#28a745"
+                      title={t('manageSubscription', 'Gestionar Suscripción')}
+                      to="/billing"
+                      description={t('manageSubscriptionDesc', 'Actualizar método de pago')}
+                    />
+                    
+                    <MenuOption
+                      icon={FaStar}
+                      iconColor="#ff6b6b"
+                      title={t('exclusiveContent', 'Contenido Exclusivo')}
+                      to="/premium-content"
+                      description={t('exclusiveContentDesc', 'Acceso a contenido premium')}
+                    />
+                  </Section>
+                )}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Container>
+
+      {/* Modales */}
+      <Modal show={showLanguageModal} onHide={() => setShowLanguageModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{t('selectLanguage', 'Seleccionar Idioma')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="d-grid gap-2">
+            <Button 
+              variant={lang === 'es' ? 'primary' : 'outline-primary'} 
+              onClick={() => changeLanguage('es')}
+              className="d-flex align-items-center justify-content-between"
+            >
+              <span>Español 🇪🇸</span>
+              {lang === 'es' && <FaCheckCircle />}
+            </Button>
+            <Button 
+              variant={lang === 'en' ? 'primary' : 'outline-primary'} 
+              onClick={() => changeLanguage('en')}
+              className="d-flex align-items-center justify-content-between"
+            >
+              <span>English 🇺🇸</span>
+              {lang === 'en' && <FaCheckCircle />}
+            </Button>
+            <Button 
+              variant={lang === 'fr' ? 'primary' : 'outline-primary'} 
+              onClick={() => changeLanguage('fr')}
+              className="d-flex align-items-center justify-content-between"
+            >
+              <span>Français 🇫🇷</span>
+              {lang === 'fr' && <FaCheckCircle />}
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{t('shareApp', 'Compartir Aplicación')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{t('shareAppDescription', 'Comparte esta increíble aplicación con tus amigos y familiares.')}</p>
+          <div className="d-grid gap-2">
+            <Button variant="primary" onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: 'Tassili Art',
+                  text: t('shareAppText', '¡Mira esta increíble aplicación de arte!'),
+                  url: window.location.origin,
+                });
+              } else {
+                navigator.clipboard.writeText(window.location.origin);
+                alert(t('linkCopied', 'Enlace copiado al portapapeles'));
+              }
+              setShowModal(false);
+            }}>
+              {t('shareNow', 'Compartir Ahora')}
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+      {/* Modal de Edición de Perfil */}
+      <Modal show={isEditingProfile} onHide={() => setIsEditingProfile(false)} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>{t('editProfile', 'Editar Perfil')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>{t('username', 'Nombre de usuario')}</Form.Label>
+              <Form.Control
+                type="text"
+                value={profileData.username}
+                onChange={(e) => handleInputChange('username', e.target.value)}
+              />
+            </Form.Group>
+            
+            <Form.Group className="mb-3">
+              <Form.Label>{t('bio', 'Biografía')}</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={profileData.bio}
+                onChange={(e) => handleInputChange('bio', e.target.value)}
+                placeholder={t('bioPlaceholder', 'Cuéntanos sobre ti...')}
+              />
+            </Form.Group>
+            
+            <Form.Group className="mb-3">
+              <Form.Label>{t('website', 'Sitio web')}</Form.Label>
+              <Form.Control
+                type="url"
+                value={profileData.website}
+                onChange={(e) => handleInputChange('website', e.target.value)}
+                placeholder="https://..."
+              />
+            </Form.Group>
+            
+            <Form.Group className="mb-3">
+              <Form.Label>{t('location', 'Ubicación')}</Form.Label>
+              <Form.Control
+                type="text"
+                value={profileData.location}
+                onChange={(e) => handleInputChange('location', e.target.value)}
+                placeholder={t('locationPlaceholder', 'Tu ciudad, país')}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setIsEditingProfile(false)}>
+            {t('cancel', 'Cancelar')}
+          </Button>
+          <Button variant="primary" onClick={handleProfileSave}>
+            {t('saveChanges', 'Guardar Cambios')}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal de Eliminación de Cuenta */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="text-danger">
+            <FaExclamationTriangle className="me-2" />
+            {t('deleteAccount', 'Eliminar Cuenta')}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="danger">
+            <strong>{t('warning', '¡Advertencia!')}</strong>
+            <br />
+            {t('deleteAccountWarning', 'Esta acción no se puede deshacer. Se eliminarán todos tus datos permanentemente.')}
+          </Alert>
+          <Form>
+            <Form.Group>
+              <Form.Label>
+                {t('confirmDelete', 'Escribe "ELIMINAR" para confirmar:')}
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="ELIMINAR"
+                className="text-uppercase"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            {t('cancel', 'Cancelar')}
+          </Button>
+          <Button variant="danger" disabled>
+            {t('deletePermanently', 'Eliminar Permanentemente')}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+};
+
+export default ProfileInfoUser;

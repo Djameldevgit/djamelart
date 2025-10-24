@@ -109,55 +109,16 @@ const Section = ({ title, children, gradient }) => (
   </div>
 );
 
-// ✅ Componente PWA Install Manager MEJORADO
+// ✅ Componente PWA Install Manager - BASADO EN LA LÓGICA QUE FUNCIONA
 const PWAInstallManager = ({ onInstallStatusChange }) => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [canInstall, setCanInstall] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
-  const [isAppInstalled, setIsAppInstalled] = useState(false);
   const [showInstallButton, setShowInstallButton] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [showIOSModal, setShowIOSModal] = useState(false);
-  const [isLocalhost, setIsLocalhost] = useState(false);
   const { t } = useTranslation('profile');
 
+  // ✅ Effect para capturar el evento de instalación PWA (igual que en Navbar2)
   useEffect(() => {
-    // ✅ Detectar si estamos en localhost
-    const checkLocalhost = () => {
-      const isLocal = window.location.hostname === 'localhost' || 
-                     window.location.hostname === '127.0.0.1' ||
-                     window.location.hostname.includes('local');
-      setIsLocalhost(isLocal);
-      console.log('🌐 Environment:', isLocal ? 'localhost' : 'production');
-      return isLocal;
-    };
-
-    // Detectar si es iOS
-    const detectIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    setIsIOS(detectIOS);
-
-    // Verificar si ya está instalado
-    const checkIfInstalled = () => {
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-      const isIOSStandalone = window.navigator.standalone;
-      const installed = isStandalone || isIOSStandalone;
-      
-      console.log('🔍 PWA Check - Standalone:', isStandalone, 'iOS Standalone:', isIOSStandalone, 'Installed:', installed);
-      
-      setIsAppInstalled(installed);
-      
-      if (onInstallStatusChange) {
-        onInstallStatusChange(installed);
-      }
-
-      // Ocultar botón si ya está instalado
-      if (installed) {
-        setShowInstallButton(false);
-        setCanInstall(false);
-      }
-    };
-
-    // Evento cuando la PWA puede instalarse
     const handleBeforeInstallPrompt = (e) => {
       console.log('🎯 PWA: beforeinstallprompt event captured');
       e.preventDefault();
@@ -166,167 +127,90 @@ const PWAInstallManager = ({ onInstallStatusChange }) => {
       setShowInstallButton(true);
     };
 
-    // Evento cuando la PWA se instala
     const handleAppInstalled = () => {
       console.log('✅ PWA: App installed successfully');
-      setIsAppInstalled(true);
-      setShowInstallButton(false);
-      setCanInstall(false);
       setDeferredPrompt(null);
+      setCanInstall(false);
+      setShowInstallButton(false);
       
       if (onInstallStatusChange) {
         onInstallStatusChange(true);
       }
     };
 
-    // Configurar event listeners
-    const isLocal = checkLocalhost();
-    checkIfInstalled();
-    
-    // ✅ Solo agregar event listeners si no estamos en localhost
-    if (!isLocal) {
-      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.addEventListener('appinstalled', handleAppInstalled);
-    } else {
-      console.log('🚫 PWA: Localhost environment - installation disabled');
-    }
-
-    // Para iOS, siempre mostrar el botón (no tiene beforeinstallprompt)
-    if (detectIOS && !isAppInstalled && !isLocal) {
-      setShowInstallButton(true);
-    }
-
-    // Verificar periódicamente
-    const interval = setInterval(checkIfInstalled, 10000);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
-      if (!isLocal) {
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-        window.removeEventListener('appinstalled', handleAppInstalled);
-      }
-      clearInterval(interval);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, [onInstallStatusChange, isAppInstalled]);
+  }, [onInstallStatusChange]);
 
+  // ✅ Verificar si ya está instalado (igual que en Navbar2)
+  const isAppInstalled = () => {
+    return window.matchMedia('(display-mode: standalone)').matches || 
+           window.navigator.standalone;
+  };
+
+  // ✅ Función principal para instalar PWA (igual que en Navbar2)
   const handleInstallPWA = async () => {
-    // ✅ No permitir instalación en localhost
-    if (isLocalhost) {
-      console.log('🚫 PWA: Installation blocked on localhost');
+    if (!deferredPrompt) {
+      console.log('❌ PWA: No deferred prompt available');
       return;
     }
 
-    // Para iOS, mostrar instrucciones
-    if (isIOS) {
-      setShowIOSModal(true);
-      return;
-    }
+    if (isInstalling) return;
 
-    // Para otros navegadores
-    if (deferredPrompt && canInstall) {
-      try {
-        setIsInstalling(true);
-        console.log('🚀 PWA: Triggering install prompt');
-        
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        
-        console.log('📊 PWA: User choice:', outcome);
-        
-        if (outcome === 'accepted') {
-          console.log('✅ PWA: User accepted installation');
-        } else {
-          console.log('❌ PWA: User declined installation');
-          // Reaparecer el botón después de 30 segundos si el usuario declina
-          setTimeout(() => {
-            if (!isAppInstalled) {
-              setShowInstallButton(true);
-            }
-          }, 30000);
-        }
-        
-        setDeferredPrompt(null);
-        setCanInstall(false);
-        
-      } catch (error) {
-        console.error('❌ PWA: Error during installation:', error);
-      } finally {
-        setIsInstalling(false);
+    setIsInstalling(true);
+
+    try {
+      console.log('🚀 PWA: Triggering install prompt');
+      deferredPrompt.prompt();
+      
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        console.log('✅ PWA: User accepted the install prompt');
+      } else {
+        console.log('❌ PWA: User dismissed the install prompt');
+        // Reaparecer el botón después de 30 segundos si el usuario declina
+        setTimeout(() => {
+          if (!isAppInstalled()) {
+            setShowInstallButton(true);
+          }
+        }, 30000);
       }
+      
+      setDeferredPrompt(null);
+      setCanInstall(false);
+      
+    } catch (error) {
+      console.error('❌ PWA: Error during installation:', error);
+    } finally {
+      setIsInstalling(false);
     }
   };
 
-  // ✅ No mostrar nada en localhost o si no se puede instalar o ya está instalado
-  if (isLocalhost || !showInstallButton || isAppInstalled) {
+  // ✅ NO mostrar nada si ya está instalado o no se puede instalar
+  if (isAppInstalled() || !showInstallButton) {
     return null;
   }
 
   return (
-    <>
-      <MenuOption
-        icon={isInstalling ? FaMobileAlt : FaDownload}
-        iconColor={isInstalling ? "#f59e0b" : "#10b981"}
-        title={isInstalling 
-          ? (t('pwa_installing') || 'Instalando...') 
-          : (isIOS 
-              ? (t('pwa_add_to_home') || 'Agregar a Pantalla') 
-              : (t('install_app') || 'Instalar App')
-            )
-        }
-        onClick={handleInstallPWA}
-        badge={isInstalling 
-          ? { text: '⏳', color: '#f59e0b' } 
-          : { text: '📱', color: '#10b981' }
-        }
-      />
-
-      {/* Modal para instrucciones iOS */}
-      <Modal show={showIOSModal} onHide={() => setShowIOSModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <FaMobileAlt className="me-2" />
-            {t('pwa_ios_install_title') || 'Agregar a Pantalla de Inicio'}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="p-3">
-            <div className="d-flex align-items-center mb-3">
-              <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                   style={{ width: '30px', height: '30px', flexShrink: 0 }}>
-                1
-              </div>
-              <span>{t('pwa_ios_step1') || 'Toca el botón compartir'}</span>
-              <FaShareAlt className="ms-2 text-primary" />
-            </div>
-            
-            <div className="d-flex align-items-center mb-3">
-              <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                   style={{ width: '30px', height: '30px', flexShrink: 0 }}>
-                2
-              </div>
-              <span>{t('pwa_ios_step2') || 'Selecciona "Agregar a Pantalla de Inicio"'}</span>
-            </div>
-            
-            <div className="d-flex align-items-center">
-              <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                   style={{ width: '30px', height: '30px', flexShrink: 0 }}>
-                3
-              </div>
-              <span>{t('pwa_ios_step3') || 'Confirma la instalación'}</span>
-            </div>
-
-            <Alert variant="info" className="mt-3 small">
-              <FaInfoCircle className="me-2" />
-              {t('pwa_ios_note') || 'Esta opción está disponible en Safari para iOS'}
-            </Alert>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={() => setShowIOSModal(false)}>
-            {t('understand') || 'Entendido'}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+    <MenuOption
+      icon={isInstalling ? FaMobileAlt : FaDownload}
+      iconColor={isInstalling ? "#f59e0b" : "#10b981"}
+      title={isInstalling 
+        ? (t('pwa_installing') || 'Instalando...') 
+        : (t('install_app') || 'Instalar App')
+      }
+      onClick={handleInstallPWA}
+      badge={isInstalling 
+        ? { text: '⏳', color: '#f59e0b' } 
+        : { text: '📱', color: '#10b981' }
+      }
+    />
   );
 };
 
@@ -392,6 +276,27 @@ const ProfileInfoUser = () => {
     i18n.changeLanguage(lng);
     setShowLanguageModal(false);
   };
+
+  // ✅ Verificar si la app está instalada
+  const checkIfAppInstalled = () => {
+    return window.matchMedia('(display-mode: standalone)').matches || 
+           window.navigator.standalone;
+  };
+
+  // ✅ Efecto para verificar estado de instalación
+  useEffect(() => {
+    const checkInstallation = () => {
+      const installed = checkIfAppInstalled();
+      setIsPWAInstalled(installed);
+    };
+
+    checkInstallation();
+    
+    // Verificar periódicamente
+    const interval = setInterval(checkInstallation, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   if (!settings) {
     return (

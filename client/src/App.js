@@ -74,7 +74,11 @@ function App() {
     }
   }, [dispatch, auth.token])
 
-
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      console.log('PWA manifest loaded successfully');
+    });
+  }
 
   useEffect(() => {
     if (!("Notification" in window)) {

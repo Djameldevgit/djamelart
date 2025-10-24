@@ -1,4 +1,13 @@
 {
+
+  "pwa_ios_desc": "Agrega esta app a tu pantalla de inicio para acceso rápido",
+  "pwa_install_desc": "Instala la app para una experiencia más rápida y sin conexión",
+  "pwa_chrome_step1": "Haz clic en los tres puntos (⋮) en la esquina superior derecha",
+  "pwa_chrome_step2": "Selecciona \"Instalar [Nombre de la App]\"",
+  "pwa_chrome_step3": "Confirma la instalación en el diálogo",
+  "pwa_chrome_note": "Disponible en Chrome, Edge, y otros navegadores modernos",
+  "pwa_manual_install_title": "Instalar Aplicación",
+
   "noPermission": "No tienes permisos para editar este perfil",
   "adminEditMode": "Modo de edición de administrador",
   "adminEditWarning": "Estás editando el perfil de otro usuario. Los cambios se aplicarán inmediatamente.",

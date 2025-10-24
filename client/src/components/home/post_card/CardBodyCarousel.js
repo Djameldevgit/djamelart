@@ -362,7 +362,10 @@ const CardBodyCarousel = ({ post }) => {
   }, [canProceed, buyLoad, inCart, dispatch, post, auth, t]);
 
   // Handler para las opciones del modal
+  // ✅ CORREGIR: Función handleOptionClick actualizada
   const handleOptionClick = useCallback((option) => {
+    console.log("📍 Opción seleccionada:", option);
+    
     switch (option) {
       case 'edit':
         handleEditPost();
@@ -385,6 +388,9 @@ const CardBodyCarousel = ({ post }) => {
       default:
         break;
     }
+    
+    // ✅ Cerrar el modal después de cada acción
+    setShowOptionsModal(false);
   }, [handleEditPost, handleDeletePost, handleContactSeller, handleShare, handleSavePostAction]);
 
   const formatDate = useCallback((dateString) => {
@@ -536,17 +542,17 @@ const CardBodyCarousel = ({ post }) => {
 
             {/* Modal de opciones */}
             <OptionsModal
-              show={showOptionsModal}
-              onClose={() => setShowOptionsModal(false)}
-              innerRef={optionsModalRef}
-              isAdmin={isAdmin}
-              isPostOwner={isPostOwner}
-              saved={saved}
-              saveLoad={saveLoad}
-              t={t}
-              onOptionClick={handleOptionClick}
-              onAprove={handleAprove}
-              onChatWithAdmin={handleChatWithAdmin}
+             show={showOptionsModal}
+             onClose={() => setShowOptionsModal(false)} // ✅ Esto faltaba
+             innerRef={optionsModalRef}
+             isAdmin={isAdmin}
+             isPostOwner={isPostOwner}
+             saved={saved}
+             saveLoad={saveLoad}
+             t={t}
+             onOptionClick={handleOptionClick}
+             onAprove={handleAprove}
+             onChatWithAdmin={handleChatWithAdmin}
             />
           </>
         )}
