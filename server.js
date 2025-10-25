@@ -11,11 +11,31 @@ const SocketServer = require('./socketServer');
 const morgan = require('morgan');
 
 // ✅ CORS para Express
-const app = express()
-app.use(express.json())
-app.use(cors())
-app.use(cookieParser())
+const app = express();
 
+// Orígenes permitidos (local y producción)
+const allowedOrigins = [
+  'http://localhost:3000',               // Para desarrollo local
+  'https://djamelart.onrender.com',       // Para producción (si es tu URL de producción)
+  // Puedes agregar otros orígenes si es necesario
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Permite el acceso si no hay origen (esto es útil para pruebas locales o algunas configuraciones de redireccionamiento)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+  credentials: true, // Permite enviar cookies con las solicitudes
+};
+
+app.use(cors(corsOptions));  // Aplicamos la configuración de CORS
+
+app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('dev'));
 
@@ -23,6 +43,7 @@ app.use((req, res, next) => {
   res.setHeader('Cache-Control', 'no-store');
   next();
 });
+
 i18n.configure({
   locales: ['en', 'es', 'fr', 'ar', 'ru', 'kab', 'chino'],
   directory: path.join(__dirname, 'locales'),
@@ -34,13 +55,12 @@ i18n.configure({
 });
 app.use(i18n.init);
 
-const http = require('http').createServer(app)
-const io = require('socket.io')(http)
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
 io.on('connection', socket => {
-    SocketServer(socket)
-})
-
+  SocketServer(socket);
+});
 
 // --- Rutas de API ---
 app.get('/api/set-language', (req, res) => {
@@ -74,27 +94,25 @@ app.use("/api", require("./routes/settingsRouter"));
 // --- Auto desbloqueo de usuarios cada 5 min ---
 setInterval(autoUnblockUsers, 5 * 60 * 1000);
 
-
-const URI = process.env.MONGODB_URL
+const URI = process.env.MONGODB_URL;
 mongoose.connect(URI, {
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 }, err => {
-    if(err) throw err;
-    console.log('Connected to mongodb')
-})
+  if (err) throw err;
+  console.log('Connected to mongodb');
+});
 
-if(process.env.NODE_ENV === 'production'){
-    app.use(express.static('client/build'))
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
-    })
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+  });
 }
 
-
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5000;
 http.listen(port, () => {
-    console.log('Server is running on port', port)
-})
+  console.log('Server is running on port', port);
+});
